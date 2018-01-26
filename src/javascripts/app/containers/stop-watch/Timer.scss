@@ -1,0 +1,26 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.number {
+  background-color: $blue;
+  border-radius: 3px;
+  color: $white;
+  flex: 1;
+  font-size: 26px;
+  padding: 10px;
+  text-align: center;
+}
+
+.separator {
+  font-size: 26px;
+  padding: 10px;
+  text-align: center;
+}
+

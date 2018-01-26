@@ -1,0 +1,16 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+
+.container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.warning {
+  padding: 30px 0;
+}
+
+.button {
+  text-align: center;
+}

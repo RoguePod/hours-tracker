@@ -1,0 +1,11 @@
+**/node_modules/*
+dist/
+**/*.log*
+.npm/
+config/secrets.yml
+.DS_Store
+/coverage
+*.sublime*
+functions/index.js
+.env*
+.firebaserc

@@ -1,0 +1,15 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+
+.total {
+  color: $blue;
+}
+
+.billable {
+  color: $green;
+}
+
+.totalCell {
+  background-color: lighten($blue, 40%) !important;
+}

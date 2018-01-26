@@ -1,0 +1,22 @@
+@import 'variables';
+
+$offset: 15px;
+
+.container {
+  bottom: $offset + $offset;
+  left: $offset;
+  margin: 0 auto;
+  max-width: 1120px - ($offset * 2);
+  position: fixed;
+  right: $offset;
+  z-index: 100001;
+}
+
+
+.icon {
+  float: right;
+}
+
+.message {
+  margin-right: 25px;
+}

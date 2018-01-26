@@ -1,0 +1,392 @@
+const admin     = require('firebase-admin');
+const functions = require('firebase-functions');
+const moment    = require('moment-timezone');
+const json2csv  = require('json2csv');
+/* eslint-disable id-length */
+const _         = require('lodash');
+/* eslint-enable id-length */
+
+admin.initializeApp(functions.config().firebase);
+
+exports.updateUserRecents = functions.firestore.document('entries/{entryId}')
+  .onWrite((event) => {
+    const firestore = admin.firestore();
+    const { clientRef, projectRef, userRef } = event.data.data();
+
+    if (!projectRef) {
+      return null;
+    }
+
+    _.includes(1, 2);
+
+    return new Promise((resolve, reject) => {
+      firestore
+        .collection('entries')
+        .where('userRef', '==', userRef)
+        .where('projectRef', '==', projectRef)
+        .orderBy('startedAt', 'desc')
+        .limit(1)
+        .get()
+        .then((snapshot) => {
+          if (snapshot.empty) {
+            resolve();
+          } else {
+            snapshot.forEach((doc) => {
+              const { description, startedAt } = doc.data();
+              firestore
+                .doc(`users/${userRef.id}/recents/${projectRef.id}`)
+                .set({
+                  clientRef,
+                  description,
+                  projectRef,
+                  startedAt
+                })
+                .then(() => resolve())
+                .catch(() => reject());
+            });
+          }
+        })
+        .catch(() => reject());
+    });
+  });
+
+const setEntryBillable = (event) => {
+  const { clientRef, projectRef } = event.data.data();
+
+  let previousProjectRef = null;
+
+  if (event.data.previous) {
+    previousProjectRef = event.data.previous.data().projectRef;
+  }
+
+  if (!clientRef) {
+    event.data.ref.update({ billable: false });
+    return null;
+  }
+
+  if (projectRef === previousProjectRef) {
+    return null;
+  }
+
+  return new Promise((resolve, reject) => {
+    projectRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          const { billable } = doc.data();
+
+          event.data.ref.update({ billable });
+          resolve();
+        } else {
+          resolve();
+        }
+      })
+      .catch(() => reject());
+  });
+};
+
+exports.createEntryBillable = functions.firestore.document('entries/{entryId}')
+  .onCreate(setEntryBillable);
+
+exports.updateEntryBillable = functions.firestore.document('entries/{entryId}')
+  .onUpdate(setEntryBillable);
+
+exports.createUserProfile = functions.auth.user()
+  .onCreate((event) => {
+    const user = event.data;
+
+    admin.firestore()
+      .doc(`users/${user.uid}`)
+      .set({
+        autoloadLastDescription: 1,
+        entriesTab: '#filter',
+        name: '',
+        recentProjectsListSize: '10',
+        recentProjectsSort: 'startedAt',
+        role: 'User',
+        timezone: 'America/Denver'
+      });
+  });
+
+const buildQuery = (query) => {
+  const {
+    clientRef, endDate, projectRef, startDate, timezone, userRef
+  } = query;
+
+  const firestore = admin.firestore();
+
+  let data = firestore.collection('entries').orderBy('startedAt', 'desc');
+
+  if (userRef) {
+    data = data.where('userRef', '==', firestore.doc(userRef));
+  }
+
+  if (clientRef) {
+    data = data.where('clientRef', '==', firestore.doc(clientRef));
+  }
+
+  if (projectRef) {
+    data = data.where('projectRef', '==', firestore.doc(projectRef));
+  }
+
+  if (startDate && startDate.length > 0) {
+    data = data.where(
+      'startedAt',
+      '>=',
+      moment.tz(startDate, timezone)
+        .valueOf()
+    );
+  }
+
+  if (endDate && endDate.length > 0) {
+    data = data.where(
+      'startedAt',
+      '<=',
+      moment.tz(endDate, timezone)
+        .endOf('day')
+        .valueOf()
+    );
+  }
+
+  return data;
+};
+
+const parseEntry = async(entryDoc) => {
+  const entry = entryDoc.data();
+
+  const startedAt = moment.tz(entry.startedAt, entry.timezone);
+  let stoppedAt   = null;
+  let duration    = 0;
+  const user      = await entry.userRef.get();
+  const client    = entry.clientRef ? await entry.clientRef.get() : null;
+  const project   = entry.projectRef ? await entry.projectRef.get() : null;
+
+  if (entry.stoppedAt) {
+    stoppedAt = moment.tz(entry.stoppedAt, entry.timezone);
+    duration = stoppedAt.diff(startedAt, 'hours', true);
+  }
+
+  const projectData = project && project.exists ? project.data() : null;
+
+  return {
+    billable: _.get(projectData, 'billable', false),
+    client: client && client.exists ? client.data().name : null,
+    description: entry.description,
+    duration: duration.toFixed(1),
+    durationRaw: duration,
+    project: _.get(projectData, 'name'),
+    startedAt: startedAt.format(),
+    startedAtMoment: startedAt,
+    startedAtValue: entry.startedAt,
+    stoppedAt: stoppedAt ? stoppedAt.format() : null,
+    stoppedAtMoment: stoppedAt ? stoppedAt : null,
+    stoppedAtValue: entry.stoppedAt,
+    user: user.exists ? user.data().name : null
+  };
+};
+
+const buildEntriesCsv = async(querySnapshot) => {
+  const fields = [
+    'user',
+    'client',
+    'project',
+    'startedAt',
+    'stoppedAt',
+    'duration',
+    'description'
+  ];
+  const fieldNames = [
+    'User',
+    'Client',
+    'Project',
+    'Started At',
+    'Stopped At',
+    'Duration',
+    'Description'
+  ];
+
+  const data = await Promise.all(querySnapshot.docs.map(await parseEntry));
+
+  return json2csv({ data, fieldNames, fields });
+};
+
+exports.entriesCsv = functions.https.onRequest(async(req, res) => {
+  const querySnapshot = await buildQuery(req.query).get();
+  const csv           = await buildEntriesCsv(querySnapshot);
+  const filename      = moment().format('YYYY-MM-DD.HH.MM.SS');
+
+  res.attachment(`ht.entries.${filename}.csv`);
+  res.status(200).send(csv);
+});
+
+const buildBillableCsv = async(querySnapshot) => {
+  const fields = [
+    'user',
+    'client',
+    'project',
+    'startedAt',
+    'stoppedAt',
+    'duration',
+    'description'
+  ];
+  const fieldNames = [
+    'User',
+    'Client',
+    'Project',
+    'Started At',
+    'Stopped At',
+    'Duration',
+    'Description'
+  ];
+
+  const data = await Promise.all(querySnapshot.docs.map(await parseEntry));
+
+  const groups = _.groupBy(
+    _.filter(data, (entry) => entry.billable), 'client'
+  );
+
+  let csv = '';
+
+  for (const group of _.keys(groups).sort()) {
+    const entries  = groups[group];
+    const duration = _.sumBy(entries, (entry) => Number(entry.durationRaw));
+
+    csv += json2csv({
+      data: _.sortBy(entries, 'user'),
+      fieldNames,
+      fields
+    });
+    csv += `\n,,,,"Sub Total:","${duration.toFixed(1)}",\n\n`;
+  }
+
+  return csv;
+};
+
+exports.billableCsv = functions.https.onRequest(async(req, res) => {
+  const querySnapshot = await buildQuery(req.query).get();
+  const csv           = await buildBillableCsv(querySnapshot);
+  const filename      = moment().format('YYYY-MM-DD.HH.MM.SS');
+
+  res.attachment(`ht.billable.${filename}.csv`);
+  res.status(200).send(csv);
+});
+
+const userTotals = (weeks, entries, overtime) => {
+  let weekTotal = 0;
+
+  const cells = weeks.map((week) => {
+    const startValue = week.start.valueOf();
+    const endValue   = week.end.valueOf();
+
+    let total = 0;
+
+    for (const entry of entries) {
+      const startedAt = entry.startedAtMoment.valueOf();
+      if (startedAt >= startValue && startedAt <= endValue) {
+        total += Number(entry.durationRaw);
+      }
+    }
+
+    if (overtime) {
+      if (total > 40) {
+        total -= 40;
+      } else {
+        total = 0;
+      }
+    } else if (total > 40) {
+      total = 40;
+    }
+
+    weekTotal += total;
+
+    return total.toFixed(1);
+  });
+
+  cells.push(weekTotal.toFixed(1));
+
+  return cells;
+};
+
+/* eslint-disable max-statements */
+const buildPayrollCsv = async(querySnapshot, timezone) => {
+  const entries = await Promise.all(querySnapshot.docs.map(await parseEntry));
+
+  const startDate = moment.tz(_.last(entries).startedAtValue, timezone)
+    .startOf('isoWeek');
+  const endDate   = moment.tz(_.first(entries).startedAtValue, timezone)
+    .endOf('isoWeek');
+
+  const csv = [];
+
+  const weeks = [];
+  while (startDate.isBefore(endDate.startOf('day'))) {
+    weeks.push({
+      end: startDate.clone().add(6, 'd')
+        .endOf('day'),
+      start: startDate.clone()
+    });
+
+    startDate.add(1, 'w');
+  }
+
+  let headerRow = [''];
+
+  headerRow = headerRow.concat(
+    weeks.map((week) => {
+      return `${week.start.format('MM/DD')} - ${week.end.format('MM/DD')}`;
+    })
+  );
+
+  headerRow.push('Overtime Total');
+  headerRow.push('');
+
+  headerRow = headerRow.concat(
+    weeks.map((week) => {
+      return `${week.start.format('MM/DD')} - ${week.end.format('MM/DD')}`;
+    })
+  );
+  headerRow.push('Regular Total');
+  csv.push(headerRow.join(','));
+
+  const users = _.groupBy(entries, (entry) => entry.user);
+
+  for (const userName of Object.keys(users).sort()) {
+    let row = [userName];
+    row = row.concat(userTotals(weeks, users[userName], true));
+    row.push('');
+    row = row.concat(userTotals(weeks, users[userName], false));
+
+    csv.push(row.join(','));
+  }
+
+  return csv.join('\n');
+};
+/* eslint-enable max-statements */
+
+exports.payrollCsv = functions.https.onRequest(async(req, res) => {
+  const { query }    = req;
+  const { timezone } = query;
+
+  let { endDate, startDate } = query;
+
+  if (startDate && startDate.length > 0) {
+    startDate = moment.tz(startDate, timezone)
+      .startOf('isoWeek')
+      .format('YYYY-MM-DD');
+  }
+
+  if (endDate && endDate.length > 0) {
+    endDate = moment.tz(endDate, timezone)
+      .endOf('isoWeek')
+      .format('YYYY-MM-DD');
+  }
+
+  const newQuery = Object.assign({}, query, { endDate, startDate });
+
+  const querySnapshot = await buildQuery(newQuery).get();
+  const csv           = await buildPayrollCsv(querySnapshot, timezone);
+  const filename      = moment().format('YYYY-MM-DD.HH.MM.SS');
+
+  res.attachment(`ht.payroll.${filename}.csv`);
+  res.status(200).send(csv);
+});

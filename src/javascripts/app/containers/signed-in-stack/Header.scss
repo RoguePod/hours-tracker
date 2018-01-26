@@ -1,0 +1,27 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+
+.container {
+  background-color: $blue;
+  left: 0;
+  padding: 10px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.logo {
+  color: $white;
+  font-size: 20px;
+  padding-left: 10px;
+}
+
+.menu {
+  flex: 1;
+}
+
+.icon {
+  color: $white;
+}

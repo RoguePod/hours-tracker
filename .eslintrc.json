@@ -1,0 +1,81 @@
+{
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "eslint:all",
+    "plugin:react/all"
+  ],
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "es6": true,
+    "jest": true
+  },
+  "rules": {
+    "array-element-newline": 0,
+    "arrow-body-style": 0,
+    "arrow-parens": [2, "always"],
+    "capitalized-comments": 0,
+    "class-methods-use-this": 0,
+    "dot-location": ["error", "property"],
+    "func-style": 0,
+    "function-paren-newline": ["error", "consistent"],
+    "generator-star-spacing": ["error", {"before": false, "after": true}],
+    "global-require": 0,
+    "indent": ["error", 2],
+    "lines-around-comment": 0,
+    "line-comment-position": 0,
+    "max-params": ["error", 5],
+    "max-statements": ["error", 20],
+    "multiline-comment-style": ["error", "separate-lines"],
+    "multiline-ternary": ["error", "never"],
+    "no-continue": 0,
+    "no-extra-parens": 0,
+    "no-inline-comments": 0,
+    "no-magic-numbers": 0,
+    "no-unmodified-loop-condition": 0,
+    "no-multi-spaces": [
+      "error", {
+        "exceptions": { "VariableDeclarator": true }
+      }
+    ],
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "no-process-env": 0,
+    "no-ternary": 0,
+    "no-undefined": 0,
+    "no-underscore-dangle": 0,
+    "object-curly-newline": 0,
+    "object-curly-spacing": ["error", "always"],
+    "object-property-newline": [
+      "error", { "allowMultiplePropertiesPerLine": true }
+    ],
+    "one-var": ["error", "never"],
+    "padded-blocks": ["error", "never"],
+    "prefer-destructuring": ["error", {
+      "array": false,
+      "object": true
+    }, {
+      "enforceForRenamedProperties": false
+    }],
+    "prefer-promise-reject-errors": 0,
+    "prefer-reflect": 0,
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "quote-props": 0,
+    "react/forbid-component-props": 0,
+    "react/forbid-prop-types": 0,
+    "react/jsx-filename-extension": [1, { "extensions": [".js"] }],
+    "react/jsx-handler-names": 0,
+    "react/jsx-indent": [2, 2],
+    "react/jsx-indent-props": [2, 2],
+    "react/no-array-index-key": 0,
+    "react/no-multi-comp": 0,
+    "react/no-set-state": 0,
+    "react/no-will-update-set-state": 0,
+    "require-jsdoc": 0,
+    "space-before-function-paren": ["error", "never"]
+  },
+  "globals": {
+    "fetch": false
+  }
+}

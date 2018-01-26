@@ -1,0 +1,27 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+
+.container {
+  flex: 1;
+  margin-top: 0 !important;
+  min-height: 200px;
+  padding: 0 !important;
+}
+
+.bar {
+  background-color: $blue;
+  color: $white;
+  font-size: 18px;
+  padding: 10px 20px;
+}
+
+.list {
+  bottom: 0;
+  left: 0;
+  overflow-y: auto;
+  padding-bottom: 1em;
+  position: absolute;
+  right: 0;
+  top: 39px;
+}

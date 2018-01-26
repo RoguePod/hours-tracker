@@ -1,0 +1,41 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+
+$border-color: rgba(34, 36, 38, .15);
+
+.container {
+  border-top: 1px solid $border-color;
+  margin-top: 1em;
+  padding-top: 1em;
+
+  &:first-child {
+    border-top: 0;
+    margin-top: 0;
+  }
+}
+
+.inner {
+  align-items: center;
+  display: flex;
+  padding: 0 20px;
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+}
+
+.project {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.client {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}

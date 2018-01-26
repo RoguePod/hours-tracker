@@ -1,0 +1,15 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+
+$hover-background: rgba(0, 0, 0, .05);
+$hover-color: rgba(0, 0, 0, .95);
+
+.container {
+  cursor: pointer;
+
+  &:hover {
+    background-color: $hover-background !important;
+    color: $hover-color !important;
+  }
+}

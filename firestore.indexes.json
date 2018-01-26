@@ -1,0 +1,31 @@
+{
+  "indexes": [
+    {
+      "collectionId": "entries",
+      "fields": [
+        { "fieldPath": "userRef", "mode": "ASCENDING" },
+        { "fieldPath": "startedAt", "mode": "DESCENDING" }
+      ]
+    }, {
+      "collectionId": "entries",
+      "fields": [
+        { "fieldPath": "projectRef", "mode": "ASCENDING" },
+        { "fieldPath": "startedAt", "mode": "DESCENDING" }
+      ]
+    }, {
+      "collectionId": "entries",
+      "fields": [
+        { "fieldPath": "clientRef", "mode": "ASCENDING" },
+        { "fieldPath": "startedAt", "mode": "DESCENDING" }
+      ]
+    }, {
+      "collectionId": "entries",
+      "fields": [
+        { "fieldPath": "clientRef", "mode": "ASCENDING" },
+        { "fieldPath": "projectRef", "mode": "ASCENDING" },
+        { "fieldPath": "userRef", "mode": "ASCENDING" },
+        { "fieldPath": "startedAt", "mode": "DESCENDING" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+@import 'variables';
+
+// sass-lint:disable no-important
+.container {
+  margin: 0;
+  padding: 0;
+}
+
+.overlay {
+  background: transparent;
+  bottom: 0;
+  content: ' ';
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: all .25s ease;
+  z-index: -1;
+}
+
+.overlayOpen {
+  background: $blue-translucent;
+  z-index: 10000;
+}
+
+.slider {
+  background: $white;
+  bottom: 0;
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transform: translate(300px, 0);
+  transition: transform .25s ease;
+  width: 280px;
+  z-index: 100000;
+}
+
+.sliderOpen {
+  transform: translate(0, 0);
+}
+
+.inner {
+  flex: 1;
+  padding: 1em;
+}
+
+.link {
+  color: $blue !important;
+}
+
+.header {
+  background: $blue;
+  font-size: 20px;
+  padding: 1em;
+  position: relative;
+}
+
+.logo {
+  color: $white;
+}
