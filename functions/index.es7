@@ -55,7 +55,7 @@ const setEntryBillable = (event) => {
 
   let previousProjectRef = null;
 
-  if (event.data.previous) {
+  if (event.data.previous && event.data.previous.data()) {
     previousProjectRef = event.data.previous.data().projectRef;
   }
 

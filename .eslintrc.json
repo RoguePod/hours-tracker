@@ -71,6 +71,7 @@
     "react/no-array-index-key": 0,
     "react/no-multi-comp": 0,
     "react/no-set-state": 0,
+    "react/no-typos": 0,
     "react/no-will-update-set-state": 0,
     "require-jsdoc": 0,
     "space-before-function-paren": ["error", "never"]
