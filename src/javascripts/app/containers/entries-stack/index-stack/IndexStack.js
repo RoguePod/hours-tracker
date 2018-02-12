@@ -2,7 +2,9 @@ import {
   Dimmer, Dropdown, Header, Icon, Loader, Menu, Segment
 } from 'semantic-ui-react';
 import { Link, Route, Switch } from 'react-router-dom';
-import { reset, selectQuery } from 'javascripts/app/redux/entries';
+import {
+  reset, selectQuery, selectRawQuery
+} from 'javascripts/app/redux/entries';
 import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
 import EntriesFilterForm from './EntriesFilterForm';
@@ -25,6 +27,7 @@ class EntriesIndexStack extends React.Component {
     match: PropTypes.routerMatch.isRequired,
     onReset: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
+    rawQuery: PropTypes.entriesQuery.isRequired,
     tab: PropTypes.string.isRequired,
     timezone: PropTypes.string.isRequired
   }
@@ -95,7 +98,7 @@ class EntriesIndexStack extends React.Component {
 
   render() {
     const {
-      admin, fetching, location, match, query, tab, timezone
+      admin, fetching, location, match, query, rawQuery, tab, timezone
     } = this.props;
     const { hash, pathname } = location;
 
@@ -104,6 +107,8 @@ class EntriesIndexStack extends React.Component {
     const isReports        = pathname === '/entries/reports';
     const isReportsSummary = pathname === '/entries/reports/summary';
     const showAdmin        = isReports || isReportsSummary;
+
+    console.log(rawQuery);
 
     return (
       <Segment
@@ -213,21 +218,21 @@ class EntriesIndexStack extends React.Component {
                   <Dropdown.Item
                     as={ExportEntriesButton}
                     func="entriesCsv"
-                    query={query}
+                    query={rawQuery}
                     timezone={timezone}
                     title="Entries CSV"
                   />
                   <Dropdown.Item
                     as={ExportEntriesButton}
                     func="billableCsv"
-                    query={query}
+                    query={rawQuery}
                     timezone={timezone}
                     title="Billable CSV"
                   />
                   <Dropdown.Item
                     as={ExportEntriesButton}
                     func="payrollCsv"
-                    query={query}
+                    query={rawQuery}
                     timezone={timezone}
                     title="Payroll CSV"
                   />
@@ -271,6 +276,7 @@ const props = (state) => {
     admin: selectAdmin(state),
     fetching: state.entries.fetching,
     query: selectQuery(state),
+    rawQuery: selectRawQuery(state),
     tab: _get(state, 'app.user.entriesTab', '#filter'),
     timezone: selectTimezone(state)
   };

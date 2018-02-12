@@ -46,6 +46,19 @@ export const selectQuery = createSelector(
   }
 );
 
+export const selectRawQuery = createSelector(
+  [selectTimezone, selectRouterSearch],
+  (timezone, query) => {
+    const parsedQuery = fromQuery(query);
+    const defaults    = {
+      endDate: '',
+      startDate: ''
+    };
+
+    return Object.assign({}, defaults, parsedQuery);
+  }
+);
+
 export const selectGroupedEntries = createSelector(
   [selectEntries, selectChecked],
   (entries, checked) => {
