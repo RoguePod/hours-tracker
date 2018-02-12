@@ -108,8 +108,6 @@ class EntriesIndexStack extends React.Component {
     const isReportsSummary = pathname === '/entries/reports/summary';
     const showAdmin        = isReports || isReportsSummary;
 
-    console.log(rawQuery);
-
     return (
       <Segment
         basic
