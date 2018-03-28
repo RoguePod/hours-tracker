@@ -169,14 +169,14 @@ module.exports = {
     /* eslint-disable camelcase */
     new WebpackPwaManifest({
       background_color: '#ffffff',
-      description: 'We Build Custom Solutions for Your Web and Mobile Future.',
+      description: 'Track your time',
       icons: [
         {
           size: '192x192',
           src: Path.resolve(__dirname, './src/images/icon.png')
         }, {
           size: '512x512',
-          src: Path.resolve(__dirname, './src/images/logo-splash.png')
+          src: Path.resolve(__dirname, './src/images/splash.png')
         }
       ],
       name: 'Hours Tracker',
