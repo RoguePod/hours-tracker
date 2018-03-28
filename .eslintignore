@@ -1,1 +1,2 @@
 semantic/*
+src/javascripts/app/registerServiceWorker.js

@@ -17,3 +17,9 @@ html,
 .react-datepicker__input-container {
   display: block;
 }
+
+.noscript {
+  color: $blue;
+  padding: 20px;
+  text-align: center;
+}

@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment-timezone';
+import registerServiceWorker from './registerServiceWorker';
 /* eslint-enable sort-imports */
 
 moment.locale('en');
@@ -49,3 +50,5 @@ ReactDOM.render(
   document.getElementById('app')
   /* eslint-enable no-undef */
 );
+
+registerServiceWorker();
