@@ -32,17 +32,17 @@ Any changes to semantic ui variables will require a rebuild compile of semantic 
 ### Development
 
 ```
-firebase use development-project-id && yarn start
+yarn start
 ```
 
 ### Staging Deploy
 
 ```
-yarn run build:staging && firebase use development-project-id
+firebase use firebase-project-id && yarn run deploy:staging
 ```
 
 ### Production Deploy
 
 ```
-yarn run build:production && firebase use development-project-id
+firebase use firebase-project-id && yarn run deploy:production
 ```
