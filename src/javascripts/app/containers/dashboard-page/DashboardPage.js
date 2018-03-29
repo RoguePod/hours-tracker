@@ -1,5 +1,5 @@
 import {
-  Button, Dimmer, Divider, Header, Loader, Menu, Segment
+  Button, Dimmer, Divider, Dropdown, Header, Loader, Segment
 } from 'semantic-ui-react';
 import {
   reset, selectDashboardProjects, selectDashboardProjectsForUser,
@@ -7,12 +7,14 @@ import {
 } from 'javascripts/app/redux/dashboard';
 import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
+import AdminMenu from './AdminMenu';
 import EntriesTable from './EntriesTable';
-import { Link } from 'react-router-dom';
 import ProjectsTable from './ProjectsTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import UsersTable from './UsersTable';
+import WeekDropdownItem from './WeekDropdownItem';
+import _times from 'lodash/times';
 import { connect } from 'react-redux';
 import { history } from 'javascripts/app/redux/store';
 import moment from 'moment-timezone';
@@ -52,6 +54,8 @@ class DashboardPage extends React.Component {
 
     this._handlePrevious = this._handlePrevious.bind(this);
     this._handleNext = this._handleNext.bind(this);
+    this._handleCurrent = this._handleCurrent.bind(this);
+    this._handleDate = this._handleDate.bind(this);
     this._handleStartInterval = this._handleStartInterval.bind(this);
     this._handleStopInterval = this._handleStopInterval.bind(this);
   }
@@ -132,6 +136,18 @@ class DashboardPage extends React.Component {
     history.replace({ ...location, search: `?${toQuery(newQuery)}` });
   }
 
+  _handleCurrent() {
+    const { location } = this.props;
+
+    history.replace({ ...location, search: null });
+  }
+
+  _handleDate(date) {
+    const { location } = this.props;
+
+    history.replace({ ...location, search: `?${toQuery({ date })}` });
+  }
+
   render() {
     const {
       admin, fetching, location, projectsAdmin, query: { date },
@@ -140,39 +156,80 @@ class DashboardPage extends React.Component {
 
     const { hash } = location;
 
-    const startDate = moment.tz(date, timezone).format('MM/DD/YYYY');
+    const startDate = moment.tz(date, timezone).format('MM/DD');
     const endDate   = moment.tz(date, timezone)
       .add(6, 'd')
       .endOf('day')
-      .format('MM/DD/YYYY');
+      .format('MM/DD');
+
+    const currentDate = moment()
+      .tz(timezone)
+      .startOf('isoWeek');
+
+    const isCurrent = date === currentDate.format('YYYY-MM-DD');
+
+    const options = [];
+
+    _times(4, (index) => {
+      const weeks = index + 1;
+      const weekStart = moment.tz(timezone)
+        .startOf('isoWeek')
+        .subtract(weeks, 'w');
+
+      const weekEnd = moment.tz(timezone)
+        .startOf('isoWeek')
+        .subtract(weeks, 'w')
+        .add(6, 'd')
+        .endOf('day')
+        .format('MM/DD');
+
+      options.push(
+        <WeekDropdownItem
+          key={`${weekStart.format('MM/DD')} - ${weekEnd}`}
+          onClick={this._handleDate}
+          startDate={weekStart}
+          text={`${weekStart.format('MM/DD')} - ${weekEnd}`}
+        />
+      );
+    });
 
     return (
       <Segment
         basic
         className={styles.container}
       >
-        <Header
-          as="h1"
-          color="blue"
-        >
+        <div className={styles.headerWrapper}>
           <Button.Group
-            floated="right"
+            className={styles.buttons}
+            color="blue"
+            size="large"
           >
             <Button
-              color="blue"
+              icon="caret left"
               onClick={this._handlePrevious}
+            />
+            <Dropdown
+              button
+              text={`${startDate} - ${endDate}`}
             >
-              {'Previous Week'}
-            </Button>
+              <Dropdown.Menu>
+                {!isCurrent &&
+                  <Dropdown.Item
+                    onClick={this._handleCurrent}
+                  >
+                    {'Current Week'}
+                  </Dropdown.Item>}
+                {!isCurrent && <Dropdown.Divider />}
+                {options}
+              </Dropdown.Menu>
+            </Dropdown>
             <Button
-              color="blue"
+              disabled={isCurrent}
+              icon="caret right"
               onClick={this._handleNext}
-            >
-              {'Next Week'}
-            </Button>
+            />
           </Button.Group>
-          {`Week of ${startDate} - ${endDate}`}
-        </Header>
+        </div>
         <Dimmer
           active={Boolean(fetching)}
           inverted
@@ -182,35 +239,7 @@ class DashboardPage extends React.Component {
           </Loader>
         </Dimmer>
 
-        {admin &&
-          <Menu
-            color="blue"
-          >
-            <Menu.Item
-              active={hash === ''}
-              as={Link}
-              icon="dashboard"
-              name="My Dashboard"
-              replace
-              to={{ ...location, hash: '' }}
-            />
-            <Menu.Item
-              active={hash === '#users'}
-              as={Link}
-              icon="users"
-              name="Users"
-              replace
-              to={{ ...location, hash: '#users' }}
-            />
-            <Menu.Item
-              active={hash === '#projects'}
-              as={Link}
-              icon="table"
-              name="Projects"
-              replace
-              to={{ ...location, hash: '#projects' }}
-            />
-          </Menu>}
+        {admin && <AdminMenu location={location} />}
         {(!admin || hash === '') &&
           <ProjectsTable
             {...this.props}
@@ -238,6 +267,7 @@ class DashboardPage extends React.Component {
     );
   }
 }
+
 const props = (state) => {
   return {
     admin: selectAdmin(state),

@@ -1,7 +1,7 @@
 import {
   all, cancelled, fork, put, select, takeEvery, takeLatest
 } from 'redux-saga/effects';
-import { firestore, fromQuery, parseEntry } from 'javascripts/globals';
+import { firestore, fromQuery, isBlank, parseEntry } from 'javascripts/globals';
 
 import _filter from 'lodash/filter';
 import _sortBy from 'lodash/sortBy';
@@ -21,6 +21,8 @@ const selectUser = (state) => state.app.user;
 export const selectQuery = createSelector(
   [selectTimezone, selectRouterSearch],
   (timezone, query) => {
+    const parsedQuery = fromQuery(query);
+
     const date = moment()
       .tz(timezone)
       .startOf('isoWeek');
@@ -29,7 +31,19 @@ export const selectQuery = createSelector(
       date: date.format('YYYY-MM-DD')
     };
 
-    return Object.assign({}, defaults, fromQuery(query));
+    if (!isBlank(parsedQuery.date)) {
+      const queryDate = moment
+        .tz(parsedQuery.date, timezone)
+        .startOf('isoWeek');
+
+      if (queryDate.isBefore(date)) {
+        parsedQuery.date = queryDate.format('YYYY-MM-DD');
+
+        return Object.assign({}, defaults, parsedQuery);
+      }
+    }
+
+    return defaults;
   }
 );
 

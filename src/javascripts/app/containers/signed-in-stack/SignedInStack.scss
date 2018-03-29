@@ -16,6 +16,12 @@ $sidebar-background: #fcfcfc;
   position: relative;
 }
 
+@media only screen and (max-width: 767px) {
+  .content {
+    padding-top: 70px;
+  }
+}
+
 .offset {
   margin-left: 280px;
 }
