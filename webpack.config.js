@@ -1,8 +1,8 @@
 const Webpack               = require('webpack');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const Path                  = require('path');
-const ExtractTextPlugin     = require('extract-text-webpack-plugin');
-const SassLintPlugin        = require('sasslint-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const StyleLintPlugin      = require('stylelint-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const Dotenv                = require('dotenv-webpack');
 
@@ -21,6 +21,7 @@ module.exports = {
       './src/javascripts/app/entry.js'
     ]
   },
+  mode: 'development',
   module: {
     rules: [
       {
@@ -34,58 +35,52 @@ module.exports = {
         use: ['babel-loader']
       }, {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                importLoaders: 1,
-                localIdentName: '[name]__[local]_[hash:base64:5]',
-                modules: true
-              }
-            },
-            'postcss-loader'
-          ]
-        })
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              localIdentName: '[name]__[local]_[hash:base64:5]',
+              modules: true
+            }
+          },
+          'postcss-loader'
+        ]
       }, {
         oneOf: [
           {
             resourceQuery: /main/, // foo.css?inline
-            use: ExtractTextPlugin.extract({
-              fallback: 'style-loader',
-              use: [
-                'css-loader',
-                'postcss-loader',
-                {
-                  loader: 'sass-loader',
-                  options: {
-                    includePaths: [Path.resolve(__dirname, './src/stylesheets')]
-                  }
+            use: [
+              MiniCssExtractPlugin.loader,
+              'css-loader',
+              'postcss-loader',
+              {
+                loader: 'sass-loader',
+                options: {
+                  includePaths: [Path.resolve(__dirname, './src/stylesheets')]
                 }
-              ]
-            })
+              }
+            ]
           }, {
-            use: ExtractTextPlugin.extract({
-              fallback: 'style-loader',
-              use: [
-                {
-                  loader: 'css-loader',
-                  options: {
-                    importLoaders: 2,
-                    localIdentName: '[name]__[local]_[hash:base64:5]',
-                    modules: true
-                  }
-                },
-                'postcss-loader',
-                {
-                  loader: 'sass-loader',
-                  options: {
-                    includePaths: [Path.resolve(__dirname, './src/stylesheets')]
-                  }
+            use: [
+              MiniCssExtractPlugin.loader,
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 2,
+                  localIdentName: '[name]__[local]_[hash:base64:5]',
+                  modules: true
                 }
-              ]
-            })
+              },
+              'postcss-loader',
+              {
+                loader: 'sass-loader',
+                options: {
+                  includePaths: [Path.resolve(__dirname, './src/stylesheets')]
+                }
+              }
+            ]
           }
         ],
         test: /\.s(a|c)ss$/
@@ -137,10 +132,10 @@ module.exports = {
       template: './src/javascripts/app/index.ejs'
     }),
     new FaviconsWebpackPlugin('./favicon.png'),
-    new SassLintPlugin({
-      glob: './src/**/*.s?(a|c)ss'
-    }),
-    new ExtractTextPlugin('styles-[name].css')
+    new StyleLintPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'styles-[name].css'
+    })
   ],
   resolve: {
     modules: [Path.resolve(__dirname, './src'), 'node_modules']

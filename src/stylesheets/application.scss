@@ -2,13 +2,11 @@
 @import '../../semantic/dist/semantic.css';
 @import '~react-datepicker/dist/react-datepicker.css';
 
-// sass-lint:disable no-ids
 body,
 html,
 #app {
   height: 100%;
 }
-// sass-lint:enable no-ids
 
 .react-datepicker-wrapper {
   display: block;

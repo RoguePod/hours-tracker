@@ -1,6 +1,6 @@
 @import 'variables';
 
-// sass-lint:disable no-important
+/* stylelint-disable declaration-no-important */
 $sidebar-background: #fcfcfc;
 
 .container {
@@ -49,7 +49,7 @@ $sidebar-background: #fcfcfc;
   position: fixed;
   right: 0;
   top: 0;
-  transition: all .25s ease;
+  transition: all 0.25s ease;
   z-index: -1;
 }
 
@@ -68,7 +68,7 @@ $sidebar-background: #fcfcfc;
   position: fixed;
   top: 0;
   transform: translate(-280px, 0);
-  transition: transform .25s ease;
+  transition: transform 0.25s ease;
   width: 280px;
   z-index: 100000;
 }
