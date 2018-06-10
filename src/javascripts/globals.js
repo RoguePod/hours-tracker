@@ -1,8 +1,8 @@
-import * as baseFirebase from 'firebase';
-
 import { call, select } from 'redux-saga/effects';
 
 /* eslint-disable sort-imports */
+import baseFirebase from 'firebase/app';
+import 'firebase/auth';
 import 'firebase/firestore';
 /* eslint-enable sort-imports */
 
@@ -26,7 +26,12 @@ baseFirebase.initializeApp(firebaseConfig);
 
 export const env       = process.env.ENV;
 export const firebase  = baseFirebase;
-export const firestore = firebase.firestore();
+
+const baseFirestore = firebase.firestore();
+
+baseFirestore.settings({ timestampsInSnapshots: true });
+
+export const firestore = baseFirestore;
 
 export const isBlank = (value) => {
   return _isNil(value) || (_isString(value) && value.length === 0);
