@@ -47,9 +47,19 @@ class StopWatch extends React.Component {
     onSubscribeEntry();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { entry, onFormChange, params } = nextProps;
-    const { entry: { description, projectRef } } = this.props;
+  shouldComponentUpdate(nextProps) {
+    const { entry, fetching, ready } = this.props;
+
+    return (
+      fetching !== nextProps.fetching ||
+      ready !== nextProps.ready ||
+      !_isEqual(entry, nextProps.entry)
+    );
+  }
+
+  componentDidUpdate(prevProps) {
+    const { entry, onFormChange, params } = this.props;
+    const { entry: { description, projectRef } } = prevProps;
 
     if (entry.description !== params.description &&
         entry.description !== description) {
@@ -61,16 +71,6 @@ class StopWatch extends React.Component {
       onFormChange('StopWatchEntryForm', 'clientRef', entry.clientRef);
       onFormChange('StopWatchEntryForm', 'projectRef', entry.projectRef);
     }
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const { entry, fetching, ready } = this.props;
-
-    return (
-      fetching !== nextProps.fetching ||
-      ready !== nextProps.ready ||
-      !_isEqual(entry, nextProps.entry)
-    );
   }
 
   _handleStart() {

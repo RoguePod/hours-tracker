@@ -1,3 +1,5 @@
+/* global window,document */
+
 import { Dimmer, Loader } from 'semantic-ui-react';
 import { loadApp, openSidebar, updateWindow } from 'javascripts/app/redux/app';
 
@@ -47,22 +49,7 @@ class App extends React.Component {
 
     onLoadApp();
 
-    /* eslint-disable no-undef */
     window.addEventListener('resize', this._handleUpdateWindow);
-    /* eslint-enable no-undef */
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { location } = this.props;
-
-    if (location.pathname !== nextProps.location.pathname) {
-      // if (location.pathname.startsWith('/profile') &&
-      //     nextProps.location.pathname.startsWith('/profile')) {
-      //   return;
-      // }
-
-      jQuery('html, body').animate({ scrollTop: 0 }, 150);
-    }
   }
 
   shouldComponentUpdate(nextProps) {
@@ -81,14 +68,18 @@ class App extends React.Component {
     );
   }
 
-  componentWillUpdate(nextProps) {
-    /* eslint-disable no-undef */
-    if (nextProps.location.hash.match(/sidebar/)) {
+  componentDidUpdate(prevProps) {
+    const { location: { hash, pathname } } = this.props;
+
+    if (pathname !== prevProps.location.pathname) {
+      jQuery('html, body').animate({ scrollTop: 0 }, 150);
+    }
+
+    if (hash.match(/sidebar/)) {
       document.addEventListener('keydown', this._handleKeyPress);
     } else {
       document.removeEventListener('keydown', this._handleKeyPress);
     }
-    /* eslint-enable no-undef */
   }
 
   componentWillUnmount() {
@@ -96,17 +87,13 @@ class App extends React.Component {
       clearTimeout(this.timeout);
     }
 
-    /* eslint-disable no-undef */
     window.addEventListener('resize', this._handleUpdateWindow);
-    /* eslint-enable no-undef */
   }
 
   _handleUpdateWindow() {
     const { location, onUpdateWindow } = this.props;
 
-    /* eslint-disable no-undef */
     const element = document.documentElement;
-    /* eslint-enable no-undef */
 
     onUpdateWindow(element.clientWidth, element.clientHeight);
 

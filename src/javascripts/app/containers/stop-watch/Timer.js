@@ -1,3 +1,5 @@
+/* global document */
+
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _padStart from 'lodash/padStart';
@@ -37,9 +39,7 @@ class Timer extends React.Component {
       clearInterval(this.interval);
     }
 
-    /* eslint-disable no-undef */
     document.title = 'Hours Tracker';
-    /* eslint-enable no-undef */
   }
 
   interval = null
@@ -59,9 +59,7 @@ class Timer extends React.Component {
     const minutes  = _padStart(duration.get('minutes'), 2, '0');
     const seconds  = _padStart(duration.get('seconds'), 2, '0');
 
-    /* eslint-disable no-undef */
     document.title = `${hours}:${minutes}:${seconds} - Hours Tracker`;
-    /* eslint-enable no-undef */
 
     this.setState({ duration });
   }

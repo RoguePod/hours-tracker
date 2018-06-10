@@ -1,3 +1,5 @@
+/* global window */
+
 import { cloudFunctionsUrl, isBlank, toQuery } from 'javascripts/globals';
 
 import { ConfirmAction } from 'javascripts/shared/components';
@@ -31,9 +33,7 @@ class ExportEntriesButton extends React.Component {
 
     const url = `${cloudFunctionsUrl}/${func}?${toQuery(newQuery)}`;
 
-    /* eslint-disable no-undef */
     window.open(url, '_blank');
-    /* eslint-enable no-undef */
   }
 
   render() {
@@ -74,6 +74,7 @@ class ExportEntriesButton extends React.Component {
       <a
         className="item"
         href={url}
+        rel="noopener noreferrer"
         target="_blank"
       >
         {title}

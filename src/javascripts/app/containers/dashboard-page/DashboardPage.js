@@ -70,24 +70,24 @@ class DashboardPage extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  componentDidUpdate(prevProps) {
     const {
       running, onSubscribeEntries, query: { date }
     } = this.props;
 
-    if (date !== nextProps.query.date) {
+    if (prevProps.query.date !== date) {
       onSubscribeEntries();
     }
 
-    if (!running && nextProps.running) {
+    if (!prevProps.running && running) {
       this._handleStartInterval();
-    } else if (running && !nextProps.running) {
+    } else if (prevProps.running && !running) {
       this._handleStopInterval();
     }
-  }
-
-  shouldComponentUpdate() {
-    return true;
   }
 
   componentWillUnmount() {

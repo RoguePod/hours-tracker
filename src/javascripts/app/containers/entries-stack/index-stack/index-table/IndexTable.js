@@ -43,17 +43,17 @@ class EntriesIndexTable extends React.Component {
     this._handleRefresh();
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { location: { pathname }, query } = this.props;
-
-    if (!_isEqual(query, nextProps.query) ||
-        pathname !== nextProps.location.pathname) {
-      this._handleRefresh();
-    }
-  }
-
   shouldComponentUpdate() {
     return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location: { pathname }, query } = this.props;
+
+    if (!_isEqual(query, prevProps.query) ||
+        pathname !== prevProps.location.pathname) {
+      this._handleRefresh();
+    }
   }
 
   limit = 30

@@ -33,22 +33,22 @@ class EntryRow extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { entry: { stoppedAt } } = this.props;
-
-    if (!stoppedAt && nextProps.entry.stoppedAt) {
-      this._handleStopInterval();
-    } else if (stoppedAt && !nextProps.entry.stoppedAt) {
-      this._handleStartInterval();
-    }
-  }
-
   shouldComponentUpdate(nextProps) {
     const { entry } = this.props;
 
     return (
       !_isEqual(entry, nextProps.entry)
     );
+  }
+
+  componentDidUpdate(prevProps) {
+    const { entry: { stoppedAt } } = this.props;
+
+    if (!prevProps.entry.stoppedAt && stoppedAt) {
+      this._handleStopInterval();
+    } else if (prevProps.entry.stoppedAt && !stoppedAt) {
+      this._handleStartInterval();
+    }
   }
 
   componentWillUnmount() {

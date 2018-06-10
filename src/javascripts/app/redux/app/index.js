@@ -1,3 +1,5 @@
+/* global document */
+
 import {
   call, cancelled, fork, put, select, takeEvery, takeLatest
 } from 'redux-saga/effects';
@@ -37,14 +39,12 @@ const USER_SUBSCRIBE = `${path}/USER_SUBSCRIBE`;
 
 const initialState = {
   auth: null,
-  /* eslint-disable no-undef */
   height: document.documentElement.clientHeight,
   ready: false,
   redirect: null,
   token: null,
   user: null,
   width: document.documentElement.clientWidth
-  /* eslint-enable no-undef */
 };
 
 export default (state = initialState, action) => {

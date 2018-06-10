@@ -37,26 +37,24 @@ class EntriesSummaryTable extends React.Component {
   }
 
   componentDidMount() {
-    const { location, query } = this.props;
-
-    this._checkWarning(query, location);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    const { location: { pathname }, query } = this.props;
-
-    if (pathname !== nextProps.location.pathname ||
-        !_isEqual(query, nextProps.query)) {
-      this._checkWarning(nextProps.query, nextProps.location);
-    }
+    this._checkWarning();
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  _checkWarning(query, location) {
-    const { onSubscribeEntries } = this.props;
+  componentDidUpdate(prevProps) {
+    const { location: { pathname }, query } = this.props;
+
+    if (pathname !== prevProps.location.pathname ||
+        !_isEqual(query, prevProps.query)) {
+      this._checkWarning();
+    }
+  }
+
+  _checkWarning() {
+    const { location, onSubscribeEntries, query } = this.props;
     let warning = true;
 
     for (const value of Object.values(query)) {

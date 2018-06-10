@@ -1,3 +1,5 @@
+/* global window */
+
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
@@ -9,9 +11,7 @@ class HardRedirect extends React.Component {
   componentDidMount() {
     const { to } = this.props;
 
-    /* eslint-disable no-undef */
     window.location = to;
-    /* eslint-enable no-undef */
   }
 
   shouldComponentUpdate() {

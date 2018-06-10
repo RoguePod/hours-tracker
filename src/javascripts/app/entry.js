@@ -1,3 +1,5 @@
+/* global document */
+
 import 'stylesheets/application.scss?main';
 
 /* eslint-disable sort-imports */
@@ -46,9 +48,7 @@ ReactDOM.render(
       </App>
     </ConnectedRouter>
   </Provider>,
-  /* eslint-disable no-undef */
   document.getElementById('app')
-  /* eslint-enable no-undef */
 );
 
 registerServiceWorker();

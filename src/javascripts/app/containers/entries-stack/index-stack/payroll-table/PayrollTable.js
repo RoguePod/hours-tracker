@@ -29,17 +29,17 @@ class EntriesPayrollTable extends React.Component {
     onSubscribeEntries(null);
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { onSubscribeEntries, location: { pathname }, query } = this.props;
-
-    if (pathname !== nextProps.location.pathname ||
-        !_isEqual(query, nextProps.query)) {
-      onSubscribeEntries(null);
-    }
-  }
-
   shouldComponentUpdate() {
     return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { onSubscribeEntries, location: { pathname }, query } = this.props;
+
+    if (pathname !== prevProps.location.pathname ||
+        !_isEqual(query, prevProps.query)) {
+      onSubscribeEntries(null);
+    }
   }
 
   _renderUserCells(weeks, entries, overtime) {

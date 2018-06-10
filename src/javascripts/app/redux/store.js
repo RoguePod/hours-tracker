@@ -1,3 +1,5 @@
+/* global window */
+
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import { routerMiddleware, routerReducer } from 'react-router-redux';
 
@@ -8,9 +10,7 @@ import reducers from './reducers';
 import sagas from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
-/* eslint-disable no-undef */
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-/* eslint-enable no-undef */
 
 export const history = createHistory();
 export const store   = createStore(
