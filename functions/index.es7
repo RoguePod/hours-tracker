@@ -1,17 +1,20 @@
-const admin     = require('firebase-admin');
+/* eslint-disable max-lines */
+
 const functions = require('firebase-functions');
+const admin     = require('firebase-admin');
+
 const moment    = require('moment-timezone');
 const json2csv  = require('json2csv');
 /* eslint-disable id-length */
 const _         = require('lodash');
 /* eslint-enable id-length */
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 exports.updateUserRecents = functions.firestore.document('entries/{entryId}')
-  .onWrite((event) => {
+  .onWrite((change) => {
     const firestore = admin.firestore();
-    const { clientRef, projectRef, userRef } = event.data.data();
+    const { clientRef, projectRef, userRef } = change.after.data();
 
     if (!projectRef) {
       return null;
@@ -50,17 +53,17 @@ exports.updateUserRecents = functions.firestore.document('entries/{entryId}')
     });
   });
 
-const setEntryBillable = (event) => {
-  const { clientRef, projectRef } = event.data.data();
+const setEntryBillable = (data, previous = null) => {
+  const { clientRef, projectRef } = data;
 
   let previousProjectRef = null;
 
-  if (event.data.previous && event.data.previous.data()) {
-    previousProjectRef = event.data.previous.data().projectRef;
+  if (previous) {
+    previousProjectRef = previous.projectRef;
   }
 
   if (!clientRef) {
-    event.data.ref.update({ billable: false });
+    data.ref.update({ billable: false });
     return null;
   }
 
@@ -75,7 +78,7 @@ const setEntryBillable = (event) => {
         if (doc.exists) {
           const { billable } = doc.data();
 
-          event.data.ref.update({ billable });
+          data.ref.update({ billable });
           resolve();
         } else {
           resolve();
@@ -86,14 +89,16 @@ const setEntryBillable = (event) => {
 };
 
 exports.createEntryBillable = functions.firestore.document('entries/{entryId}')
-  .onCreate(setEntryBillable);
+  .onCreate((snap) => setEntryBillable(snap.data()));
 
 exports.updateEntryBillable = functions.firestore.document('entries/{entryId}')
-  .onUpdate(setEntryBillable);
+  .onUpdate((change) => {
+    setEntryBillable(change.after.data(), change.before.data());
+  });
 
 exports.createUserProfile = functions.auth.user()
-  .onCreate((event) => {
-    const user = event.data;
+  .onCreate((snap) => {
+    const user = snap.data();
 
     admin.firestore()
       .doc(`users/${user.uid}`)
