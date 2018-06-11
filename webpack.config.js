@@ -1,8 +1,8 @@
 const Webpack               = require('webpack');
 const HtmlWebpackPlugin     = require('html-webpack-plugin');
 const Path                  = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const StyleLintPlugin      = require('stylelint-webpack-plugin');
+const MiniCssExtractPlugin  = require('mini-css-extract-plugin');
+const StyleLintPlugin       = require('stylelint-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const Dotenv                = require('dotenv-webpack');
 

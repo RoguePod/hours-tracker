@@ -93,7 +93,7 @@ exports.createEntryBillable = functions.firestore.document('entries/{entryId}')
 
 exports.updateEntryBillable = functions.firestore.document('entries/{entryId}')
   .onUpdate((change) => {
-    setEntryBillable(change.after.data(), change.before.data());
+    return setEntryBillable(change.after.data(), change.before.data());
   });
 
 exports.createUserProfile = functions.auth.user()
