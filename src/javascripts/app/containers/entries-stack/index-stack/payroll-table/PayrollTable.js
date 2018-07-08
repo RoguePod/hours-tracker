@@ -89,31 +89,8 @@ class EntriesPayrollTable extends React.Component {
     return cells;
   }
 
-  /* eslint-disable max-statements */
-  render() {
-    const { entries, timezone } = this.props;
-
-    if (entries.length === 0) {
-      return null;
-    }
-
-    const startDate = moment.tz(_last(entries).startedAt, timezone)
-      .startOf('isoWeek');
-    const endDate   = moment.tz(_first(entries).startedAt, timezone)
-      .endOf('isoWeek');
-
-    const weeks = [];
-    while (startDate.isBefore(endDate)) {
-      weeks.push({
-        end: startDate.clone().add(6, 'd')
-          .endOf('day'),
-        start: startDate.clone()
-      });
-
-      startDate.add(1, 'w');
-    }
-
-    const headerRow = (
+  _renderHeaderRow(weeks) {
+    return (
       <Table.Row>
         <Table.HeaderCell />
         {weeks.map((week) => {
@@ -143,10 +120,12 @@ class EntriesPayrollTable extends React.Component {
         </Table.HeaderCell>
       </Table.Row>
     );
+  }
 
+  _renderRows(weeks, entries) {
     const users = _groupBy(entries, (entry) => entry.user.name);
+    const rows  = [];
 
-    const rows = [];
     for (const userName of Object.keys(users).sort()) {
       rows.push(
         <Table.Row key={userName}>
@@ -160,6 +139,32 @@ class EntriesPayrollTable extends React.Component {
       );
     }
 
+    return rows;
+  }
+
+  render() {
+    const { entries, timezone } = this.props;
+
+    if (entries.length === 0) {
+      return null;
+    }
+
+    const startDate = moment.tz(_last(entries).startedAt, timezone)
+      .startOf('isoWeek');
+    const endDate   = moment.tz(_first(entries).startedAt, timezone)
+      .endOf('isoWeek');
+
+    const weeks = [];
+    while (startDate.isBefore(endDate)) {
+      weeks.push({
+        end: startDate.clone().add(6, 'd')
+          .endOf('day'),
+        start: startDate.clone()
+      });
+
+      startDate.add(1, 'w');
+    }
+
     return (
       <div className={styles.container}>
         <Table
@@ -168,10 +173,10 @@ class EntriesPayrollTable extends React.Component {
           unstackable
         >
           <Table.Header>
-            {headerRow}
+            {this._renderHeaderRow(weeks)}
           </Table.Header>
           <Table.Body>
-            {rows}
+            {this._renderRows(weeks, entries)}
           </Table.Body>
         </Table>
       </div>

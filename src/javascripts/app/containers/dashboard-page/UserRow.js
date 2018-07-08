@@ -54,9 +54,7 @@ class UsersRow extends React.Component {
     return sum;
   }
 
-  render() {
-    const { endMonth, query, startMonth, timezone, user } = this.props;
-
+  _getCellsAndWeekTotal(query, timezone) {
     const cells = [];
     let weekTotal = 0;
 
@@ -78,6 +76,14 @@ class UsersRow extends React.Component {
         </Table.Cell>
       );
     });
+
+    return { cells, weekTotal };
+  }
+
+  render() {
+    const { endMonth, query, startMonth, timezone, user } = this.props;
+
+    const { cells, weekTotal } = this._getCellsAndWeekTotal(query, timezone);
 
     const diffMonth  = startMonth.format('MMM') !== endMonth.format('MMM');
     const monthTotal = this._calcTotal('YYYY-MM', startMonth.format('YYYY-MM'));

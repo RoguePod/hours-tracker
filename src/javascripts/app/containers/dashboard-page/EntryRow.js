@@ -81,6 +81,7 @@ class EntryRow extends React.Component {
     history.push(`/entries/${entry.id}/edit`);
   }
 
+  /* eslint-disable max-lines-per-function */
   render() {
     const { entry, timezone } = this.props;
     const { project } = entry;
@@ -218,6 +219,7 @@ class EntryRow extends React.Component {
       </Table.Row>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default EntryRow;

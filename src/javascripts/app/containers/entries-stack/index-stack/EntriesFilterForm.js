@@ -60,7 +60,7 @@ class EntriesFilterForm extends React.Component {
 
         const route = {
           ...location,
-          search: `?${toQuery(Object.assign({}, query, search))}`
+          search: `?${toQuery({ ...query, ...search })}`
         };
 
         history.replace(route);
@@ -99,6 +99,7 @@ class EntriesFilterForm extends React.Component {
     change('userRef', userRef);
   }
 
+  /* eslint-disable max-lines-per-function */
   render() {
     const { error, handleSubmit, showAdmin } = this.props;
 
@@ -185,6 +186,7 @@ class EntriesFilterForm extends React.Component {
       </Form>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default reduxForm({

@@ -91,10 +91,95 @@ class StopWatch extends React.Component {
     onStopEntry();
   }
 
+  /* eslint-disable max-lines-per-function */
+  _renderRunningButtons(entry) {
+    return (
+      <div>
+        <div className={styles.timer}>
+          <Timer {...this.props} />
+        </div>
+        <Button.Group
+          fluid
+        >
+          <Popup
+            content="Stop"
+            position="top center"
+            size="small"
+            trigger={
+              <Button
+                color="red"
+                icon="stop"
+                onClick={this._handleStop}
+              />
+            }
+          />
+          <Popup
+            content="Swap"
+            position="top center"
+            size="small"
+            trigger={
+              <Button
+                color="violet"
+                icon="refresh"
+                onClick={this._handleSwap}
+              />
+            }
+          />
+          <Popup
+            content="Split"
+            position="top center"
+            size="small"
+            trigger={
+              <Button
+                as={Link}
+                color="teal"
+                icon="exchange"
+                to={`/entries/${entry.id}/split`}
+              />
+            }
+          />
+          <Popup
+            content="Edit"
+            position="top center"
+            size="small"
+            trigger={
+              <Button
+                as={Link}
+                color="green"
+                icon="pencil"
+                to={`/entries/${entry.id}/edit`}
+              />
+            }
+          />
+        </Button.Group>
+      </div>
+    );
+  }
+  /* eslint-enable max-lines-per-function */
+
+  _renderNotRunningButtons() {
+    return (
+      <Button.Group
+        fluid
+      >
+        <Popup
+          content="Start"
+          position="top center"
+          size="small"
+          trigger={
+            <Button
+              color="green"
+              icon="play"
+              onClick={this._handleStart}
+            />
+          }
+        />
+      </Button.Group>
+    );
+  }
+
   render() {
-    const {
-      entry, fetching, onUpdateEntry, ready
-    } = this.props;
+    const { entry, fetching, onUpdateEntry, ready } = this.props;
 
     return (
       <Segment
@@ -109,83 +194,8 @@ class StopWatch extends React.Component {
             {'Loading Stop Watch...'}
           </Loader>
         </Dimmer>
-        {ready && entry.id &&
-          <div>
-            <div className={styles.timer}>
-              <Timer {...this.props} />
-            </div>
-            <Button.Group
-              fluid
-            >
-              <Popup
-                content="Stop"
-                position="top center"
-                size="small"
-                trigger={
-                  <Button
-                    color="red"
-                    icon="stop"
-                    onClick={this._handleStop}
-                  />
-                }
-              />
-              <Popup
-                content="Swap"
-                position="top center"
-                size="small"
-                trigger={
-                  <Button
-                    color="violet"
-                    icon="refresh"
-                    onClick={this._handleSwap}
-                  />
-                }
-              />
-              <Popup
-                content="Split"
-                position="top center"
-                size="small"
-                trigger={
-                  <Button
-                    as={Link}
-                    color="teal"
-                    icon="exchange"
-                    to={`/entries/${entry.id}/split`}
-                  />
-                }
-              />
-              <Popup
-                content="Edit"
-                position="top center"
-                size="small"
-                trigger={
-                  <Button
-                    as={Link}
-                    color="green"
-                    icon="pencil"
-                    to={`/entries/${entry.id}/edit`}
-                  />
-                }
-              />
-            </Button.Group>
-          </div>}
-        {ready && !entry.id &&
-          <Button.Group
-            fluid
-          >
-            <Popup
-              content="Start"
-              position="top center"
-              size="small"
-              trigger={
-                <Button
-                  color="green"
-                  icon="play"
-                  onClick={this._handleStart}
-                />
-              }
-            />
-          </Button.Group>}
+        {ready && entry.id && this._renderRunningButtons(entry)}
+        {ready && !entry.id && this._renderNotRunningButtons()}
         <div className={styles.form}>
           <EntryForm
             initialValues={entry}

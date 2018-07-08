@@ -39,28 +39,33 @@ class ProfileForm extends React.Component {
     });
   }
 
-  render() {
-    const {
-      error, handleSubmit, submitting
-    } = this.props;
-
-    const recentProjectsSortOptions = [
+  _getRecentProjectsSortOptions() {
+    return [
       { text: 'Recent', value: 'startedAt' },
       { text: 'Clients', value: 'client.name' },
       { text: 'Projects', value: 'project.name' }
     ];
+  }
 
-    const timezoneOptions = moment.tz.names().map((timezone) => {
+  _getTimezoneOptions() {
+    return moment.tz.names().map((timezone) => {
       return {
         text: timezone,
         value: timezone
       };
     });
+  }
 
-    const entriesTabOptions = [
+  _getEntriesTabOptions() {
+    return [
       { text: 'Filter', value: '#filter' },
       { text: 'New Entry', value: '#new' }
     ];
+  }
+
+  /* eslint-disable max-lines-per-function */
+  render() {
+    const { error, handleSubmit, submitting } = this.props;
 
     return (
       <Form
@@ -93,7 +98,7 @@ class ProfileForm extends React.Component {
           disabled={submitting}
           label="Recent Projects Sort"
           name="recentProjectsSort"
-          options={recentProjectsSortOptions}
+          options={this._getRecentProjectsSortOptions()}
           validate={[isRequired]}
         />
         <Field
@@ -101,7 +106,7 @@ class ProfileForm extends React.Component {
           disabled={submitting}
           label="Default Entries Tab"
           name="entriesTab"
-          options={entriesTabOptions}
+          options={this._getEntriesTabOptions()}
           validate={[isRequired]}
         />
         <Field
@@ -109,7 +114,7 @@ class ProfileForm extends React.Component {
           disabled={submitting}
           label="Timezone"
           name="timezone"
-          options={timezoneOptions}
+          options={this._getTimezoneOptions()}
           validate={[isRequired]}
         />
         <Field
@@ -130,6 +135,7 @@ class ProfileForm extends React.Component {
       </Form>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default reduxForm({

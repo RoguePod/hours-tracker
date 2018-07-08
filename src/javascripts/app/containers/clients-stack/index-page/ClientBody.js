@@ -22,10 +22,8 @@ class ClientBody extends React.Component {
     );
   }
 
-  render() {
-    const { admin, client } = this.props;
-
-    const rows = client.projects.map((project) => {
+  _renderRows(client) {
+    return client.projects.map((project) => {
       return (
         <ProjectRow
           {...this.props}
@@ -35,6 +33,45 @@ class ClientBody extends React.Component {
         />
       );
     });
+  }
+
+  _renderAdminCells(client) {
+    return (
+      <Table.Cell
+        collapsing
+      >
+        <Popup
+          content="New Project"
+          position="top center"
+          size="small"
+          trigger={
+            <Button
+              as={Link}
+              color="blue"
+              icon="plus"
+              to={`/clients/${client.id}/projects/new`}
+            />
+          }
+        />
+        <Popup
+          content="Edit Client"
+          position="top center"
+          size="small"
+          trigger={
+            <Button
+              as={Link}
+              color="blue"
+              icon="edit"
+              to={`/clients/${client.id}/edit`}
+            />
+          }
+        />
+      </Table.Cell>
+    );
+  }
+
+  render() {
+    const { admin, client } = this.props;
 
     return (
       <Table.Body
@@ -51,39 +88,9 @@ class ClientBody extends React.Component {
           <Table.Cell>
             {client.active ? 'Yes' : 'No'}
           </Table.Cell>
-          {admin &&
-            <Table.Cell
-              collapsing
-            >
-              <Popup
-                content="New Project"
-                position="top center"
-                size="small"
-                trigger={
-                  <Button
-                    as={Link}
-                    color="blue"
-                    icon="plus"
-                    to={`/clients/${client.id}/projects/new`}
-                  />
-                }
-              />
-              <Popup
-                content="Edit Client"
-                position="top center"
-                size="small"
-                trigger={
-                  <Button
-                    as={Link}
-                    color="blue"
-                    icon="edit"
-                    to={`/clients/${client.id}/edit`}
-                  />
-                }
-              />
-            </Table.Cell>}
+          {admin && this._renderAdminCells(client)}
         </Table.Row>
-        {rows}
+        {this._renderRows(client)}
       </Table.Body>
     );
   }

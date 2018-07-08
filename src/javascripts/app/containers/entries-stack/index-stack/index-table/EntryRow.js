@@ -92,6 +92,7 @@ class EntryRow extends React.Component {
     onCheckEntry(entry.id);
   }
 
+  /* eslint-disable max-lines-per-function */
   render() {
     const { admin, entry, showAdmin, timezone } = this.props;
     const { project } = entry;
@@ -238,6 +239,7 @@ class EntryRow extends React.Component {
       </Table.Row>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default EntryRow;

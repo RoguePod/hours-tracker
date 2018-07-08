@@ -30,10 +30,8 @@ class ClientsIndexPage extends React.Component {
     );
   }
 
-  render() {
-    const { admin, clients, ready } = this.props;
-
-    const bodies = clients.map((client) => {
+  _renderBodies(clients) {
+    return clients.map((client) => {
       return (
         <ClientBody
           {...this.props}
@@ -42,6 +40,11 @@ class ClientsIndexPage extends React.Component {
         />
       );
     });
+  }
+
+  /* eslint-disable max-lines-per-function */
+  render() {
+    const { admin, clients, ready } = this.props;
 
     return (
       <Segment
@@ -87,12 +90,13 @@ class ClientsIndexPage extends React.Component {
                 <Table.HeaderCell />
               </Table.Row>
             </Table.Header>
-            {bodies}
+            {this._renderBodies(clients)}
           </Table>
         </div>
       </Segment>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 const props = (state) => {

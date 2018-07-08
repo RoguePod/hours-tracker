@@ -68,11 +68,12 @@ class UsersTable extends React.Component {
     return this._calcBillable() / total;
   }
 
-  render() {
+  _renderRows() {
     const { users } = this.props;
 
     const keys = Object.keys(users).sort();
-    const rows = keys.map((key) => {
+
+    return keys.map((key) => {
       return (
         <Row
           entries={users[key]}
@@ -81,7 +82,9 @@ class UsersTable extends React.Component {
         />
       );
     });
+  }
 
+  render() {
     return [
       <Table.Header
         key="users-header"
@@ -105,7 +108,7 @@ class UsersTable extends React.Component {
       <Table.Body
         key="users-body"
       >
-        {rows}
+        {this._renderRows()}
         <Table.Row>
           <Table.Cell />
           <Table.Cell

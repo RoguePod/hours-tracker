@@ -69,10 +69,8 @@ class ProjectsRow extends React.Component {
     return this._calcBillable() / total;
   }
 
-  render() {
-    const { client } = this.props;
-
-    const rows = Object.keys(client.projects).map((key) => {
+  _renderRows(client) {
+    return Object.keys(client.projects).map((key) => {
       const entries = client.projects[key];
 
       return (
@@ -83,6 +81,10 @@ class ProjectsRow extends React.Component {
         />
       );
     });
+  }
+
+  render() {
+    const { client } = this.props;
 
     return (
       <Table.Body>
@@ -95,7 +97,7 @@ class ProjectsRow extends React.Component {
             {client.name}
           </Table.Cell>
         </Table.Row>
-        {rows}
+        {this._renderRows(client)}
         <Table.Row>
           <Table.Cell />
           <Table.Cell

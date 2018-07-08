@@ -65,14 +65,12 @@ class SplitFormEntry extends React.Component {
     const stoppedAt = onParseDate(currentValues.stoppedAt);
 
     const totalHours = Number(
-      stoppedAt
-        .diff(startedAt, 'hours', true)
-        .toFixed(1)
+      stoppedAt.diff(startedAt, 'hours', true).toFixed(1)
     );
 
     let totalPercent       = 0;
     const remainingPercent = 100 - changedPercent;
-    let lastIndex = currentValues.entries.length - 1;
+    let lastIndex          = currentValues.entries.length - 1;
 
     if (lastIndex === changedIndex) {
       lastIndex -= 1;
@@ -148,6 +146,7 @@ class SplitFormEntry extends React.Component {
     return betweenValue(0, hours)(value);
   }
 
+  /* eslint-disable max-lines-per-function */
   render() {
     const { fields, member, submitting, timezone } = this.props;
 
@@ -240,6 +239,7 @@ class SplitFormEntry extends React.Component {
       </Grid.Row>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default SplitFormEntry;

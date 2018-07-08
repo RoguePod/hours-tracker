@@ -39,7 +39,7 @@ export const selectQuery = createSelector(
       if (queryDate.isBefore(date)) {
         parsedQuery.date = queryDate.format('YYYY-MM-DD');
 
-        return Object.assign({}, defaults, parsedQuery);
+        return { ...defaults, ...parsedQuery };
       }
     }
 

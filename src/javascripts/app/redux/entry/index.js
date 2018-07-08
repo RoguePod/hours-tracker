@@ -129,9 +129,7 @@ function* entryCreate({ params, reject, resolve }) {
       userRef: user.snapshot.ref
     };
 
-    const { error } = yield call(
-      add, 'entries', Object.assign({}, defaults, params)
-    );
+    const { error } = yield call(add, 'entries', { ...defaults, ...params });
 
     if (error) {
       reject(new SubmissionError({ _error: error.message }));
@@ -159,7 +157,7 @@ function* entryUpdate({ params, reject, resolve }) {
       .valueOf();
 
     const { error } = yield call(
-      updateRef, entry.snapshot.ref, Object.assign({}, params, { updatedAt })
+      updateRef, entry.snapshot.ref, { ...params, updatedAt }
     );
 
     if (error) {
@@ -208,10 +206,10 @@ function* entrySplit({ entries, reject, resolve }) {
 
     const batch = firestore.batch();
 
-    entry.snapshot.ref.update(Object.assign({}, defaults, entries[0]));
+    entry.snapshot.ref.update({ ...defaults, ...entries[0] });
 
     entries.slice(1).forEach((newEntry) => {
-      const data = Object.assign({}, defaults, newEntry);
+      const data = { ...defaults, ...newEntry };
       firestore.collection('entries').add(data);
     });
 

@@ -152,7 +152,7 @@ class EntrySplitForm extends React.Component {
     if (startedAt) {
       startedAt = startedAt.format('MM/DD/YYYY hh:mm A z');
 
-      const values = Object.assign({}, currentValues, { startedAt });
+      const values = { ...currentValues, startedAt };
 
       setTimeout(() => this._handleCalculate(values), 1);
     }
@@ -166,16 +166,15 @@ class EntrySplitForm extends React.Component {
     if (stoppedAt) {
       stoppedAt = stoppedAt.format('MM/DD/YYYY hh:mm A z');
 
-      const values = Object.assign({}, currentValues, { stoppedAt });
+      const values = { ...currentValues, stoppedAt };
 
       setTimeout(() => this._handleCalculate(values), 1);
     }
   }
 
+  /* eslint-disable max-lines-per-function */
   render() {
-    const {
-      error, handleSubmit, submitting, timezone
-    } = this.props;
+    const { error, handleSubmit, submitting, timezone } = this.props;
 
     return (
       <Form
@@ -243,6 +242,7 @@ class EntrySplitForm extends React.Component {
       </Form>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default reduxForm({

@@ -70,11 +70,7 @@ class ProjectsRow extends React.Component {
     return sum;
   }
 
-  render() {
-    const {
-      client, endMonth, project, query, startMonth, timezone
-    } = this.props;
-
+  _getCellsAndWeekTotal(query, timezone) {
     const cells = [];
     let weekTotal = 0;
 
@@ -97,6 +93,10 @@ class ProjectsRow extends React.Component {
       );
     });
 
+    return { cells, weekTotal };
+  }
+
+  _getMonthAndOtherTotals(startMonth, endMonth) {
     const diffMonth  = startMonth.format('MMM') !== endMonth.format('MMM');
     const monthTotal = this._calcTotal('YYYY-MM', startMonth.format('YYYY-MM'));
     let otherTotal   = null;
@@ -104,6 +104,19 @@ class ProjectsRow extends React.Component {
     if (diffMonth) {
       otherTotal = this._calcTotal('YYYY-MM', endMonth.format('YYYY-MM'));
     }
+
+    return { diffMonth, monthTotal, otherTotal };
+  }
+
+  render() {
+    const {
+      client, endMonth, project, query, startMonth, timezone
+    } = this.props;
+
+    const { cells, weekTotal } = this._getCellsAndWeekTotal(query, timezone);
+    const {
+      diffMonth, monthTotal, otherTotal
+    } = this._getMonthTotals(startMonth, endMonth);
 
     return (
       <Table.Row>

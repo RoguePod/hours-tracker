@@ -5,6 +5,7 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _range from 'lodash/range';
 
+/* eslint-disable max-lines-per-function */
 const Pagination = ({ onPage, pagination: { page, totalPages }, range }) => {
   if (totalPages <= 1) {
     return null;
@@ -89,6 +90,7 @@ const Pagination = ({ onPage, pagination: { page, totalPages }, range }) => {
     </Menu>
   );
 };
+/* eslint-enable max-lines-per-function */
 
 Pagination.propTypes = {
   onPage: PropTypes.func.isRequired,

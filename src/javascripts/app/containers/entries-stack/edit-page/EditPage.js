@@ -41,8 +41,8 @@ class EntryEditPage extends React.Component {
     );
   }
 
-  render() {
-    const { entry, fetching, onUpdateEntry, running } = this.props;
+  _getInitialValuesAndIsRequired() {
+    const { entry, running } = this.props;
 
     let initialValues = {};
     let isRequired    = null;
@@ -73,6 +73,14 @@ class EntryEditPage extends React.Component {
         isRequired = null;
       }
     }
+
+    return { initialValues, isRequired };
+  }
+
+  render() {
+    const { entry, fetching, onUpdateEntry } = this.props;
+
+    const { initialValues, isRequired } = this._getInitialValuesAndIsRequired();
 
     return (
       <Segment

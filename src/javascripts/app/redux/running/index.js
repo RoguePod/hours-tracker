@@ -124,7 +124,7 @@ function* entryStart({ params }) {
       userRef: user.snapshot.ref
     };
 
-    const finalParams = Object.assign({}, defaults, params);
+    const finalParams = { ...defaults, ...params };
 
     const response = yield call(add, 'entries', finalParams);
 
@@ -175,7 +175,7 @@ function* entryUpdate({ params }) {
       const updatedAt = moment()
         .utc()
         .valueOf();
-      entry.snapshot.ref.update(Object.assign({}, params, { updatedAt }));
+      entry.snapshot.ref.update({ ...params, updatedAt });
     }
   } finally {
     yield put(setFetching(null));

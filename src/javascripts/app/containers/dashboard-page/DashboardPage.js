@@ -1,6 +1,4 @@
-import {
-  Button, Dimmer, Divider, Dropdown, Header, Loader, Segment
-} from 'semantic-ui-react';
+import { Dimmer, Divider, Header, Loader, Segment } from 'semantic-ui-react';
 import {
   reset, selectDashboardProjects, selectDashboardProjectsForUser,
   selectDashboardUsers, selectQuery, subscribeEntries
@@ -13,13 +11,9 @@ import ProjectsTable from './ProjectsTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import UsersTable from './UsersTable';
-import WeekDropdownItem from './WeekDropdownItem';
-import _times from 'lodash/times';
+import WeekDropdown from './WeekDropdown';
 import { connect } from 'react-redux';
-import { history } from 'javascripts/app/redux/store';
-import moment from 'moment-timezone';
 import styles from './DashboardPage.scss';
-import { toQuery } from 'javascripts/globals';
 
 class DashboardPage extends React.Component {
   static propTypes = {
@@ -52,10 +46,6 @@ class DashboardPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this._handlePrevious = this._handlePrevious.bind(this);
-    this._handleNext = this._handleNext.bind(this);
-    this._handleCurrent = this._handleCurrent.bind(this);
-    this._handleDate = this._handleDate.bind(this);
     this._handleStartInterval = this._handleStartInterval.bind(this);
     this._handleStopInterval = this._handleStopInterval.bind(this);
   }
@@ -112,86 +102,10 @@ class DashboardPage extends React.Component {
     }
   }
 
-  _handlePrevious() {
-    const { location, query: { date }, timezone } = this.props;
-
-    const currentDate = moment.tz(date, timezone);
-
-    const newQuery = {
-      date: currentDate.subtract(7, 'd').format('YYYY-MM-DD')
-    };
-
-    history.replace({ ...location, search: `?${toQuery(newQuery)}` });
-  }
-
-  _handleNext() {
-    const { location, query: { date }, timezone } = this.props;
-
-    const currentDate = moment.tz(date, timezone);
-
-    const newQuery = {
-      date: currentDate.add(7, 'd').format('YYYY-MM-DD')
-    };
-
-    history.replace({ ...location, search: `?${toQuery(newQuery)}` });
-  }
-
-  _handleCurrent() {
-    const { location } = this.props;
-
-    history.replace({ ...location, search: null });
-  }
-
-  _handleDate(date) {
-    const { location } = this.props;
-
-    history.replace({ ...location, search: `?${toQuery({ date })}` });
-  }
-
   render() {
-    const {
-      admin, fetching, location, projectsAdmin, query: { date },
-      timezone
-    } = this.props;
+    const { admin, fetching, location, projectsAdmin } = this.props;
 
     const { hash } = location;
-
-    const startDate = moment.tz(date, timezone).format('MM/DD');
-    const endDate   = moment.tz(date, timezone)
-      .add(6, 'd')
-      .endOf('day')
-      .format('MM/DD');
-
-    const currentDate = moment()
-      .tz(timezone)
-      .startOf('isoWeek');
-
-    const isCurrent = date === currentDate.format('YYYY-MM-DD');
-
-    const options = [];
-
-    _times(4, (index) => {
-      const weeks = index + 1;
-      const weekStart = moment.tz(timezone)
-        .startOf('isoWeek')
-        .subtract(weeks, 'w');
-
-      const weekEnd = moment.tz(timezone)
-        .startOf('isoWeek')
-        .subtract(weeks, 'w')
-        .add(6, 'd')
-        .endOf('day')
-        .format('MM/DD');
-
-      options.push(
-        <WeekDropdownItem
-          key={`${weekStart.format('MM/DD')} - ${weekEnd}`}
-          onClick={this._handleDate}
-          startDate={weekStart}
-          text={`${weekStart.format('MM/DD')} - ${weekEnd}`}
-        />
-      );
-    });
 
     return (
       <Segment
@@ -199,36 +113,7 @@ class DashboardPage extends React.Component {
         className={styles.container}
       >
         <div className={styles.headerWrapper}>
-          <Button.Group
-            className={styles.buttons}
-            color="blue"
-            size="large"
-          >
-            <Button
-              icon="caret left"
-              onClick={this._handlePrevious}
-            />
-            <Dropdown
-              button
-              text={`${startDate} - ${endDate}`}
-            >
-              <Dropdown.Menu>
-                {!isCurrent &&
-                  <Dropdown.Item
-                    onClick={this._handleCurrent}
-                  >
-                    {'Current Week'}
-                  </Dropdown.Item>}
-                {!isCurrent && <Dropdown.Divider />}
-                {options}
-              </Dropdown.Menu>
-            </Dropdown>
-            <Button
-              disabled={isCurrent}
-              icon="caret right"
-              onClick={this._handleNext}
-            />
-          </Button.Group>
+          <WeekDropdown {...this.props} />
         </div>
         <Dimmer
           active={Boolean(fetching)}

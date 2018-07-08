@@ -82,6 +82,7 @@ class EntryNewForm extends React.Component {
     change('projectRef', projectRef);
   }
 
+  /* eslint-disable max-lines-per-function */
   render() {
     const {
       error, fetching, handleSubmit, running, submitting, timezone
@@ -183,6 +184,7 @@ class EntryNewForm extends React.Component {
       </Form>
     ];
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 const form = reduxForm({

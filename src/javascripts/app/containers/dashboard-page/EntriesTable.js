@@ -40,10 +40,8 @@ class EntriesTable extends React.Component {
 
   limit = 10
 
-  render() {
-    const { entries, fetching } = this.props;
-
-    const rows = entries.map((entry) => {
+  _renderRows(entries) {
+    return entries.map((entry) => {
       return (
         <EntryRow
           {...this.props}
@@ -52,6 +50,11 @@ class EntriesTable extends React.Component {
         />
       );
     });
+  }
+
+  /* eslint-disable max-lines-per-function */
+  render() {
+    const { entries, fetching } = this.props;
 
     return (
       <Segment
@@ -114,13 +117,14 @@ class EntriesTable extends React.Component {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {rows}
+              {this._renderRows(entries)}
             </Table.Body>
           </Table>
         </div>
       </Segment>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 const props = (state) => {

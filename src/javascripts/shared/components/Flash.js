@@ -71,7 +71,7 @@ class Flash extends React.Component {
   render() {
     const { flash, style } = this.props;
 
-    const flashStyle = Object.assign({}, style);
+    const flashStyle = { ...style };
     const translateX = flashStyle.translateX || 0;
     const translateY = flashStyle.translateY || 0;
 

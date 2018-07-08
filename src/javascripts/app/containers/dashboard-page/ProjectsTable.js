@@ -8,9 +8,24 @@ import _times from 'lodash/times';
 import moment from 'moment-timezone';
 import styles from './ProjectsTable.scss';
 
-const ProjectsTable = (props) => {
-  const { projects, query: { date }, timezone } = props;
+const _renderRows = (projects, startMonth, endMonth, props) => {
+  return projects.map((value) => {
+    const { client, project } = value;
 
+    return (
+      <ProjectRow
+        {...props}
+        client={client}
+        endMonth={endMonth}
+        key={_get(project, 'id', 'none')}
+        project={project}
+        startMonth={startMonth}
+      />
+    );
+  });
+};
+
+const _renderHeaderCells = (date, timezone) => {
   const headerCells = [];
   _times(7, (index) => {
     const dow = moment.tz(date, timezone)
@@ -26,23 +41,15 @@ const ProjectsTable = (props) => {
     );
   });
 
+  return headerCells;
+};
+
+/* eslint-disable max-lines-per-function */
+const ProjectsTable = (props) => {
+  const { projects, query: { date }, timezone } = props;
+
   const startMonth = moment.tz(date, timezone);
   const endMonth   = moment.tz(date, timezone).add(6, 'd');
-
-  const rows = projects.map((value) => {
-    const { client, project } = value;
-
-    return (
-      <ProjectRow
-        {...props}
-        client={client}
-        endMonth={endMonth}
-        key={_get(project, 'id', 'none')}
-        project={project}
-        startMonth={startMonth}
-      />
-    );
-  });
 
   return (
     <div className={styles.container}>
@@ -59,7 +66,7 @@ const ProjectsTable = (props) => {
             <Table.HeaderCell>
               {'Project'}
             </Table.HeaderCell>
-            {headerCells}
+            {_renderHeaderCells(date, timezone)}
             <Table.HeaderCell
               collapsing
             >
@@ -81,7 +88,7 @@ const ProjectsTable = (props) => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {rows}
+          {_renderRows(projects, startMonth, endMonth, props)}
         </Table.Body>
         <ProjectsFooter
           {...props}
@@ -92,6 +99,7 @@ const ProjectsTable = (props) => {
     </div>
   );
 };
+/* eslint-enable max-lines-per-function */
 
 ProjectsTable.propTypes = {
   projects: PropTypes.arrayOf(PropTypes.shape({

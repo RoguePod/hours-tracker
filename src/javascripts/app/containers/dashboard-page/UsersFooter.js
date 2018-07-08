@@ -53,9 +53,7 @@ class UsersFooter extends React.Component {
     return sum;
   }
 
-  render() {
-    const { endMonth, query, startMonth, timezone } = this.props;
-
+  _getCellsAndWeekTotals(query, timezone) {
     const billableCells = [];
     const totalCells    = [];
 
@@ -96,6 +94,10 @@ class UsersFooter extends React.Component {
       );
     });
 
+    return { billableCells, totalCells, weekBillableTotal, weekTotal };
+  }
+
+  _getMonthAndOtherTotals(startMonth, endMonth) {
     const diffMonth = startMonth.format('MMM') !== endMonth.format('MMM');
     const monthTotal = this._calcTotal(
       false, 'YYYY-MM', startMonth.format('YYYY-MM')
@@ -115,6 +117,23 @@ class UsersFooter extends React.Component {
         true, 'YYYY-MM', endMonth.format('YYYY-MM')
       );
     }
+
+    return {
+      diffMonth, monthBillableTotal, monthTotal, otherBillableTotal, otherTotal
+    };
+  }
+
+  /* eslint-disable max-lines-per-function */
+  render() {
+    const { endMonth, query, startMonth, timezone } = this.props;
+
+    const {
+      billableCells, totalCells, weekBillableTotal, weekTotal
+    } = this._getCellsAndWeekTotals(query, timezone);
+
+    const {
+      diffMonth, monthBillableTotal, monthTotal, otherBillableTotal, otherTotal
+    } = this._getMonthAndOtherTotals(startMonth, endMonth);
 
     return (
       <Table.Footer>
@@ -189,6 +208,7 @@ class UsersFooter extends React.Component {
       </Table.Footer>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default UsersFooter;

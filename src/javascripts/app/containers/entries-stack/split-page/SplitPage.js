@@ -34,9 +34,7 @@ class EntrySplitPage extends React.Component {
     return true;
   }
 
-  render() {
-    const { entry, fetching, onSplitEntry, values } = this.props;
-
+  _getInitialValuesAndHours(entry) {
     let initialValues = {};
     let hours         = 0;
 
@@ -82,6 +80,14 @@ class EntrySplitPage extends React.Component {
         stoppedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z')
       };
     }
+
+    return { hours, initialValues };
+  }
+
+  render() {
+    const { entry, fetching, onSplitEntry, values } = this.props;
+
+    const { hours, initialValues } = this._getInitialValuesAndHours(entry);
 
     return (
       <Segment

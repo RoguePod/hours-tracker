@@ -7,9 +7,21 @@ import _times from 'lodash/times';
 import moment from 'moment-timezone';
 import styles from './UsersTable.scss';
 
-const UsersTable = (props) => {
-  const { query: { date }, timezone, users } = props;
+const _renderRows = (users, startMonth, endMonth, props) => {
+  return users.map((user) => {
+    return (
+      <UserRow
+        {...props}
+        endMonth={endMonth}
+        key={user.id}
+        startMonth={startMonth}
+        user={user}
+      />
+    );
+  });
+};
 
+const _renderHeaderCells = (date, timezone) => {
   const headerCells = [];
   _times(7, (index) => {
     const dow = moment.tz(date, timezone)
@@ -24,21 +36,13 @@ const UsersTable = (props) => {
       </Table.HeaderCell>
     );
   });
+};
+
+const UsersTable = (props) => {
+  const { query: { date }, timezone, users } = props;
 
   const startMonth = moment.tz(date, timezone);
   const endMonth   = moment.tz(date, timezone).add(6, 'd');
-
-  const rows = users.map((user) => {
-    return (
-      <UserRow
-        {...props}
-        endMonth={endMonth}
-        key={user.id}
-        startMonth={startMonth}
-        user={user}
-      />
-    );
-  });
 
   return (
     <div className={styles.container}>
@@ -52,10 +56,8 @@ const UsersTable = (props) => {
             <Table.HeaderCell>
               {'User'}
             </Table.HeaderCell>
-            {headerCells}
-            <Table.HeaderCell
-              collapsing
-            >
+            {_renderHeaderCells(date, timezone)}
+            <Table.HeaderCell collapsing>
               {'Totals'}
             </Table.HeaderCell>
             <Table.HeaderCell
@@ -74,7 +76,7 @@ const UsersTable = (props) => {
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {rows}
+          {_renderRows(users, startMonth, endMonth, props)}
         </Table.Body>
         <UsersFooter
           {...props}

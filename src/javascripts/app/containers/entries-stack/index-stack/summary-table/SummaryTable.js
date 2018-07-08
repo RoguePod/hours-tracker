@@ -80,39 +80,43 @@ class EntriesSummaryTable extends React.Component {
     onSubscribeEntries(null);
   }
 
-  render() {
-    const { warning } = this.state;
-
+  _renderWarning() {
     const text = "You've requested to get all entries, without filters, " +
       'which can be slow.';
 
-    if (warning) {
-      return (
-        <div className={styles.warning}>
-          <Header
-            as="h2"
+    return (
+      <div className={styles.warning}>
+        <Header
+          as="h2"
+          color="yellow"
+          icon
+          textAlign="center"
+        >
+          <Icon
+            name="warning sign"
+          />
+          {'Caution'}
+          <Header.Subheader>
+            {text}
+          </Header.Subheader>
+        </Header>
+        <div className={styles.button}>
+          <Button
             color="yellow"
-            icon
-            textAlign="center"
-          >
-            <Icon
-              name="warning sign"
-            />
-            {'Caution'}
-            <Header.Subheader>
-              {text}
-            </Header.Subheader>
-          </Header>
-          <div className={styles.button}>
-            <Button
-              color="yellow"
-              content="Do it Anyway"
-              onClick={this._handleSubscribe}
-              size="huge"
-            />
-          </div>
+            content="Do it Anyway"
+            onClick={this._handleSubscribe}
+            size="huge"
+          />
         </div>
-      );
+      </div>
+    );
+  }
+
+  render() {
+    const { warning } = this.state;
+
+    if (warning) {
+      return this._renderWarning();
     }
 
     return (
@@ -123,28 +127,20 @@ class EntriesSummaryTable extends React.Component {
         >
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell
-                colSpan={5}
-              >
+              <Table.HeaderCell colSpan={5}>
                 {'Summary by Users'}
               </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
-          <UsersTable
-            {...this.props}
-          />
+          <UsersTable {...this.props} />
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell
-                colSpan={5}
-              >
+              <Table.HeaderCell colSpan={5}>
                 {'Summary by Clients/Projects'}
               </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
-          <ProjectsTable
-            {...this.props}
-          />
+          <ProjectsTable {...this.props} />
         </Table>
       </div>
     );

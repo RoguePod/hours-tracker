@@ -83,9 +83,7 @@ class EntriesIndexTable extends React.Component {
     }
   }
 
-  render() {
-    const { checked, entries, showAdmin } = this.props;
-
+  _renderTbodies(entries, showAdmin) {
     const tbodies = [];
 
     for (const key of Object.keys(entries)) {
@@ -118,6 +116,13 @@ class EntriesIndexTable extends React.Component {
         </Table.Body>
       );
     }
+
+    return tbodies;
+  }
+
+  /* eslint-disable max-lines-per-function */
+  render() {
+    const { checked, entries, showAdmin } = this.props;
 
     return (
       <div>
@@ -200,7 +205,7 @@ class EntriesIndexTable extends React.Component {
                 </Table.HeaderCell>
               </Table.Row>
             </Table.Header>
-            {tbodies}
+            {this._renderTbodies(entries, showAdmin)}
           </Table>
         </div>
         <div className={styles.pagination}>
@@ -214,6 +219,7 @@ class EntriesIndexTable extends React.Component {
       </div>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 const props = (state) => {

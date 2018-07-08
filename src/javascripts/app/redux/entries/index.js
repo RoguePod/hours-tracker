@@ -42,7 +42,7 @@ export const selectQuery = createSelector(
       parsedQuery.userRef = firestore.doc(parsedQuery.userRef);
     }
 
-    return Object.assign({}, defaults, parsedQuery);
+    return { ...defaults, ...parsedQuery };
   }
 );
 
@@ -55,7 +55,7 @@ export const selectRawQuery = createSelector(
       startDate: ''
     };
 
-    return Object.assign({}, defaults, parsedQuery);
+    return { ...defaults, ...parsedQuery };
   }
 );
 
@@ -235,9 +235,7 @@ function* handleEntriesSubscribe({ snapshot }) {
 /* eslint-disable max-statements */
 const buildQuery = (state, limit, emit) => {
   const { pathname, query, timezone, user } = state;
-  const {
-    clientRef, endDate, projectRef, startDate, userRef
-  } = query;
+  const { clientRef, endDate, projectRef, startDate, userRef } = query;
 
   let data = firestore
     .collection('entries')
@@ -280,9 +278,7 @@ const buildQuery = (state, limit, emit) => {
     );
   }
 
-  data = data.onSnapshot((snapshot) => {
-    emit({ snapshot });
-  });
+  data = data.onSnapshot((snapshot) => emit({ snapshot }));
 
   return data;
 };

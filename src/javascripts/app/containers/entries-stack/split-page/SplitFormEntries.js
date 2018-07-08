@@ -46,10 +46,10 @@ class SplitFormEntries extends React.Component {
     });
   }
 
-  render() {
+  _renderRows() {
     const { currentValues, fields, meta, ...rest } = this.props;
 
-    const rows = fields.map((member, index) => {
+    return fields.map((member, index) => {
       return (
         <SplitFormEntry
           {...meta}
@@ -62,6 +62,12 @@ class SplitFormEntries extends React.Component {
         />
       );
     });
+  }
+
+  render() {
+    const { currentValues } = this.props;
+
+    const rows = this._renderRows();
 
     return (
       <Grid

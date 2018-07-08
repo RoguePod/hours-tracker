@@ -255,12 +255,7 @@ export function* parseEntry(snapshot) {
   }
 
   return {
-    ...data,
-    client,
-    id: snapshot.id,
-    project,
-    snapshot,
-    user
+    ...data, client, id: snapshot.id, project, snapshot, user
   };
 }
 

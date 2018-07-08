@@ -32,6 +32,64 @@ class Sidebar extends React.Component {
     history.push({ ...location, hash: null });
   }
 
+  /* eslint-disable max-lines-per-function */
+  _renderMenu(pathname) {
+    const isHome     = pathname === '/' || pathname.length === 0;
+    const isEntries  = pathname.startsWith('/entries');
+    const isProfile  = pathname.startsWith('/profile');
+    const isProjects = pathname.startsWith('/projects');
+
+    return (
+      <Menu
+        fluid
+        secondary
+        style={{ margin: 0 }}
+        vertical
+      >
+        <Menu.Item
+          active={isHome}
+          as={Link}
+          className={styles.link}
+          to="/"
+        >
+          {'Home'}
+        </Menu.Item>
+        <Menu.Item
+          active={isEntries}
+          as={Link}
+          className={styles.link}
+          to="/entries"
+        >
+          {'Entries'}
+        </Menu.Item>
+        <Menu.Item
+          active={isProjects}
+          as={Link}
+          className={styles.link}
+          to="/projects"
+        >
+          {'Projects'}
+        </Menu.Item>
+        <Menu.Item
+          active={isProfile}
+          as={Link}
+          className={styles.link}
+          to="/profile"
+        >
+          {'Profile'}
+        </Menu.Item>
+        <Menu.Item
+          as={Link}
+          className={styles.link}
+          to="/sign-out"
+        >
+          {'Sign Out'}
+        </Menu.Item>
+      </Menu>
+    );
+  }
+  /* eslint-enable max-lines-per-function */
+
   render() {
     const { location } = this.props;
 
@@ -44,11 +102,6 @@ class Sidebar extends React.Component {
     const sliderClasses = cx(
       styles.slider, { [styles.sliderOpen]: hash.match(/sidebar/) }
     );
-
-    const isHome     = pathname === '/' || pathname.length === 0;
-    const isEntries  = pathname.startsWith('/entries');
-    const isProfile  = pathname.startsWith('/profile');
-    const isProjects = pathname.startsWith('/projects');
 
     return (
       <menu className={styles.container}>
@@ -68,52 +121,7 @@ class Sidebar extends React.Component {
             </Link>
           </div>
           <div className={styles.inner}>
-            <Menu
-              fluid
-              secondary
-              style={{ margin: 0 }}
-              vertical
-            >
-              <Menu.Item
-                active={isHome}
-                as={Link}
-                className={styles.link}
-                to="/"
-              >
-                {'Home'}
-              </Menu.Item>
-              <Menu.Item
-                active={isEntries}
-                as={Link}
-                className={styles.link}
-                to="/entries"
-              >
-                {'Entries'}
-              </Menu.Item>
-              <Menu.Item
-                active={isProjects}
-                as={Link}
-                className={styles.link}
-                to="/projects"
-              >
-                {'Projects'}
-              </Menu.Item>
-              <Menu.Item
-                active={isProfile}
-                as={Link}
-                className={styles.link}
-                to="/profile"
-              >
-                {'Profile'}
-              </Menu.Item>
-              <Menu.Item
-                as={Link}
-                className={styles.link}
-                to="/sign-out"
-              >
-                {'Sign Out'}
-              </Menu.Item>
-            </Menu>
+            {this._renderMenu(pathname)}
           </div>
         </div>
       </menu>

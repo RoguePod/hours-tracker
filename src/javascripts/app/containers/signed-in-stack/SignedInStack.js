@@ -56,9 +56,7 @@ class SignedInStack extends React.Component {
     const { hash } = location;
 
     if (!auth) {
-      return (
-        <Redirect to="/sign-in" />
-      );
+      return <Redirect to="/sign-in" />;
     }
 
     const hideStopWatch = width < 768;
@@ -77,9 +75,7 @@ class SignedInStack extends React.Component {
 
     return (
       <div className={styles.container}>
-        <Header
-          {...this.props}
-        />
+        <Header {...this.props} />
 
         <div className={styles.content}>
           {hideStopWatch &&
@@ -98,9 +94,7 @@ class SignedInStack extends React.Component {
           </div>
         </div>
 
-        <Sidebar
-          {...this.props}
-        />
+        <Sidebar {...this.props} />
       </div>
     );
   }

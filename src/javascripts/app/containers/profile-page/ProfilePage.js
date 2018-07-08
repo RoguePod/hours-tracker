@@ -25,15 +25,13 @@ class ProfilePage extends React.Component {
     );
   }
 
-  render() {
-    const { onUpdatePassword, onUpdateUser, user } = this.props;
-
+  _getInitialValues(user) {
     const {
       autoloadLastDescription, name, entriesTab,
       recentProjectsListSize, recentProjectsSort, timezone
     } = user;
 
-    const initialValues = {
+    return {
       autoloadLastDescription,
       entriesTab,
       name,
@@ -41,6 +39,10 @@ class ProfilePage extends React.Component {
       recentProjectsSort,
       timezone
     };
+  }
+
+  render() {
+    const { onUpdatePassword, onUpdateUser, user } = this.props;
 
     return (
       <div className={styles.container}>
@@ -58,7 +60,7 @@ class ProfilePage extends React.Component {
             {'Settings'}
           </Header>
           <ProfileForm
-            initialValues={initialValues}
+            initialValues={this._getInitialValues(user)}
             onUpdateUser={onUpdateUser}
           />
         </Segment>
