@@ -62,14 +62,14 @@ class SignedInStack extends React.Component {
     const hideStopWatch = width < 768;
 
     const overlayClasses = cx(
-      styles.overlay, { [styles.overlayOpen]: hash.match(/stopwatch/) }
+      styles.overlay, { [styles.overlayOpen]: hash.match(/stopwatch/u) }
     );
 
     let sliderClasses = styles.stopwatch;
 
     if (hideStopWatch) {
       sliderClasses = cx(
-        styles.slider, { [styles.sliderOpen]: hash.match(/stopwatch/) }
+        styles.slider, { [styles.sliderOpen]: hash.match(/stopwatch/u) }
       );
     }
 

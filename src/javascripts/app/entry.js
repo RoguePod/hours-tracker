@@ -12,15 +12,23 @@ import {
   SignOutPage
 } from 'javascripts/app/containers';
 import { Route, Switch } from 'react-router-dom';
+import {
+  faSpinner
+} from '@fortawesome/free-solid-svg-icons';
 
-import { ConnectedRouter } from 'react-router-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import { NoMatchPage } from 'javascripts/shared/containers';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment-timezone';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import registerServiceWorker from './registerServiceWorker';
 /* eslint-enable sort-imports */
+
+library.add(
+  faSpinner
+);
 
 moment.locale('en');
 

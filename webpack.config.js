@@ -9,7 +9,7 @@ const Dotenv                = require('dotenv-webpack');
 module.exports = {
   devServer: {
     historyApiFallback: {
-      rewrites: [{ from: /^\/$/, to: '/index.html' }]
+      rewrites: [{ from: /^\/$/u, to: '/index.html' }]
     },
     host: '0.0.0.0',
     inline: false
@@ -17,7 +17,7 @@ module.exports = {
   devtool: 'eval',
   entry: {
     app: [
-      'babel-polyfill',
+      '@babel/polyfill',
       './src/javascripts/app/entry.js'
     ]
   },
@@ -26,15 +26,15 @@ module.exports = {
     rules: [
       {
         enforce: 'pre',
-        exclude: [/node_modules/],
-        test: /\.js$/,
+        exclude: [/node_modules/u],
+        test: /\.js$/u,
         use: ['eslint-loader']
       }, {
-        exclude: [/node_modules/],
-        test: /\.js$/,
+        exclude: [/node_modules/u],
+        test: /\.js$/u,
         use: ['babel-loader']
       }, {
-        test: /\.css$/,
+        test: /\.css$/u,
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -50,7 +50,7 @@ module.exports = {
       }, {
         oneOf: [
           {
-            resourceQuery: /main/, // foo.css?inline
+            resourceQuery: /main/u, // foo.css?inline
             use: [
               MiniCssExtractPlugin.loader,
               'css-loader',
@@ -83,9 +83,9 @@ module.exports = {
             ]
           }
         ],
-        test: /\.s(a|c)ss$/
+        test: /\.s(a|c)ss$/u
       }, {
-        test: /\.(woff|woff2|eot|ttf|svg)(\?.*$|$)/,
+        test: /\.(woff|woff2|eot|ttf|svg)(\?.*$|$)/u,
         use: [
           {
             loader: 'url-loader',
@@ -96,7 +96,7 @@ module.exports = {
           }
         ]
       }, {
-        test: /\.(png|jpg|gif|jpeg)$/,
+        test: /\.(png|jpg|gif|jpeg)$/u,
         use: [
           {
             loader: 'url-loader',
@@ -123,7 +123,7 @@ module.exports = {
       jQuery: 'jquery',
       jquery: 'jquery'
     }),
-    new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new Webpack.IgnorePlugin(/^\.\/locale$/u, /moment$/u),
     new HtmlWebpackPlugin({
       chunks: ['app'],
       environment: 'development',

@@ -96,11 +96,11 @@ class Sidebar extends React.Component {
     const { pathname, hash } = location;
 
     const overlayClasses = cx(
-      styles.overlay, { [styles.overlayOpen]: hash.match(/sidebar/) }
+      styles.overlay, { [styles.overlayOpen]: hash.match(/sidebar/u) }
     );
 
     const sliderClasses = cx(
-      styles.slider, { [styles.sliderOpen]: hash.match(/sidebar/) }
+      styles.slider, { [styles.sliderOpen]: hash.match(/sidebar/u) }
     );
 
     return (

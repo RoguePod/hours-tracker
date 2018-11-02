@@ -1,15 +1,12 @@
-import { Message } from 'semantic-ui-react';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
 const FormError = ({ error }) => {
   if (error) {
     return (
-      <Message negative>
-        <Message.Header>
-          {error}
-        </Message.Header>
-      </Message>
+      <div className="text-red">
+        {error}
+      </div>
     );
   }
 

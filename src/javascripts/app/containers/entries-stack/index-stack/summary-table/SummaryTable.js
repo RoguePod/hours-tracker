@@ -1,6 +1,9 @@
 import { Button, Header, Icon, Table } from 'semantic-ui-react';
 import {
-  selectClientsByEntries, selectQuery, selectUsersByEntries, subscribeEntries
+  selectClientsByEntries,
+  selectQuery,
+  selectUsersByEntries,
+  subscribeEntries
 } from 'javascripts/app/redux/entries';
 
 import ProjectsTable from './ProjectsTable';
@@ -68,7 +71,7 @@ class EntriesSummaryTable extends React.Component {
 
     if (!warning) {
       onSubscribeEntries(null);
-    } else if (!location.hash.match(/filter/)) {
+    } else if (!location.hash.match(/filter/u)) {
       history.replace({ ...location, hash: '#filter' });
     }
   }

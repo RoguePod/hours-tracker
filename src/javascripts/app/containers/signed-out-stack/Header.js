@@ -1,5 +1,3 @@
-import { Header, Menu } from 'semantic-ui-react';
-
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -19,40 +17,66 @@ class SignedOutHeader extends React.Component {
     );
   }
 
+  /* eslint-disable max-lines-per-function */
   render() {
     const { location: { pathname } } = this.props;
 
     const isSignIn         = pathname === '/sign-in';
     const isForgotPassword = pathname.startsWith('/sign-in/forgot-password');
 
+    const tabClasses = 'inline-block border rounded py-1 px-3';
+    const selectedTabClasses = 'border-blue bg-blue text-white';
+
+    const unselectedTabClasses =
+      'border-transparent hover:border-grey-lighter text-blue ' +
+      'hover:bg-grey-lighter hover:border-grey-lighter';
+
+    const signInClasses = cx(
+      tabClasses, {
+        [selectedTabClasses]: isSignIn,
+        [unselectedTabClasses]: !isSignIn
+      }
+    );
+
+    const forgotPasswordClasses = cx(
+      tabClasses, {
+        [selectedTabClasses]: isForgotPassword,
+        [unselectedTabClasses]: !isForgotPassword
+      }
+    );
+
     return (
       <header>
-        <Header
-          as="h1"
-          color="blue"
+        <h1
+          className="text-blue"
         >
           {'Hours Tracker'}
-        </Header>
+        </h1>
 
-        <Menu
-          secondary
+        <ul
+          className="list-reset flex pt-4"
         >
-          <Link
-            className={cx('item', { active: isSignIn })}
-            to="/sign-in"
-          >
-            {'Sign In'}
-          </Link>
-          <Link
-            className={cx('item', { active: isForgotPassword })}
-            to="/sign-in/forgot-password"
-          >
-            {'Forgot Password'}
-          </Link>
-        </Menu>
+          <li className="mr-4">
+            <Link
+              className={signInClasses}
+              to="/sign-in"
+            >
+              {'Sign In'}
+            </Link>
+          </li>
+          <li>
+            <Link
+              className={forgotPasswordClasses}
+              to="/sign-in/forgot-password"
+            >
+              {'Forgot Password'}
+            </Link>
+          </li>
+        </ul>
       </header>
     );
   }
+  /* eslint-enable max-lines-per-function */
 }
 
 export default SignedOutHeader;

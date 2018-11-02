@@ -1,16 +1,12 @@
-import { Label } from 'semantic-ui-react';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
 const FieldError = ({ touched, error }) => {
   if (touched && error) {
     return (
-      <Label
-        color="red"
-        pointing
-      >
+      <div className="text-red text-sm">
         {error}
-      </Label>
+      </div>
     );
   }
 

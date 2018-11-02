@@ -1,7 +1,7 @@
 /* global window */
 
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
-import { routerMiddleware, routerReducer } from 'react-router-redux';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 
 import createHistory from 'history/createBrowserHistory';
 import createSagaMiddleware from 'redux-saga';
@@ -14,11 +14,12 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 export const history = createHistory();
 export const store   = createStore(
-  combineReducers({
-    form: formReducer,
-    router: routerReducer,
-    ...reducers
-  }),
+  connectRouter(history)(
+    combineReducers({
+      form: formReducer,
+      ...reducers
+    })
+  ),
   composeEnhancers(
     applyMiddleware(sagaMiddleware),
     applyMiddleware(routerMiddleware(history))

@@ -1,17 +1,16 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Segment } from 'semantic-ui-react';
 import SignInForm from './SignInForm';
 import { connect } from 'react-redux';
 import { signInUser } from 'javascripts/app/redux/user';
 
 const SignInPage = ({ onSignInUser }) => {
   return (
-    <Segment>
+    <div className="bg-white shadow rounded p-4">
       <SignInForm
         onSignInUser={onSignInUser}
       />
-    </Segment>
+    </div>
   );
 };
 

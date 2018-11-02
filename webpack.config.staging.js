@@ -12,7 +12,7 @@ module.exports = {
   devtool: 'cheap-module-source-map',
   entry: {
     app: [
-      'babel-polyfill',
+      '@babel/polyfill',
       './src/javascripts/app/entry.js'
     ]
   },
@@ -21,15 +21,15 @@ module.exports = {
     rules: [
       {
         enforce: 'pre',
-        exclude: [/node_modules/],
-        test: /\.js$/,
+        exclude: [/node_modules/u],
+        test: /\.js$/u,
         use: ['eslint-loader']
       }, {
-        exclude: [/node_modules/],
-        test: /\.js$/,
+        exclude: [/node_modules/u],
+        test: /\.js$/u,
         use: ['babel-loader']
       }, {
-        test: /\.css$/,
+        test: /\.css$/u,
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -45,7 +45,7 @@ module.exports = {
       }, {
         oneOf: [
           {
-            resourceQuery: /main/, // foo.css?inline
+            resourceQuery: /main/u, // foo.css?inline
             use: [
               MiniCssExtractPlugin.loader,
               'css-loader',
@@ -78,9 +78,9 @@ module.exports = {
             ]
           }
         ],
-        test: /\.s(a|c)ss$/
+        test: /\.s(a|c)ss$/u
       }, {
-        test: /\.(woff|woff2|eot|ttf|svg)(\?.*$|$)/,
+        test: /\.(woff|woff2|eot|ttf|svg)(\?.*$|$)/u,
         use: [
           {
             loader: 'url-loader',
@@ -91,7 +91,7 @@ module.exports = {
           }
         ]
       }, {
-        test: /\.(png|jpg|gif|jpeg)$/,
+        test: /\.(png|jpg|gif|jpeg)$/u,
         use: [
           {
             loader: 'url-loader',
@@ -121,7 +121,7 @@ module.exports = {
       jQuery: 'jquery',
       jquery: 'jquery'
     }),
-    new Webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new Webpack.IgnorePlugin(/^\.\/locale$/u, /moment$/u),
     new HtmlWebpackPlugin({
       chunks: ['app'],
       environment: 'staging',
@@ -146,7 +146,7 @@ module.exports = {
       // used to populate the caches, to ensure the responses are fresh.
       // If a URL is already hashed by Webpack, then there is no concern
       // about it being stale, and the cache-busting can be skipped.
-      dontCacheBustUrlsMatching: /\.\w{8}\./,
+      dontCacheBustUrlsMatching: /\.\w{8}\./u,
       filename: 'service-worker.js',
       logger(message) {
         if (message.indexOf('Total precache size is') === 0) {
@@ -164,7 +164,7 @@ module.exports = {
       },
       minify: true,
       // Don't precache sourcemaps (they're large) and build asset manifest:
-      staticFileGlobsIgnorePatterns: [/\.map$/, /asset-manifest\.json$/]
+      staticFileGlobsIgnorePatterns: [/\.map$/u, /asset-manifest\.json$/u]
       // `navigateFallback` and `navigateFallbackWhitelist` are disabled by
       // default
       // navigateFallback: publicUrl + '/index.html',

@@ -1,8 +1,7 @@
+import { Button, FormError, InputField } from 'javascripts/shared/components';
 import { Field, reduxForm } from 'redux-form';
-import { FormError, InputField } from 'javascripts/shared/components';
 import { isEmail, isRequired } from 'javascripts/validators';
 
-import { Form } from 'semantic-ui-react';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
@@ -38,7 +37,7 @@ class SignInForm extends React.Component {
     } = this.props;
 
     return (
-      <Form
+      <form
         noValidate
         onSubmit={handleSubmit(this._handleSubmit)}
       >
@@ -49,6 +48,7 @@ class SignInForm extends React.Component {
           autoFocus
           component={InputField}
           disabled={submitting}
+          id="email"
           label="Email"
           name="email"
           type="email"
@@ -59,21 +59,22 @@ class SignInForm extends React.Component {
           autoCorrect="off"
           component={InputField}
           disabled={submitting}
+          id="password"
           label="Password"
           name="password"
           type="password"
           validate={isRequired}
         />
-        <Form.Button
+        <Button
+          className="w-full py-4"
           color="green"
           disabled={submitting}
-          fluid
           loading={submitting}
-          size="big"
+          type="submit"
         >
           {'Sign In'}
-        </Form.Button>
-      </Form>
+        </Button>
+      </form>
     );
   }
 }

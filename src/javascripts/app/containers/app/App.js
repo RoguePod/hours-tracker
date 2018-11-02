@@ -1,7 +1,7 @@
 /* global window,document */
 
 import { Dimmer, Loader } from 'semantic-ui-react';
-import { loadApp, openSidebar, updateWindow } from 'javascripts/app/redux/app';
+import { loadApp, updateWindow } from 'javascripts/app/redux/app';
 
 import { Flashes } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
@@ -75,7 +75,7 @@ class App extends React.Component {
       jQuery('html, body').animate({ scrollTop: 0 }, 150);
     }
 
-    if (hash.match(/sidebar/)) {
+    if (hash.match(/sidebar/u)) {
       document.addEventListener('keydown', this._handleKeyPress);
     } else {
       document.removeEventListener('keydown', this._handleKeyPress);
@@ -97,7 +97,7 @@ class App extends React.Component {
 
     onUpdateWindow(element.clientWidth, element.clientHeight);
 
-    if (location.hash.match(/sidebar/)) {
+    if (location.hash.match(/sidebar/u)) {
       history.push({ ...location, hash: null });
     }
   }
@@ -105,7 +105,7 @@ class App extends React.Component {
   _handleKeyPress(event) {
     const { location } = this.props;
 
-    if (event.keyCode === 27 && location.hash.match(/sidebar/)) {
+    if (event.keyCode === 27 && location.hash.match(/sidebar/u)) {
       history.push({ ...location, hash: null });
     }
   }
@@ -165,7 +165,6 @@ const props = (state) => {
 
 const actions = {
   onLoadApp: loadApp,
-  onOpenSidebar: openSidebar,
   onRemoveFlash: removeFlash,
   onSignOutUser: signOutUser,
   onUpdateWindow: updateWindow

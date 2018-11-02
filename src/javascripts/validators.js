@@ -7,7 +7,7 @@ export const isRequired = (value) => {
 };
 
 export const isEmail = (value) => {
-  if (value && !(/.+@.+/).test(String(value))) {
+  if (value && !(/.+@.+/u).test(String(value))) {
     return 'Invalid Email Address';
   }
 
@@ -59,7 +59,7 @@ export const betweenValue = (min, max) => (value) => {
 export const isZip = (value) => {
   /* eslint-disable max-len */
   if (value &&
-      !value.match(/(^\d{5}(-\d{4})?$)|(^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$)/)) {
+      !value.match(/(^\d{5}(-\d{4})?$)|(^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$)/u)) {
     return 'Must be in the format US (12345 or 12345-1234) or ' +
       'Canada (A0A 0A0 or A0A0A0)';
   }
@@ -71,7 +71,7 @@ export const isZip = (value) => {
 export const isUSZip = (value) => {
   /* eslint-disable max-len */
   if (value &&
-      !value.match(/(^\d{5}(-\d{4})?$)|(^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$)/)) {
+      !value.match(/(^\d{5}(-\d{4})?$)|(^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$)/u)) {
     return 'Invalid Zip format (12345 or 12345-1234)';
   }
   /* eslint-enable max-len */

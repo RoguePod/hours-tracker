@@ -3,7 +3,7 @@ export const formatPhoneNumber = (value) => {
     return value;
   }
 
-  const onlyNums = value.replace(/[^\d]/g, '');
+  const onlyNums = value.replace(/[^\d]/gu, '');
 
   if (onlyNums.length <= 3) {
     return onlyNums;
@@ -23,8 +23,8 @@ export const formatCardNumber = (value) => {
     return value;
   }
 
-  return value.replace(/[^\d]/g, '')
-    .match(/.{1,4}/g)
+  return value.replace(/[^\d]/gu, '')
+    .match(/.{1,4}/gu)
     .join(' ');
 };
 
@@ -33,8 +33,8 @@ export const formatDate = (value, previousValue) => {
     return value;
   }
 
-  const onlyNums     = value.replace(/[^\d]/g, '');
-  const previousNums = (previousValue || '').replace(/[^\d]/g, '');
+  const onlyNums     = value.replace(/[^\d]/gu, '');
+  const previousNums = (previousValue || '').replace(/[^\d]/gu, '');
 
   if (onlyNums.length <= 1) {
     return onlyNums;
@@ -66,5 +66,5 @@ export const formatFloatPositive = (value) => {
     return value;
   }
 
-  return String(value).replace(/[^0-9.]/g, '');
+  return String(value).replace(/[^0-9.]/gu, '');
 };

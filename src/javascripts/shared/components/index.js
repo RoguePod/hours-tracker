@@ -1,3 +1,4 @@
+export Button from './Button';
 export CheckboxField from './CheckboxField';
 export ConfirmAction from './ConfirmAction';
 export DateField from './DateField';
@@ -8,6 +9,7 @@ export Flashes from './Flashes';
 export FormError from './FormError';
 export HardRedirect from './HardRedirect';
 export InputField from './InputField';
+export Label from './Label';
 export Pagination from './Pagination';
 export SelectField from './SelectField';
 export TextAreaField from './TextAreaField';

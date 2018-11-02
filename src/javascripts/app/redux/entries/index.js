@@ -1,6 +1,12 @@
 /* eslint-disable max-lines */
 import {
-  all, cancelled, fork, put, select, takeEvery, takeLatest
+  all,
+  cancelled,
+  fork,
+  put,
+  select,
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects';
 import { firestore, fromQuery, parseEntry } from 'javascripts/globals';
 
@@ -245,7 +251,7 @@ const buildQuery = (state, limit, emit) => {
     data = data.limit(limit);
   }
 
-  if (pathname.match(/reports/) && user.role === 'Admin') {
+  if (pathname.match(/reports/u) && user.role === 'Admin') {
     if (userRef) {
       data = data.where('userRef', '==', userRef);
     }

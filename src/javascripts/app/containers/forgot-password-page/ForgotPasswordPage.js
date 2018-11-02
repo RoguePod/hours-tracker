@@ -1,17 +1,16 @@
 import ForgotPasswordForm from './ForgotPasswordForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Segment } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { forgotPassword } from 'javascripts/app/redux/passwords';
 
 const ForgotPasswordPage = ({ onForgotPassword }) => {
   return (
-    <Segment>
+    <div className="bg-white shadow rounded p-4">
       <ForgotPasswordForm
         onForgotPassword={onForgotPassword}
       />
-    </Segment>
+    </div>
   );
 };
 
