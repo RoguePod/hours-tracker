@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "1.2.8",
-    "@fortawesome/free-solid-svg-icons": "5.4.2",
+    "@fortawesome/free-solid-svg-icons": "5.5.0",
     "@fortawesome/react-fontawesome": "0.1.3",
     "chrono-node": "1.3.5",
     "classnames": "2.2.6",
-    "connected-react-router": "4.5.0",
+    "connected-react-router": "5.0.0",
     "firebase": "5.5.7",
     "fuse.js": "3.3.0",
     "immutability-helper": "2.8.1",
@@ -15,7 +15,7 @@
     "numeral": "2.0.6",
     "prop-types": "15.6.2",
     "react": "16.6.0",
-    "react-datepicker": "1.7.0",
+    "react-datepicker": "1.8.0",
     "react-dom": "16.6.0",
     "react-motion": "0.5.2",
     "react-nl2br": "0.4.0",

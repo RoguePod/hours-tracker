@@ -11,6 +11,7 @@ export HardRedirect from './HardRedirect';
 export InputField from './InputField';
 export Label from './Label';
 export Pagination from './Pagination';
+export Portal from './Portal';
 export SelectField from './SelectField';
 export TextAreaField from './TextAreaField';
 export TimeField from './TimeField';

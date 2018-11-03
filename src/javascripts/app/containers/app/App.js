@@ -1,9 +1,9 @@
 /* global window,document */
 
-import { Dimmer, Loader } from 'semantic-ui-react';
 import { loadApp, updateWindow } from 'javascripts/app/redux/app';
 
 import { Flashes } from 'javascripts/shared/components';
+import Loader from './Loader';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
@@ -115,38 +115,38 @@ class App extends React.Component {
       auth, children, clientsReady, fetching, flashes, onRemoveFlash, ready
     } = this.props;
 
-    if (!ready || (!clientsReady && auth)) {
-      return (
-        <div className={styles.container}>
-          <Dimmer
-            active
-            inverted
-          >
-            <Loader>
-              {'Getting everything ready...'}
-            </Loader>
-          </Dimmer>
-        </div>
-      );
-    }
+    const isReady = !(!ready || (!clientsReady && auth));
+
+    // return (
+    //   <div className={styles.container}>
+    //     <Dimmer
+    //       active
+    //       inverted
+    //     >
+    //       <Loader>
+    //         {'Getting everything ready...'}
+    //       </Loader>
+    //     </Dimmer>
+    //   </div>
+    // );
 
     return (
-      <div className={styles.container}>
-        <div className={cx(styles.content, { [styles.signedOut]: !auth })}>
-          {children}
-        </div>
+      <React.Fragment>
+        {isReady &&
+          <div className={styles.container}>
+            <div className={cx(styles.content, { [styles.signedOut]: !auth })}>
+              {children}
+            </div>
+          </div>}
 
-        <Dimmer
-          active={fetching}
-          inverted
-        >
-          <Loader />
-        </Dimmer>
+        <Loader
+          loading={fetching}
+        />
         <Flashes
           flashes={flashes}
           onRemoveFlash={onRemoveFlash}
         />
-      </div>
+      </React.Fragment>
     );
   }
 }

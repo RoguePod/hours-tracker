@@ -14,9 +14,7 @@ const FormError = ({ error }) => {
 };
 
 FormError.propTypes = {
-  /* eslint-disable react/forbid-prop-types */
-  error: PropTypes.any
-  /* eslint-enable react/forbid-prop-types */
+  error: PropTypes.node
 };
 
 FormError.defaultProps = {
