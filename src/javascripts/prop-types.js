@@ -23,7 +23,8 @@ const propTypes = {
     stoppedAt: PropTypes.number
   }),
   flash: PropTypes.shape({
-    color: PropTypes.string.isRequired,
+    color: PropTypes.string,
+    icon: PropTypes.string,
     id: PropTypes.number.isRequired,
     message: PropTypes.string.isRequired
   }),

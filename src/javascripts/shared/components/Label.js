@@ -2,11 +2,7 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
 
-const Label = (props) => {
-  const {
-    children, className, error, ...rest
-  } = props;
-
+const Label = ({ children, className, error, ...rest }) => {
   const labelClassName = cx(
     'block text-grey-darker text-sm font-bold mb-2',
     {
@@ -16,7 +12,6 @@ const Label = (props) => {
     className
   );
 
-  /* eslint-disable react/button-has-type */
   return (
     <label
       {...rest}
@@ -25,7 +20,6 @@ const Label = (props) => {
       {children}
     </label>
   );
-  /* eslint-enable react/button-has-type */
 };
 
 Label.propTypes = {

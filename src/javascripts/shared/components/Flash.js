@@ -1,27 +1,17 @@
-import { Icon, Portal, Segment } from 'semantic-ui-react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import styles from './Flash.scss';
 
 class Flash extends React.Component {
   static propTypes = {
     flash: PropTypes.flash.isRequired,
-    onRemoveFlash: PropTypes.func.isRequired,
-    /* eslint-disable react/forbid-prop-types */
-    style: PropTypes.object
-    /* eslint-enable react/forbid-prop-types */
-  }
-
-  static defaultProps = {
-    style: null
+    onRemoveFlash: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props);
 
     this._handleRemove = this._handleRemove.bind(this);
-    this._handleRef = this._handleRef.bind(this);
   }
 
   componentDidMount() {
@@ -36,27 +26,7 @@ class Flash extends React.Component {
     }
   }
 
-  elementHeight = 0
-
   timeout = null
-
-  index() {
-    const { flash } = this.props;
-
-    return flash.index;
-  }
-
-  height() {
-    return this.elementHeight;
-  }
-
-  _handleRef(element) {
-    if (element) {
-      this.elementHeight = parseInt(element.offsetHeight, 10);
-    } else {
-      this.elementHeight = 0;
-    }
-  }
 
   _handleRemove() {
     const { onRemoveFlash, flash: { id } } = this.props;
@@ -69,42 +39,34 @@ class Flash extends React.Component {
   }
 
   render() {
-    const { flash, style } = this.props;
+    const { flash } = this.props;
 
-    const flashStyle = { ...style };
-    const translateX = flashStyle.translateX || 0;
-    const translateY = flashStyle.translateY || 0;
+    const color = flash.color || 'green';
+    const icon = flash.icon || 'exclamation-circle';
 
-    flashStyle.transform = `translate(${translateX}px, ${translateY}px)`;
-    flashStyle.zIndex = 100001;
+    const alertClasses =
+      `bg-${color}-lightest border-${color} rounded text-${color}-darkest ` +
+      'border-t-4  px-4 py-3 shadow-lg flex items-center m-4';
 
     return (
-      <Portal
-        open
+      <div
+        className={alertClasses}
+        onClick={this._handleRemove}
       >
-        <div
-          className={styles.container}
-          ref={this._handleRef}
-          style={flashStyle}
-        >
-          <Segment
-            clearing
-            color={flash.color}
-            inverted
-            raised
-          >
-            <div className={styles.icon}>
-              <Icon
-                name="close"
-                onClick={this._handleRemove}
-              />
-            </div>
-            <div className={styles.message}>
-              {flash.message}
-            </div>
-          </Segment>
+        <div className="p-2">
+          <FontAwesomeIcon
+            icon={icon}
+          />
         </div>
-      </Portal>
+        <div className="flex-1">
+          {flash.message}
+        </div>
+        <div className="p-2 cursor-pointer">
+          <FontAwesomeIcon
+            icon="times"
+          />
+        </div>
+      </div>
     );
   }
 }

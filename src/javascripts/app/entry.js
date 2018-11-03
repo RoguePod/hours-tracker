@@ -13,7 +13,10 @@ import {
 } from 'javascripts/app/containers';
 import { Route, Switch } from 'react-router-dom';
 import {
-  faSpinner
+  faClock,
+  faExclamationCircle,
+  faSpinner,
+  faTimes
 } from '@fortawesome/free-solid-svg-icons';
 
 import { ConnectedRouter } from 'connected-react-router';
@@ -27,7 +30,10 @@ import registerServiceWorker from './registerServiceWorker';
 /* eslint-enable sort-imports */
 
 library.add(
-  faSpinner
+  faClock,
+  faExclamationCircle,
+  faSpinner,
+  faTimes
 );
 
 moment.locale('en');

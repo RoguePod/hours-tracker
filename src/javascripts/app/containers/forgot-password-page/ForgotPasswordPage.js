@@ -7,6 +7,9 @@ import { forgotPassword } from 'javascripts/app/redux/passwords';
 const ForgotPasswordPage = ({ onForgotPassword }) => {
   return (
     <div className="bg-white shadow rounded p-4">
+      <h2 className="text-blue pb-4">
+        {'Forgot Password?'}
+      </h2>
       <ForgotPasswordForm
         onForgotPassword={onForgotPassword}
       />

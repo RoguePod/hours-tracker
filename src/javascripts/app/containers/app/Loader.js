@@ -1,38 +1,50 @@
+import posed, { PoseGroup } from 'react-pose';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Portal } from 'javascripts/shared/components';
-// import PropTypes from 'javascripts/prop-types';
+import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-// import cx from 'classnames';
 
-const Loader = () => {
+const FadeIn = posed.div({
+  enter: { opacity: 1 },
+  exit: { opacity: 0 }
+});
+
+const Loader = ({ loading }) => {
+  const shadeClassName =
+    'fixed pin z-10 overflow-auto bg-white flex items-center justify-center ' +
+    'text-blue flex-col';
+
   return (
     <Portal>
-      <div className="fixed pin z-50 overflow-auto bg-smoke-light flex items-center justify-center text-white">
-        <FontAwesomeIcon
-          icon="spinner"
-          size="3x"
-          spin
-        />
-      </div>
+      <PoseGroup>
+        {loading &&
+          <FadeIn
+            className={shadeClassName}
+            key="shade"
+          >
+            <div className="flex flex-row items-center">
+              <FontAwesomeIcon
+                icon="clock"
+                pulse
+                size="3x"
+              />
+              <div className="pl-2 text-4xl">
+                {'Hours Tracker'}
+              </div>
+            </div>
+          </FadeIn>}
+      </PoseGroup>
     </Portal>
   );
 };
 
 Loader.propTypes = {
-  // children: PropTypes.node.isRequired,
-  // className: PropTypes.string,
-  // color: PropTypes.string,
-  // loading: PropTypes.bool,
-  // textColor: PropTypes.string,
-  // type: PropTypes.string
+  loading: PropTypes.bool
 };
 
 Loader.defaultProps = {
-  // className: '',
-  // color: 'blue',
-  // loading: false,
-  // textColor: 'white',
-  // type: 'button'
+  loading: false
 };
 
 export default Loader;

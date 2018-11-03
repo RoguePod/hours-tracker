@@ -32,6 +32,7 @@ export default (state = initialState, action) => {
         $push: [
           {
             color: action.color,
+            icon: action.icon,
             id: new Date().getTime(),
             message: action.message
           }
@@ -55,9 +56,9 @@ export const removeFlash = (id) => {
   };
 };
 
-export const addFlash = (message, color = 'green') => {
+export const addFlash = (message, other = {}) => {
   return {
-    color,
+    ...other,
     message,
     type: FLASH_ADD
   };

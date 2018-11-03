@@ -9,9 +9,20 @@
 @import '~react-datepicker/dist/react-datepicker.css';
 
 body,
-html,
-#app {
+html {
   height: 100%;
+  min-height: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#app {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100%;
 }
 
 .react-datepicker-wrapper {
@@ -20,15 +31,4 @@ html,
 
 .react-datepicker__input-container {
   display: block;
-}
-
-.noscript {
-  color: $blue;
-  padding: 20px;
-  text-align: center;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
 }

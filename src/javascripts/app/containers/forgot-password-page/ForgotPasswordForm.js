@@ -1,4 +1,9 @@
-import { Button, FormError, InputField } from 'javascripts/shared/components';
+import {
+  Button,
+  FormError,
+  InputField,
+  Link
+} from 'javascripts/shared/components';
 import { Field, reduxForm } from 'redux-form';
 import { isEmail, isRequired } from 'javascripts/validators';
 
@@ -54,15 +59,23 @@ class ForgotPasswordForm extends React.Component {
           type="email"
           validate={[isRequired, isEmail]}
         />
-        <Button
-          className="w-full py-4"
-          color="green"
-          disabled={submitting}
-          loading={submitting}
-          type="submit"
-        >
-          {'Send Me Password Reset Instructions'}
-        </Button>
+        <div className="flex flex-row justify-between">
+          <Button
+            className="py-2"
+            color="green"
+            disabled={submitting}
+            loading={submitting}
+            type="submit"
+          >
+            {'Submit'}
+          </Button>
+          <Link
+            className="py-2"
+            to="/sign-in"
+          >
+            {'Sign In'}
+          </Link>
+        </div>
       </form>
     );
   }

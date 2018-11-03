@@ -17,15 +17,16 @@
     "react": "16.6.0",
     "react-datepicker": "1.8.0",
     "react-dom": "16.6.0",
-    "react-motion": "0.5.2",
     "react-nl2br": "0.4.0",
+    "react-pose": "3.4.0",
     "react-redux": "5.1.0",
     "react-router-dom": "4.3.1",
     "redux": "4.0.1",
     "redux-form": "7.4.2",
     "redux-saga": "0.16.2",
     "reselect": "4.0.0",
-    "semantic-ui-react": "0.82.5"
+    "semantic-ui-react": "0.82.5",
+    "styled-components": "4.0.3"
   },
   "devDependencies": {
     "@babel/core": "7.1.2",
@@ -50,6 +51,7 @@
     "autoprefixer": "9.3.1",
     "babel-eslint": "10.0.1",
     "babel-loader": "8.0.4",
+    "babel-plugin-styled-components": "1.8.0",
     "babel-plugin-transform-remove-console": "6.9.4",
     "css-loader": "1.0.1",
     "css-modules-require-hook": "4.2.3",

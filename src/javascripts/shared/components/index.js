@@ -10,6 +10,7 @@ export FormError from './FormError';
 export HardRedirect from './HardRedirect';
 export InputField from './InputField';
 export Label from './Label';
+export Link from './Link';
 export Pagination from './Pagination';
 export Portal from './Portal';
 export SelectField from './SelectField';

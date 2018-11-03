@@ -1,16 +1,21 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import posed from 'react-pose';
+
+const FadeIn = posed.div({
+  hide: { height: 0, opacity: 0 },
+  show: { height: 'auto', opacity: 1 }
+});
 
 const FieldError = ({ touched, error }) => {
-  if (touched && error) {
-    return (
-      <div className="text-red text-sm">
-        {error}
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <FadeIn
+      className="text-red text-sm pt-1"
+      pose={touched && error ? 'show' : 'hide'}
+    >
+      {error}
+    </FadeIn>
+  );
 };
 
 FieldError.propTypes = {

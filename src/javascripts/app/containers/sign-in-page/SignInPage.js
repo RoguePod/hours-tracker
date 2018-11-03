@@ -4,12 +4,13 @@ import SignInForm from './SignInForm';
 import { connect } from 'react-redux';
 import { signInUser } from 'javascripts/app/redux/user';
 
-const SignInPage = ({ onSignInUser }) => {
+const SignInPage = (props) => {
   return (
     <div className="bg-white shadow rounded p-4">
-      <SignInForm
-        onSignInUser={onSignInUser}
-      />
+      <h2 className="text-blue pb-4">
+        {'Sign In'}
+      </h2>
+      <SignInForm {...props} />
     </div>
   );
 };

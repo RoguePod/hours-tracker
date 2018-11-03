@@ -47,7 +47,7 @@ function* passwordForgot({ params: { email }, resolve, reject }) {
     const { error } = yield call(handlePasswordForgot, email);
 
     if (error) {
-      reject(new SubmissionError({ _error: error.message }));
+      reject(new SubmissionError({ _error: error }));
     } else {
       yield put(addFlash('Reset Password Instructions sent!'));
       yield call(history.push, '/sign-in');

@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import cx from 'classnames';
 import { history } from 'javascripts/app/redux/store';
 import jQuery from 'jquery';
-import { removeFlash } from 'javascripts/shared/redux/flashes';
 import { signOutUser } from 'javascripts/app/redux/user';
 import styles from './App.scss';
 import { withRouter } from 'react-router-dom';
@@ -25,7 +24,6 @@ class App extends React.Component {
     flashes: PropTypes.arrayOf(PropTypes.flash).isRequired,
     location: PropTypes.routerLocation.isRequired,
     onLoadApp: PropTypes.func.isRequired,
-    onRemoveFlash: PropTypes.func.isRequired,
     onUpdateWindow: PropTypes.func.isRequired,
     ready: PropTypes.bool.isRequired,
     width: PropTypes.number.isRequired
@@ -112,40 +110,24 @@ class App extends React.Component {
 
   render() {
     const {
-      auth, children, clientsReady, fetching, flashes, onRemoveFlash, ready
+      auth, children, clientsReady, ready
     } = this.props;
 
     const isReady = !(!ready || (!clientsReady && auth));
 
-    // return (
-    //   <div className={styles.container}>
-    //     <Dimmer
-    //       active
-    //       inverted
-    //     >
-    //       <Loader>
-    //         {'Getting everything ready...'}
-    //       </Loader>
-    //     </Dimmer>
-    //   </div>
-    // );
-
     return (
       <React.Fragment>
         {isReady &&
-          <div className={styles.container}>
+          <div className="flex flex-col">
             <div className={cx(styles.content, { [styles.signedOut]: !auth })}>
               {children}
             </div>
           </div>}
 
         <Loader
-          loading={fetching}
+          loading={!isReady}
         />
-        <Flashes
-          flashes={flashes}
-          onRemoveFlash={onRemoveFlash}
-        />
+        <Flashes />
       </React.Fragment>
     );
   }
@@ -155,7 +137,6 @@ const props = (state) => {
   return {
     auth: state.app.auth,
     clientsReady: state.clients.ready,
-    fetching: state.fetching.fetching.length > 0,
     flashes: state.flashes.flashes,
     ready: state.app.ready,
     sidebar: state.app.sidebar,
@@ -165,7 +146,6 @@ const props = (state) => {
 
 const actions = {
   onLoadApp: loadApp,
-  onRemoveFlash: removeFlash,
   onSignOutUser: signOutUser,
   onUpdateWindow: updateWindow
 };
