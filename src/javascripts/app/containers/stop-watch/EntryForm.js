@@ -1,7 +1,6 @@
 import { Field, reduxForm } from 'redux-form';
 import { FormError, TextAreaField } from 'javascripts/shared/components';
 
-import { Form } from 'semantic-ui-react';
 import { ProjectField } from 'javascripts/app/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -51,12 +50,13 @@ class EntryForm extends React.Component {
     const { error } = this.props;
 
     return (
-      <Form
+      <form
         noValidate
       >
         <FormError error={error} />
         <Field
           component={ProjectField}
+          id="projectRef"
           label="Project"
           name="projectName"
           nameClient="clientRef"
@@ -68,12 +68,13 @@ class EntryForm extends React.Component {
           autoCorrect="on"
           autoHeight
           component={TextAreaField}
+          id="description"
           label="Description"
           name="description"
           onChange={this._handleDescriptionChange}
           rows={1}
         />
-      </Form>
+      </form>
     );
   }
 }

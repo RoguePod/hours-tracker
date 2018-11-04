@@ -13,9 +13,12 @@ import {
 } from 'javascripts/app/containers';
 import { Route, Switch } from 'react-router-dom';
 import {
+  faBars,
   faClock,
   faExclamationCircle,
+  faPlay,
   faSpinner,
+  faStop,
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -30,9 +33,12 @@ import registerServiceWorker from './registerServiceWorker';
 /* eslint-enable sort-imports */
 
 library.add(
+  faBars,
   faClock,
   faExclamationCircle,
+  faPlay,
   faSpinner,
+  faStop,
   faTimes
 );
 

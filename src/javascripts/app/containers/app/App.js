@@ -12,7 +12,6 @@ import cx from 'classnames';
 import { history } from 'javascripts/app/redux/store';
 import jQuery from 'jquery';
 import { signOutUser } from 'javascripts/app/redux/user';
-import styles from './App.scss';
 import { withRouter } from 'react-router-dom';
 
 class App extends React.Component {
@@ -119,7 +118,7 @@ class App extends React.Component {
       <React.Fragment>
         {isReady &&
           <div className="flex flex-col">
-            <div className={cx(styles.content, { [styles.signedOut]: !auth })}>
+            <div className={cx('flex-1', { 'bg-blue-lightest': !auth })}>
               {children}
             </div>
           </div>}

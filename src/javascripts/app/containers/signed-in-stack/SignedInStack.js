@@ -1,6 +1,5 @@
 import { RecentsList, StopWatch } from 'javascripts/app/containers';
 
-import { Container } from 'semantic-ui-react';
 import Header from './Header';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -11,7 +10,16 @@ import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 import { history } from 'javascripts/app/redux/store';
-import styles from './SignedInStack.scss';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  height: auto;
+  min-height: 100%;
+`;
+
+const Content = styled.div`
+  padding-top: 62px;
+`;
 
 class SignedInStack extends React.Component {
   static propTypes = {
@@ -53,49 +61,41 @@ class SignedInStack extends React.Component {
 
   render() {
     const { auth, location, width } = this.props;
-    const { hash } = location;
 
     if (!auth) {
       return <Redirect to="/sign-in" />;
     }
 
-    const hideStopWatch = width < 768;
+    // const hideStopWatch = width < 768;
 
-    const overlayClasses = cx(
-      styles.overlay, { [styles.overlayOpen]: hash.match(/stopwatch/u) }
-    );
+    // const overlayClasses = cx(
+    //   styles.overlay, { [styles.overlayOpen]: hash.match(/stopwatch/u) }
+    // );
 
-    let sliderClasses = styles.stopwatch;
+    // let sliderClasses = styles.stopwatch;
 
-    if (hideStopWatch) {
-      sliderClasses = cx(
-        styles.slider, { [styles.sliderOpen]: hash.match(/stopwatch/u) }
-      );
-    }
+    // if (hideStopWatch) {
+    //   sliderClasses = cx(
+    //     styles.slider, { [styles.sliderOpen]: hash.match(/stopwatch/u) }
+    //   );
+    // }
 
     return (
-      <div className={styles.container}>
+      <Container className="flex flex-col">
         <Header {...this.props} />
 
-        <div className={styles.content}>
-          {hideStopWatch &&
-            <div
-              className={overlayClasses}
-              onClick={this._handleClose}
-            />}
-          <div className={sliderClasses}>
+        <Content className="flex flex-1">
+          <div className="w-80 hidden md:block">
             <StopWatch />
-            <RecentsList />
+            {/* <RecentsList /> */}
           </div>
-          <div className={cx(styles.main, { [styles.offset]: !hideStopWatch })}>
-            <Container>
-              <Routes {...this.props} />
-            </Container>
+          <div className="flex-1 container mx-auto">
+            <Routes {...this.props} />
           </div>
-        </div>
+        </Content>
 
         <Sidebar {...this.props} />
-      </div>
+      </Container>
     );
   }
 }

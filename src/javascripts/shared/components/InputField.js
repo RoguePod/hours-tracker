@@ -44,7 +44,7 @@ class InputField extends React.Component {
   }
 
   render() {
-    const { className, label, id, input, meta, ...rest } = this.props;
+    const { className, id, input, label, meta, ...rest } = this.props;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;

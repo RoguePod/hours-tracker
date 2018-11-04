@@ -1,12 +1,14 @@
-import {
-  Button, Dimmer, Icon, Loader, Popup, Segment
-} from 'semantic-ui-react';
 import { change, formValueSelector } from 'redux-form';
 import {
-  selectRunningEntry, startEntry, stopEntry, subscribeEntry, updateEntry
+  selectRunningEntry,
+  startEntry,
+  stopEntry,
+  subscribeEntry,
+  updateEntry
 } from 'javascripts/app/redux/running';
 
 import EntryForm from './EntryForm';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -94,64 +96,46 @@ class StopWatch extends React.Component {
   /* eslint-disable max-lines-per-function */
   _renderRunningButtons(entry) {
     return (
-      <div>
+      <div className="flex">
         <div className={styles.timer}>
           <Timer {...this.props} />
         </div>
-        <Button.Group
-          fluid
+
+        <div
+          className="text-red"
+          onClick={this._handleStop}
         >
-          <Popup
-            content="Stop"
-            position="top center"
-            size="small"
-            trigger={
-              <Button
-                color="red"
-                icon="stop"
-                onClick={this._handleStop}
-              />
-            }
+          <FontAwesomeIcon
+            icon="stop"
           />
-          <Popup
-            content="Swap"
-            position="top center"
-            size="small"
-            trigger={
-              <Button
-                color="violet"
-                icon="refresh"
-                onClick={this._handleSwap}
-              />
-            }
+        </div>
+
+        <div
+          className="text-violet"
+          onClick={this._handleSwap}
+        >
+          <FontAwesomeIcon
+            icon="refresh"
           />
-          <Popup
-            content="Split"
-            position="top center"
-            size="small"
-            trigger={
-              <Button
-                as={Link}
-                color="teal"
-                icon="exchange"
-                to={`/entries/${entry.id}/split`}
-              />
-            }
+        </div>
+
+        <Link
+          className="text-teal"
+          to={`/entries/${entry.id}/split`}
+        >
+          <FontAwesomeIcon
+            icon="exchange"
           />
-          <Popup
-            content="Edit"
-            position="top center"
-            size="small"
-            trigger={
-              <Button
-                as={Link}
-                color="green"
-                icon="pencil"
-                to={`/entries/${entry.id}/edit`}
-              />
-            }
+        </Link>
+
+        <div
+          className="text-green"
+          to={`/entries/${entry.id}/edit`}
+        >
+          <FontAwesomeIcon
+            icon="pencil"
           />
-        </Button.Group>
+        </div>
       </div>
     );
   }
@@ -159,22 +143,16 @@ class StopWatch extends React.Component {
 
   _renderNotRunningButtons() {
     return (
-      <Button.Group
-        fluid
-      >
-        <Popup
-          content="Start"
-          position="top center"
-          size="small"
-          trigger={
-            <Button
-              color="green"
-              icon="play"
-              onClick={this._handleStart}
-            />
-          }
-        />
-      </Button.Group>
+      <div className="flex">
+        <div
+          className="text-green"
+          onClick={this._handleStart}
+        >
+          <FontAwesomeIcon
+            icon="play"
+          />
+        </div>
+      </div>
     );
   }
 
@@ -182,18 +160,11 @@ class StopWatch extends React.Component {
     const { entry, fetching, onUpdateEntry, ready } = this.props;
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={!ready}
-          inverted
-        >
-          <Loader>
+      <div>
+        {!ready &&
+          <div>
             {'Loading Stop Watch...'}
-          </Loader>
-        </Dimmer>
+          </div>}
         {ready && entry.id && this._renderRunningButtons(entry)}
         {ready && !entry.id && this._renderNotRunningButtons()}
         <div className={styles.form}>
@@ -204,15 +175,15 @@ class StopWatch extends React.Component {
         </div>
         {fetching &&
           <div className={styles.flash}>
-            <Icon
-              loading
-              name="spinner"
+            <FontAwesomeIcon
+              icon="clock"
+              pulse
             />
             <div>
               {fetching}
             </div>
           </div>}
-      </Segment>
+      </div>
     );
   }
 }

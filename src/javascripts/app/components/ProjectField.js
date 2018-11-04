@@ -1,13 +1,14 @@
-import { FieldError, FieldWarning } from 'javascripts/shared/components';
-import { Form, Search } from 'semantic-ui-react';
+import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 import {
-  selectClientsByKey, selectQueriedProjects
+  selectClientsByKey,
+  selectQueriedProjects
 } from 'javascripts/app/redux/clients';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 import { formValueSelector } from 'redux-form';
 
 class ProjectField extends React.Component {
@@ -144,42 +145,49 @@ class ProjectField extends React.Component {
   }
 
   render() {
-    const { input, label, meta, ready, results } = this.props;
-    const { focused } = this.state;
+    const { className, id, input, label, meta } = this.props;
+    // const { focused } = this.state;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
     /* eslint-enable no-unneeded-ternary */
 
-    let { value } = input;
+    // let { value } = input;
 
-    if (!focused) {
-      value = this._findValue();
-    }
+    // if (!focused) {
+    //   value = this._findValue();
+    // }
+
+    const inputClassName = cx(
+      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
+      'leading-tight focus:outline-none',
+      {
+        'border-grey-light': !isError,
+        'border-red': isError,
+        'focus:border-blue-light': !isError,
+        'focus:border-red': isError
+      },
+      className
+    );
 
     return (
-      <Form.Field
-        error={isError}
-      >
+      <div className="mb-4">
         {label &&
-          <label>
+          <Label
+            error={isError}
+            htmlFor={id}
+          >
             {label}
-          </label>}
-        <Search
+          </Label>}
+        <input
           {...input}
-          category
-          disabled={!ready}
-          onBlur={this._handleBlur}
-          onFocus={this._handleFocus}
-          onResultSelect={this._handleChange}
-          onSearchChange={this._handleSearchChange}
-          resultRenderer={this._handleRenderResult}
-          results={results}
-          value={value}
+          className={inputClassName}
+          id={id}
+          ref={this._handleRef}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />
-      </Form.Field>
+      </div>
     );
   }
 }

@@ -1,10 +1,13 @@
-import { Icon, Menu } from 'semantic-ui-react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import cx from 'classnames';
-import styles from './Header.scss';
+import Tab from './Tab';
+import styled from 'styled-components';
+
+const Header = styled.header`
+  height: 62px;
+`;
 
 class SignedInHeader extends React.Component {
   static propTypes = {
@@ -30,131 +33,113 @@ class SignedInHeader extends React.Component {
     );
   }
 
-  _renderMobileMenu(running, location) {
-    return (
-      <Menu
-        color="blue"
-        inverted
-        secondary
-      >
-        <Menu.Item>
-          <Link to={{ ...location, hash: 'stopwatch' }}>
-            <Icon.Group size="big">
-              <Icon
-                className={styles.icon}
-                name="clock"
-              />
-              {running &&
-                <Icon
-                  color="green"
-                  corner
-                  name="play"
-                />}
-              {!running &&
-                <Icon
-                  color="red"
-                  corner
-                  name="stop"
-                />}
-            </Icon.Group>
-          </Link>
-          <Link
-            className={styles.logo}
-            to="/"
-          >
-            {'Hours Tracker'}
-          </Link>
-        </Menu.Item>
-        <Menu.Menu position="right">
-          <Menu.Item
-            as={Link}
-            to={{ ...location, hash: 'sidebar' }}
-          >
-            <Icon
-              className={styles.icon}
-              name="sidebar"
-              size="big"
-            />
-          </Menu.Item>
-        </Menu.Menu>
-      </Menu>
-    );
-  }
-
   /* eslint-disable max-lines-per-function */
-  _renderWideMenu(pathname, user) {
-    const isHome     = pathname === '/' || pathname.length === 0;
-    const isEntries  = pathname.startsWith('/entries');
-    const isProjects = pathname.startsWith('/projects');
-    const isProfile  = pathname.startsWith('/profile');
+  render() {
+    const { location, running, user } = this.props;
+    const { pathname } = location;
+
+    const headerClasses =
+      'fixed pin-t pin-x px-4 bg-blue text-white overflow-hidden z-10';
 
     return (
-      <Menu
-        color="blue"
-        inverted
-        secondary
-      >
-        <Menu.Item
-          as={Link}
-          to="/"
-        >
-          <span
-            className={styles.logo}
-          >
-            {'Hours Tracker'}
-          </span>
-        </Menu.Item>
-        <Menu.Menu position="right">
-          <Menu.Item>
-            {user.name}
-          </Menu.Item>
-          <Link
-            className={cx('item', { active: isHome })}
-            to="/"
-          >
-            {'Home'}
-          </Link>
-          <Link
-            className={cx('item', { active: isEntries })}
-            to="/entries"
-          >
-            {'Entries'}
-          </Link>
-          <Link
-            className={cx('item', { active: isProjects })}
-            to="/clients"
-          >
-            {'Clients/Projects'}
-          </Link>
-          <Link
-            className={cx('item', { active: isProfile })}
-            to="/profile"
-          >
-            {'Profile'}
-          </Link>
-          <Link
-            className="item"
-            to="/sign-out"
-          >
-            {'Sign Out'}
-          </Link>
-        </Menu.Menu>
-      </Menu>
+      <Header className={headerClasses}>
+        <div className="flex items-center h-full">
+          <div className="flex-1 flex items-center">
+            <div className="pl-4 pr-2 hidden lg:block">
+              <FontAwesomeIcon
+                icon="clock"
+                size="2x"
+              />
+            </div>
+            <div className="pl-4 pr-2 md:hidden">
+              <Link to={{ ...location, hash: 'stopwatch' }}>
+                <FontAwesomeIcon
+                  icon="clock"
+                  pulse={running}
+                  size="2x"
+                />
+                {running &&
+                  <FontAwesomeIcon
+                    className="text-green"
+                    icon="play"
+                  />}
+                {!running &&
+                  <FontAwesomeIcon
+                    className="text-red"
+                    icon="stop"
+                  />}
+              </Link>
+            </div>
+            <Link
+              className="text-xl"
+              to="/"
+            >
+              {'Hours Tracker'}
+            </Link>
+          </div>
+          <ul className="list-reset items-center hidden md:flex">
+            <li className="mr-3 lg:mr-6 uppercase text-sm">
+              {user.name}
+            </li>
+
+            <li className="mr-2 lg:mr-4">
+              <Tab
+                selected={pathname === '/' || pathname.length === 0}
+                to="/"
+              >
+                {'Home'}
+              </Tab>
+            </li>
+            <li className="mr-2 lg:mr-4">
+              <Tab
+                selected={pathname.startsWith('/entries')}
+                to="/entries"
+              >
+                {'Entries'}
+              </Tab>
+            </li>
+            <li className="mr-2 lg:mr-4">
+              <Tab
+                selected={pathname.startsWith('/clients')}
+                to="/clients"
+              >
+                {'Clients/Projects'}
+              </Tab>
+            </li>
+            <li className="mr-2 lg:mr-4">
+              <Tab
+                selected={pathname.startsWith('/profile')}
+                to="/profile"
+              >
+                {'Profile'}
+              </Tab>
+            </li>
+            <li>
+              <Tab
+                to="/sign-out"
+              >
+                {'Sign Out'}
+              </Tab>
+            </li>
+          </ul>
+          <ul className="list-reset flex items-center md:hidden">
+            <li>
+              <Link
+                className="block rounded py-1 px-3 hover:bg-blue-light"
+                to={{ ...location, hash: 'sidebar' }}
+              >
+                <FontAwesomeIcon
+                  icon="bars"
+                  size="2x"
+                />
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </Header>
     );
   }
   /* eslint-enable max-lines-per-function */
-
-  render() {
-    const { location, running, user, width } = this.props;
-    const { pathname } = location;
-
-    return (
-      <header className={styles.container}>
-        {width >= 768 && this._renderWideMenu(pathname, user)}
-        {width < 768 && this._renderMobileMenu(running, location)}
-      </header>
-    );
-  }
 }
 
 export default SignedInHeader;

@@ -1,6 +1,7 @@
 import posed, { PoseGroup } from 'react-pose';
 
 import Flash from './Flash';
+import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -17,7 +18,7 @@ const FlashWrapper = posed.div({
     delay: 250,
     opacity: 1,
     transition: {
-      default: { duration: 300 },
+      default: { duration: 250 },
       y: { damping: 15, stiffness: 1000, type: 'spring' }
     },
     y: 0
@@ -48,15 +49,17 @@ const Flashes = (props) => {
   });
 
   return (
-    <Container
-      className="fixed w-full"
-    >
-      <PoseGroup>
-        {flashChildren}
-      </PoseGroup>
-    </Container>
+    <Portal>
+      <Container
+        className="fixed w-full"
+      >
+        <PoseGroup>
+          {flashChildren}
+        </PoseGroup>
+      </Container>
+    </Portal>
   );
-}
+};
 
 Flashes.propTypes = {
   flashes: PropTypes.arrayOf(PropTypes.flash).isRequired

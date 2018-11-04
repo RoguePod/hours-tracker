@@ -1,11 +1,13 @@
-import { FieldError, FieldWarning } from 'javascripts/shared/components';
-import { Form, TextArea } from 'semantic-ui-react';
+import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import cx from 'classnames';
 
 class TextAreaField extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
+    id: PropTypes.string.isRequired,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -19,6 +21,7 @@ class TextAreaField extends React.Component {
   }
 
   static defaultProps = {
+    className: '',
     label: null
   }
 
@@ -41,28 +44,43 @@ class TextAreaField extends React.Component {
   }
 
   render() {
-    const { label, input, meta, ...rest } = this.props;
+    const { className, id, input, label, meta, ...rest } = this.props;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
     /* eslint-enable no-unneeded-ternary */
 
+    const textAreaClassName = cx(
+      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
+      'leading-tight focus:outline-none',
+      {
+        'border-grey-light': !isError,
+        'border-red': isError,
+        'focus:border-blue-light': !isError,
+        'focus:border-red': isError
+      },
+      className
+    );
+
     return (
-      <Form.Field
-        error={isError}
-      >
+      <div className="mb-4">
         {label &&
-          <label>
+          <Label
+            error={isError}
+            htmlFor={id}
+          >
             {label}
-          </label>}
-        <TextArea
+          </Label>}
+        <textarea
           {...input}
           {...rest}
+          className={textAreaClassName}
+          id={id}
           ref={this._handleRef}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />
-      </Form.Field>
+      </div>
     );
   }
 }
