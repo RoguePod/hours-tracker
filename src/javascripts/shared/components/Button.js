@@ -51,7 +51,7 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
-  className: '',
+  className: null,
   color: 'blue',
   loading: false,
   textColor: 'white',

@@ -85,9 +85,9 @@ class SignedInStack extends React.Component {
         <Header {...this.props} />
 
         <Content className="flex flex-1">
-          <div className="w-80 hidden md:block">
+          <div className="w-80 hidden md:flex bg-blue-lightest shadow-md flex-col">
             <StopWatch />
-            {/* <RecentsList /> */}
+            <RecentsList />
           </div>
           <div className="flex-1 container mx-auto">
             <Routes {...this.props} />

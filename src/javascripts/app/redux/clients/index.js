@@ -1,5 +1,11 @@
 import {
-  all, cancelled, fork, put, select, takeEvery, takeLatest
+  all,
+  cancelled,
+  fork,
+  put,
+  select,
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects';
 import { firestore, parseClient } from 'javascripts/globals';
 
@@ -176,22 +182,22 @@ export const selectQueriedProjects = createSelector(
 
     const searchResults = new Fuse(projects, options).search(query);
     const results       = {};
-    const groups        = _groupBy(searchResults, 'clientName');
+    const groups        = _groupBy(searchResults, 'clientId');
 
-    for (const clientName of Object.keys(groups)) {
-      const group = groups[clientName];
+    for (const clientId of Object.keys(groups)) {
+      const group = groups[clientId];
 
-      results[clientName] = {
-        name: clientName,
-        results: group.map((result) => {
+      results[clientId] = {
+        name: group[0].clientName,
+        projects: group.map((result) => {
           const projectRef = firestore
             .doc(`clients/${result.clientId}/projects/${result.projectId}`);
 
           return {
-            'data-client-ref': firestore.doc(`clients/${result.clientId}`),
-            'data-project-ref': projectRef,
-            key: result.projectId,
-            name: result.projectName
+            clientRef: firestore.doc(`clients/${result.clientId}`),
+            id: result.projectId,
+            name: result.projectName,
+            projectRef
           };
         })
       };

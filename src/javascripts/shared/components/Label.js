@@ -29,7 +29,7 @@ Label.propTypes = {
 };
 
 Label.defaultProps = {
-  className: '',
+  className: null,
   error: false
 };
 

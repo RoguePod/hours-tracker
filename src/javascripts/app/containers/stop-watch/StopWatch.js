@@ -7,6 +7,7 @@ import {
   updateEntry
 } from 'javascripts/app/redux/running';
 
+import { ActionButton } from 'javascripts/shared/components';
 import EntryForm from './EntryForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
@@ -15,7 +16,6 @@ import React from 'react';
 import Timer from './Timer';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import styles from './StopWatch.scss';
 
 class StopWatch extends React.Component {
   static propTypes = {
@@ -97,7 +97,7 @@ class StopWatch extends React.Component {
   _renderRunningButtons(entry) {
     return (
       <div className="flex">
-        <div className={styles.timer}>
+        <div>
           <Timer {...this.props} />
         </div>
 
@@ -143,15 +143,15 @@ class StopWatch extends React.Component {
 
   _renderNotRunningButtons() {
     return (
-      <div className="flex">
-        <div
-          className="text-green"
+      <div className="flex justify-center">
+        <ActionButton
           onClick={this._handleStart}
+          title="Start Timer"
         >
           <FontAwesomeIcon
             icon="play"
           />
-        </div>
+        </ActionButton>
       </div>
     );
   }
@@ -160,21 +160,21 @@ class StopWatch extends React.Component {
     const { entry, fetching, onUpdateEntry, ready } = this.props;
 
     return (
-      <div>
+      <div className="p-4">
         {!ready &&
           <div>
             {'Loading Stop Watch...'}
           </div>}
         {ready && entry.id && this._renderRunningButtons(entry)}
         {ready && !entry.id && this._renderNotRunningButtons()}
-        <div className={styles.form}>
+        <div>
           <EntryForm
             initialValues={entry}
             onUpdateEntry={onUpdateEntry}
           />
         </div>
         {fetching &&
-          <div className={styles.flash}>
+          <div>
             <FontAwesomeIcon
               icon="clock"
               pulse

@@ -4,6 +4,7 @@ import {
   selectQueriedProjects
 } from 'javascripts/app/redux/clients';
 
+import ClientDropdown from './ClientDropdown';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
@@ -47,8 +48,6 @@ class ProjectField extends React.Component {
     this._handleChange = this._handleChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
     this._handleFocus = this._handleFocus.bind(this);
-    this._handleSearchChange = this._handleSearchChange.bind(this);
-    this._handleRenderResult = this._handleRenderResult.bind(this);
     this._findValue = this._findValue.bind(this);
   }
 
@@ -69,7 +68,7 @@ class ProjectField extends React.Component {
 
   timeout = null
 
-  _handleChange(event, data) {
+  _handleChange(project) {
     const { input: { onChange }, onProjectChange } = this.props;
 
     if (this.timeout) {
@@ -77,30 +76,13 @@ class ProjectField extends React.Component {
       this.timeout = null;
     }
 
-    onProjectChange(
-      data.result['data-client-ref'],
-      data.result['data-project-ref']
-    );
+    onProjectChange(project.clientRef, project.projectRef);
     onChange('');
     this.setState({ focused: false });
   }
 
-  _handleSearchChange(event, { value }) {
-    const { input: { onChange } } = this.props;
-
-    onChange(value);
-  }
-
-  _handleRenderResult({ name }) {
-    return (
-      <div>
-        {name}
-      </div>
-    );
-  }
-
-  _handleBlur(event, { value }) {
-    const { input: { onChange }, onProjectChange } = this.props;
+  _handleBlur() {
+    const { input: { onChange, value }, onProjectChange } = this.props;
 
     this.timeout = setTimeout(() => {
       if (value.length === 0) {
@@ -145,18 +127,18 @@ class ProjectField extends React.Component {
   }
 
   render() {
-    const { className, id, input, label, meta } = this.props;
-    // const { focused } = this.state;
+    const { className, id, input, label, meta, ready, results } = this.props;
+    const { focused } = this.state;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
     /* eslint-enable no-unneeded-ternary */
 
-    // let { value } = input;
+    let { value } = input;
 
-    // if (!focused) {
-    //   value = this._findValue();
-    // }
+    if (!focused) {
+      value = this._findValue();
+    }
 
     const inputClassName = cx(
       'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
@@ -171,7 +153,7 @@ class ProjectField extends React.Component {
     );
 
     return (
-      <div className="mb-4">
+      <div className="mb-4 relative">
         {label &&
           <Label
             error={isError}
@@ -182,8 +164,15 @@ class ProjectField extends React.Component {
         <input
           {...input}
           className={inputClassName}
+          disabled={!ready}
           id={id}
-          ref={this._handleRef}
+          onBlur={this._handleBlur}
+          onFocus={this._handleFocus}
+          value={value}
+        />
+        <ClientDropdown
+          clients={results}
+          onProjectClick={this._handleChange}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />

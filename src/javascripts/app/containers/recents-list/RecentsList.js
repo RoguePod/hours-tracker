@@ -1,15 +1,15 @@
-import { Dimmer, Loader, Segment } from 'semantic-ui-react';
 import {
-  selectFilteredRecents, subscribeRecents
+  selectFilteredRecents,
+  subscribeRecents
 } from 'javascripts/app/redux/recents';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import RecentRow from './RecentRow';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { startEntry } from 'javascripts/app/redux/running';
-import styles from './RecentsList.scss';
 
 class RecentsList extends React.Component {
   static propTypes = {
@@ -48,26 +48,23 @@ class RecentsList extends React.Component {
     });
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={!ready}
-          inverted
-        >
-          <Loader>
-            {'Loading Recents...'}
-          </Loader>
-        </Dimmer>
-        <div className={styles.bar}>
+      <React.Fragment>
+        <div className="bg-blue text-white p-4 font-bold">
           {'Recent Projects'}
         </div>
-        {ready &&
-          <div className={styles.list}>
-            {rows}
+        {!ready &&
+          <div className="flex flex-col items-center justify-center flex-1 text-blue">
+            <FontAwesomeIcon
+              icon="clock"
+              pulse
+              size="3x"
+            />
+            <div className="pt-2">
+              {'Loading Recents...'}
+            </div>
           </div>}
-      </Segment>
+        {ready && rows}
+      </React.Fragment>
     );
   }
 }

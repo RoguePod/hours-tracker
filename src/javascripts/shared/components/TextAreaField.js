@@ -21,7 +21,7 @@ class TextAreaField extends React.Component {
   }
 
   static defaultProps = {
-    className: '',
+    className: null,
     label: null
   }
 

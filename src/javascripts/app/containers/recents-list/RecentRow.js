@@ -1,10 +1,17 @@
-import { Button, Popup } from 'semantic-ui-react';
-
+import { ActionButton } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
-import styles from './RecentRow.scss';
+import styled from 'styled-components';
+
+const Ellipsis = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+`;
 
 class RecentRow extends React.Component {
   static propTypes = {
@@ -48,34 +55,28 @@ class RecentRow extends React.Component {
     const { recent } = this.props;
 
     return (
-      <div className={styles.container}>
-        <div className={styles.inner}>
-          <div className={styles.name}>
-            <div className={styles.client}>
+      <div className="border-b border-grey p-4">
+        <div className="flex items-center">
+          <div className="flex-1 pr-4">
+            <Ellipsis>
               <em>
                 <small>
                   {recent.client.name}
                 </small>
               </em>
-            </div>
-            <div className={styles.project}>
+            </Ellipsis>
+            <Ellipsis>
               {recent.project.name}
-            </div>
+            </Ellipsis>
           </div>
-          <Button.Group>
-            <Popup
-              content="Start"
-              position="top center"
-              size="small"
-              trigger={
-                <Button
-                  color="green"
-                  icon="play"
-                  onClick={this._handleStart}
-                />
-              }
+          <ActionButton
+            onClick={this._handleStart}
+            title="Start Timer"
+          >
+            <FontAwesomeIcon
+              icon="play"
             />
-          </Button.Group>
+          </ActionButton>
         </div>
       </div>
     );
