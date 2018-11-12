@@ -39,7 +39,7 @@ class ProjectRow extends React.Component {
 
     let description = '';
 
-    if (found && Number(user.autoloadLastDescription) === 1) {
+    if (found && user.autoloadLastDescription) {
       description = _get(found, 'description', '');
     }
 

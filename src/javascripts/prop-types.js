@@ -58,7 +58,7 @@ const propTypes = {
     params: PropTypes.object
   }),
   user: PropTypes.shape({
-    autoloadLastDescription: PropTypes.oneOf([0, 1]),
+    autoloadLastDescription: PropTypes.bool,
     name: PropTypes.string,
     recentProjectsListSize: PropTypes.string,
     recentProjectsSort: PropTypes.oneOf(

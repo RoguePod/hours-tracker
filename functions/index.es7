@@ -103,7 +103,7 @@ exports.createUserProfile = functions.auth.user()
     admin.firestore()
       .doc(`users/${user.uid}`)
       .set({
-        autoloadLastDescription: 1,
+        autoloadLastDescription: true,
         entriesTab: '#filter',
         name: '',
         recentProjectsListSize: '10',

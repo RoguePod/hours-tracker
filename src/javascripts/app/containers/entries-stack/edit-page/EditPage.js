@@ -1,13 +1,12 @@
-import { Dimmer, Header, Loader, Segment } from 'semantic-ui-react';
 import { getEntry, updateEntry } from 'javascripts/app/redux/entry';
 
 import EntryForm from './EntryForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import styles from './EditPage.scss';
 
 class EntryEditPage extends React.Component {
   static propTypes = {
@@ -83,36 +82,26 @@ class EntryEditPage extends React.Component {
     const { initialValues, isRequired } = this._getInitialValuesAndIsRequired();
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
+      <div className="min-w-300 relative">
         {entry &&
-          <div>
-            <Header
-              as="h1"
-              color="blue"
-            >
+          <React.Fragment>
+            <h1 className="text-blue">
               {'Edit Entry'}
-            </Header>
-            <Segment>
+            </h1>
+            <div className="shadow rounded border p-4">
               <EntryForm
                 initialValues={initialValues}
                 onSaveEntry={onUpdateEntry}
                 running={isRequired}
                 timezone={entry.timezone}
               />
-            </Segment>
-          </div>}
-      </Segment>
+            </div>
+          </React.Fragment>}
+        <Spinner
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      </div>
     );
   }
 }

@@ -1,12 +1,9 @@
-import { Header, Segment } from 'semantic-ui-react';
-
 import PasswordForm from './PasswordForm';
 import ProfileForm from './ProfileForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import styles from './ProfilePage.scss';
 import { updatePassword } from 'javascripts/app/redux/passwords';
 import { updateUser } from 'javascripts/app/redux/user';
 
@@ -45,36 +42,27 @@ class ProfilePage extends React.Component {
     const { onUpdatePassword, onUpdateUser, user } = this.props;
 
     return (
-      <div className={styles.container}>
-        <Header
-          as="h1"
-          color="blue"
-        >
+      <div>
+        <h1 className="text-blue mb-2">
           {'Profile'}
-        </Header>
-        <Segment>
-          <Header
-            as="h3"
-            color="blue"
-          >
+        </h1>
+        <div className="border rounded shadow mb-4 p-4">
+          <h3 className="text-blue mb-2">
             {'Settings'}
-          </Header>
+          </h3>
           <ProfileForm
             initialValues={this._getInitialValues(user)}
             onUpdateUser={onUpdateUser}
           />
-        </Segment>
-        <Segment>
-          <Header
-            as="h3"
-            color="blue"
-          >
+        </div>
+        <div className="border rounded shadow p-4">
+          <h3 className="text-blue mb-2">
             {'Password'}
-          </Header>
+          </h3>
           <PasswordForm
             onUpdatePassword={onUpdatePassword}
           />
-        </Segment>
+        </div>
       </div>
     );
   }

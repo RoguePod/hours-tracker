@@ -1,8 +1,11 @@
-import { Field, reduxForm } from 'redux-form';
-import { Form, Grid } from 'semantic-ui-react';
 import {
-  FormError, SelectField, TextAreaField, TimeField
+  Button,
+  FormError,
+  SelectField,
+  TextAreaField,
+  TimeField
 } from 'javascripts/shared/components';
+import { Field, reduxForm } from 'redux-form';
 import { isParsedTime, isRequired, isStoppedAt } from 'javascripts/validators';
 
 import { ProjectField } from 'javascripts/app/components';
@@ -96,96 +99,84 @@ class EntryForm extends React.Component {
     });
 
     return (
-      <Form
+      <form
         noValidate
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Grid
-          columns="equal"
-          stackable
+        <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              autoFocus
+              component={TimeField}
+              disabled={submitting}
+              id="startedAt"
+              label="Started"
+              name="startedAt"
+              timezone={timezone}
+              type="text"
+              validate={[isRequired, isParsedTime]}
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-3">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              component={TimeField}
+              disabled={submitting}
+              label="Stopped"
+              name="stoppedAt"
+              timezone={timezone}
+              type="text"
+              validate={stoppedAtValidation}
+            />
+          </div>
+        </div>
+        <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+            <Field
+              component={ProjectField}
+              disabled={submitting}
+              label="Project"
+              name="projectName"
+              nameClient="clientRef"
+              nameProject="projectRef"
+              onProjectChange={this._handleProjectChange}
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-3">
+            <Field
+              component={SelectField}
+              disabled={submitting}
+              label="Timezone"
+              name="timezone"
+              options={timezoneOptions}
+              validate={[isRequired]}
+            />
+          </div>
+        </div>
+        <Field
+          autoCapitalize="sentences"
+          autoCorrect="on"
+          autoHeight
+          component={TextAreaField}
+          disabled={submitting}
+          label="Description"
+          name="description"
+          rows={1}
+        />
+        <Button
+          className="py-2"
+          color="green"
+          disabled={submitting}
+          loading={submitting}
+          type="submit"
         >
-          <Grid.Row>
-            <Grid.Column>
-              <Field
-                autoCapitalize="none"
-                autoCorrect="off"
-                autoFocus
-                component={TimeField}
-                disabled={submitting}
-                label="Started"
-                name="startedAt"
-                timezone={timezone}
-                type="text"
-                validate={[isRequired, isParsedTime]}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Field
-                autoCapitalize="none"
-                autoCorrect="off"
-                component={TimeField}
-                disabled={submitting}
-                label="Stopped"
-                name="stoppedAt"
-                timezone={timezone}
-                type="text"
-                validate={stoppedAtValidation}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Field
-                component={ProjectField}
-                disabled={submitting}
-                label="Project"
-                name="projectName"
-                nameClient="clientRef"
-                nameProject="projectRef"
-                onProjectChange={this._handleProjectChange}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Field
-                component={SelectField}
-                disabled={submitting}
-                label="Timezone"
-                name="timezone"
-                options={timezoneOptions}
-                validate={[isRequired]}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Field
-                autoCapitalize="sentences"
-                autoCorrect="on"
-                autoHeight
-                component={TextAreaField}
-                disabled={submitting}
-                label="Description"
-                name="description"
-                rows={1}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Form.Button
-                color="green"
-                disabled={submitting}
-                fluid
-                loading={submitting}
-                size="big"
-              >
-                {'Save'}
-              </Form.Button>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Form>
+          {submitting ? 'Saving...' : 'Save'}
+        </Button>
+      </form>
     );
   }
   /* eslint-enable max-lines-per-function */

@@ -28,15 +28,11 @@ class InputField extends React.Component {
   constructor(props) {
     super(props);
 
-    this._handleRef = this._handleRef.bind(this);
+    this.element = React.createRef();
   }
 
   shouldComponentUpdate() {
     return true;
-  }
-
-  _handleRef(element) {
-    this.element = element;
   }
 
   focus() {
@@ -76,7 +72,7 @@ class InputField extends React.Component {
           {...rest}
           className={inputClassName}
           id={id}
-          ref={this._handleRef}
+          ref={this.element}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />

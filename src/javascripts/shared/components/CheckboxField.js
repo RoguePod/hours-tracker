@@ -1,18 +1,18 @@
-import { Checkbox, Form } from 'semantic-ui-react';
+import { FieldError, FieldWarning } from 'javascripts/shared/components';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import cx from 'classnames';
 
 class CheckboxField extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
-      /* eslint-disable react/forbid-prop-types */
-      value: PropTypes.any
-      /* eslint-enable react/forbid-prop-types */
+      value: PropTypes.bool
     }).isRequired,
-    label: PropTypes.node,
+    label: PropTypes.node.isRequired,
     meta: PropTypes.shape({
       errpr: PropTypes.string,
       touched: PropTypes.bool
@@ -20,7 +20,7 @@ class CheckboxField extends React.Component {
   }
 
   static defaultProps = {
-    label: null
+    className: ''
   }
 
   constructor(props) {
@@ -40,18 +40,43 @@ class CheckboxField extends React.Component {
   }
 
   render() {
-    const { input, meta, ...rest } = this.props;
+    const { className, input, label, meta, ...rest } = this.props;
+
+    /* eslint-disable no-unneeded-ternary */
+    const isError = meta.touched && meta.error ? true : false;
+    /* eslint-enable no-unneeded-ternary */
+
+    const inputClassName = cx(
+      className
+    );
+
+    const labelClassName = cx(
+      'text-grey-darker ml-2',
+      {
+        'text-grey-darker': !isError,
+        'text-red': isError
+      }
+    );
 
     return (
-      <Form.Field
-        error={meta.error && meta.dirty}
-      >
-        <Checkbox
-          {...rest}
-          checked={Boolean(input.value)}
-          onChange={this._handleChange}
-        />
-      </Form.Field>
+      <div className="mb-4">
+        <label className="block flex flex-row items-center">
+          <input
+            {...input}
+            {...rest}
+            checked={input.value}
+            className={inputClassName}
+            type="checkbox"
+          />
+          <div
+            className={labelClassName}
+          >
+            {label}
+          </div>
+        </label>
+        <FieldError {...meta} />
+        <FieldWarning {...meta} />
+      </div>
     );
   }
 }

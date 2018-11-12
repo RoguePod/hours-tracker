@@ -40,7 +40,7 @@ class RecentRow extends React.Component {
 
     let description = '';
 
-    if (Number(user.autoloadLastDescription) === 1) {
+    if (user.autoloadLastDescription) {
       description = _get(recent, 'description', '');
     }
 

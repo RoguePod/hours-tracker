@@ -172,7 +172,7 @@ class WeekDropdown extends React.Component {
             icon="caret-left"
           />
         </button>
-        <div className="block relative">
+        <div className="relative">
           <select
             className={selectClasses}
             onChange={this._handleChange}

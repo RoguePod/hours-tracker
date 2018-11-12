@@ -181,24 +181,18 @@ class ProjectsFooter extends React.Component {
             </strong>
           </th>
           {totalCells}
-          <th
-            className="w-collapsing"
-          >
+          <th className="w-collapsing">
             <strong className="text-blue">
               {weekTotal.toFixed(1)}
             </strong>
           </th>
-          <th
-            className="w-collapsing bg-blue-lighter"
-          >
+          <th className="w-collapsing bg-blue-lighter">
             <strong className="text-blue">
               {monthTotal.toFixed(1)}
             </strong>
           </th>
           {diffMonth &&
-            <th
-              className="w-collapsing bg-blue-lighter"
-            >
+            <th className="w-collapsing bg-blue-lighter">
               <strong className="text-blue">
                 {otherTotal.toFixed(1)}
               </strong>

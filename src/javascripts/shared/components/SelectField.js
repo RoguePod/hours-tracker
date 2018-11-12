@@ -1,21 +1,31 @@
-import { Dropdown, Form } from 'semantic-ui-react';
-import { FieldError, FieldWarning } from 'javascripts/shared/components';
+import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import cx from 'classnames';
 
 class SelectField extends React.Component {
   static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    id: PropTypes.string.isRequired,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
     }).isRequired,
-    label: PropTypes.string.isRequired,
+    label: PropTypes.string,
     meta: PropTypes.shape({
       errpr: PropTypes.string,
       touched: PropTypes.bool
     }).isRequired
+  }
+
+  static defaultProps = {
+    children: null,
+    className: null,
+    label: null
   }
 
   constructor(props) {
@@ -35,29 +45,55 @@ class SelectField extends React.Component {
   }
 
   render() {
-    const { label, input, meta, ...rest } = this.props;
+    const { children, className, label, id, input, meta, ...rest } = this.props;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
     /* eslint-enable no-unneeded-ternary */
 
+    const inputClassName = cx(
+      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
+      'leading-tight focus:outline-none bg-white cursor-pointer h-full',
+      {
+        'border-grey-light': !isError,
+        'border-red': isError,
+        'focus:border-blue-light': !isError,
+        'focus:border-red': isError
+      },
+      className
+    );
+
+    const arrowClasses =
+      'pointer-events-none absolute pin-y pin-r flex items-center px-4';
+
     return (
-      <Form.Field>
+      <div className="mb-4">
         {label &&
-          <label>
+          <Label
+            error={isError}
+            htmlFor={id}
+          >
             {label}
-          </label>}
-        <Dropdown
-          {...input}
-          {...rest}
-          error={isError}
-          fluid
-          onChange={this._handleChange}
-          selection
-        />
+          </Label>}
+
+        <div className="relative">
+          <select
+            {...input}
+            {...rest}
+            className={inputClassName}
+            id={id}
+          >
+            {children}
+          </select>
+          <div className={arrowClasses}>
+            <FontAwesomeIcon
+              icon="caret-down"
+            />
+          </div>
+        </div>
         <FieldError {...meta} />
         <FieldWarning {...meta} />
-      </Form.Field>
+      </div>
     );
   }
 }

@@ -1,9 +1,12 @@
 import {
-  CheckboxField, FormError, InputField, SelectField
+  Button,
+  CheckboxField,
+  FormError,
+  InputField,
+  SelectField
 } from 'javascripts/shared/components';
 import { Field, reduxForm } from 'redux-form';
 
-import { Form } from 'semantic-ui-react';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { isRequired } from 'javascripts/validators';
@@ -39,28 +42,41 @@ class ProfileForm extends React.Component {
     });
   }
 
+  _convertToOptions(values) {
+    return values.map((value) => {
+      return (
+        <option
+          key={value.value}
+          value={value.value}
+        >
+          {value.text}
+        </option>
+      );
+    });
+  }
+
   _getRecentProjectsSortOptions() {
-    return [
+    return this._convertToOptions([
       { text: 'Recent', value: 'startedAt' },
       { text: 'Clients', value: 'client.name' },
       { text: 'Projects', value: 'project.name' }
-    ];
+    ]);
   }
 
   _getTimezoneOptions() {
-    return moment.tz.names().map((timezone) => {
+    return this._convertToOptions(moment.tz.names().map((timezone) => {
       return {
         text: timezone,
         value: timezone
       };
-    });
+    }));
   }
 
   _getEntriesTabOptions() {
-    return [
+    return this._convertToOptions([
       { text: 'Filter', value: '#filter' },
       { text: 'New Entry', value: '#new' }
-    ];
+    ]);
   }
 
   /* eslint-disable max-lines-per-function */
@@ -68,7 +84,7 @@ class ProfileForm extends React.Component {
     const { error, handleSubmit, submitting } = this.props;
 
     return (
-      <Form
+      <form
         noValidate
         onSubmit={handleSubmit(this._handleSubmit)}
       >
@@ -78,6 +94,7 @@ class ProfileForm extends React.Component {
           autoCorrect="off"
           component={InputField}
           disabled={submitting}
+          id="name"
           label="Name"
           name="name"
           type="text"
@@ -88,6 +105,7 @@ class ProfileForm extends React.Component {
           autoCorrect="off"
           component={InputField}
           disabled={submitting}
+          id="recentProjectsListSize"
           label="Recent Projects List Size"
           name="recentProjectsListSize"
           type="number"
@@ -96,43 +114,58 @@ class ProfileForm extends React.Component {
         <Field
           component={SelectField}
           disabled={submitting}
+          id="recentProjectsSort"
           label="Recent Projects Sort"
           name="recentProjectsSort"
-          options={this._getRecentProjectsSortOptions()}
           validate={[isRequired]}
-        />
+        >
+          <option value="">
+            {'--Select--'}
+          </option>
+          {this._getRecentProjectsSortOptions()}
+        </Field>
         <Field
           component={SelectField}
           disabled={submitting}
+          id="entriesTab"
           label="Default Entries Tab"
           name="entriesTab"
-          options={this._getEntriesTabOptions()}
           validate={[isRequired]}
-        />
+        >
+          <option value="">
+            {'--Select--'}
+          </option>
+          {this._getEntriesTabOptions()}
+        </Field>
         <Field
           component={SelectField}
           disabled={submitting}
+          id="timezone"
           label="Timezone"
           name="timezone"
-          options={this._getTimezoneOptions()}
           validate={[isRequired]}
-        />
+        >
+          <option value="">
+            {'--Select--'}
+          </option>
+          {this._getTimezoneOptions()}
+        </Field>
         <Field
           component={CheckboxField}
           disabled={submitting}
           label="Autoload Last Description"
           name="autoloadLastDescription"
         />
-        <Form.Button
+        <Button
+          className="py-2"
           color="green"
           disabled={submitting}
-          fluid
           loading={submitting}
-          size="big"
+          type="submit"
         >
-          {'Save'}
-        </Form.Button>
-      </Form>
+          {submitting ? 'Submitting...' : 'Submit'}
+        </Button>
+      </form>
     );
   }
   /* eslint-enable max-lines-per-function */
