@@ -15,21 +15,23 @@ const SignedOutStack = (props) => {
   }
 
   return (
-    <div className="max-w-sm mx-auto py-4 px-2">
-      <header
-        className="text-blue flex flex-row items-center justify-center"
-      >
-        <FontAwesomeIcon
-          icon="clock"
-          size="3x"
-        />
-        <h1 className="pl-3">
-          {'Hours Tracker'}
-        </h1>
-      </header>
+    <div>
+      <div className="max-w-sm mx-auto py-4 px-2">
+        <header
+          className="text-blue flex flex-row items-center justify-center"
+        >
+          <FontAwesomeIcon
+            icon="clock"
+            size="3x"
+          />
+          <h1 className="pl-3">
+            {'Hours Tracker'}
+          </h1>
+        </header>
 
-      <div className="pt-6">
-        <Routes {...props} />
+        <div className="pt-6">
+          <Routes {...props} />
+        </div>
       </div>
     </div>
   );

@@ -15,6 +15,7 @@ export Link from './Link';
 export Pagination from './Pagination';
 export Portal from './Portal';
 export SelectField from './SelectField';
+export Spinner from './Spinner';
 export TextAreaField from './TextAreaField';
 export TimeField from './TimeField';
 export Tooltip from './Tooltip';

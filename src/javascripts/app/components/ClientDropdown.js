@@ -54,9 +54,12 @@ const ClientDropdown = ({ clients, ...rest }) => {
     );
   });
 
+  const dropdownClasses =
+    'bg-white rounded absolute pin-x shadow-lg z-10 overflow-hidden mt-2';
+
   return (
     <Dropdown
-      className="bg-white rounded absolute pin-x shadow-lg z-10 overflow-hidden"
+      className={dropdownClasses}
       pose={keys.length > 0 ? 'show' : 'hide'}
     >
       {rows}

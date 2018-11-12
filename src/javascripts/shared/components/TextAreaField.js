@@ -7,6 +7,7 @@ import cx from 'classnames';
 class TextAreaField extends React.Component {
   static propTypes = {
     className: PropTypes.string,
+    containerClassName: PropTypes.string,
     id: PropTypes.string.isRequired,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -22,6 +23,7 @@ class TextAreaField extends React.Component {
 
   static defaultProps = {
     className: null,
+    containerClassName: 'mb-4',
     label: null
   }
 
@@ -44,7 +46,9 @@ class TextAreaField extends React.Component {
   }
 
   render() {
-    const { className, id, input, label, meta, ...rest } = this.props;
+    const {
+      className, containerClassName, id, input, label, meta, ...rest
+    } = this.props;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
@@ -63,7 +67,7 @@ class TextAreaField extends React.Component {
     );
 
     return (
-      <div className="mb-4">
+      <div className={containerClassName}>
         {label &&
           <Label
             error={isError}

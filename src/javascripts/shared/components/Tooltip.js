@@ -1,3 +1,4 @@
+import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
@@ -10,7 +11,22 @@ const FadeIn = posed.div({
 });
 
 const Title = styled(FadeIn)`
-  bottom: 100%;
+  transform: translate(-50%, -100%);
+
+  &::after {
+    border: solid transparent;
+    border-color: rgba(136, 183, 213, 0);
+    border-top-color: #22292f;
+    border-width: 10px;
+    content: ' ';
+    height: 0;
+    left: 50%;
+    margin-left: -10px;
+    pointer-events: none;
+    position: absolute;
+    top: 95%;
+    width: 0;
+  }
 `;
 
 class Tooltip extends React.Component {
@@ -24,6 +40,8 @@ class Tooltip extends React.Component {
 
     this._handleMouseOut = this._handleMouseOut.bind(this);
     this._handleMouseOver = this._handleMouseOver.bind(this);
+
+    this.element = React.createRef();
   }
 
   state = {
@@ -60,23 +78,40 @@ class Tooltip extends React.Component {
     const { hover, show } = this.state;
 
     const titleClasses = cx(
-      'absolute bg-black text-white p-2 rounded text-sm z-10', { hidden: !show }
+      'fixed bg-black text-white p-2 rounded text-sm z-20 shadow-md',
+      { hidden: !show }
     );
 
+    let tooltipStyles = {};
+    if (show && this.element) {
+      const rect = this.element.current.getBoundingClientRect();
+
+      tooltipStyles = {
+        left: rect.left + (rect.width / 2),
+        top: rect.top - 10
+      };
+    }
+
     return (
-      <div
-        className="relative"
-        onMouseOut={this._handleMouseOut}
-        onMouseOver={this._handleMouseOver}
-      >
-        <Title
-          className={titleClasses}
-          pose={hover ? 'show' : 'hide'}
+      <React.Fragment>
+        <Portal>
+          {show &&
+            <Title
+              className={titleClasses}
+              pose={hover ? 'show' : 'hide'}
+              style={tooltipStyles}
+            >
+              {title}
+            </Title>}
+        </Portal>
+        <div
+          onMouseOut={this._handleMouseOut}
+          onMouseOver={this._handleMouseOver}
+          ref={this.element}
         >
-          {title}
-        </Title>
-        {children}
-      </div>
+          {children}
+        </div>
+      </React.Fragment>
     );
   }
 }

@@ -1,9 +1,7 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Table } from 'semantic-ui-react';
 import _times from 'lodash/times';
 import moment from 'moment-timezone';
-import styles from './UserRow.scss';
 
 class UsersRow extends React.Component {
   static propTypes = {
@@ -68,12 +66,12 @@ class UsersRow extends React.Component {
       weekTotal += dayTotal;
 
       cells.push(
-        <Table.Cell
-          collapsing
+        <td
+          className="w-collapsing"
           key={day}
         >
           {dayTotal.toFixed(1)}
-        </Table.Cell>
+        </td>
       );
     });
 
@@ -94,30 +92,22 @@ class UsersRow extends React.Component {
     }
 
     return (
-      <Table.Row>
-        <Table.Cell>
+      <tr>
+        <td>
           {user.name}
-        </Table.Cell>
+        </td>
         {cells}
-        <Table.Cell
-          collapsing
-        >
+        <td className="w-collapsing">
           {weekTotal.toFixed(1)}
-        </Table.Cell>
-        <Table.Cell
-          className={styles.total}
-          collapsing
-        >
+        </td>
+        <td className="w-collapsing bg-blue-lighter">
           {monthTotal.toFixed(1)}
-        </Table.Cell>
+        </td>
         {diffMonth &&
-          <Table.Cell
-            className={styles.total}
-            collapsing
-          >
+          <td className="w-collapsing bg-blue-lighter">
             {otherTotal.toFixed(1)}
-          </Table.Cell>}
-      </Table.Row>
+          </td>}
+      </tr>
     );
   }
 }

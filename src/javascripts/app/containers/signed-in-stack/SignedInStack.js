@@ -1,104 +1,74 @@
-import { RecentsList, StopWatch } from 'javascripts/app/containers';
+import {
+  ClientsStack,
+  DashboardPage,
+  EntriesStack,
+  ProfilePage
+} from 'javascripts/app/containers';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import Header from './Header';
+import LeftSidebar from './LeftSidebar';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import Routes from './Routes';
-import Sidebar from './Sidebar';
-import _isEqual from 'lodash/isEqual';
+import RightSidebar from './RightSidebar';
 import { connect } from 'react-redux';
-import cx from 'classnames';
-import { history } from 'javascripts/app/redux/store';
 import styled from 'styled-components';
 
 const Container = styled.div`
-  height: auto;
-  min-height: 100%;
+  margin-top: 62px;
 `;
 
 const Content = styled.div`
-  padding-top: 62px;
+  max-width: 1120px;
 `;
 
-class SignedInStack extends React.Component {
-  static propTypes = {
-    auth: PropTypes.auth,
-    location: PropTypes.routerLocation.isRequired,
-    running: PropTypes.entry,
-    user: PropTypes.user.isRequired,
-    width: PropTypes.number.isRequired
+const SignedInStack = (props) => {
+  const { auth } = props;
+
+  if (!auth) {
+    return <Redirect to="/sign-in" />;
   }
 
-  static defaultProps = {
-    auth: null,
-    running: null
-  }
-
-  constructor(props) {
-    super(props);
-
-    this._handleClose = this._handleClose.bind(this);
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const { auth, location, running, user, width } = this.props;
-
-    return (
-      width !== nextProps.width ||
-      user.name !== nextProps.user.name ||
-      running !== nextProps.running ||
-      !_isEqual(location, nextProps.location) ||
-      !_isEqual(auth, nextProps.auth)
-    );
-  }
-
-  _handleClose() {
-    const { location } = this.props;
-
-    history.push({ ...location, hash: null });
-  }
-
-  render() {
-    const { auth, location, width } = this.props;
-
-    if (!auth) {
-      return <Redirect to="/sign-in" />;
-    }
-
-    // const hideStopWatch = width < 768;
-
-    // const overlayClasses = cx(
-    //   styles.overlay, { [styles.overlayOpen]: hash.match(/stopwatch/u) }
-    // );
-
-    // let sliderClasses = styles.stopwatch;
-
-    // if (hideStopWatch) {
-    //   sliderClasses = cx(
-    //     styles.slider, { [styles.sliderOpen]: hash.match(/stopwatch/u) }
-    //   );
-    // }
-
-    return (
-      <Container className="flex flex-col">
-        <Header {...this.props} />
-
-        <Content className="flex flex-1">
-          <div className="w-80 hidden md:flex bg-blue-lightest shadow-md flex-col">
-            <StopWatch />
-            <RecentsList />
-          </div>
-          <div className="flex-1 container mx-auto">
-            <Routes {...this.props} />
-          </div>
+  return (
+    <React.Fragment>
+      <Container className="md:ml-64 transition relative overflow-auto">
+        <Content className="mx-auto">
+          <Switch>
+            <Route
+              component={ClientsStack}
+              path="/clients"
+            />
+            <Route
+              component={EntriesStack}
+              path="/entries"
+            />
+            <Route
+              component={ProfilePage}
+              path="/profile"
+            />
+            <Route
+              component={DashboardPage}
+              exact
+              path="/"
+            />
+          </Switch>
         </Content>
-
-        <Sidebar {...this.props} />
       </Container>
-    );
-  }
-}
+
+      <Header {...props} />
+      <LeftSidebar {...props} />
+      <RightSidebar {...props} />
+    </React.Fragment>
+  );
+};
+
+SignedInStack.propTypes = {
+  auth: PropTypes.auth
+};
+
+SignedInStack.defaultProps = {
+  auth: null
+};
 
 const props = (state) => {
   return {

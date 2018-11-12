@@ -1,11 +1,9 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Table } from 'semantic-ui-react';
 import UserRow from './UserRow';
 import UsersFooter from './UsersFooter';
 import _times from 'lodash/times';
 import moment from 'moment-timezone';
-import styles from './UsersTable.scss';
 
 const _renderRows = (users, startMonth, endMonth, props) => {
   return users.map((user) => {
@@ -28,14 +26,16 @@ const _renderHeaderCells = (date, timezone) => {
       .add(index, 'd')
       .format('ddd');
     headerCells.push(
-      <Table.HeaderCell
-        collapsing
+      <th
+        className="w-collapsing"
         key={dow}
       >
         {dow}
-      </Table.HeaderCell>
+      </th>
     );
   });
+
+  return headerCells;
 };
 
 const UsersTable = (props) => {
@@ -45,45 +45,35 @@ const UsersTable = (props) => {
   const endMonth   = moment.tz(date, timezone).add(6, 'd');
 
   return (
-    <div className={styles.container}>
-      <Table
-        celled
-        selectable
-        unstackable
-      >
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>
+    <div className="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>
               {'User'}
-            </Table.HeaderCell>
+            </th>
             {_renderHeaderCells(date, timezone)}
-            <Table.HeaderCell collapsing>
+            <th className="w-collapsing">
               {'Totals'}
-            </Table.HeaderCell>
-            <Table.HeaderCell
-              className={styles.total}
-              collapsing
-            >
+            </th>
+            <th className="bg-blue text-white w-collapsing">
               {startMonth.format('MMM')}
-            </Table.HeaderCell>
+            </th>
             {startMonth.format('MMM') !== endMonth.format('MMM') &&
-              <Table.HeaderCell
-                className={styles.total}
-                collapsing
-              >
+              <th className="bg-blue text-white w-collapsing">
                 {endMonth.format('MMM')}
-              </Table.HeaderCell>}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
+              </th>}
+          </tr>
+        </thead>
+        <tbody>
           {_renderRows(users, startMonth, endMonth, props)}
-        </Table.Body>
+        </tbody>
         <UsersFooter
           {...props}
           endMonth={endMonth}
           startMonth={startMonth}
         />
-      </Table>
+      </table>
     </div>
   );
 };

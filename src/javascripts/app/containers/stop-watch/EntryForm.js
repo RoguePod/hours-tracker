@@ -43,7 +43,7 @@ class EntryForm extends React.Component {
 
     this.timeout = setTimeout(() => {
       onUpdateEntry({ description: value });
-    }, 250);
+    }, 1000);
   }
 
   render() {
@@ -67,6 +67,7 @@ class EntryForm extends React.Component {
           autoCapitalize="sentences"
           autoCorrect="on"
           component={TextAreaField}
+          containerClassName=""
           id="description"
           label="Description"
           name="description"

@@ -71,7 +71,7 @@ class RecentRow extends React.Component {
           </div>
           <ActionButton
             onClick={this._handleStart}
-            title="Start Timer"
+            title="Start"
           >
             <FontAwesomeIcon
               icon="play"

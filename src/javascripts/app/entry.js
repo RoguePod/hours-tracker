@@ -14,11 +14,17 @@ import {
 import { Route, Switch } from 'react-router-dom';
 import {
   faBars,
+  faCaretDown,
+  faCaretLeft,
+  faCaretRight,
   faClock,
+  faExchangeAlt,
   faExclamationCircle,
+  faPencilAlt,
   faPlay,
   faSpinner,
   faStop,
+  faSyncAlt,
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -34,11 +40,17 @@ import registerServiceWorker from './registerServiceWorker';
 
 library.add(
   faBars,
+  faCaretDown,
+  faCaretLeft,
+  faCaretRight,
   faClock,
+  faExchangeAlt,
   faExclamationCircle,
+  faPencilAlt,
   faPlay,
   faSpinner,
   faStop,
+  faSyncAlt,
   faTimes
 );
 

@@ -3,12 +3,17 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _padStart from 'lodash/padStart';
+import cx from 'classnames';
 import moment from 'moment-timezone';
-import styles from './Timer.scss';
 
 class Timer extends React.Component {
   static propTypes = {
+    disabled: PropTypes.bool,
     entry: PropTypes.entry.isRequired
+  }
+
+  static defaultProps = {
+    disabled: false
   }
 
   constructor(props) {
@@ -27,9 +32,11 @@ class Timer extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    const { disabled } = this.props;
     const { duration } = this.state;
 
     return (
+      disabled !== nextProps.disabled ||
       duration !== nextState.duration
     );
   }
@@ -45,9 +52,15 @@ class Timer extends React.Component {
   interval = null
 
   _handleTick() {
-    const { entry } = this.props;
+    const { disabled, entry } = this.props;
+    const { duration: currentDuration } = this.state;
 
-    if (!entry) {
+    if (disabled) {
+      if (currentDuration) {
+        this.setState({ duration: null });
+        document.title = 'Hours Tracker';
+      }
+
       return;
     }
 
@@ -55,9 +68,9 @@ class Timer extends React.Component {
     const startedAt = moment.tz(entry.startedAt, entry.timezone);
     const duration  = moment.duration(now.diff(startedAt));
 
-    const hours    = _padStart(duration.get('hours'), 2, '0');
-    const minutes  = _padStart(duration.get('minutes'), 2, '0');
-    const seconds  = _padStart(duration.get('seconds'), 2, '0');
+    const hours = _padStart(duration.get('hours'), 2, '0');
+    const minutes = _padStart(duration.get('minutes'), 2, '0');
+    const seconds = _padStart(duration.get('seconds'), 2, '0');
 
     document.title = `${hours}:${minutes}:${seconds} - Hours Tracker`;
 
@@ -65,34 +78,54 @@ class Timer extends React.Component {
   }
 
   render() {
-    // const { entry: { startedAt, timezone } } = this.props;
+    const { disabled } = this.props;
     const { duration } = this.state;
 
-    if (!duration) {
-      return null;
+    let hours   = '00';
+    let minutes = '00';
+    let seconds = '00';
+
+    if (duration) {
+      hours = _padStart(duration.get('hours'), 2, '0');
+      minutes = _padStart(duration.get('minutes'), 2, '0');
+      seconds = _padStart(duration.get('seconds'), 2, '0');
     }
 
-    // const abbr = moment.tz.zone(timezone).abbr(startedAt);
+    const numberClasses = cx(
+      'rounded text-center px-2 text-3xl flex-1',
+      {
+        'bg-blue': !disabled,
+        'bg-grey-dark': disabled
+      }
+    );
 
-    const hours   = _padStart(duration.get('hours'), 2, '0');
-    const minutes = _padStart(duration.get('minutes'), 2, '0');
-    const seconds = _padStart(duration.get('seconds'), 2, '0');
+    const separatorClasses = cx(
+      'text-center text-3xl px-2',
+      {
+        'text-blue': !disabled,
+        'text-grey-dark': disabled
+      }
+    );
+
+    const containerClasses =
+      'flex flex-row flex-no-wrap items-center justify-center text-white ' +
+      'font-mono';
 
     return (
-      <div className={styles.container}>
-        <div className={styles.number}>
+      <div className={containerClasses}>
+        <div className={numberClasses}>
           {hours}
         </div>
-        <div className={styles.separator}>
+        <div className={separatorClasses}>
           {':'}
         </div>
-        <div className={styles.number}>
+        <div className={numberClasses}>
           {minutes}
         </div>
-        <div className={styles.separator}>
+        <div className={separatorClasses}>
           {':'}
         </div>
-        <div className={styles.number}>
+        <div className={numberClasses}>
           {seconds}
         </div>
       </div>

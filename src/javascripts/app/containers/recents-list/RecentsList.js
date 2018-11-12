@@ -47,13 +47,16 @@ class RecentsList extends React.Component {
       );
     });
 
+    const listClasses =
+      'flex flex-col items-center justify-center flex-1 text-blue';
+
     return (
       <React.Fragment>
         <div className="bg-blue text-white p-4 font-bold">
           {'Recent Projects'}
         </div>
         {!ready &&
-          <div className="flex flex-col items-center justify-center flex-1 text-blue">
+          <div className={listClasses}>
             <FontAwesomeIcon
               icon="clock"
               pulse
@@ -63,7 +66,11 @@ class RecentsList extends React.Component {
               {'Loading Recents...'}
             </div>
           </div>}
-        {ready && rows}
+
+        {ready &&
+          <div className="overflow-y-auto overflow-x-hidden">
+            {rows}
+          </div>}
       </React.Fragment>
     );
   }

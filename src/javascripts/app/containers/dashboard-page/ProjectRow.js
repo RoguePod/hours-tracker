@@ -1,12 +1,11 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Table } from 'semantic-ui-react';
 import _get from 'lodash/get';
 import _times from 'lodash/times';
+import cx from 'classnames';
 import moment from 'moment-timezone';
-import styles from './ProjectRow.scss';
 
-class ProjectsRow extends React.Component {
+class ProjectRow extends React.Component {
   static propTypes = {
     client: PropTypes.client,
     endMonth: PropTypes.instanceOf(moment).isRequired,
@@ -84,12 +83,12 @@ class ProjectsRow extends React.Component {
       weekTotal += total;
 
       cells.push(
-        <Table.Cell
-          collapsing
+        <td
+          className="w-collapsing"
           key={day}
         >
           {total.toFixed(1)}
-        </Table.Cell>
+        </td>
       );
     });
 
@@ -116,46 +115,36 @@ class ProjectsRow extends React.Component {
     const { cells, weekTotal } = this._getCellsAndWeekTotal(query, timezone);
     const {
       diffMonth, monthTotal, otherTotal
-    } = this._getMonthTotals(startMonth, endMonth);
+    } = this._getMonthAndOtherTotals(startMonth, endMonth);
+
+    const cellClass = cx({
+      'text-green': project && project.billable,
+      'text-red': !project,
+      'text-yellow': project && !project.billable
+    });
 
     return (
-      <Table.Row>
-        <Table.Cell
-          error={!project}
-          positive={project && project.billable}
-          warning={project && !project.billable}
-        >
+      <tr>
+        <td className={cellClass}>
           {_get(client, 'name', 'No Client')}
-        </Table.Cell>
-        <Table.Cell
-          error={!project}
-          positive={project && project.billable}
-          warning={project && !project.billable}
-        >
+        </td>
+        <td className={cellClass}>
           {_get(project, 'name', 'No Project')}
-        </Table.Cell>
+        </td>
         {cells}
-        <Table.Cell
-          collapsing
-        >
+        <td className="w-collapsing">
           {weekTotal.toFixed(1)}
-        </Table.Cell>
-        <Table.Cell
-          className={styles.total}
-          collapsing
-        >
+        </td>
+        <td className="w-collapsing bg-blue-lighter">
           {monthTotal.toFixed(1)}
-        </Table.Cell>
+        </td>
         {diffMonth &&
-          <Table.Cell
-            className={styles.total}
-            collapsing
-          >
+          <td className="w-collapsing bg-blue-lighter">
             {otherTotal.toFixed(1)}
-          </Table.Cell>}
-      </Table.Row>
+          </td>}
+      </tr>
     );
   }
 }
 
-export default ProjectsRow;
+export default ProjectRow;

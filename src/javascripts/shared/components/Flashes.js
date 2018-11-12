@@ -15,7 +15,7 @@ const Container = styled.div`
 /* eslint-disable id-length */
 const FlashWrapper = posed.div({
   enter: {
-    delay: 250,
+    // delay: 250,
     opacity: 1,
     transition: {
       default: { duration: 250 },
@@ -51,7 +51,7 @@ const Flashes = (props) => {
   return (
     <Portal>
       <Container
-        className="fixed w-full"
+        className="fixed w-full z-50"
       >
         <PoseGroup>
           {flashChildren}

@@ -2,11 +2,9 @@ import ProjectRow from './ProjectRow';
 import ProjectsFooter from './ProjectsFooter';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Table } from 'semantic-ui-react';
 import _get from 'lodash/get';
 import _times from 'lodash/times';
 import moment from 'moment-timezone';
-import styles from './ProjectsTable.scss';
 
 const _renderRows = (projects, startMonth, endMonth, props) => {
   return projects.map((value) => {
@@ -32,12 +30,12 @@ const _renderHeaderCells = (date, timezone) => {
       .add(index, 'd')
       .format('ddd');
     headerCells.push(
-      <Table.HeaderCell
-        collapsing
+      <th
+        className="w-collapsing"
         key={dow}
       >
         {dow}
-      </Table.HeaderCell>
+      </th>
     );
   });
 
@@ -52,50 +50,38 @@ const ProjectsTable = (props) => {
   const endMonth   = moment.tz(date, timezone).add(6, 'd');
 
   return (
-    <div className={styles.container}>
-      <Table
-        celled
-        selectable
-        unstackable
-      >
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>
+    <div className="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>
               {'Client'}
-            </Table.HeaderCell>
-            <Table.HeaderCell>
+            </th>
+            <th>
               {'Project'}
-            </Table.HeaderCell>
+            </th>
             {_renderHeaderCells(date, timezone)}
-            <Table.HeaderCell
-              collapsing
-            >
+            <th className="w-collapsing">
               {'Totals'}
-            </Table.HeaderCell>
-            <Table.HeaderCell
-              className={styles.total}
-              collapsing
-            >
+            </th>
+            <th className="bg-blue text-white w-collapsing">
               {startMonth.format('MMM')}
-            </Table.HeaderCell>
+            </th>
             {startMonth.format('MMM') !== endMonth.format('MMM') &&
-              <Table.HeaderCell
-                className={styles.total}
-                collapsing
-              >
+              <th className="w-collapsing bg-blue text-white">
                 {endMonth.format('MMM')}
-              </Table.HeaderCell>}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
+              </th>}
+          </tr>
+        </thead>
+        <tbody>
           {_renderRows(projects, startMonth, endMonth, props)}
-        </Table.Body>
+        </tbody>
         <ProjectsFooter
           {...props}
           endMonth={endMonth}
           startMonth={startMonth}
         />
-      </Table>
+      </table>
     </div>
   );
 };

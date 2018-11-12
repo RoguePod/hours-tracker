@@ -10,10 +10,13 @@ const FadeIn = posed.div({
 const FieldError = ({ touched, error }) => {
   return (
     <FadeIn
-      className="text-red text-sm pt-1"
+      className="text-red text-sm"
       pose={touched && error ? 'show' : 'hide'}
     >
-      {error}
+      {error &&
+        <div className="pt-1">
+          {error}
+        </div>}
     </FadeIn>
   );
 };

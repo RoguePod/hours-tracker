@@ -1,4 +1,4 @@
-@import url('//fonts.googleapis.com/css?family=Overpass');
+@import url('//fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono');
 @import '~react-datepicker/dist/react-datepicker.css';
 
 /* stylelint-disable at-rule-no-unknown, at-rule-empty-line-before */
@@ -30,4 +30,46 @@ a {
 
 .react-datepicker__input-container {
   display: block;
+}
+
+.transition {
+  transition: all 0.25s ease;
+}
+
+.table-responsive {
+  @apply w-full overflow-x-auto;
+}
+
+.table-hover {
+  tr {
+    &:hover {
+      @apply bg-blue-lighter;
+    }
+  }
+}
+
+table {
+  @apply w-full border;
+
+  td,
+  th {
+    @apply p-2 border;
+  }
+
+  th {
+    @apply text-left font-normal;
+  }
+
+  thead {
+    th {
+      @apply bg-blue text-white;
+    }
+  }
+}
+
+hr {
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  height: 0;
 }

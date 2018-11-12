@@ -8,8 +8,9 @@ const ActionButton = (props) => {
   const { as, children, className, color, title, ...rest } = props;
 
   const actionClasses = cx(
-    `text-white bg-${color} hover:bg-${color}-dark shadow-md flex`,
-    'cursor-pointer rounded-full w-10 h-10 items-center justify-center',
+    `text-white bg-${color} hover:bg-${color}-dark shadow hover:shadow-md`,
+    'cursor-pointer rounded-full w-10 h-10 items-center justify-center flex',
+    'transition',
     className
   );
 

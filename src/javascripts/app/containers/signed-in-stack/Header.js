@@ -36,10 +36,13 @@ class SignedInHeader extends React.Component {
   /* eslint-disable max-lines-per-function */
   render() {
     const { location, running, user } = this.props;
-    const { pathname } = location;
+    const { hash, pathname } = location;
 
     const headerClasses =
       'fixed pin-t pin-x px-4 bg-blue text-white overflow-hidden z-10';
+
+    const menuHash = hash.match(/sidebar/u) ? '' : 'sidebar';
+    const logoHash = hash.match(/stopwatch/u) ? '' : 'stopwatch';
 
     return (
       <Header className={headerClasses}>
@@ -52,22 +55,12 @@ class SignedInHeader extends React.Component {
               />
             </div>
             <div className="pl-4 pr-2 md:hidden">
-              <Link to={{ ...location, hash: 'stopwatch' }}>
+              <Link to={{ ...location, hash: logoHash }}>
                 <FontAwesomeIcon
                   icon="clock"
-                  pulse={running}
+                  pulse={Boolean(running)}
                   size="2x"
                 />
-                {running &&
-                  <FontAwesomeIcon
-                    className="text-green"
-                    icon="play"
-                  />}
-                {!running &&
-                  <FontAwesomeIcon
-                    className="text-red"
-                    icon="stop"
-                  />}
               </Link>
             </div>
             <Link
@@ -126,7 +119,7 @@ class SignedInHeader extends React.Component {
             <li>
               <Link
                 className="block rounded py-1 px-3 hover:bg-blue-light"
-                to={{ ...location, hash: 'sidebar' }}
+                to={{ ...location, hash: menuHash }}
               >
                 <FontAwesomeIcon
                   icon="bars"

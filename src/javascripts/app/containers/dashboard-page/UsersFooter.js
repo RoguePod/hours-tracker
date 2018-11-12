@@ -1,9 +1,7 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Table } from 'semantic-ui-react';
 import _times from 'lodash/times';
 import moment from 'moment-timezone';
-import styles from './ProjectsFooter.scss';
 
 class UsersFooter extends React.Component {
   static propTypes = {
@@ -72,25 +70,25 @@ class UsersFooter extends React.Component {
       weekTotal += total;
 
       billableCells.push(
-        <Table.HeaderCell
-          collapsing
+        <th
+          className="w-collapsing"
           key={day}
         >
-          <strong className={styles.billable}>
+          <strong className="text-green">
             {billableTotal.toFixed(1)}
           </strong>
-        </Table.HeaderCell>
+        </th>
       );
 
       totalCells.push(
-        <Table.HeaderCell
-          collapsing
+        <th
+          className="w-collapsing"
           key={day}
         >
-          <strong className={styles.total}>
+          <strong className="text-blue">
             {total.toFixed(1)}
           </strong>
-        </Table.HeaderCell>
+        </th>
       );
     });
 
@@ -136,76 +134,56 @@ class UsersFooter extends React.Component {
     } = this._getMonthAndOtherTotals(startMonth, endMonth);
 
     return (
-      <Table.Footer>
-        <Table.Row>
-          <Table.HeaderCell
-            textAlign="right"
-          >
-            <strong className={styles.billable}>
+      <tfoot>
+        <tr>
+          <th className="text-right">
+            <strong className="text-green">
               {'Billable'}
             </strong>
-          </Table.HeaderCell>
+          </th>
           {billableCells}
-          <Table.HeaderCell
-            collapsing
-          >
-            <strong className={styles.billable}>
+          <th className="w-collapsing">
+            <strong className="text-green">
               {weekBillableTotal.toFixed(1)}
             </strong>
-          </Table.HeaderCell>
-          <Table.HeaderCell
-            className={styles.totalCell}
-            collapsing
-          >
-            <strong className={styles.billable}>
+          </th>
+          <th className="w-collapsing bg-blue-lighter">
+            <strong className="text-green">
               {monthBillableTotal.toFixed(1)}
             </strong>
-          </Table.HeaderCell>
+          </th>
           {diffMonth &&
-            <Table.HeaderCell
-              className={styles.totalCell}
-              collapsing
-            >
-              <strong className={styles.billable}>
+            <th className="w-collapsing bg-blue-lighter">
+              <strong className="text-green">
                 {otherBillableTotal.toFixed(1)}
               </strong>
-            </Table.HeaderCell>}
-        </Table.Row>
-        <Table.Row>
-          <Table.HeaderCell
-            textAlign="right"
-          >
-            <strong className={styles.total}>
+            </th>}
+        </tr>
+        <tr>
+          <th className="text-right">
+            <strong className="text-blue">
               {'Total'}
             </strong>
-          </Table.HeaderCell>
+          </th>
           {totalCells}
-          <Table.HeaderCell
-            collapsing
-          >
-            <strong className={styles.total}>
+          <th className="w-collapsing">
+            <strong className="text-blue">
               {weekTotal.toFixed(1)}
             </strong>
-          </Table.HeaderCell>
-          <Table.HeaderCell
-            className={styles.totalCell}
-            collapsing
-          >
-            <strong className={styles.total}>
+          </th>
+          <th className="w-collapsing bg-blue-lighter">
+            <strong className="text-blue">
               {monthTotal.toFixed(1)}
             </strong>
-          </Table.HeaderCell>
+          </th>
           {diffMonth &&
-            <Table.HeaderCell
-              className={styles.totalCell}
-              collapsing
-            >
-              <strong className={styles.total}>
+            <th className="w-collapsing bg-blue-lighter">
+              <strong className="text-blue">
                 {otherTotal.toFixed(1)}
               </strong>
-            </Table.HeaderCell>}
-        </Table.Row>
-      </Table.Footer>
+            </th>}
+        </tr>
+      </tfoot>
     );
   }
   /* eslint-enable max-lines-per-function */

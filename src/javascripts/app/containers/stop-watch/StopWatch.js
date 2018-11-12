@@ -1,3 +1,4 @@
+import { ActionButton, Spinner } from 'javascripts/shared/components';
 import { change, formValueSelector } from 'redux-form';
 import {
   selectRunningEntry,
@@ -7,10 +8,8 @@ import {
   updateEntry
 } from 'javascripts/app/redux/running';
 
-import { ActionButton } from 'javascripts/shared/components';
 import EntryForm from './EntryForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Timer from './Timer';
@@ -93,60 +92,58 @@ class StopWatch extends React.Component {
     onStopEntry();
   }
 
-  /* eslint-disable max-lines-per-function */
   _renderRunningButtons(entry) {
     return (
-      <div className="flex">
-        <div>
-          <Timer {...this.props} />
-        </div>
-
-        <div
-          className="text-red"
+      <div className="flex flex-row justify-between flex-no-wrap py-4">
+        <ActionButton
+          color="red"
           onClick={this._handleStop}
+          title="Stop"
         >
           <FontAwesomeIcon
             icon="stop"
           />
-        </div>
+        </ActionButton>
 
-        <div
-          className="text-violet"
+        <ActionButton
+          color="purple"
           onClick={this._handleSwap}
+          title="Swap"
         >
           <FontAwesomeIcon
-            icon="refresh"
+            icon="sync-alt"
           />
-        </div>
+        </ActionButton>
 
-        <Link
-          className="text-teal"
+        <ActionButton
+          color="teal"
+          title="Split"
           to={`/entries/${entry.id}/split`}
         >
           <FontAwesomeIcon
-            icon="exchange"
+            icon="exchange-alt"
           />
-        </Link>
+        </ActionButton>
 
-        <div
-          className="text-green"
+        <ActionButton
+          color="orange"
+          title="Edit"
           to={`/entries/${entry.id}/edit`}
         >
           <FontAwesomeIcon
-            icon="pencil"
+            icon="pencil-alt"
           />
-        </div>
+        </ActionButton>
       </div>
     );
   }
-  /* eslint-enable max-lines-per-function */
 
   _renderNotRunningButtons() {
     return (
-      <div className="flex justify-center">
+      <div className="flex flex-row justify-center flex-no-wrap py-4">
         <ActionButton
           onClick={this._handleStart}
-          title="Start Timer"
+          title="Start"
         >
           <FontAwesomeIcon
             icon="play"
@@ -159,30 +156,27 @@ class StopWatch extends React.Component {
   render() {
     const { entry, fetching, onUpdateEntry, ready } = this.props;
 
+    const hasEntry = ready && entry.id;
+
     return (
-      <div className="p-4">
-        {!ready &&
-          <div>
-            {'Loading Stop Watch...'}
-          </div>}
-        {ready && entry.id && this._renderRunningButtons(entry)}
-        {ready && !entry.id && this._renderNotRunningButtons()}
-        <div>
+      <div className="relative">
+        <div className="p-4">
+          <Timer
+            {...this.props}
+            disabled={!hasEntry}
+          />
+          {hasEntry && this._renderRunningButtons(entry)}
+          {!hasEntry && this._renderNotRunningButtons()}
           <EntryForm
             initialValues={entry}
             onUpdateEntry={onUpdateEntry}
           />
         </div>
         {fetching &&
-          <div>
-            <FontAwesomeIcon
-              icon="clock"
-              pulse
-            />
-            <div>
-              {fetching}
-            </div>
-          </div>}
+          <Spinner
+            spinning={Boolean(fetching)}
+            text={fetching}
+          />}
       </div>
     );
   }

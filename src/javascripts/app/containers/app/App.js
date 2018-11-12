@@ -3,6 +3,7 @@
 import { loadApp, updateWindow } from 'javascripts/app/redux/app';
 
 import { Flashes } from 'javascripts/shared/components';
+import { Helmet } from 'react-helmet';
 import Loader from './Loader';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -72,7 +73,7 @@ class App extends React.Component {
       jQuery('html, body').animate({ scrollTop: 0 }, 150);
     }
 
-    if (hash.match(/sidebar/u)) {
+    if (hash.match(/sidebar/u) || hash.match(/stopwatch/u)) {
       document.addEventListener('keydown', this._handleKeyPress);
     } else {
       document.removeEventListener('keydown', this._handleKeyPress);
@@ -94,7 +95,8 @@ class App extends React.Component {
 
     onUpdateWindow(element.clientWidth, element.clientHeight);
 
-    if (location.hash.match(/sidebar/u)) {
+    if (location.hash.match(/sidebar/u) ||
+        location.hash.match(/stopwatch/u)) {
       history.push({ ...location, hash: null });
     }
   }
@@ -102,7 +104,10 @@ class App extends React.Component {
   _handleKeyPress(event) {
     const { location } = this.props;
 
-    if (event.keyCode === 27 && location.hash.match(/sidebar/u)) {
+    const sidebar =
+      location.hash.match(/sidebar/u) || location.hash.match(/stopwatch/u);
+
+    if (event.keyCode === 27 && sidebar) {
       history.push({ ...location, hash: null });
     }
   }
@@ -114,14 +119,18 @@ class App extends React.Component {
 
     const isReady = !(!ready || (!clientsReady && auth));
 
+    const htmlClasses = cx('antialiased', {
+      'bg-blue-lightest': !auth,
+      'bg-white': auth
+    });
+
     return (
       <React.Fragment>
-        {isReady &&
-          <div className="flex flex-col">
-            <div className={cx('flex-1', { 'bg-blue-lightest': !auth })}>
-              {children}
-            </div>
-          </div>}
+        <Helmet>
+          <html className={htmlClasses} />
+        </Helmet>
+
+        {isReady && children}
 
         <Loader
           loading={!isReady}

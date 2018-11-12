@@ -46,12 +46,12 @@ let defaultConfig = require('tailwindcss/defaultConfig')()
 let colors = {
   'transparent': 'transparent',
 
-  'smoke': 'rgba(0, 0, 0, 0.7)',
+  'smoke': 'rgba(14, 29, 40, 0.8)',
 
   'black': '#22292f',
   // 'grey-darkest': '#3d4852',
   'grey-darker': '#606f7b',
-  // 'grey-dark': '#8795a1',
+  'grey-dark': '#8795a1',
   // 'grey': '#b8c2cc',
   'grey-light': '#dae1e7',
   'grey-lighter': '#f1f5f8',
@@ -60,7 +60,7 @@ let colors = {
 
   'red-darkest': '#3b0d0c',
   // 'red-darker': '#621b18',
-  // 'red-dark': '#cc1f1a',
+  'red-dark': '#8e3e49', // '#cc1f1a',
   'red': '#b14e5b', // '#e3342f',
   // 'red-light': '#ef5753',
   // 'red-lighter': '#f9acaa',
@@ -68,8 +68,8 @@ let colors = {
 
   // 'orange-darkest': '#462a16',
   // 'orange-darker': '#613b1f',
-  // 'orange-dark': '#de751f',
-  // 'orange': '#f6993f',
+  'orange-dark': '#de751f',
+  'orange': '#f6993f',
   // 'orange-light': '#faad63',
   // 'orange-lighter': '#fcd9b6',
   // 'orange-lightest': '#fff5eb',
@@ -84,7 +84,7 @@ let colors = {
 
   'green-darkest': '#0f2f21',
   // 'green-darker': '#1a4731',
-  // 'green-dark': '#1f9d55',
+  'green-dark': '#1f9d55',
   'green': '#5bb14e', // '#38c172',
   // 'green-light': '#51d88a',
   // 'green-lighter': '#a2f5bf',
@@ -92,7 +92,7 @@ let colors = {
 
   // 'teal-darkest': '#0d3331',
   // 'teal-darker': '#20504f',
-  // 'teal-dark': '#38a89d',
+  'teal-dark': '#38a89d',
   'teal': '#4dc0b5',
   // 'teal-light': '#64d5ca',
   // 'teal-lighter': '#a0f0ed',
@@ -116,7 +116,7 @@ let colors = {
 
   // 'purple-darkest': '#21183c',
   // 'purple-darker': '#382b5f',
-  // 'purple-dark': '#794acf',
+  'purple-dark': '#794acf',
   'purple': '#9561e2',
   // 'purple-light': '#a779e9',
   // 'purple-lighter': '#d6bbfc',
@@ -196,14 +196,14 @@ module.exports = {
 
   fonts: {
     'sans': [
-      'Overpass',
+      'Ubuntu',
       'system-ui',
       'BlinkMacSystemFont',
       '-apple-system',
       'Segoe UI',
       'Roboto',
       'Oxygen',
-      'Ubuntu',
+      // 'Ubuntu',
       'Cantarell',
       'Fira Sans',
       'Droid Sans',
@@ -223,6 +223,7 @@ module.exports = {
       'serif',
     ],
     'mono': [
+      'Ubuntu Mono',
       'Menlo',
       'Monaco',
       'Consolas',
@@ -473,6 +474,7 @@ module.exports = {
   width: {
     'auto': 'auto',
     'px': '1px',
+    'collapsing': '1px',
     '1': '0.25rem',
     '2': '0.5rem',
     '3': '0.75rem',
@@ -487,7 +489,6 @@ module.exports = {
     '32': '8rem',
     '48': '12rem',
     '64': '16rem',
-    '80': '20rem',
     '1/2': '50%',
     '1/3': '33.33333%',
     '2/3': '66.66667%',
@@ -577,6 +578,7 @@ module.exports = {
 
   minHeight: {
     '0': '0',
+    '300': '300px',
     'full': '100%',
     'screen': '100vh',
   },
@@ -697,7 +699,7 @@ module.exports = {
     '20': '5rem',
     '24': '6rem',
     '32': '8rem',
-    '72': '16rem',
+    '64': '16rem',
   },
 
 

@@ -1,13 +1,11 @@
-import { Dimmer, Loader, Segment, Table } from 'semantic-ui-react';
-
 import EntryRow from './EntryRow';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { destroyEntry } from 'javascripts/app/redux/entry';
 import { selectTimezone } from 'javascripts/app/redux/app';
-import styles from './EntriesTable.scss';
 import { subscribeEntries } from 'javascripts/app/redux/entries';
 
 class EntriesTable extends React.Component {
@@ -52,79 +50,51 @@ class EntriesTable extends React.Component {
     });
   }
 
-  /* eslint-disable max-lines-per-function */
   render() {
     const { entries, fetching } = this.props;
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
-        <div className={styles.table}>
-          <Table
-            celled
-            unstackable
-          >
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                />
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+      <div className="relative min-h-300">
+        <div className="table-responsive">
+          <table className="table-hover">
+            <thead>
+              <tr>
+                <th />
+                <th>
                   {'Client'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+                </th>
+                <th>
                   {'Project'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+                </th>
+                <th>
                   {'Date'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+                </th>
+                <th>
                   {'Started'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+                </th>
+                <th>
                   {'Stopped'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+                </th>
+                <th>
                   {'Hours'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+                </th>
+                <th>
                   {'Description'}
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
               {this._renderRows(entries)}
-            </Table.Body>
-          </Table>
+            </tbody>
+          </table>
         </div>
-      </Segment>
+        <Spinner
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      </div>
     );
   }
-  /* eslint-enable max-lines-per-function */
 }
 
 const props = (state) => {

@@ -1,12 +1,10 @@
-import { Button, Dropdown } from 'semantic-ui-react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import WeekDropdownItem from './WeekDropdownItem';
 import _times from 'lodash/times';
+import cx from 'classnames';
 import { history } from 'javascripts/app/redux/store';
 import moment from 'moment-timezone';
-import styles from './DashboardPage.scss';
 import { toQuery } from 'javascripts/globals';
 
 class WeekDropdown extends React.Component {
@@ -23,8 +21,7 @@ class WeekDropdown extends React.Component {
 
     this._handlePrevious = this._handlePrevious.bind(this);
     this._handleNext = this._handleNext.bind(this);
-    this._handleCurrent = this._handleCurrent.bind(this);
-    this._handleDate = this._handleDate.bind(this);
+    this._handleChange = this._handleChange.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -55,38 +52,47 @@ class WeekDropdown extends React.Component {
     history.replace({ ...location, search: `?${toQuery(newQuery)}` });
   }
 
-  _handleCurrent() {
-    const { location } = this.props;
+  _handleChange(event) {
+    const { location, timezone } = this.props;
 
-    history.replace({ ...location, search: null });
-  }
+    const date = event.target.value;
 
-  _handleDate(date) {
-    const { location } = this.props;
-
-    history.replace({ ...location, search: `?${toQuery({ date })}` });
-  }
-
-  _getIsCurrent(date, timezone) {
     const currentDate = moment()
       .tz(timezone)
-      .startOf('isoWeek');
+      .startOf('isoWeek')
+      .format('YYYY-MM-DD');
 
-    return date === currentDate.format('YYYY-MM-DD');
+    if (date === currentDate) {
+      history.replace({ ...location, search: null });
+    } else {
+      history.replace({ ...location, search: `?${toQuery({ date })}` });
+    }
   }
 
-  _getDates(date, timezone) {
-    const startDate = moment.tz(date, timezone).format('MM/DD');
-    const endDate   = moment.tz(date, timezone)
+  _extraOption() {
+    const { query: { date }, timezone } = this.props;
+
+    const weekStart = moment.tz(date, timezone);
+    const weekEnd   = moment.tz(date, timezone)
       .add(6, 'd')
       .endOf('day')
       .format('MM/DD');
 
-    return { endDate, startDate };
+    return (
+      <option
+        key={weekStart.format('YYYY-MM-DD')}
+        value={weekStart.format('YYYY-MM-DD')}
+      >
+        {`${weekStart.format('MM/DD')} - ${weekEnd}`}
+      </option>
+    );
   }
 
-  _renderOptions(timezone) {
+  _renderOptions(isCurrent) {
+    const { query: { date }, timezone } = this.props;
     const options = [];
+
+    let found = isCurrent;
 
     _times(4, (index) => {
       const weeks = index + 1;
@@ -101,15 +107,23 @@ class WeekDropdown extends React.Component {
         .endOf('day')
         .format('MM/DD');
 
+      if (!found && date === weekStart.format('YYYY-MM-DD')) {
+        found = true;
+      }
+
       options.push(
-        <WeekDropdownItem
-          key={`${weekStart.format('MM/DD')} - ${weekEnd}`}
-          onClick={this._handleDate}
-          startDate={weekStart}
-          text={`${weekStart.format('MM/DD')} - ${weekEnd}`}
-        />
+        <option
+          key={weekStart.format('YYYY-MM-DD')}
+          value={weekStart.format('YYYY-MM-DD')}
+        >
+          {`${weekStart.format('MM/DD')} - ${weekEnd}`}
+        </option>
       );
     });
+
+    if (!found) {
+      options.push(this._extraOption());
+    }
 
     return options;
   }
@@ -117,40 +131,75 @@ class WeekDropdown extends React.Component {
   render() {
     const { query: { date }, timezone } = this.props;
 
-    const { endDate, startDate } = this._getDates(date, timezone);
-    const isCurrent = this._getIsCurrent(date, timezone);
+    const currentDate = moment()
+      .tz(timezone)
+      .startOf('isoWeek')
+      .format('YYYY-MM-DD');
+
+    const isCurrent = date === currentDate;
+
+    const baseButtonClasses =
+      'bg-blue p-3 text-white';
+
+    const leftButtonClasses = cx(
+      baseButtonClasses, 'rounded-l hover:bg-blue-dark'
+    );
+
+    const rightButtonClasses = cx(
+      baseButtonClasses, 'rounded-r',
+      {
+        'cursor-not-allowed opacity-50': isCurrent,
+        'hover:bg-blue-dark': !isCurrent
+      }
+    );
+
+    const selectClasses =
+      'block bg-blue text-white appearance-none outline-none px-4 py-2 pr-10 ' +
+      'h-full cursor-pointer';
+
+    const arrowClasses =
+      'pointer-events-none absolute pin-y pin-r flex items-center px-4 ' +
+      'text-white';
 
     return (
-      <Button.Group
-        className={styles.buttons}
-        color="blue"
-        size="large"
-      >
-        <Button
-          icon="caret left"
+      <div className="flex flex-row justify-center">
+        <button
+          className={leftButtonClasses}
           onClick={this._handlePrevious}
-        />
-        <Dropdown
-          button
-          text={`${startDate} - ${endDate}`}
+          type="button"
         >
-          <Dropdown.Menu>
-            {!isCurrent &&
-              <Dropdown.Item
-                onClick={this._handleCurrent}
-              >
-                {'Current Week'}
-              </Dropdown.Item>}
-            {!isCurrent && <Dropdown.Divider />}
-            {this._renderOptions(timezone)}
-          </Dropdown.Menu>
-        </Dropdown>
-        <Button
+          <FontAwesomeIcon
+            icon="caret-left"
+          />
+        </button>
+        <div className="block relative">
+          <select
+            className={selectClasses}
+            onChange={this._handleChange}
+            value={date}
+          >
+            <option value={currentDate}>
+              {'Current Week'}
+            </option>
+            {this._renderOptions(isCurrent)}
+          </select>
+          <div className={arrowClasses}>
+            <FontAwesomeIcon
+              icon="caret-down"
+            />
+          </div>
+        </div>
+        <button
+          className={rightButtonClasses}
           disabled={isCurrent}
-          icon="caret right"
           onClick={this._handleNext}
-        />
-      </Button.Group>
+          type="button"
+        >
+          <FontAwesomeIcon
+            icon="caret-right"
+          />
+        </button>
+      </div>
     );
   }
 }

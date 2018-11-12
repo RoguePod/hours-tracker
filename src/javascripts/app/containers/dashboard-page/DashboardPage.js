@@ -1,7 +1,10 @@
-import { Dimmer, Divider, Header, Loader, Segment } from 'semantic-ui-react';
 import {
-  reset, selectDashboardProjects, selectDashboardProjectsForUser,
-  selectDashboardUsers, selectQuery, subscribeEntries
+  reset,
+  selectDashboardProjects,
+  selectDashboardProjectsForUser,
+  selectDashboardUsers,
+  selectQuery,
+  subscribeEntries
 } from 'javascripts/app/redux/dashboard';
 import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
@@ -10,10 +13,10 @@ import EntriesTable from './EntriesTable';
 import ProjectsTable from './ProjectsTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import UsersTable from './UsersTable';
 import WeekDropdown from './WeekDropdown';
 import { connect } from 'react-redux';
-import styles from './DashboardPage.scss';
 
 class DashboardPage extends React.Component {
   static propTypes = {
@@ -104,25 +107,13 @@ class DashboardPage extends React.Component {
 
   render() {
     const { admin, fetching, location, projectsAdmin } = this.props;
-
     const { hash } = location;
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <div className={styles.headerWrapper}>
+      <div className="p-4">
+        <div className="flex flex-wrap justify-center items-center">
           <WeekDropdown {...this.props} />
         </div>
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
 
         {admin && <AdminMenu location={location} />}
         {(!admin || hash === '') &&
@@ -139,16 +130,14 @@ class DashboardPage extends React.Component {
             projects={projectsAdmin}
             user={null}
           />}
-        <Divider />
+        <hr />
 
-        <Header
-          as="h2"
-          color="blue"
-        >
+        <h2 className="text-blue mb-2">
           {'Latest Entries'}
-        </Header>
+        </h2>
         <EntriesTable />
-      </Segment>
+        <Spinner spinning={Boolean(fetching)} />
+      </div>
     );
   }
 }

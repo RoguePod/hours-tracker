@@ -1,15 +1,15 @@
-import { Icon, Popup, Table } from 'semantic-ui-react';
+import { ConfirmAction, Tooltip } from 'javascripts/shared/components';
 
-import { ConfirmAction } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
+import cx from 'classnames';
 import { history } from 'javascripts/app/redux/store';
 import moment from 'moment-timezone';
 import nl2br from 'react-nl2br';
-import styles from './EntryRow.scss';
 
 class EntryRow extends React.Component {
   static propTypes = {
@@ -95,128 +95,124 @@ class EntryRow extends React.Component {
       stoppedAt = moment().tz(entry.timezone);
     }
 
+    const baseHighlightClasses =
+      'whitespace-no-wrap';
+
+    let highlightClasses = cx(
+      'text-green',
+      baseHighlightClasses
+    );
+
+    if (!project) {
+      highlightClasses = cx(
+        'text-red',
+        baseHighlightClasses
+      );
+    } else if (!project.billable) {
+      highlightClasses = cx(
+        'text-yellow',
+        baseHighlightClasses
+      );
+    }
+
     return (
-      <Table.Row
-        className={styles.container}
-      >
-        <Table.Cell
-          collapsing
-          singleLine
-        >
-          <Popup
-            content="Edit"
-            position="top center"
-            size="small"
-            trigger={
+      <tr>
+        <td className="whitespace-no-wrap">
+          <div className="flex flex-row">
+            <Tooltip
+              title="Edit"
+            >
               <Link
+                className="text-orange block"
                 to={`/entries/${entry.id}/edit`}
               >
-                <Icon
-                  color="green"
-                  name="pencil"
-                  size="large"
+                <FontAwesomeIcon
+                  icon="pencil-alt"
                 />
               </Link>
-            }
-          />
-          <Popup
-            content="Split"
-            position="top center"
-            size="small"
-            trigger={
+            </Tooltip>
+            <Tooltip
+              title="Split"
+            >
               <Link
+                className="text-teal block px-2"
                 to={`/entries/${entry.id}/split`}
               >
-                <Icon
-                  color="teal"
-                  name="exchange"
-                  size="large"
+                <FontAwesomeIcon
+                  icon="exchange-alt"
                 />
               </Link>
-            }
-          />
-          <ConfirmAction
-            message="This will remove this entry.  Are you sure?"
-            onClick={this._handleDestroy}
-          >
-            <Icon
-              color="red"
-              name="remove"
-              size="large"
-            />
-          </ConfirmAction>
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          error={!project}
+            </Tooltip>
+            <Tooltip
+              title="Remove"
+            >
+              <ConfirmAction
+                message="This will remove this entry.  Are you sure?"
+                onClick={this._handleDestroy}
+              >
+                <FontAwesomeIcon
+                  className="text-red"
+                  icon="times"
+                />
+              </ConfirmAction>
+            </Tooltip>
+          </div>
+        </td>
+        <td
+          className={highlightClasses}
           onClick={this._handleLink}
-          positive={project && project.billable}
-          singleLine
-          warning={project && !project.billable}
         >
           {_get(entry, 'client.name', 'No Client')}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          error={!project}
+        </td>
+        <td
+          className={highlightClasses}
           onClick={this._handleLink}
-          positive={project && project.billable}
-          singleLine
-          warning={project && !project.billable}
         >
           {_get(entry, 'project.name', 'No Project')}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
+        </td>
+        <td
+          className="text-center whitespace-no-wrap"
           onClick={this._handleLink}
-          singleLine
-          textAlign="center"
         >
           {startedAt.format('ddd, MM/DD')}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
+        </td>
+        <td
+          className="text-center whitespace-no-wrap"
           onClick={this._handleLink}
-          singleLine
-          textAlign="center"
         >
           {startedAt.format('h:mma ')}
           {entry.timezone !== timezone &&
             <sup>
               {startedAt.format(' z')}
             </sup>}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
+        </td>
+        <td
+          className="text-center whitespace-no-wrap"
           onClick={this._handleLink}
-          singleLine
-          textAlign="center"
         >
           {entry.stoppedAt && stoppedAt.format('h:mma')}
           {!entry.stoppedAt &&
-            <Icon
-              loading
-              name="spinner"
+            <FontAwesomeIcon
+              icon="clock"
+              pulse
             />}
           {(entry.stoppedAt && entry.timezone !== timezone) &&
             <sup>
               {startedAt.format(' z')}
             </sup>}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
+        </td>
+        <td
+          className="text-center whitespace-no-wrap"
           onClick={this._handleLink}
-          singleLine
-          textAlign="center"
         >
           {stoppedAt.diff(startedAt, 'hours', true).toFixed(1)}
-        </Table.Cell>
-        <Table.Cell
+        </td>
+        <td
           onClick={this._handleLink}
         >
           {nl2br(entry.description)}
-        </Table.Cell>
-      </Table.Row>
+        </td>
+      </tr>
     );
   }
   /* eslint-enable max-lines-per-function */
