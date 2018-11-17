@@ -1,11 +1,15 @@
+/* global window */
+
 import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import _sum from 'lodash/sum';
 import cx from 'classnames';
 
 class TextAreaField extends React.Component {
   static propTypes = {
+    autoHeight: PropTypes.bool,
     className: PropTypes.string,
     containerClassName: PropTypes.string,
     id: PropTypes.string.isRequired,
@@ -22,6 +26,7 @@ class TextAreaField extends React.Component {
   }
 
   static defaultProps = {
+    autoHeight: false,
     className: null,
     containerClassName: 'mb-4',
     label: null
@@ -30,25 +35,85 @@ class TextAreaField extends React.Component {
   constructor(props) {
     super(props);
 
-    this._handleRef = this._handleRef.bind(this);
+    this.ref = React.createRef();
+
+    this._removeAutoHeightStyles = this._removeAutoHeightStyles.bind(this);
+    this._updateHeight = this._updateHeight.bind(this);
+    this._handleChange = this._handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    this._updateHeight();
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  _handleRef(element) {
-    this.element = element;
+  componentDidUpdate(prevProps) {
+    const { autoHeight, value } = this.props;
+
+    // removed autoHeight
+    if (!autoHeight && prevProps.autoHeight) {
+      this._removeAutoHeightStyles();
+    }
+
+    // added autoHeight or value changed
+    if ((autoHeight && !prevProps.autoHeight) || prevProps.value !== value) {
+      this.updateHeight();
+    }
   }
 
   focus() {
     this.element.focus();
   }
 
-  render() {
+  _removeAutoHeightStyles() {
+    if (this.ref && this.ref.current) {
+      this.ref.current.style.height = null;
+      this.ref.current.style.resize = null;
+    }
+  }
+
+  _updateHeight() {
+    const { autoHeight } = this.props;
+
+    if (!this.ref || !this.ref.current || !autoHeight) {
+      return;
+    }
+
     const {
-      className, containerClassName, id, input, label, meta, ...rest
+      borderBottomWidth, borderTopWidth, minHeight
+    } = window.getComputedStyle(this.ref.current);
+
+    /* eslint-disable id-length */
+    const borderHeight =
+      _sum([borderBottomWidth, borderTopWidth].map((x) => parseFloat(x)));
+    /* eslint-enable id-length */
+
+    // Measure the scrollHeight and update the height to match.
+    this.ref.current.style.height = 'auto';
+    this.ref.current.style.overflowY = 'hidden';
+    this.ref.current.style.height = `${Math.max(
+      parseFloat(minHeight),
+      Math.ceil(this.ref.current.scrollHeight + borderHeight)
+    )}px`;
+    this.ref.current.style.overflowY = '';
+  }
+
+  _handleChange(event) {
+    const { input: { onChange } } = this.props;
+
+    onChange(event);
+    this._updateHeight();
+  }
+
+  render() {
+    /* eslint-disable no-unused-vars */
+    const {
+      autoHeight, className, containerClassName, id, input, label, meta, ...rest
     } = this.props;
+    /* eslint-enable no-unused-vars */
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
@@ -80,7 +145,8 @@ class TextAreaField extends React.Component {
           {...rest}
           className={textAreaClassName}
           id={id}
-          ref={this._handleRef}
+          onChange={this._handleChange}
+          ref={this.ref}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />

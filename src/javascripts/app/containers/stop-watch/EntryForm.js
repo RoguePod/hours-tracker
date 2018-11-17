@@ -66,6 +66,7 @@ class EntryForm extends React.Component {
         <Field
           autoCapitalize="sentences"
           autoCorrect="on"
+          autoHeight
           component={TextAreaField}
           containerClassName=""
           id="description"
