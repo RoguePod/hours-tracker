@@ -2,12 +2,13 @@ import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import _uniqueId from 'lodash/uniqueId';
 import cx from 'classnames';
 
 class InputField extends React.Component {
   static propTypes = {
     className: PropTypes.string,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -22,21 +23,12 @@ class InputField extends React.Component {
 
   static defaultProps = {
     className: null,
+    id: null,
     label: null
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.element = React.createRef();
   }
 
   shouldComponentUpdate() {
     return true;
-  }
-
-  focus() {
-    this.element.focus();
   }
 
   render() {
@@ -45,6 +37,8 @@ class InputField extends React.Component {
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
     /* eslint-enable no-unneeded-ternary */
+
+    const inputId = id ? id : _uniqueId('input_');
 
     const inputClassName = cx(
       'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
@@ -59,11 +53,11 @@ class InputField extends React.Component {
     );
 
     return (
-      <div className="mb-4">
+      <React.Fragment>
         {label &&
           <Label
             error={isError}
-            htmlFor={id}
+            htmlFor={inputId}
           >
             {label}
           </Label>}
@@ -71,12 +65,11 @@ class InputField extends React.Component {
           {...input}
           {...rest}
           className={inputClassName}
-          id={id}
-          ref={this.element}
+          id={inputId}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />
-      </div>
+      </React.Fragment>
     );
   }
 }

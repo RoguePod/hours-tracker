@@ -1,30 +1,34 @@
-import { Label } from 'semantic-ui-react';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import posed from 'react-pose';
 
-const FieldWarning = ({ touched, warning }) => {
-  if (touched && warning) {
-    return (
-      <Label
-        color="green"
-        pointing
-      >
-        {warning}
-      </Label>
-    );
-  }
+const FadeIn = posed.div({
+  hide: { height: 0, opacity: 0 },
+  show: { height: 'auto', opacity: 1 }
+});
 
-  return null;
+const FieldError = ({ touched, warning }) => {
+  return (
+    <FadeIn
+      className="text-yellow text-sm"
+      pose={touched && warning ? 'show' : 'hide'}
+    >
+      {warning &&
+        <div className="pt-1">
+          {warning}
+        </div>}
+    </FadeIn>
+  );
 };
 
-FieldWarning.propTypes = {
+FieldError.propTypes = {
   touched: PropTypes.bool,
   warning: PropTypes.string
 };
 
-FieldWarning.defaultProps = {
+FieldError.defaultProps = {
   touched: false,
   warning: null
 };
 
-export default FieldWarning;
+export default FieldError;

@@ -1,21 +1,24 @@
-import { Dimmer, Header, Loader, Menu, Segment } from 'semantic-ui-react';
 import { Link, Route, Switch } from 'react-router-dom';
 import {
-  reset, selectQuery, selectRawQuery
+  reset,
+  selectQuery,
+  selectRawQuery
 } from 'javascripts/app/redux/entries';
 import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
 import EntriesFilterForm from './EntriesFilterForm';
 import EntryNewForm from './EntryNewForm';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import IndexMenu from './IndexMenu';
 import IndexTable from './index-table/IndexTable';
 import PayrollTable from './payroll-table/PayrollTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import SummaryTable from './summary-table/SummaryTable';
 import _get from 'lodash/get';
 import { connect } from 'react-redux';
-import styles from './IndexStack.scss';
+import cx from 'classnames';
 
 class EntriesIndexStack extends React.Component {
   static propTypes = {
@@ -98,28 +101,58 @@ class EntriesIndexStack extends React.Component {
     const { location, tab } = this.props;
     const { hash } = location;
 
+    const tabClasses =
+      'cursor-pointer py-2 px-4 border-l border-t border-r rounded-t ' +
+      'block transition';
+
+    const filterActive =
+      (hash === '' && tab === '#filter') || hash === '#filter';
+    const filterTabClasses = cx(
+      tabClasses,
+      {
+        'bg-white': filterActive,
+        'border-transparent text-blue hover:text-blue-darker': !filterActive
+      }
+    );
+
+    const newActive = (hash === '' && tab === '#new') || hash === '#new';
+    const newTabClasses = cx(
+      tabClasses,
+      {
+        'bg-white': newActive,
+        'border-transparent text-blue hover:text-blue-darker': !newActive
+      }
+    );
+
     return (
-      <Menu
-        attached="top"
-        tabular
-      >
-        <Menu.Item
-          active={(hash === '' && tab === '#filter') || hash === '#filter'}
-          as={Link}
-          icon="filter"
-          name="Filter"
-          replace
-          to={{ ...location, hash: '#filter' }}
-        />
-        <Menu.Item
-          active={(hash === '' && tab === '#new') || hash === '#new'}
-          as={Link}
-          icon="plus"
-          name="New Entry"
-          replace
-          to={{ ...location, hash: '#new' }}
-        />
-      </Menu>
+      <ul className="list-reset -mb-px px-4">
+        <li className="mr-1 inline-block">
+          <Link
+            className={filterTabClasses}
+            replace
+            to={{ ...location, hash: '#filter' }}
+          >
+            <FontAwesomeIcon
+              icon="filter"
+            />
+            {' '}
+            {'Filter'}
+          </Link>
+        </li>
+        <li className="inline-block">
+          <Link
+            className={newTabClasses}
+            replace
+            to={{ ...location, hash: '#new' }}
+          >
+            <FontAwesomeIcon
+              icon="plus"
+            />
+            {' '}
+            {'New Entry'}
+          </Link>
+        </li>
+      </ul>
     );
   }
 
@@ -128,7 +161,7 @@ class EntriesIndexStack extends React.Component {
     const { hash } = location;
 
     return (
-      <Segment attached="bottom">
+      <div className="border rounded shadow p-4">
         {((hash === '' && tab === '#filter') || hash === '#filter') &&
           <EntriesFilterForm
             initialValues={query}
@@ -138,7 +171,7 @@ class EntriesIndexStack extends React.Component {
           />}
         {((hash === '' && tab === '#new') || hash === '#new') &&
           <EntryNewForm />}
-      </Segment>
+      </div>
     );
   }
 
@@ -184,29 +217,19 @@ class EntriesIndexStack extends React.Component {
     const showAdmin        = isReports || isReportsSummary;
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Header
-          as="h1"
-          color="blue"
-        >
+      <div className="px-4">
+        <h1 className="text-blue">
           {'Entries'}
-        </Header>
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
+        </h1>
         {this._renderTopMenu()}
         {this._renderForm(showAdmin)}
         <IndexMenu {...this.props} />
         {this._renderRoutes()}
-      </Segment>
+        <Spinner
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      </div>
     );
   }
 }

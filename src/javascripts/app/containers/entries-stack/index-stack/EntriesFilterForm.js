@@ -1,8 +1,13 @@
-import { Button, Form, Grid } from 'semantic-ui-react';
 import {
-  ClientField, ProjectField, UserField
+  Button,
+  DateField,
+  FormError
+} from 'javascripts/shared/components';
+import {
+  ClientField,
+  ProjectField,
+  UserField
 } from 'javascripts/app/components';
-import { DateField, FormError } from 'javascripts/shared/components';
 import { Field, reduxForm } from 'redux-form';
 
 import PropTypes from 'javascripts/prop-types';
@@ -104,86 +109,74 @@ class EntriesFilterForm extends React.Component {
     const { error, handleSubmit, showAdmin } = this.props;
 
     return (
-      <Form
+      <form
         noValidate
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Grid
-          columns="equal"
-          stackable
-        >
-          <Grid.Row>
-            <Grid.Column>
-              <Field
-                component={DateField}
-                label="Start Date"
-                name="startDate"
-                time={false}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Field
-                component={DateField}
-                label="End Date"
-                name="endDate"
-                time={false}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Field
-                component={ClientField}
-                label="Client"
-                name="clientName"
-                onClientChange={this._handleClientChange}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Field
-                component={ProjectField}
-                label="Project"
-                name="projectName"
-                nameClient="clientRef"
-                nameProject="projectRef"
-                onProjectChange={this._handleProjectChange}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          {showAdmin &&
-            <Grid.Row>
-              <Grid.Column>
-                <Field
-                  component={UserField}
-                  label="User"
-                  name="userName"
-                  onUserChange={this._handleUserChange}
-                />
-              </Grid.Column>
-            </Grid.Row>}
-          <Grid.Row>
-            <Grid.Column>
-              <Form.Button
-                color="blue"
-                fluid
-                size="big"
-              >
-                {'Filter'}
-              </Form.Button>
-            </Grid.Column>
-            <Grid.Column>
-              <Button
-                fluid
-                onClick={this._handleClear}
-                size="big"
-              >
-                {'Clear'}
-              </Button>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Form>
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full md:w-1/2 px-2 mb-4">
+            <Field
+              component={DateField}
+              label="Start Date"
+              name="startDate"
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-2 mb-4">
+            <Field
+              component={DateField}
+              label="End Date"
+              name="endDate"
+            />
+          </div>
+        </div>
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full md:w-1/2 px-2 mb-4">
+            <Field
+              component={ClientField}
+              label="Client"
+              name="clientName"
+              nameClient="clientRef"
+              onClientChange={this._handleClientChange}
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-2 mb-4">
+            <Field
+              component={ProjectField}
+              label="Project"
+              name="projectName"
+              nameClient="clientRef"
+              nameProject="projectRef"
+              onProjectChange={this._handleProjectChange}
+            />
+          </div>
+        </div>
+        {showAdmin &&
+          <div className="mb-4">
+            <Field
+              component={UserField}
+              label="User"
+              name="userName"
+              onUserChange={this._handleUserChange}
+            />
+          </div>}
+        <div className="flex flex-row justify-between">
+          <Button
+            className="py-2"
+            color="green"
+            type="submit"
+          >
+            {'Filter'}
+          </Button>
+          <Button
+            className="py-2"
+            onClick={this._handleClear}
+            type="button"
+          >
+            {'Clear'}
+          </Button>
+        </div>
+      </form>
     );
   }
   /* eslint-enable max-lines-per-function */

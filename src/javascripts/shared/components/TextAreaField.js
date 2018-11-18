@@ -5,14 +5,14 @@ import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _sum from 'lodash/sum';
+import _uniqueId from 'lodash/uniqueId';
 import cx from 'classnames';
 
 class TextAreaField extends React.Component {
   static propTypes = {
     autoHeight: PropTypes.bool,
     className: PropTypes.string,
-    containerClassName: PropTypes.string,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -28,7 +28,7 @@ class TextAreaField extends React.Component {
   static defaultProps = {
     autoHeight: false,
     className: null,
-    containerClassName: 'mb-4',
+    id: null,
     label: null
   }
 
@@ -62,10 +62,6 @@ class TextAreaField extends React.Component {
     if ((autoHeight && !prevProps.autoHeight) || prevProps.value !== value) {
       this.updateHeight();
     }
-  }
-
-  focus() {
-    this.element.focus();
   }
 
   _removeAutoHeightStyles() {
@@ -111,7 +107,7 @@ class TextAreaField extends React.Component {
   render() {
     /* eslint-disable no-unused-vars */
     const {
-      autoHeight, className, containerClassName, id, input, label, meta, ...rest
+      autoHeight, className, id, input, label, meta, ...rest
     } = this.props;
     /* eslint-enable no-unused-vars */
 
@@ -131,12 +127,14 @@ class TextAreaField extends React.Component {
       className
     );
 
+    const inputId = id ? id : _uniqueId('input_');
+
     return (
-      <div className={containerClassName}>
+      <React.Fragment>
         {label &&
           <Label
             error={isError}
-            htmlFor={id}
+            htmlFor={inputId}
           >
             {label}
           </Label>}
@@ -144,13 +142,13 @@ class TextAreaField extends React.Component {
           {...input}
           {...rest}
           className={textAreaClassName}
-          id={id}
+          id={inputId}
           onChange={this._handleChange}
           ref={this.ref}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -46,17 +46,18 @@ class PasswordForm extends React.Component {
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Field
-          autoCapitalize="off"
-          autoCorrect="off"
-          component={InputField}
-          disabled={submitting}
-          id="password"
-          label="New Password"
-          name="password"
-          type="password"
-          validate={[isRequired]}
-        />
+        <div className="mb-4">
+          <Field
+            autoCapitalize="off"
+            autoCorrect="off"
+            component={InputField}
+            disabled={submitting}
+            label="New Password"
+            name="password"
+            type="password"
+            validate={[isRequired]}
+          />
+        </div>
         <Button
           className="py-2"
           color="green"

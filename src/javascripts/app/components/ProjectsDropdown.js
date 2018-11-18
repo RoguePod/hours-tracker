@@ -21,7 +21,7 @@ const Divider = styled.div`
   height: 1px;
 `;
 
-const ClientDropdown = ({ clients, ...rest }) => {
+const ProjectsDropdown = ({ clients, ...rest }) => {
   const keys = Object.keys(clients);
 
   const rows = keys.map((clientId) => {
@@ -67,10 +67,10 @@ const ClientDropdown = ({ clients, ...rest }) => {
   );
 };
 
-ClientDropdown.propTypes = {
+ProjectsDropdown.propTypes = {
   clients: PropTypes.shape({
     clientName: PropTypes.shape({ name: PropTypes.string })
   }).isRequired
 };
 
-export default ClientDropdown;
+export default ProjectsDropdown;

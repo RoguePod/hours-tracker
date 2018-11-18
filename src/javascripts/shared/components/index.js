@@ -5,7 +5,6 @@ export ConfirmAction from './ConfirmAction';
 export DateField from './DateField';
 export FieldError from './FieldError';
 export FieldWarning from './FieldWarning';
-export FileInput from './FileInput';
 export Flashes from './Flashes';
 export FormError from './FormError';
 export HardRedirect from './HardRedirect';

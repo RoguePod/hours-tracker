@@ -47,29 +47,31 @@ class SignInForm extends React.Component {
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          autoFocus
-          component={InputField}
-          disabled={submitting}
-          id="email"
-          label="Email"
-          name="email"
-          type="email"
-          validate={[isRequired, isEmail]}
-        />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          component={InputField}
-          disabled={submitting}
-          id="password"
-          label="Password"
-          name="password"
-          type="password"
-          validate={isRequired}
-        />
+        <div className="mb-4">
+          <Field
+            autoCapitalize="none"
+            autoCorrect="off"
+            autoFocus
+            component={InputField}
+            disabled={submitting}
+            label="Email"
+            name="email"
+            type="email"
+            validate={[isRequired, isEmail]}
+          />
+        </div>
+        <div className="mb-4">
+          <Field
+            autoCapitalize="none"
+            autoCorrect="off"
+            component={InputField}
+            disabled={submitting}
+            label="Password"
+            name="password"
+            type="password"
+            validate={isRequired}
+          />
+        </div>
         <div className="flex flex-row justify-between">
           <Button
             className="py-2"

@@ -1,19 +1,23 @@
-import { FieldError, FieldWarning } from 'javascripts/shared/components';
-import { Form, Search } from 'semantic-ui-react';
+import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 import {
-  selectClientsByKey, selectQueriedClients
+  selectClientsByKey,
+  selectQueriedClients
 } from 'javascripts/app/redux/clients';
 
+import ClientsDropdown from './ClientsDropdown';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
+import _uniqueId from 'lodash/uniqueId';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 import { formValueSelector } from 'redux-form';
 
 class ClientField extends React.Component {
   static propTypes = {
     clientRef: PropTypes.docRef,
     clients: PropTypes.docRef.isRequired,
+    id: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -31,6 +35,7 @@ class ClientField extends React.Component {
 
   static defaultProps = {
     clientRef: null,
+    id: null,
     label: null
   }
 
@@ -40,8 +45,6 @@ class ClientField extends React.Component {
     this._handleChange = this._handleChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
     this._handleFocus = this._handleFocus.bind(this);
-    this._handleSearchChange = this._handleSearchChange.bind(this);
-    this._handleRenderResult = this._handleRenderResult.bind(this);
     this._findValue = this._findValue.bind(this);
   }
 
@@ -62,7 +65,7 @@ class ClientField extends React.Component {
 
   timeout = null
 
-  _handleChange(event, data) {
+  _handleChange(client) {
     const { input: { onChange }, onClientChange } = this.props;
 
     if (this.timeout) {
@@ -70,15 +73,9 @@ class ClientField extends React.Component {
       this.timeout = null;
     }
 
-    onClientChange(data.result['data-client-ref']);
+    onClientChange(client.clientRef);
     onChange('');
     this.setState({ focused: false });
-  }
-
-  _handleSearchChange(event, { value }) {
-    const { input: { onChange } } = this.props;
-
-    onChange(value);
   }
 
   _handleRenderResult({ name }) {
@@ -89,8 +86,8 @@ class ClientField extends React.Component {
     );
   }
 
-  _handleBlur(event, { value }) {
-    const { input: { onChange }, onClientChange } = this.props;
+  _handleBlur() {
+    const { input: { onChange, value }, onClientChange } = this.props;
 
     this.timeout = setTimeout(() => {
       if (value.length === 0) {
@@ -109,7 +106,9 @@ class ClientField extends React.Component {
     onChange(this._findValue());
 
     this.setState({ focused: true }, () => {
-      target.select();
+      setTimeout(() => {
+        target.select();
+      }, 1);
     });
   }
 
@@ -131,7 +130,7 @@ class ClientField extends React.Component {
   }
 
   render() {
-    const { input, label, meta, ready, results } = this.props;
+    const { className, id, input, label, meta, ready, results } = this.props;
     const { focused } = this.state;
 
     /* eslint-disable no-unneeded-ternary */
@@ -144,38 +143,57 @@ class ClientField extends React.Component {
       value = this._findValue();
     }
 
+    const inputClassName = cx(
+      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
+      'leading-tight focus:outline-none',
+      {
+        'border-grey-light': !isError,
+        'border-red': isError,
+        'focus:border-blue-light': !isError,
+        'focus:border-red': isError
+      },
+      className
+    );
+
+    const inputId = id ? id : _uniqueId('input_');
+
     return (
-      <Form.Field
-        error={isError}
-      >
+      <div className="relative">
         {label &&
-          <label>
+          <Label
+            error={isError}
+            htmlFor={inputId}
+          >
             {label}
-          </label>}
-        <Search
+          </Label>}
+        <input
           {...input}
+          className={inputClassName}
           disabled={!ready}
+          id={inputId}
           onBlur={this._handleBlur}
           onFocus={this._handleFocus}
-          onResultSelect={this._handleChange}
-          onSearchChange={this._handleSearchChange}
-          resultRenderer={this._handleRenderResult}
-          results={results}
           value={value}
+        />
+        <ClientsDropdown
+          clients={results}
+          onClientClick={this._handleChange}
         />
         <FieldError {...meta} />
         <FieldWarning {...meta} />
-      </Form.Field>
+      </div>
     );
   }
 }
 
 const props = (state, ownProps) => {
-  const formSelector = formValueSelector(ownProps.meta.form);
-  const query        = formSelector(state, 'clientName');
+  const { input: { name }, meta: { form }, nameClient } = ownProps;
+
+  const formSelector = formValueSelector(form);
+  const query        = formSelector(state, name);
 
   return {
-    clientRef: formSelector(state, 'clientRef'),
+    clientRef: formSelector(state, nameClient),
     clients: selectClientsByKey(state),
     ready: state.clients.ready,
     results: selectQueriedClients(state, query)

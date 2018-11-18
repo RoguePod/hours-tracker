@@ -104,15 +104,14 @@ class EntryForm extends React.Component {
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+        <div className="flex flex-wrap -mx-2 mb-4">
+          <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
               autoCapitalize="none"
               autoCorrect="off"
               autoFocus
               component={TimeField}
               disabled={submitting}
-              id="startedAt"
               label="Started"
               name="startedAt"
               timezone={timezone}
@@ -120,7 +119,7 @@ class EntryForm extends React.Component {
               validate={[isRequired, isParsedTime]}
             />
           </div>
-          <div className="w-full md:w-1/2 px-3">
+          <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
               autoCapitalize="none"
               autoCorrect="off"
@@ -134,8 +133,8 @@ class EntryForm extends React.Component {
             />
           </div>
         </div>
-        <div className="flex flex-wrap -mx-3 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+        <div className="flex flex-wrap -mx-2 mb-4">
+          <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
               component={ProjectField}
               disabled={submitting}
@@ -146,7 +145,7 @@ class EntryForm extends React.Component {
               onProjectChange={this._handleProjectChange}
             />
           </div>
-          <div className="w-full md:w-1/2 px-3">
+          <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
               component={SelectField}
               disabled={submitting}

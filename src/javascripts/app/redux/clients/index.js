@@ -218,8 +218,8 @@ export const selectQueriedClients = createSelector(
 
     return results.map((client) => {
       return {
-        'data-client-ref': firestore.doc(`clients/${client.id}`),
-        key: client.id,
+        clientRef: firestore.doc(`clients/${client.id}`),
+        id: client.id,
         name: client.name
       };
     });

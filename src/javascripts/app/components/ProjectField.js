@@ -4,10 +4,11 @@ import {
   selectQueriedProjects
 } from 'javascripts/app/redux/clients';
 
-import ClientDropdown from './ClientDropdown';
+import ProjectsDropdown from './ProjectsDropdown';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
+import _uniqueId from 'lodash/uniqueId';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 import { formValueSelector } from 'redux-form';
@@ -16,6 +17,7 @@ class ProjectField extends React.Component {
   static propTypes = {
     clientRef: PropTypes.docRef,
     clients: PropTypes.docRef.isRequired,
+    id: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -38,6 +40,7 @@ class ProjectField extends React.Component {
 
   static defaultProps = {
     clientRef: null,
+    id: null,
     label: null,
     projectRef: null
   }
@@ -152,12 +155,14 @@ class ProjectField extends React.Component {
       className
     );
 
+    const inputId = id ? id : _uniqueId('input_');
+
     return (
-      <div className="mb-4 relative">
+      <div className="relative">
         {label &&
           <Label
             error={isError}
-            htmlFor={id}
+            htmlFor={inputId}
           >
             {label}
           </Label>}
@@ -165,12 +170,12 @@ class ProjectField extends React.Component {
           {...input}
           className={inputClassName}
           disabled={!ready}
-          id={id}
+          id={inputId}
           onBlur={this._handleBlur}
           onFocus={this._handleFocus}
           value={value}
         />
-        <ClientDropdown
+        <ProjectsDropdown
           clients={results}
           onProjectClick={this._handleChange}
         />

@@ -1,8 +1,11 @@
-import { Dimmer, Form, Grid, Loader } from 'semantic-ui-react';
-import { Field, reduxForm } from 'redux-form';
 import {
-  FormError, TextAreaField, TimeField
+  Button,
+  FormError,
+  Spinner,
+  TextAreaField,
+  TimeField
 } from 'javascripts/shared/components';
+import { Field, reduxForm } from 'redux-form';
 import { isParsedTime, isRequired, isStoppedAt } from 'javascripts/validators';
 
 import { ProjectField } from 'javascripts/app/components';
@@ -94,28 +97,15 @@ class EntryNewForm extends React.Component {
       stoppedAtValidation.unshift(isRequired);
     }
 
-    return [
-      <Dimmer
-        active={Boolean(fetching)}
-        inverted
-        key="dimmer"
-      >
-        <Loader>
-          {fetching}
-        </Loader>
-      </Dimmer>,
-      <Form
-        key="form"
-        noValidate
-        onSubmit={handleSubmit(this._handleSubmit)}
-      >
-        <FormError error={error} />
-        <Grid
-          columns="equal"
-          stackable
+    return (
+      <React.Fragment>
+        <form
+          noValidate
+          onSubmit={handleSubmit(this._handleSubmit)}
         >
-          <Grid.Row>
-            <Grid.Column>
+          <FormError error={error} />
+          <div className="flex flex-wrap -mx-2">
+            <div className="w-full md:w-1/2 px-2 mb-4">
               <Field
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -127,8 +117,8 @@ class EntryNewForm extends React.Component {
                 type="text"
                 validate={[isRequired, isParsedTime]}
               />
-            </Grid.Column>
-            <Grid.Column>
+            </div>
+            <div className="w-full md:w-1/2 px-2 mb-4">
               <Field
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -140,10 +130,10 @@ class EntryNewForm extends React.Component {
                 type="text"
                 validate={stoppedAtValidation}
               />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
+            </div>
+          </div>
+          <div className="flex flex-wrap -mx-2">
+            <div className="w-full md:w-1/2 px-2 mb-4">
               <Field
                 component={ProjectField}
                 disabled={submitting}
@@ -153,8 +143,8 @@ class EntryNewForm extends React.Component {
                 nameProject="projectRef"
                 onProjectChange={this._handleProjectChange}
               />
-            </Grid.Column>
-            <Grid.Column>
+            </div>
+            <div className="w-full md:w-1/2 px-2 mb-4">
               <Field
                 autoCapitalize="sentences"
                 autoCorrect="on"
@@ -165,24 +155,24 @@ class EntryNewForm extends React.Component {
                 name="description"
                 rows={1}
               />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Form.Button
-                color="green"
-                disabled={submitting}
-                fluid
-                loading={submitting}
-                size="big"
-              >
-                {'Save'}
-              </Form.Button>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Form>
-    ];
+            </div>
+          </div>
+          <Button
+            className="py-2 w-full"
+            color="green"
+            disabled={submitting}
+            loading={submitting}
+            type="submit"
+          >
+            {submitting ? 'Saving...' : 'Save'}
+          </Button>
+        </form>
+        <Spinner
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      </React.Fragment>
+    );
   }
   /* eslint-enable max-lines-per-function */
 }

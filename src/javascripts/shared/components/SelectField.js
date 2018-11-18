@@ -3,13 +3,14 @@ import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import _uniqueId from 'lodash/uniqueId';
 import cx from 'classnames';
 
 class SelectField extends React.Component {
   static propTypes = {
     children: PropTypes.node,
     className: PropTypes.string,
-    id: PropTypes.string.isRequired,
+    id: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -25,6 +26,7 @@ class SelectField extends React.Component {
   static defaultProps = {
     children: null,
     className: null,
+    id: null,
     label: null
   }
 
@@ -66,12 +68,14 @@ class SelectField extends React.Component {
     const arrowClasses =
       'pointer-events-none absolute pin-y pin-r flex items-center px-4';
 
+    const inputId = id ? id : _uniqueId('input_');
+
     return (
-      <div className="mb-4">
+      <React.Fragment>
         {label &&
           <Label
             error={isError}
-            htmlFor={id}
+            htmlFor={inputId}
           >
             {label}
           </Label>}
@@ -81,7 +85,7 @@ class SelectField extends React.Component {
             {...input}
             {...rest}
             className={inputClassName}
-            id={id}
+            id={inputId}
           >
             {children}
           </select>
@@ -93,7 +97,7 @@ class SelectField extends React.Component {
         </div>
         <FieldError {...meta} />
         <FieldWarning {...meta} />
-      </div>
+      </React.Fragment>
     );
   }
 }

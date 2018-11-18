@@ -89,73 +89,80 @@ class ProfileForm extends React.Component {
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Field
-          autoCapitalize="sentences"
-          autoCorrect="off"
-          component={InputField}
-          disabled={submitting}
-          id="name"
-          label="Name"
-          name="name"
-          type="text"
-          validate={[isRequired]}
-        />
-        <Field
-          autoCapitalize="off"
-          autoCorrect="off"
-          component={InputField}
-          disabled={submitting}
-          id="recentProjectsListSize"
-          label="Recent Projects List Size"
-          name="recentProjectsListSize"
-          type="number"
-          validate={[isRequired]}
-        />
-        <Field
-          component={SelectField}
-          disabled={submitting}
-          id="recentProjectsSort"
-          label="Recent Projects Sort"
-          name="recentProjectsSort"
-          validate={[isRequired]}
-        >
-          <option value="">
-            {'--Select--'}
-          </option>
-          {this._getRecentProjectsSortOptions()}
-        </Field>
-        <Field
-          component={SelectField}
-          disabled={submitting}
-          id="entriesTab"
-          label="Default Entries Tab"
-          name="entriesTab"
-          validate={[isRequired]}
-        >
-          <option value="">
-            {'--Select--'}
-          </option>
-          {this._getEntriesTabOptions()}
-        </Field>
-        <Field
-          component={SelectField}
-          disabled={submitting}
-          id="timezone"
-          label="Timezone"
-          name="timezone"
-          validate={[isRequired]}
-        >
-          <option value="">
-            {'--Select--'}
-          </option>
-          {this._getTimezoneOptions()}
-        </Field>
-        <Field
-          component={CheckboxField}
-          disabled={submitting}
-          label="Autoload Last Description"
-          name="autoloadLastDescription"
-        />
+        <div className="mb-4">
+          <Field
+            autoCapitalize="sentences"
+            autoCorrect="off"
+            component={InputField}
+            disabled={submitting}
+            label="Name"
+            name="name"
+            type="text"
+            validate={[isRequired]}
+          />
+        </div>
+        <div className="mb-4">
+          <Field
+            autoCapitalize="off"
+            autoCorrect="off"
+            component={InputField}
+            disabled={submitting}
+            label="Recent Projects List Size"
+            name="recentProjectsListSize"
+            type="number"
+            validate={[isRequired]}
+          />
+        </div>
+        <div className="mb-4">
+          <Field
+            component={SelectField}
+            disabled={submitting}
+            label="Recent Projects Sort"
+            name="recentProjectsSort"
+            validate={[isRequired]}
+          >
+            <option value="">
+              {'--Select--'}
+            </option>
+            {this._getRecentProjectsSortOptions()}
+          </Field>
+        </div>
+        <div className="mb-4">
+          <Field
+            component={SelectField}
+            disabled={submitting}
+            label="Default Entries Tab"
+            name="entriesTab"
+            validate={[isRequired]}
+          >
+            <option value="">
+              {'--Select--'}
+            </option>
+            {this._getEntriesTabOptions()}
+          </Field>
+        </div>
+        <div className="mb-4">
+          <Field
+            component={SelectField}
+            disabled={submitting}
+            label="Timezone"
+            name="timezone"
+            validate={[isRequired]}
+          >
+            <option value="">
+              {'--Select--'}
+            </option>
+            {this._getTimezoneOptions()}
+          </Field>
+        </div>
+        <div className="mb-4">
+          <Field
+            component={CheckboxField}
+            disabled={submitting}
+            label="Autoload Last Description"
+            name="autoloadLastDescription"
+          />
+        </div>
         <Button
           className="py-2"
           color="green"

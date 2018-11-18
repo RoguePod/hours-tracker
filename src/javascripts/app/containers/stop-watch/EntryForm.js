@@ -56,7 +56,6 @@ class EntryForm extends React.Component {
         <FormError error={error} />
         <Field
           component={ProjectField}
-          id="projectRef"
           label="Project"
           name="projectName"
           nameClient="clientRef"
@@ -68,8 +67,6 @@ class EntryForm extends React.Component {
           autoCorrect="on"
           autoHeight
           component={TextAreaField}
-          containerClassName=""
-          id="description"
           label="Description"
           name="description"
           onChange={this._handleDescriptionChange}
