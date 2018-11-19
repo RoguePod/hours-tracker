@@ -22,7 +22,6 @@ class EntryRow extends React.Component {
     super(props);
 
     this._handleDestroy = this._handleDestroy.bind(this);
-    this._handleLink = this._handleLink.bind(this);
   }
 
   componentDidMount() {
@@ -75,12 +74,6 @@ class EntryRow extends React.Component {
     onDestroyEntry(entry.id);
   }
 
-  _handleLink() {
-    const { entry } = this.props;
-
-    history.push(`/entries/${entry.id}/edit`);
-  }
-
   /* eslint-disable max-lines-per-function */
   render() {
     const { entry, timezone } = this.props;
@@ -95,8 +88,7 @@ class EntryRow extends React.Component {
       stoppedAt = moment().tz(entry.timezone);
     }
 
-    const baseHighlightClasses =
-      'whitespace-no-wrap';
+    const baseHighlightClasses = 'whitespace-no-wrap';
 
     let highlightClasses = cx(
       'text-green',
@@ -110,7 +102,7 @@ class EntryRow extends React.Component {
       );
     } else if (!project.billable) {
       highlightClasses = cx(
-        'text-yellow',
+        'text-blue',
         baseHighlightClasses
       );
     }
@@ -160,25 +152,21 @@ class EntryRow extends React.Component {
         </td>
         <td
           className={highlightClasses}
-          onClick={this._handleLink}
         >
           {_get(entry, 'client.name', 'No Client')}
         </td>
         <td
           className={highlightClasses}
-          onClick={this._handleLink}
         >
           {_get(entry, 'project.name', 'No Project')}
         </td>
         <td
           className="text-center whitespace-no-wrap"
-          onClick={this._handleLink}
         >
           {startedAt.format('ddd, MM/DD')}
         </td>
         <td
           className="text-center whitespace-no-wrap"
-          onClick={this._handleLink}
         >
           {startedAt.format('h:mma ')}
           {entry.timezone !== timezone &&
@@ -188,7 +176,6 @@ class EntryRow extends React.Component {
         </td>
         <td
           className="text-center whitespace-no-wrap"
-          onClick={this._handleLink}
         >
           {entry.stoppedAt && stoppedAt.format('h:mma')}
           {!entry.stoppedAt &&
@@ -203,13 +190,10 @@ class EntryRow extends React.Component {
         </td>
         <td
           className="text-center whitespace-no-wrap"
-          onClick={this._handleLink}
         >
           {stoppedAt.diff(startedAt, 'hours', true).toFixed(1)}
         </td>
-        <td
-          onClick={this._handleLink}
-        >
+        <td>
           {nl2br(entry.description)}
         </td>
       </tr>

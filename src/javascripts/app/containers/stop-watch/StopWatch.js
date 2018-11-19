@@ -116,6 +116,7 @@ class StopWatch extends React.Component {
         </ActionButton>
 
         <ActionButton
+          as="Link"
           color="teal"
           title="Split"
           to={`/entries/${entry.id}/split`}
@@ -126,6 +127,7 @@ class StopWatch extends React.Component {
         </ActionButton>
 
         <ActionButton
+          as="Link"
           color="orange"
           title="Edit"
           to={`/entries/${entry.id}/edit`}

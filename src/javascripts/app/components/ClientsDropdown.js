@@ -1,6 +1,7 @@
 import ClientRow from './ClientRow';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import cx from 'classnames';
 import posed from 'react-pose';
 import styled from 'styled-components';
 
@@ -14,6 +15,7 @@ const FadeIn = posed.div({
 });
 
 const Dropdown = styled(FadeIn)`
+  max-height: 300px;
   top: 100%;
 `;
 
@@ -36,9 +38,13 @@ const ClientsDropdown = ({ clients, ...rest }) => {
     );
   });
 
-  const dropdownClasses =
-    'bg-white rounded absolute pin-x shadow-lg z-10 overflow-hidden mt-2 ' +
-    'list-reset';
+  const dropdownClasses = cx(
+    'bg-white border-blue rounded-b absolute pin-x shadow-md z-10 ' +
+    'overflow-x-hidden overflow-y-auto list-reset',
+    {
+      'border-b border-l border-r': clients.length > 0
+    }
+  );
 
   return (
     <Dropdown

@@ -55,7 +55,8 @@ class SelectField extends React.Component {
 
     const inputClassName = cx(
       'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none bg-white cursor-pointer h-full',
+      'leading-tight focus:outline-none bg-white cursor-pointer h-full ' +
+      'transition',
       {
         'border-grey-light': !isError,
         'border-red': isError,

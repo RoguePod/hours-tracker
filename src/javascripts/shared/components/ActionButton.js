@@ -1,3 +1,4 @@
+import ConfirmAction from './ConfirmAction';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -5,7 +6,9 @@ import Tooltip from './Tooltip';
 import cx from 'classnames';
 
 const ActionButton = (props) => {
-  const { as, children, className, color, title, ...rest } = props;
+  const {
+    as, children, className, color, confirm, onClick, title, ...rest
+  } = props;
 
   const actionClasses = cx(
     `text-white bg-${color} hover:bg-${color}-dark shadow hover:shadow-md`,
@@ -21,6 +24,7 @@ const ActionButton = (props) => {
       <button
         {...rest}
         className={actionClasses}
+        onClick={confirm ? null : onClick}
         type="button"
       >
         {children}
@@ -38,12 +42,23 @@ const ActionButton = (props) => {
   }
 
   if (title) {
-    return (
+    action = (
       <Tooltip
         title={title}
       >
         {action}
       </Tooltip>
+    );
+  }
+
+  if (confirm && confirm.length > 0) {
+    action = (
+      <ConfirmAction
+        message={confirm}
+        onClick={onClick}
+      >
+        {action}
+      </ConfirmAction>
     );
   }
 
@@ -55,6 +70,8 @@ ActionButton.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   color: PropTypes.string,
+  confirm: PropTypes.string,
+  onClick: PropTypes.func,
   title: PropTypes.string
 };
 
@@ -62,6 +79,8 @@ ActionButton.defaultProps = {
   as: 'button',
   className: null,
   color: 'green',
+  confirm: null,
+  onClick: null,
   title: null
 };
 

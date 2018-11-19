@@ -84,7 +84,7 @@ class ProjectRow extends React.Component {
 
       cells.push(
         <td
-          className="w-collapsing"
+          className="w-px"
           key={day}
         >
           {total.toFixed(1)}
@@ -118,9 +118,9 @@ class ProjectRow extends React.Component {
     } = this._getMonthAndOtherTotals(startMonth, endMonth);
 
     const cellClass = cx({
+      'text-blue': project && !project.billable,
       'text-green': project && project.billable,
-      'text-red': !project,
-      'text-yellow': project && !project.billable
+      'text-red': !project
     });
 
     return (
@@ -132,14 +132,14 @@ class ProjectRow extends React.Component {
           {_get(project, 'name', 'No Project')}
         </td>
         {cells}
-        <td className="w-collapsing">
+        <td className="w-px">
           {weekTotal.toFixed(1)}
         </td>
-        <td className="w-collapsing bg-blue-lighter">
+        <td className="w-px bg-blue-lighter">
           {monthTotal.toFixed(1)}
         </td>
         {diffMonth &&
-          <td className="w-collapsing bg-blue-lighter">
+          <td className="w-px bg-blue-lighter">
             {otherTotal.toFixed(1)}
           </td>}
       </tr>

@@ -1,6 +1,7 @@
 import ProjectRow from './ProjectRow';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import cx from 'classnames';
 import posed from 'react-pose';
 import styled from 'styled-components';
 
@@ -14,6 +15,7 @@ const FadeIn = posed.div({
 });
 
 const Dropdown = styled(FadeIn)`
+  max-height: 300px;
   top: 100%;
 `;
 
@@ -41,7 +43,7 @@ const ProjectsDropdown = ({ clients, ...rest }) => {
     });
 
     return (
-      <div
+      <React.Fragment
         key={clientId}
       >
         <div className="bg-blue-light p-2 font-bold text-white">
@@ -50,12 +52,17 @@ const ProjectsDropdown = ({ clients, ...rest }) => {
         <ul className="list-reset">
           {projects}
         </ul>
-      </div>
+      </React.Fragment>
     );
   });
 
-  const dropdownClasses =
-    'bg-white rounded absolute pin-x shadow-lg z-10 overflow-hidden mt-2';
+  const dropdownClasses = cx(
+    'bg-white border-blue rounded-b absolute pin-x shadow-md z-10 ' +
+    'overflow-x-hidden overflow-y-auto',
+    {
+      'border-b border-l border-r': keys.length > 0
+    }
+  );
 
   return (
     <Dropdown

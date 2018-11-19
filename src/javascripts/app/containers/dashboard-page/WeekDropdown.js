@@ -155,7 +155,7 @@ class WeekDropdown extends React.Component {
 
     const selectClasses =
       'block bg-blue text-white appearance-none outline-none px-4 py-2 pr-10 ' +
-      'h-full cursor-pointer';
+      'h-full cursor-pointer transition';
 
     const arrowClasses =
       'pointer-events-none absolute pin-y pin-r flex items-center px-4 ' +

@@ -67,7 +67,7 @@ class UsersRow extends React.Component {
 
       cells.push(
         <td
-          className="w-collapsing"
+          className="w-px"
           key={day}
         >
           {dayTotal.toFixed(1)}
@@ -97,14 +97,14 @@ class UsersRow extends React.Component {
           {user.name}
         </td>
         {cells}
-        <td className="w-collapsing">
+        <td className="w-px">
           {weekTotal.toFixed(1)}
         </td>
-        <td className="w-collapsing bg-blue-lighter">
+        <td className="w-px bg-blue-lighter">
           {monthTotal.toFixed(1)}
         </td>
         {diffMonth &&
-          <td className="w-collapsing bg-blue-lighter">
+          <td className="w-px bg-blue-lighter">
             {otherTotal.toFixed(1)}
           </td>}
       </tr>

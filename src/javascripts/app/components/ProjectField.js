@@ -143,14 +143,18 @@ class ProjectField extends React.Component {
       value = this._findValue();
     }
 
+    const keys = Object.keys(results);
+
     const inputClassName = cx(
-      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none',
+      'appearance-none border w-full py-2 px-3 text-grey-darker',
+      'leading-tight focus:outline-none transition',
       {
         'border-grey-light': !isError,
         'border-red': isError,
         'focus:border-blue-light': !isError,
-        'focus:border-red': isError
+        'focus:border-red': isError,
+        'rounded': keys.length === 0,
+        'rounded-t': keys.length > 0
       },
       className
     );

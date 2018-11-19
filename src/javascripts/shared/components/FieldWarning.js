@@ -10,7 +10,7 @@ const FadeIn = posed.div({
 const FieldError = ({ touched, warning }) => {
   return (
     <FadeIn
-      className="text-yellow text-sm"
+      className="text-yellow-darker text-sm"
       pose={touched && warning ? 'show' : 'hide'}
     >
       {warning &&

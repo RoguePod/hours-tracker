@@ -1,15 +1,18 @@
-import { Checkbox, Icon, Popup, Table } from 'semantic-ui-react';
+import {
+  ActionButton,
+  ConfirmAction,
+  Tooltip
+} from 'javascripts/shared/components';
 
-import { ConfirmAction } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
-import { history } from 'javascripts/app/redux/store';
+import cx from 'classnames';
 import moment from 'moment-timezone';
 import nl2br from 'react-nl2br';
-import styles from './EntryRow.scss';
 
 class EntryRow extends React.Component {
   static propTypes = {
@@ -25,7 +28,6 @@ class EntryRow extends React.Component {
     super(props);
 
     this._handleDestroy = this._handleDestroy.bind(this);
-    this._handleLink = this._handleLink.bind(this);
     this._handleChecked = this._handleChecked.bind(this);
   }
 
@@ -80,12 +82,6 @@ class EntryRow extends React.Component {
     onDestroyEntry(entry.id);
   }
 
-  _handleLink() {
-    const { entry } = this.props;
-
-    history.push(`/entries/${entry.id}/edit`);
-  }
-
   _handleChecked() {
     const { entry, onCheckEntry } = this.props;
 
@@ -106,137 +102,115 @@ class EntryRow extends React.Component {
       stoppedAt = moment().tz(entry.timezone);
     }
 
+    const baseHighlightClasses = 'w-px whitespace-no-wrap';
+    let highlightClasses = cx(
+      'text-green',
+      baseHighlightClasses
+    );
+
+    if (!project) {
+      highlightClasses = cx(
+        'text-red',
+        baseHighlightClasses
+      );
+    } else if (!project.billable) {
+      highlightClasses = cx(
+        'text-blue',
+        baseHighlightClasses
+      );
+    }
+
     return (
-      <Table.Row
-        className={styles.container}
-      >
-        <Table.Cell
-          collapsing
-          singleLine
-        >
-          <Checkbox
+      <tr>
+        <td className="w-px whitespace-no-wrap text-center">
+          <input
             checked={entry.checked}
-            onClick={this._handleChecked}
+            onChange={this._handleChecked}
+            type="checkbox"
           />
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          singleLine
-        >
-          <Popup
-            content="Edit"
-            position="top center"
-            size="small"
-            trigger={
-              <Link
-                to={`/entries/${entry.id}/edit`}
-              >
-                <Icon
-                  color="green"
-                  name="pencil"
-                  size="large"
-                />
-              </Link>
-            }
-          />
-          <Popup
-            content="Split"
-            position="top center"
-            size="small"
-            trigger={
-              <Link
-                to={`/entries/${entry.id}/split`}
-              >
-                <Icon
-                  color="teal"
-                  name="exchange"
-                  size="large"
-                />
-              </Link>
-            }
-          />
-          <ConfirmAction
-            message="This will remove this entry.  Are you sure?"
-            onClick={this._handleDestroy}
-          >
-            <Icon
+        </td>
+        <td>
+          <div className="flex flex-row">
+            <ActionButton
+              as="Link"
+              color="orange"
+              title="Edit"
+              to={`/entries/${entry.id}/edit`}
+            >
+              <FontAwesomeIcon
+                icon="pencil-alt"
+              />
+            </ActionButton>
+            <ActionButton
+              as="Link"
+              color="teal"
+              title="Split"
+              to={`/entries/${entry.id}/split`}
+            >
+              <FontAwesomeIcon
+                icon="exchange-alt"
+              />
+            </ActionButton>
+            <ActionButton
               color="red"
-              name="remove"
-              size="large"
-            />
-          </ConfirmAction>
-        </Table.Cell>
+              confirm="This will remove this entry.  Are you sure?"
+              onClick={this._handleDestroy}
+              title="Remove"
+            >
+              <FontAwesomeIcon
+                icon="times"
+              />
+            </ActionButton>
+          </div>
+        </td>
         {admin &&
-          <Table.Cell
-            collapsing
-            onClick={this._handleLink}
-            singleLine
+          <td
+            className="w-px whitespace-no-wrap"
           >
             {entry.user.name}
-          </Table.Cell>}
-        <Table.Cell
-          collapsing
-          error={!project}
-          onClick={this._handleLink}
-          positive={project && project.billable}
-          singleLine
-          warning={project && !project.billable}
+          </td>}
+        <td
+          className={highlightClasses}
         >
           {_get(entry, 'client.name', 'No Client')}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          error={!project}
-          onClick={this._handleLink}
-          positive={project && project.billable}
-          singleLine
-          warning={project && !project.billable}
+        </td>
+        <td
+          className={highlightClasses}
         >
           {_get(entry, 'project.name', 'No Project')}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          onClick={this._handleLink}
-          singleLine
-          textAlign="center"
+        </td>
+        <td
+          className="w-px whitespace-no-wrap text-center"
         >
           {startedAt.format('h:mma')}
           {(showAdmin || entry.timezone !== timezone) &&
             <sup>
               {startedAt.format(' z')}
             </sup>}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          onClick={this._handleLink}
-          singleLine
-          textAlign="center"
+        </td>
+        <td
+          className="w-px whitespace-no-wrap text-center"
         >
           {entry.stoppedAt && stoppedAt.format('h:mma')}
           {!entry.stoppedAt &&
-            <Icon
-              loading
-              name="spinner"
+            <FontAwesomeIcon
+              icon="clock"
+              pulse
             />}
           {(entry.stoppedAt && (showAdmin || entry.timezone !== timezone)) &&
             <sup>
               {startedAt.format(' z')}
             </sup>}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          onClick={this._handleLink}
-          singleLine
-          textAlign="center"
+        </td>
+        <td
+          className="text-center whitespace-no-wrap"
         >
           {stoppedAt.diff(startedAt, 'hours', true).toFixed(1)}
-        </Table.Cell>
-        <Table.Cell
-          onClick={this._handleLink}
-        >
+        </td>
+        <td>
           {nl2br(entry.description)}
-        </Table.Cell>
-      </Table.Row>
+        </td>
+      </tr>
     );
   }
   /* eslint-enable max-lines-per-function */

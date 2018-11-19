@@ -1,17 +1,19 @@
-import { Button, Table } from 'semantic-ui-react';
+import { Button, ConfirmAction } from 'javascripts/shared/components';
 import {
-  checkEntry, selectGroupedEntries, selectQuery, subscribeEntries
+  checkEntry,
+  selectGroupedEntries,
+  selectQuery,
+  subscribeEntries
 } from 'javascripts/app/redux/entries';
 
-import { ConfirmAction } from 'javascripts/shared/components';
 import EntryRow from './EntryRow';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { destroyEntry } from 'javascripts/app/redux/entry';
 import { selectTimezone } from 'javascripts/app/redux/app';
-import styles from './IndexTable.scss';
 
 class EntriesIndexTable extends React.Component {
   static propTypes = {
@@ -99,21 +101,20 @@ class EntriesIndexTable extends React.Component {
       });
 
       tbodies.push(
-        <Table.Body
+        <tbody
           key={key}
         >
-          <Table.Row
-            className={styles.dayRow}
-            textAlign="center"
+          <tr
+            className="bg-blue-lighter text-center text-blue"
           >
-            <Table.Cell
+            <td
               colSpan={showAdmin ? 9 : 8}
             >
               {key}
-            </Table.Cell>
-          </Table.Row>
+            </td>
+          </tr>
           {rows}
-        </Table.Body>
+        </tbody>
       );
     }
 
@@ -128,89 +129,61 @@ class EntriesIndexTable extends React.Component {
       <div>
         <div>
           <Button
-            color="blue"
-            content="More"
-            floated="right"
             onClick={this._handleMore}
-          />
+          >
+            {'More'}
+          </Button>
           <ConfirmAction
             message="This will remove all checked entries.  Are you sure?"
             onClick={this._handleDestroy}
           >
             <Button
               color="red"
-              content="Remove Checked"
               disabled={checked.length === 0}
-              icon="close"
-              size="small"
-            />
+            >
+              <FontAwesomeIcon
+                icon="times"
+              />
+              {' '}
+              {'Remove Checked'}
+            </Button>
           </ConfirmAction>
         </div>
-        <div className={styles.table}>
-          <Table
-            celled
-            unstackable
-          >
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                  collapsing
-                />
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                  collapsing
-                />
+        <div className="table-responsive">
+          <table className="table-hover">
+            <thead>
+              <tr>
+                <th className="w-px" />
+                <th className="w-px" />
                 {showAdmin &&
-                  <Table.HeaderCell
-                    className={styles.headerCell}
-                    collapsing
-                  >
+                  <th className="w-px">
                     {'User'}
-                  </Table.HeaderCell>}
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                  collapsing
-                >
+                  </th>}
+                <th className="w-px">
                   {'Client'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                  collapsing
-                >
+                </th>
+                <th className="w-px">
                   {'Project'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                  collapsing
-                >
+                </th>
+                <th className="w-px">
                   {'Started'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                  collapsing
-                >
+                </th>
+                <th className="w-px">
                   {'Stopped'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                  collapsing
-                >
+                </th>
+                <th className="w-px">
                   {'Hours'}
-                </Table.HeaderCell>
-                <Table.HeaderCell
-                  className={styles.headerCell}
-                >
+                </th>
+                <th>
                   {'Description'}
-                </Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
+                </th>
+              </tr>
+            </thead>
             {this._renderTbodies(entries, showAdmin)}
-          </Table>
+          </table>
         </div>
-        <div className={styles.pagination}>
+        <div className="pt-4 text-center">
           <Button
-            color="blue"
             onClick={this._handleMore}
           >
             {'More'}

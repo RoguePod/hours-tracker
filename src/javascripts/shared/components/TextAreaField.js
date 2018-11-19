@@ -117,7 +117,7 @@ class TextAreaField extends React.Component {
 
     const textAreaClassName = cx(
       'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none',
+      'leading-tight focus:outline-none transition',
       {
         'border-grey-light': !isError,
         'border-red': isError,

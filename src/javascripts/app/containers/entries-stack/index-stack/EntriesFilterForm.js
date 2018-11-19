@@ -160,21 +160,25 @@ class EntriesFilterForm extends React.Component {
               onUserChange={this._handleUserChange}
             />
           </div>}
-        <div className="flex flex-row justify-between">
-          <Button
-            className="py-2"
-            color="green"
-            type="submit"
-          >
-            {'Filter'}
-          </Button>
-          <Button
-            className="py-2"
-            onClick={this._handleClear}
-            type="button"
-          >
-            {'Clear'}
-          </Button>
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full md:w-1/2 px-2 md:mb-0 mb-4">
+            <Button
+              className="py-2 w-full"
+              color="green"
+              type="submit"
+            >
+              {'Filter'}
+            </Button>
+          </div>
+          <div className="w-full md:w-1/2 px-2">
+            <Button
+              className="py-2 w-full"
+              onClick={this._handleClear}
+              type="button"
+            >
+              {'Clear'}
+            </Button>
+          </div>
         </div>
       </form>
     );

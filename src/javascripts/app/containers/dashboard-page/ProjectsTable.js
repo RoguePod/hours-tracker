@@ -31,7 +31,7 @@ const _renderHeaderCells = (date, timezone) => {
       .format('ddd');
     headerCells.push(
       <th
-        className="w-collapsing"
+        className="w-px"
         key={dow}
       >
         {dow}
@@ -61,14 +61,14 @@ const ProjectsTable = (props) => {
               {'Project'}
             </th>
             {_renderHeaderCells(date, timezone)}
-            <th className="w-collapsing">
+            <th className="w-px">
               {'Totals'}
             </th>
-            <th className="bg-blue text-white w-collapsing">
+            <th className="bg-blue text-white w-px">
               {startMonth.format('MMM')}
             </th>
             {startMonth.format('MMM') !== endMonth.format('MMM') &&
-              <th className="w-collapsing bg-blue text-white">
+              <th className="w-px bg-blue text-white">
                 {endMonth.format('MMM')}
               </th>}
           </tr>

@@ -217,8 +217,8 @@ class EntriesIndexStack extends React.Component {
     const showAdmin        = isReports || isReportsSummary;
 
     return (
-      <div className="px-4">
-        <h1 className="text-blue">
+      <div className="p-4">
+        <h1 className="text-blue mb-4">
           {'Entries'}
         </h1>
         {this._renderTopMenu()}

@@ -28,7 +28,7 @@ class ProjectRow extends React.Component {
   render() {
     const { project } = this.props;
     const projectClasses =
-      'hover:bg-blue-lightest cursor-pointer px-3 py-2 text-sm';
+      'hover:bg-yellow-light cursor-pointer px-3 py-2 text-sm transition';
 
     return (
       <li

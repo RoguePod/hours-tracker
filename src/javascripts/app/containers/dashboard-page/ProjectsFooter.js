@@ -80,7 +80,7 @@ class ProjectsFooter extends React.Component {
 
       billableCells.push(
         <th
-          className="w-collapsing"
+          className="w-px"
           key={day}
         >
           <strong className="text-green">
@@ -91,7 +91,7 @@ class ProjectsFooter extends React.Component {
 
       totalCells.push(
         <th
-          className="w-collapsing"
+          className="w-px"
           key={day}
         >
           <strong className="text-blue">
@@ -154,18 +154,18 @@ class ProjectsFooter extends React.Component {
             </strong>
           </th>
           {billableCells}
-          <th className="w-collapsing">
+          <th className="w-px">
             <strong className="text-green">
               {weekBillableTotal.toFixed(1)}
             </strong>
           </th>
-          <th className="w-collapsing bg-blue-lighter">
+          <th className="w-px bg-blue-lighter">
             <strong className="text-green">
               {monthBillableTotal.toFixed(1)}
             </strong>
           </th>
           {diffMonth &&
-            <th className="w-collapsing bg-blue-lighter">
+            <th className="w-px bg-blue-lighter">
               <strong className="text-green">
                 {otherBillableTotal.toFixed(1)}
               </strong>
@@ -181,18 +181,18 @@ class ProjectsFooter extends React.Component {
             </strong>
           </th>
           {totalCells}
-          <th className="w-collapsing">
+          <th className="w-px">
             <strong className="text-blue">
               {weekTotal.toFixed(1)}
             </strong>
           </th>
-          <th className="w-collapsing bg-blue-lighter">
+          <th className="w-px bg-blue-lighter">
             <strong className="text-blue">
               {monthTotal.toFixed(1)}
             </strong>
           </th>
           {diffMonth &&
-            <th className="w-collapsing bg-blue-lighter">
+            <th className="w-px bg-blue-lighter">
               <strong className="text-blue">
                 {otherTotal.toFixed(1)}
               </strong>

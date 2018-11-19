@@ -54,14 +54,16 @@ class EntryForm extends React.Component {
         noValidate
       >
         <FormError error={error} />
-        <Field
-          component={ProjectField}
-          label="Project"
-          name="projectName"
-          nameClient="clientRef"
-          nameProject="projectRef"
-          onProjectChange={this._handleProjectChange}
-        />
+        <div className="mb-2">
+          <Field
+            component={ProjectField}
+            label="Project"
+            name="projectName"
+            nameClient="clientRef"
+            nameProject="projectRef"
+            onProjectChange={this._handleProjectChange}
+          />
+        </div>
         <Field
           autoCapitalize="sentences"
           autoCorrect="on"
