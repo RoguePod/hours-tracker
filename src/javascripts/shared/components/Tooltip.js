@@ -6,12 +6,18 @@ import posed from 'react-pose';
 import styled from 'styled-components';
 
 const FadeIn = posed.div({
-  hide: { opacity: 0, transition: { duration: 250 } },
-  show: { opacity: 1, transition: { duration: 250 } }
+  hide: {
+    opacity: 0,
+    transition: { duration: 250 }
+  },
+  show: {
+    opacity: 1,
+    transition: { duration: 250 }
+  }
 });
 
 const Title = styled(FadeIn)`
-  transform: translate(-50%, -100%);
+  transform: translate(-50%, -100%) !important;
 
   &::after {
     border: solid transparent;

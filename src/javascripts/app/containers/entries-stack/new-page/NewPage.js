@@ -1,14 +1,14 @@
-import EditForm from './EditForm';
+import NewForm from './NewForm';
 import React from 'react';
 
-const EntryEditPage = (props) => {
+const EntryNewPage = (props) => {
   return (
     <div className="relative p-4">
       <h1 className="text-blue">
-        {'Edit Entry'}
+        {'New Entry'}
       </h1>
       <div className="shadow rounded border p-4">
-        <EditForm
+        <NewForm
           {...props}
           page
         />
@@ -17,4 +17,4 @@ const EntryEditPage = (props) => {
   );
 };
 
-export default EntryEditPage;
+export default EntryNewPage;

@@ -55,7 +55,7 @@ class SignedInHeader extends React.Component {
               />
             </div>
             <div className="pl-4 pr-2 md:hidden">
-              <Link to={{ ...location, hash: logoHash }}>
+              <Link to={{ ...location, hash: logoHash, replace: true }}>
                 <FontAwesomeIcon
                   icon="clock"
                   pulse={Boolean(running)}
@@ -119,7 +119,7 @@ class SignedInHeader extends React.Component {
             <li>
               <Link
                 className="block rounded py-1 px-3 hover:bg-blue-light"
-                to={{ ...location, hash: menuHash }}
+                to={{ ...location, hash: menuHash, replace: true }}
               >
                 <FontAwesomeIcon
                   icon="bars"

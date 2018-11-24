@@ -1,5 +1,4 @@
-import { FieldError, FieldWarning } from 'javascripts/shared/components';
-
+import { FieldError } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
@@ -75,7 +74,6 @@ class CheckboxField extends React.Component {
           </div>
         </label>
         <FieldError {...meta} />
-        <FieldWarning {...meta} />
       </div>
     );
   }

@@ -153,8 +153,10 @@ class EntriesIndexTable extends React.Component {
           <table className="table-hover">
             <thead>
               <tr>
-                <th className="w-px" />
-                <th className="w-px" />
+                <th
+                  className="w-px"
+                  colSpan={2}
+                />
                 {showAdmin &&
                   <th className="w-px">
                     {'User'}

@@ -7,7 +7,6 @@ import {
 import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
 import EntriesFilterForm from './EntriesFilterForm';
-import EntryNewForm from './EntryNewForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import IndexMenu from './IndexMenu';
 import IndexTable from './index-table/IndexTable';
@@ -16,7 +15,6 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { Spinner } from 'javascripts/shared/components';
 import SummaryTable from './summary-table/SummaryTable';
-import _get from 'lodash/get';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 
@@ -29,7 +27,6 @@ class EntriesIndexStack extends React.Component {
     onReset: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
     rawQuery: PropTypes.entriesQuery.isRequired,
-    tab: PropTypes.string.isRequired,
     timezone: PropTypes.string.isRequired
   }
 
@@ -98,29 +95,17 @@ class EntriesIndexStack extends React.Component {
   }
 
   _renderTopMenu() {
-    const { location, tab } = this.props;
-    const { hash } = location;
+    const { location } = this.props;
 
     const tabClasses =
       'cursor-pointer py-2 px-4 border-l border-t border-r rounded-t ' +
       'block transition';
 
-    const filterActive =
-      (hash === '' && tab === '#filter') || hash === '#filter';
     const filterTabClasses = cx(
       tabClasses,
       {
-        'bg-white': filterActive,
-        'border-transparent text-blue hover:text-blue-darker': !filterActive
-      }
-    );
-
-    const newActive = (hash === '' && tab === '#new') || hash === '#new';
-    const newTabClasses = cx(
-      tabClasses,
-      {
-        'bg-white': newActive,
-        'border-transparent text-blue hover:text-blue-darker': !newActive
+        'bg-white': true,
+        'border-transparent text-blue hover:text-blue-darker': !true
       }
     );
 
@@ -139,38 +124,21 @@ class EntriesIndexStack extends React.Component {
             {'Filter'}
           </Link>
         </li>
-        <li className="inline-block">
-          <Link
-            className={newTabClasses}
-            replace
-            to={{ ...location, hash: '#new' }}
-          >
-            <FontAwesomeIcon
-              icon="plus"
-            />
-            {' '}
-            {'New Entry'}
-          </Link>
-        </li>
       </ul>
     );
   }
 
   _renderForm(showAdmin) {
-    const { location, query, tab } = this.props;
-    const { hash } = location;
+    const { location, query } = this.props;
 
     return (
       <div className="border rounded shadow p-4">
-        {((hash === '' && tab === '#filter') || hash === '#filter') &&
-          <EntriesFilterForm
-            initialValues={query}
-            location={location}
-            query={query}
-            showAdmin={showAdmin}
-          />}
-        {((hash === '' && tab === '#new') || hash === '#new') &&
-          <EntryNewForm />}
+        <EntriesFilterForm
+          initialValues={query}
+          location={location}
+          query={query}
+          showAdmin={showAdmin}
+        />
       </div>
     );
   }
@@ -218,6 +186,11 @@ class EntriesIndexStack extends React.Component {
 
     return (
       <div className="p-4">
+        <Link
+          to={{ pathname: '/entries/new', state: { modal: true } }}
+        >
+          {'New Entry'}
+        </Link>
         <h1 className="text-blue mb-4">
           {'Entries'}
         </h1>
@@ -226,6 +199,7 @@ class EntriesIndexStack extends React.Component {
         <IndexMenu {...this.props} />
         {this._renderRoutes()}
         <Spinner
+          page
           spinning={Boolean(fetching)}
           text={fetching}
         />
@@ -240,7 +214,6 @@ const props = (state) => {
     fetching: state.entries.fetching,
     query: selectQuery(state),
     rawQuery: selectRawQuery(state),
-    tab: _get(state, 'app.user.entriesTab', '#filter'),
     timezone: selectTimezone(state)
   };
 };

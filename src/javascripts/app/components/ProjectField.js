@@ -1,4 +1,4 @@
-import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
+import { FieldError, Label } from 'javascripts/shared/components';
 import {
   selectClientsByKey,
   selectQueriedProjects
@@ -184,7 +184,6 @@ class ProjectField extends React.Component {
           onProjectClick={this._handleChange}
         />
         <FieldError {...meta} />
-        <FieldWarning {...meta} />
       </div>
     );
   }

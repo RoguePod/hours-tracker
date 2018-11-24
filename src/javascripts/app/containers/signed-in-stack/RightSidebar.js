@@ -49,7 +49,7 @@ class RightSidebar extends React.Component {
   _handleClose() {
     const { location } = this.props;
 
-    history.push({ ...location, hash: null });
+    history.push({ ...location, hash: null, replace: true });
   }
 
   _renderMenu() {

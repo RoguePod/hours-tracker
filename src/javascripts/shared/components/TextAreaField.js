@@ -1,6 +1,6 @@
 /* global window */
 
-import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
+import { FieldError, Label } from 'javascripts/shared/components';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -147,7 +147,6 @@ class TextAreaField extends React.Component {
           ref={this.ref}
         />
         <FieldError {...meta} />
-        <FieldWarning {...meta} />
       </React.Fragment>
     );
   }

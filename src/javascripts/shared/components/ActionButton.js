@@ -7,13 +7,13 @@ import cx from 'classnames';
 
 const ActionButton = (props) => {
   const {
-    as, children, className, color, confirm, onClick, title, ...rest
+    as, children, className, color, confirm, onClick, size, title, ...rest
   } = props;
 
   const actionClasses = cx(
     `text-white bg-${color} hover:bg-${color}-dark shadow hover:shadow-md`,
-    'cursor-pointer rounded-full w-10 h-10 items-center justify-center flex',
-    'transition',
+    `cursor-pointer w-${size} h-${size} items-center justify-center`,
+    'transition flex rounded-full',
     className
   );
 
@@ -72,6 +72,7 @@ ActionButton.propTypes = {
   color: PropTypes.string,
   confirm: PropTypes.string,
   onClick: PropTypes.func,
+  size: PropTypes.number,
   title: PropTypes.string
 };
 
@@ -81,6 +82,7 @@ ActionButton.defaultProps = {
   color: 'green',
   confirm: null,
   onClick: null,
+  size: 10,
   title: null
 };
 

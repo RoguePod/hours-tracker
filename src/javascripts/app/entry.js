@@ -29,6 +29,10 @@ import {
   faSyncAlt,
   faTimes
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCheckSquare,
+  faSquare
+} from '@fortawesome/free-regular-svg-icons';
 
 import { ConnectedRouter } from 'connected-react-router';
 import { NoMatchPage } from 'javascripts/shared/containers';
@@ -45,6 +49,7 @@ library.add(
   faCaretDown,
   faCaretLeft,
   faCaretRight,
+  faCheckSquare,
   faClock,
   faExchangeAlt,
   faExclamationCircle,
@@ -53,6 +58,7 @@ library.add(
   faPlay,
   faPlus,
   faSpinner,
+  faSquare,
   faStop,
   faSyncAlt,
   faTimes

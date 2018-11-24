@@ -71,6 +71,8 @@
     "react/jsx-indent-props": [2, 2],
     "react/jsx-max-depth": 0,
     "react/no-array-index-key": 0,
+    "react/no-did-update-set-state": 0,
+    "react/no-did-mount-set-state": 0,
     "react/no-multi-comp": 0,
     "react/no-set-state": 0,
     "react/no-typos": 0,

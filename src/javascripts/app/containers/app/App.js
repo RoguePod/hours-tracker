@@ -97,7 +97,7 @@ class App extends React.Component {
 
     if (location.hash.match(/sidebar/u) ||
         location.hash.match(/stopwatch/u)) {
-      history.push({ ...location, hash: null });
+      history.push({ ...location, hash: null, replace: true });
     }
   }
 
@@ -108,7 +108,7 @@ class App extends React.Component {
       location.hash.match(/sidebar/u) || location.hash.match(/stopwatch/u);
 
     if (event.keyCode === 27 && sidebar) {
-      history.push({ ...location, hash: null });
+      history.push({ ...location, hash: null, replace: true });
     }
   }
 

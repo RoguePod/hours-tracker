@@ -1,4 +1,4 @@
-import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
+import { FieldError, Label } from 'javascripts/shared/components';
 import {
   selectClientsByKey,
   selectQueriedClients
@@ -182,7 +182,6 @@ class ClientField extends React.Component {
           onClientClick={this._handleChange}
         />
         <FieldError {...meta} />
-        <FieldWarning {...meta} />
       </div>
     );
   }

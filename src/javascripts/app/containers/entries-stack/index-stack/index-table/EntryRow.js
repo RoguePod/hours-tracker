@@ -1,11 +1,5 @@
-import {
-  ActionButton,
-  ConfirmAction,
-  Tooltip
-} from 'javascripts/shared/components';
-
+import { ActionButton } from 'javascripts/shared/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
@@ -122,20 +116,29 @@ class EntryRow extends React.Component {
 
     return (
       <tr>
-        <td className="w-px whitespace-no-wrap text-center">
-          <input
-            checked={entry.checked}
-            onChange={this._handleChecked}
-            type="checkbox"
-          />
+        <td
+          className="w-px text-center cursor-pointer text-grey-darker"
+          onClick={this._handleChecked}
+        >
+          {!entry.checked &&
+            <FontAwesomeIcon
+              icon={['far', 'square']}
+            />}
+          {entry.checked &&
+            <FontAwesomeIcon
+              icon={['far', 'check-square']}
+            />}
         </td>
-        <td>
+        <td className="w-px whitespace-no-wrap">
           <div className="flex flex-row">
             <ActionButton
               as="Link"
               color="orange"
+              size={8}
               title="Edit"
-              to={`/entries/${entry.id}/edit`}
+              to={{
+                pathname: `/entries/${entry.id}/edit`, state: { modal: true }
+              }}
             >
               <FontAwesomeIcon
                 icon="pencil-alt"
@@ -143,7 +146,9 @@ class EntryRow extends React.Component {
             </ActionButton>
             <ActionButton
               as="Link"
+              className="mx-1"
               color="teal"
+              size={8}
               title="Split"
               to={`/entries/${entry.id}/split`}
             >
@@ -155,6 +160,7 @@ class EntryRow extends React.Component {
               color="red"
               confirm="This will remove this entry.  Are you sure?"
               onClick={this._handleDestroy}
+              size={8}
               title="Remove"
             >
               <FontAwesomeIcon

@@ -14,6 +14,17 @@ import React from 'react';
 import chrono from 'chrono-node';
 import moment from 'moment';
 
+const timezoneOptions = moment.tz.names().map((timezone) => {
+  return (
+    <option
+      key={timezone}
+      value={timezone}
+    >
+      {timezone}
+    </option>
+  );
+});
+
 class EntryForm extends React.Component {
   static propTypes = {
     change: PropTypes.func.isRequired,
@@ -91,20 +102,13 @@ class EntryForm extends React.Component {
       stoppedAtValidation.unshift(isRequired);
     }
 
-    const timezoneOptions = moment.tz.names().map((tz) => {
-      return {
-        text: tz,
-        value: tz
-      };
-    });
-
     return (
       <form
         noValidate
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <div className="flex flex-wrap -mx-2 mb-4">
+        <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
               autoCapitalize="none"
@@ -133,7 +137,7 @@ class EntryForm extends React.Component {
             />
           </div>
         </div>
-        <div className="flex flex-wrap -mx-2 mb-4">
+        <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
               component={ProjectField}
@@ -151,21 +155,27 @@ class EntryForm extends React.Component {
               disabled={submitting}
               label="Timezone"
               name="timezone"
-              options={timezoneOptions}
               validate={[isRequired]}
-            />
+            >
+              <option value="">
+                {'--Select--'}
+              </option>
+              {timezoneOptions}
+            </Field>
           </div>
         </div>
-        <Field
-          autoCapitalize="sentences"
-          autoCorrect="on"
-          autoHeight
-          component={TextAreaField}
-          disabled={submitting}
-          label="Description"
-          name="description"
-          rows={1}
-        />
+        <div className="mb-4">
+          <Field
+            autoCapitalize="sentences"
+            autoCorrect="on"
+            autoHeight
+            component={TextAreaField}
+            disabled={submitting}
+            label="Description"
+            name="description"
+            rows={1}
+          />
+        </div>
         <Button
           className="py-2"
           color="green"

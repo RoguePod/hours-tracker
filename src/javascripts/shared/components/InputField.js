@@ -1,4 +1,4 @@
-import { FieldError, FieldWarning, Label } from 'javascripts/shared/components';
+import { FieldError, Label } from 'javascripts/shared/components';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -68,7 +68,6 @@ class InputField extends React.Component {
           id={inputId}
         />
         <FieldError {...meta} />
-        <FieldWarning {...meta} />
       </React.Fragment>
     );
   }

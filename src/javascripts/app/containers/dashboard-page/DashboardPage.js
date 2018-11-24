@@ -111,7 +111,7 @@ class DashboardPage extends React.Component {
 
     return (
       <div className="p-4">
-        <div className="flex flex-wrap justify-center items-center">
+        <div className="flex flex-wrap justify-center items-center pb-4">
           <WeekDropdown {...this.props} />
         </div>
 
@@ -136,7 +136,10 @@ class DashboardPage extends React.Component {
           {'Latest Entries'}
         </h2>
         <EntriesTable />
-        <Spinner spinning={Boolean(fetching)} />
+        <Spinner
+          page
+          spinning={Boolean(fetching)}
+        />
       </div>
     );
   }

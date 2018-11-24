@@ -42,7 +42,7 @@ class ProfilePage extends React.Component {
     const { onUpdatePassword, onUpdateUser, user } = this.props;
 
     return (
-      <div>
+      <div className="p-4">
         <h1 className="text-blue mb-2">
           {'Profile'}
         </h1>

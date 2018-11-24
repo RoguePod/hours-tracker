@@ -1,9 +1,10 @@
-import { FieldError, FieldWarning } from 'javascripts/shared/components';
 import { Form, Search } from 'semantic-ui-react';
 import {
-  selectQueriedUsers, selectUsersByKey
+  selectQueriedUsers,
+  selectUsersByKey
 } from 'javascripts/app/redux/users';
 
+import { FieldError } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
@@ -163,7 +164,6 @@ class UserField extends React.Component {
           value={value}
         />
         <FieldError {...meta} />
-        <FieldWarning {...meta} />
       </Form.Field>
     );
   }

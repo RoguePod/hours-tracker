@@ -103,6 +103,9 @@ class ConfirmAction extends React.Component {
     const overlayClassName =
       'fixed pin z-30 overflow-auto flex items-center justify-center';
 
+    const slideInClasses =
+      'flex flex-col items-center bg-white p-4 rounded z-40 shadow-lg';
+
     return (
       <React.Fragment>
         <span
@@ -122,7 +125,7 @@ class ConfirmAction extends React.Component {
                   />}
                 {show &&
                   <SlideIn
-                    className="flex flex-col items-center bg-white p-4 rounded z-40"
+                    className={slideInClasses}
                     key="modal"
                     pose={show ? 'enter' : 'exit'}
                   >

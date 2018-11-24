@@ -50,6 +50,9 @@ const propTypes = {
       search: PropTypes.string
     })
   }),
+  routerAction: PropTypes.shape({
+    action: PropTypes.string.isRequired
+  }),
   routerLocation: PropTypes.shape({
     pathname: PropTypes.string.isRequired,
     search: PropTypes.string

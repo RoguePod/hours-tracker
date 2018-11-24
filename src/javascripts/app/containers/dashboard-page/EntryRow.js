@@ -1,13 +1,10 @@
-import { ConfirmAction, Tooltip } from 'javascripts/shared/components';
-
+import { ActionButton } from 'javascripts/shared/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import cx from 'classnames';
-import { history } from 'javascripts/app/redux/store';
 import moment from 'moment-timezone';
 import nl2br from 'react-nl2br';
 
@@ -111,43 +108,40 @@ class EntryRow extends React.Component {
       <tr>
         <td className="whitespace-no-wrap">
           <div className="flex flex-row">
-            <Tooltip
+            <ActionButton
+              as="Link"
+              color="orange"
+              size={8}
               title="Edit"
+              to={`/entries/${entry.id}/edit`}
             >
-              <Link
-                className="text-orange block"
-                to={`/entries/${entry.id}/edit`}
-              >
-                <FontAwesomeIcon
-                  icon="pencil-alt"
-                />
-              </Link>
-            </Tooltip>
-            <Tooltip
+              <FontAwesomeIcon
+                icon="pencil-alt"
+              />
+            </ActionButton>
+            <ActionButton
+              as="Link"
+              className="mx-1"
+              color="teal"
+              size={8}
               title="Split"
+              to={`/entries/${entry.id}/split`}
             >
-              <Link
-                className="text-teal block px-2"
-                to={`/entries/${entry.id}/split`}
-              >
-                <FontAwesomeIcon
-                  icon="exchange-alt"
-                />
-              </Link>
-            </Tooltip>
-            <Tooltip
+              <FontAwesomeIcon
+                icon="exchange-alt"
+              />
+            </ActionButton>
+            <ActionButton
+              color="red"
+              confirm="This will remove this entry.  Are you sure?"
+              onClick={this._handleDestroy}
+              size={8}
               title="Remove"
             >
-              <ConfirmAction
-                message="This will remove this entry.  Are you sure?"
-                onClick={this._handleDestroy}
-              >
-                <FontAwesomeIcon
-                  className="text-red"
-                  icon="times"
-                />
-              </ConfirmAction>
-            </Tooltip>
+              <FontAwesomeIcon
+                icon="times"
+              />
+            </ActionButton>
           </div>
         </td>
         <td

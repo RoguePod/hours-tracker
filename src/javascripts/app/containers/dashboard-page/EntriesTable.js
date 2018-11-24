@@ -98,9 +98,17 @@ class EntriesTable extends React.Component {
 }
 
 const props = (state) => {
+  let fetching = null;
+
+  /* eslint-disable prefer-destructuring */
+  if (!state.dashboard.fetching) {
+    fetching = state.entries.fetching;
+  }
+  /* eslint-enable prefer-destructuring */
+
   return {
     entries: state.entries.entries,
-    fetching: state.entries.fetching,
+    fetching,
     timezone: selectTimezone(state)
   };
 };
