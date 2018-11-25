@@ -12,6 +12,7 @@ export Label from './Label';
 export Link from './Link';
 export Modal from './Modal';
 export Pagination from './Pagination';
+export Pill from './Pill';
 export Portal from './Portal';
 export SelectField from './SelectField';
 export Spinner from './Spinner';

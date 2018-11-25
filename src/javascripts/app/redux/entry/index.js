@@ -1,9 +1,19 @@
 import { SubmissionError, reset as resetForm } from 'redux-form';
 import {
-  add, batchCommit, deleteDoc, firestore, getDoc, parseEntry, updateRef
+  add,
+  batchCommit,
+  deleteDoc,
+  firestore,
+  getDoc,
+  parseEntry,
+  updateRef
 } from 'javascripts/globals';
 import {
-  call, fork, put, select, takeLatest
+  call,
+  fork,
+  put,
+  select,
+  takeLatest
 } from 'redux-saga/effects';
 
 import { addFlash } from 'javascripts/shared/redux/flashes';
@@ -134,9 +144,15 @@ function* entryCreate({ params, reject, resolve }) {
     if (error) {
       reject(new SubmissionError({ _error: error.message }));
     } else {
-      yield put(resetForm('EntryNewForm'));
+      yield put(resetForm('EntryForm'));
       yield put(addFlash('Entry has saved.'));
       resolve();
+
+      if (history.action === 'POP') {
+        yield call(history.push, '/entries');
+      } else {
+        yield call(history.goBack);
+      }
     }
   } finally {
     yield put(setFetching(null));
@@ -165,7 +181,12 @@ function* entryUpdate({ params, reject, resolve }) {
     } else {
       yield put(addFlash('Entry has saved.'));
       resolve();
-      history.push('/entries');
+
+      if (history.action === 'POP') {
+        yield call(history.push, '/entries');
+      } else {
+        yield call(history.goBack);
+      }
     }
   } finally {
     yield put(setFetching(null));

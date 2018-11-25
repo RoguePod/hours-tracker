@@ -125,12 +125,10 @@ class Modal extends React.Component {
             >
               <div
                 className="absolute pin"
-                key="overlay"
                 onClick={onClose}
               />
               <SlideIn
                 className={slideInClasses}
-                key="modal"
                 pose={show ? 'enter' : 'exit'}
               >
                 <Close

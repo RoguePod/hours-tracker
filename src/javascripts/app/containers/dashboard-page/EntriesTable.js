@@ -56,7 +56,7 @@ class EntriesTable extends React.Component {
     return (
       <div className="relative min-h-300">
         <div className="table-responsive">
-          <table className="table-hover">
+          <table>
             <thead>
               <tr>
                 <th />

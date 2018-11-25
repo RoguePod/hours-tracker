@@ -1,5 +1,6 @@
 import { ActionButton } from 'javascripts/shared/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
@@ -99,28 +100,29 @@ class EntryRow extends React.Component {
       );
     } else if (!project.billable) {
       highlightClasses = cx(
-        'text-blue',
         baseHighlightClasses
       );
     }
 
     return (
-      <tr>
+      <tr className="hover:bg-blue-lightest">
         <td className="whitespace-no-wrap">
           <div className="flex flex-row">
             <ActionButton
-              as="Link"
+              as={Link}
               color="orange"
               size={8}
               title="Edit"
-              to={`/entries/${entry.id}/edit`}
+              to={{
+                pathname: `/entries/${entry.id}/edit`, state: { modal: true }
+              }}
             >
               <FontAwesomeIcon
                 icon="pencil-alt"
               />
             </ActionButton>
             <ActionButton
-              as="Link"
+              as={Link}
               className="mx-1"
               color="teal"
               size={8}
@@ -137,6 +139,7 @@ class EntryRow extends React.Component {
               onClick={this._handleDestroy}
               size={8}
               title="Remove"
+              type="button"
             >
               <FontAwesomeIcon
                 icon="times"

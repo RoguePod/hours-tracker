@@ -1,3 +1,4 @@
+import { Button, Spinner } from 'javascripts/shared/components';
 import { Link, Route, Switch } from 'react-router-dom';
 import {
   reset,
@@ -13,10 +14,8 @@ import IndexTable from './index-table/IndexTable';
 import PayrollTable from './payroll-table/PayrollTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Spinner } from 'javascripts/shared/components';
 import SummaryTable from './summary-table/SummaryTable';
 import { connect } from 'react-redux';
-import cx from 'classnames';
 
 class EntriesIndexStack extends React.Component {
   static propTypes = {
@@ -94,55 +93,6 @@ class EntriesIndexStack extends React.Component {
     );
   }
 
-  _renderTopMenu() {
-    const { location } = this.props;
-
-    const tabClasses =
-      'cursor-pointer py-2 px-4 border-l border-t border-r rounded-t ' +
-      'block transition';
-
-    const filterTabClasses = cx(
-      tabClasses,
-      {
-        'bg-white': true,
-        'border-transparent text-blue hover:text-blue-darker': !true
-      }
-    );
-
-    return (
-      <ul className="list-reset -mb-px px-4">
-        <li className="mr-1 inline-block">
-          <Link
-            className={filterTabClasses}
-            replace
-            to={{ ...location, hash: '#filter' }}
-          >
-            <FontAwesomeIcon
-              icon="filter"
-            />
-            {' '}
-            {'Filter'}
-          </Link>
-        </li>
-      </ul>
-    );
-  }
-
-  _renderForm(showAdmin) {
-    const { location, query } = this.props;
-
-    return (
-      <div className="border rounded shadow p-4">
-        <EntriesFilterForm
-          initialValues={query}
-          location={location}
-          query={query}
-          showAdmin={showAdmin}
-        />
-      </div>
-    );
-  }
-
   _renderRoutes() {
     const { admin, match } = this.props;
 
@@ -177,7 +127,7 @@ class EntriesIndexStack extends React.Component {
   }
 
   render() {
-    const { fetching, location } = this.props;
+    const { fetching, location, query } = this.props;
     const { pathname } = location;
 
     const isReports        = pathname === '/entries/reports';
@@ -186,16 +136,31 @@ class EntriesIndexStack extends React.Component {
 
     return (
       <div className="p-4">
-        <Link
-          to={{ pathname: '/entries/new', state: { modal: true } }}
-        >
-          {'New Entry'}
-        </Link>
-        <h1 className="text-blue mb-4">
-          {'Entries'}
-        </h1>
-        {this._renderTopMenu()}
-        {this._renderForm(showAdmin)}
+        <div className="flex flex-row items-center justify-between mb-4">
+          <h1 className="text-blue">
+            {'Entries'}
+          </h1>
+          <Button
+            as={Link}
+            color="green"
+            to={{ pathname: '/entries/new', state: { modal: true } }}
+          >
+            <FontAwesomeIcon
+              icon="plus"
+            />
+            {' '}
+            {'New Entry'}
+          </Button>
+        </div>
+
+        <div className="border rounded shadow p-4">
+          <EntriesFilterForm
+            initialValues={query}
+            location={location}
+            query={query}
+            showAdmin={showAdmin}
+          />
+        </div>
         <IndexMenu {...this.props} />
         {this._renderRoutes()}
         <Spinner

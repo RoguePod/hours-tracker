@@ -1,8 +1,8 @@
 /* global window */
 
+import { ConfirmAction, Pill } from 'javascripts/shared/components';
 import { cloudFunctionsUrl, isBlank, toQuery } from 'javascripts/globals';
 
-import { ConfirmAction } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
@@ -71,14 +71,14 @@ class ExportEntriesButton extends React.Component {
     const url = `${cloudFunctionsUrl}/${func}?${toQuery(newQuery)}`;
 
     return (
-      <a
-        className="item"
+      <Pill
+        as="a"
         href={url}
         rel="noopener noreferrer"
         target="_blank"
       >
         {title}
-      </a>
+      </Pill>
     );
   }
 }

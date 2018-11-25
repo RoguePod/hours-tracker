@@ -5,14 +5,14 @@ import cx from 'classnames';
 
 const Button = (props) => {
   const {
-    children, className, color, disabled, loading, textColor, ...rest
+    as, children, className, color, disabled, loading, textColor, ...rest
   } = props;
 
   const hoverKey = `hover:bg-${color}-dark`;
   const buttonClassName = cx(
     `bg-${color}`,
     `text-${textColor}`,
-    'font-bold rounded py-3 px-6 transition hover:shadow',
+    'font-bold rounded py-3 px-6 transition hover:shadow appearance-none',
     {
       'cursor-not-allowed': disabled,
       [hoverKey]: !disabled,
@@ -21,9 +21,10 @@ const Button = (props) => {
     className
   );
 
-  /* eslint-disable react/button-has-type */
+  const Tag = as;
+
   return (
-    <button
+    <Tag
       {...rest}
       className={buttonClassName}
       disabled={disabled}
@@ -36,12 +37,12 @@ const Button = (props) => {
           />
         </div>}
       {children}
-    </button>
+    </Tag>
   );
-  /* eslint-enable react/button-has-type */
 };
 
 Button.propTypes = {
+  as: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   color: PropTypes.string,
@@ -51,6 +52,7 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
+  as: 'button',
   className: null,
   color: 'blue',
   loading: false,

@@ -118,7 +118,6 @@ class ProjectRow extends React.Component {
     } = this._getMonthAndOtherTotals(startMonth, endMonth);
 
     const cellClass = cx({
-      'text-blue': project && !project.billable,
       'text-green': project && project.billable,
       'text-red': !project
     });

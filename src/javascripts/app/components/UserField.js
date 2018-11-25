@@ -1,18 +1,21 @@
-import { Form, Search } from 'semantic-ui-react';
+import { FieldError, Label } from 'javascripts/shared/components';
 import {
   selectQueriedUsers,
   selectUsersByKey
 } from 'javascripts/app/redux/users';
 
-import { FieldError } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import UsersDropdown from './UsersDropdown';
 import _get from 'lodash/get';
+import _uniqueId from 'lodash/uniqueId';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 import { formValueSelector } from 'redux-form';
 
 class UserField extends React.Component {
   static propTypes = {
+    id: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -31,6 +34,7 @@ class UserField extends React.Component {
   }
 
   static defaultProps = {
+    id: null,
     label: null,
     userRef: null
   }
@@ -41,8 +45,6 @@ class UserField extends React.Component {
     this._handleChange = this._handleChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
     this._handleFocus = this._handleFocus.bind(this);
-    this._handleSearchChange = this._handleSearchChange.bind(this);
-    this._handleRenderResult = this._handleRenderResult.bind(this);
     this._findValue = this._findValue.bind(this);
   }
 
@@ -63,7 +65,7 @@ class UserField extends React.Component {
 
   timeout = null
 
-  _handleChange(event, data) {
+  _handleChange(user) {
     const { input: { onChange }, onUserChange } = this.props;
 
     if (this.timeout) {
@@ -71,27 +73,13 @@ class UserField extends React.Component {
       this.timeout = null;
     }
 
-    onUserChange(data.result['data-user-ref']);
+    onUserChange(user.userRef);
     onChange('');
     this.setState({ focused: false });
   }
 
-  _handleSearchChange(event, { value }) {
-    const { input: { onChange } } = this.props;
-
-    onChange(value);
-  }
-
-  _handleRenderResult({ name }) {
-    return (
-      <div>
-        {name}
-      </div>
-    );
-  }
-
-  _handleBlur(event, { value }) {
-    const { input: { onChange }, onUserChange } = this.props;
+  _handleBlur() {
+    const { input: { onChange, value }, onUserChange } = this.props;
 
     this.timeout = setTimeout(() => {
       if (value.length === 0) {
@@ -110,7 +98,9 @@ class UserField extends React.Component {
     onChange(this._findValue());
 
     this.setState({ focused: true }, () => {
-      target.select();
+      setTimeout(() => {
+        target.select();
+      }, 1);
     });
   }
 
@@ -131,7 +121,7 @@ class UserField extends React.Component {
   }
 
   render() {
-    const { input, label, meta, ready, results } = this.props;
+    const { className, id, input, label, meta, ready, results } = this.props;
     const { focused } = this.state;
 
     /* eslint-disable no-unneeded-ternary */
@@ -144,39 +134,60 @@ class UserField extends React.Component {
       value = this._findValue();
     }
 
+    const inputClassName = cx(
+      'appearance-none border w-full py-2 px-3 text-grey-darker',
+      'leading-tight focus:outline-none transition',
+      {
+        'border-grey-light': !isError,
+        'border-red': isError,
+        'focus:border-blue-light': !isError,
+        'focus:border-red': isError,
+        'rounded': results.length === 0,
+        'rounded-t': results.length > 0
+      },
+      className
+    );
+
+    const inputId = id ? id : _uniqueId('input_');
+
     return (
-      <Form.Field
-        error={isError}
-      >
+      <div className="relative">
         {label &&
-          <label>
+          <Label
+            error={isError}
+            htmlFor={inputId}
+          >
             {label}
-          </label>}
-        <Search
+          </Label>}
+        <input
           {...input}
+          className={inputClassName}
           disabled={!ready}
+          id={inputId}
           onBlur={this._handleBlur}
           onFocus={this._handleFocus}
-          onResultSelect={this._handleChange}
-          onSearchChange={this._handleSearchChange}
-          resultRenderer={this._handleRenderResult}
-          results={results}
           value={value}
         />
+        <UsersDropdown
+          onUserClick={this._handleChange}
+          users={results}
+        />
         <FieldError {...meta} />
-      </Form.Field>
+      </div>
     );
   }
 }
 
 const props = (state, ownProps) => {
-  const formSelector = formValueSelector(ownProps.meta.form);
-  const query        = formSelector(state, 'userName');
+  const { input: { name }, meta: { form }, nameUser } = ownProps;
+
+  const formSelector = formValueSelector(form);
+  const query        = formSelector(state, name);
 
   return {
     ready: state.users.ready,
     results: selectQueriedUsers(state, query),
-    userRef: formSelector(state, 'userRef'),
+    userRef: formSelector(state, nameUser),
     users: selectUsersByKey(state)
   };
 };

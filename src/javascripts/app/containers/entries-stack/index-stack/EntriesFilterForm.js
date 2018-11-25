@@ -157,6 +157,7 @@ class EntriesFilterForm extends React.Component {
               component={UserField}
               label="User"
               name="userName"
+              nameUser="userRef"
               onUserChange={this._handleUserChange}
             />
           </div>}

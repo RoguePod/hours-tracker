@@ -1,5 +1,11 @@
 import {
-  all, cancelled, fork, put, select, takeEvery, takeLatest
+  all,
+  cancelled,
+  fork,
+  put,
+  select,
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects';
 
 import Fuse from 'fuse.js';
@@ -147,9 +153,9 @@ export const selectQueriedUsers = createSelector(
 
     return results.map((user) => {
       return {
-        'data-user-ref': firestore.doc(`users/${user.id}`),
-        key: user.id,
-        name: user.name
+        id: user.id,
+        name: user.name,
+        userRef: firestore.doc(`users/${user.id}`)
       };
     });
   }

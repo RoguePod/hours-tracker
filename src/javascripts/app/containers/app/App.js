@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet';
 import Loader from './Loader';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import cx from 'classnames';
@@ -67,9 +68,13 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { hash, pathname } } = this.props;
+    const { location } = this.props;
+    const { hash, pathname } = location;
 
-    if (pathname !== prevProps.location.pathname) {
+    const modal     = _get(location, 'state.modal', false);
+    const prevModal = _get(prevProps, 'location.state.modal', false);
+
+    if (!modal && !prevModal && pathname !== prevProps.location.pathname) {
       jQuery('html, body').animate({ scrollTop: 0 }, 150);
     }
 

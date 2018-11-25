@@ -22,10 +22,12 @@ class DateField extends React.Component {
     return true;
   }
 
-  _handleChange(date) {
+  _handleChange(value) {
     const { input: { onChange } } = this.props;
 
-    if (date) {
+    const date = moment(value);
+
+    if (date && date.isValid()) {
       onChange(date.format('YYYY-MM-DD'));
     } else {
       onChange('');
@@ -37,7 +39,7 @@ class DateField extends React.Component {
 
     let date = null;
     if (value && value.length > 0) {
-      date = moment(value);
+      date = moment(value).toDate();
     }
 
     const component = (
@@ -49,7 +51,6 @@ class DateField extends React.Component {
     return (
       <DatePicker
         customInput={component}
-        isClearable
         onChange={this._handleChange}
         selected={date}
       />

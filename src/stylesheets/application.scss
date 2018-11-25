@@ -40,14 +40,6 @@ a {
   @apply w-full overflow-x-auto;
 }
 
-.table-hover {
-  tr {
-    &:hover {
-      @apply bg-blue-lighter;
-    }
-  }
-}
-
 table {
   @apply w-full border;
 

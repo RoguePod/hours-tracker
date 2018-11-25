@@ -1,7 +1,5 @@
-import { Dropdown, Icon, Menu } from 'semantic-ui-react';
-
 import ExportEntriesButton from './ExportEntriesButton';
-import { Link } from 'react-router-dom';
+import { Pill } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
@@ -26,58 +24,56 @@ class EntriesIndexStack extends React.Component {
     const isReportsSummary = pathname === '/entries/reports/summary';
 
     return (
-      <Menu.Menu
-        position="right"
-      >
-        <Menu.Item
-          header
+      <ul className="list-reset flex flex-row">
+        <li
+          className="mr-3"
         >
-          <Icon name="users" />
-          {'Reports'}
-        </Menu.Item>
-        <Menu.Item
-          active={isReports}
-          as={Link}
-          icon="list"
-          name="List"
-          to={{ ...location, pathname: '/entries/reports' }}
-        />
-        <Menu.Item
-          active={isReportsSummary}
-          as={Link}
-          icon="table"
-          name="Summary"
-          to={{ ...location, pathname: '/entries/reports/summary' }}
-        />
-        <Dropdown
-          item
-          text="Export"
+          <Pill
+            selected={isReports}
+            to={{ ...location, pathname: '/entries/reports' }}
+          >
+            {'List'}
+          </Pill>
+        </li>
+        <li
+          className="mr-3"
         >
-          <Dropdown.Menu>
-            <Dropdown.Item
-              as={ExportEntriesButton}
-              func="entriesCsv"
-              query={rawQuery}
-              timezone={timezone}
-              title="Entries CSV"
-            />
-            <Dropdown.Item
-              as={ExportEntriesButton}
-              func="billableCsv"
-              query={rawQuery}
-              timezone={timezone}
-              title="Billable CSV"
-            />
-            <Dropdown.Item
-              as={ExportEntriesButton}
-              func="payrollCsv"
-              query={rawQuery}
-              timezone={timezone}
-              title="Payroll CSV"
-            />
-          </Dropdown.Menu>
-        </Dropdown>
-      </Menu.Menu>
+          <Pill
+            selected={isReportsSummary}
+            to={{ ...location, pathname: '/entries/reports/summary' }}
+          >
+            {'Summary'}
+          </Pill>
+        </li>
+        <li
+          className="mr-3"
+        >
+          <ExportEntriesButton
+            func="entriesCsv"
+            query={rawQuery}
+            timezone={timezone}
+            title="Entries CSV"
+          />
+        </li>
+        <li
+          className="mr-3"
+        >
+          <ExportEntriesButton
+            func="billableCsv"
+            query={rawQuery}
+            timezone={timezone}
+            title="Billable CSV"
+          />
+        </li>
+        <li>
+          <ExportEntriesButton
+            func="payrollCsv"
+            query={rawQuery}
+            timezone={timezone}
+            title="Payroll CSV"
+          />
+        </li>
+      </ul>
     );
   }
   /* eslint-enable max-lines-per-function */
@@ -90,26 +86,31 @@ class EntriesIndexStack extends React.Component {
     const isSummary = pathname === '/entries/summary';
 
     return (
-      <Menu
-        color="blue"
-        stackable
+      <div
+        className="flex flex-wrap justify-between flex-row items-center my-4"
       >
-        <Menu.Item
-          active={isRoot}
-          as={Link}
-          icon="list"
-          name="List"
-          to={{ ...location, pathname: '/entries' }}
-        />
-        <Menu.Item
-          active={isSummary}
-          as={Link}
-          icon="table"
-          name="Summary"
-          to={{ ...location, pathname: '/entries/summary' }}
-        />
+        <ul className="list-reset flex flex-row">
+          <li
+            className="mr-3"
+          >
+            <Pill
+              selected={isRoot}
+              to={{ ...location, pathname: '/entries' }}
+            >
+              {'List'}
+            </Pill>
+          </li>
+          <li>
+            <Pill
+              selected={isSummary}
+              to={{ ...location, pathname: '/entries/summary' }}
+            >
+              {'Summary'}
+            </Pill>
+          </li>
+        </ul>
         {admin && this._renderAdminMenu()}
-      </Menu>
+      </div>
     );
   }
 }

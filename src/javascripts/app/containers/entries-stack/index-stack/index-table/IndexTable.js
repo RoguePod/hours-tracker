@@ -127,12 +127,7 @@ class EntriesIndexTable extends React.Component {
 
     return (
       <div>
-        <div>
-          <Button
-            onClick={this._handleMore}
-          >
-            {'More'}
-          </Button>
+        <div className="flex flex-row items-center justify-between mb-4">
           <ConfirmAction
             message="This will remove all checked entries.  Are you sure?"
             onClick={this._handleDestroy}
@@ -148,9 +143,14 @@ class EntriesIndexTable extends React.Component {
               {'Remove Checked'}
             </Button>
           </ConfirmAction>
+          <Button
+            onClick={this._handleMore}
+          >
+            {'More'}
+          </Button>
         </div>
         <div className="table-responsive">
-          <table className="table-hover">
+          <table>
             <thead>
               <tr>
                 <th

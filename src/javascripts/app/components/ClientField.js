@@ -78,14 +78,6 @@ class ClientField extends React.Component {
     this.setState({ focused: false });
   }
 
-  _handleRenderResult({ name }) {
-    return (
-      <div>
-        {name}
-      </div>
-    );
-  }
-
   _handleBlur() {
     const { input: { onChange, value }, onClientChange } = this.props;
 
@@ -119,8 +111,7 @@ class ClientField extends React.Component {
       return '';
     }
 
-    const clientId  = _get(clientRef, 'id');
-    const client    = _get(clients, clientId);
+    const client = _get(clients, _get(clientRef, 'id'));
 
     if (client) {
       return client.name;

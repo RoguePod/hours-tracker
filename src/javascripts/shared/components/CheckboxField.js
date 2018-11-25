@@ -1,4 +1,5 @@
 import { FieldError } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
@@ -32,25 +33,21 @@ class CheckboxField extends React.Component {
     return true;
   }
 
-  _handleChange(event, data) {
-    const { input: { onChange } } = this.props;
+  _handleChange() {
+    const { input: { onChange, value } } = this.props;
 
-    onChange(data.checked);
+    onChange(!value);
   }
 
   render() {
-    const { className, input, label, meta, ...rest } = this.props;
+    const { input, label, meta } = this.props;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
     /* eslint-enable no-unneeded-ternary */
 
-    const inputClassName = cx(
-      className
-    );
-
     const labelClassName = cx(
-      'text-grey-darker ml-2',
+      'block flex flex-row items-center cursor-pointer',
       {
         'text-grey-darker': !isError,
         'text-red': isError
@@ -59,16 +56,20 @@ class CheckboxField extends React.Component {
 
     return (
       <div className="mb-4">
-        <label className="block flex flex-row items-center">
-          <input
-            {...input}
-            {...rest}
-            checked={input.value}
-            className={inputClassName}
-            type="checkbox"
-          />
+        <label
+          className={labelClassName}
+          onClick={this._handleChange}
+        >
+          {!input.value &&
+            <FontAwesomeIcon
+              icon={['far', 'square']}
+            />}
+          {input.value &&
+            <FontAwesomeIcon
+              icon={['far', 'check-square']}
+            />}
           <div
-            className={labelClassName}
+            className="ml-2"
           >
             {label}
           </div>

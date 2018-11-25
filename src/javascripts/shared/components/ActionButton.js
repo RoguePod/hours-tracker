@@ -1,5 +1,4 @@
 import ConfirmAction from './ConfirmAction';
-import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Tooltip from './Tooltip';
@@ -13,33 +12,21 @@ const ActionButton = (props) => {
   const actionClasses = cx(
     `text-white bg-${color} hover:bg-${color}-dark shadow hover:shadow-md`,
     `cursor-pointer w-${size} h-${size} items-center justify-center`,
-    'transition flex rounded-full',
+    'transition flex rounded-full appearance-none',
     className
   );
 
-  let action = null;
+  const Tag = as;
 
-  if (as === 'button') {
-    action = (
-      <button
-        {...rest}
-        className={actionClasses}
-        onClick={confirm ? null : onClick}
-        type="button"
-      >
-        {children}
-      </button>
-    );
-  } else if (as === 'Link') {
-    action = (
-      <Link
-        {...rest}
-        className={actionClasses}
-      >
-        {children}
-      </Link>
-    );
-  }
+  let action = (
+    <Tag
+      {...rest}
+      className={actionClasses}
+      onClick={confirm ? null : onClick}
+    >
+      {children}
+    </Tag>
+  );
 
   if (title) {
     action = (
@@ -66,7 +53,7 @@ const ActionButton = (props) => {
 };
 
 ActionButton.propTypes = {
-  as: PropTypes.string,
+  as: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   color: PropTypes.string,

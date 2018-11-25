@@ -6,10 +6,10 @@ import Portal from './Portal';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
-const duration = 150;
+const duration = 200;
 
 const FadeIn = posed.div({
-  enter: { opacity: 1, transition: { duration } },
+  enter: { beforeChildren: true, opacity: 1, transition: { duration } },
   exit: { opacity: 0, transition: { duration } }
 });
 
@@ -101,7 +101,8 @@ class ConfirmAction extends React.Component {
     const { open, show } = this.state;
 
     const overlayClassName =
-      'fixed pin z-30 overflow-auto flex items-center justify-center';
+      'fixed pin z-40 flex items-center justify-center pt-8 px-4 pb-4 ' +
+      'overflow-auto bg-smoke';
 
     const slideInClasses =
       'flex flex-col items-center bg-white p-4 rounded z-40 shadow-lg';
@@ -115,18 +116,18 @@ class ConfirmAction extends React.Component {
         </span>
         {open &&
           <Portal>
-            <div className={overlayClassName}>
-              <PoseGroup>
-                {show &&
-                  <FadeIn
-                    className="absolute pin bg-smoke"
-                    key="overlay"
+            <PoseGroup>
+              {show &&
+                <FadeIn
+                  className={overlayClassName}
+                  key="overlay"
+                >
+                  <div
+                    className="absolute pin"
                     onClick={this._handleClose}
-                  />}
-                {show &&
+                  />
                   <SlideIn
                     className={slideInClasses}
-                    key="modal"
                     pose={show ? 'enter' : 'exit'}
                   >
                     <FontAwesomeIcon
@@ -152,9 +153,9 @@ class ConfirmAction extends React.Component {
                         {'Cancel'}
                       </Button>
                     </div>
-                  </SlideIn>}
-              </PoseGroup>
-            </div>
+                  </SlideIn>
+                </FadeIn>}
+            </PoseGroup>
           </Portal>}
       </React.Fragment>
     );

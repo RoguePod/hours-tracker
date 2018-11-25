@@ -10,6 +10,7 @@ import {
 
 import EntryForm from './EntryForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Timer from './Timer';
@@ -99,6 +100,7 @@ class StopWatch extends React.Component {
           color="red"
           onClick={this._handleStop}
           title="Stop"
+          type="button"
         >
           <FontAwesomeIcon
             icon="stop"
@@ -109,6 +111,7 @@ class StopWatch extends React.Component {
           color="purple"
           onClick={this._handleSwap}
           title="Swap"
+          type="button"
         >
           <FontAwesomeIcon
             icon="sync-alt"
@@ -116,7 +119,7 @@ class StopWatch extends React.Component {
         </ActionButton>
 
         <ActionButton
-          as="Link"
+          as={Link}
           color="teal"
           title="Split"
           to={`/entries/${entry.id}/split`}
@@ -127,10 +130,12 @@ class StopWatch extends React.Component {
         </ActionButton>
 
         <ActionButton
-          as="Link"
+          as={Link}
           color="orange"
           title="Edit"
-          to={`/entries/${entry.id}/edit`}
+          to={{
+            pathname: `/entries/${entry.id}/edit`, state: { modal: true }
+          }}
         >
           <FontAwesomeIcon
             icon="pencil-alt"
