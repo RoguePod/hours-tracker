@@ -12,7 +12,7 @@ const Button = (props) => {
   const buttonClassName = cx(
     `bg-${color}`,
     `text-${textColor}`,
-    'font-bold rounded py-3 px-6 transition hover:shadow appearance-none',
+    'font-bold rounded py-2 px-4 transition hover:shadow appearance-none',
     {
       'cursor-not-allowed': disabled,
       [hoverKey]: !disabled,

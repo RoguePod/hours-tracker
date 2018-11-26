@@ -5,7 +5,7 @@ import cx from 'classnames';
 
 const Pill = ({ as, children, className, selected, ...rest }) => {
   const basePillClasses =
-    'block rounded py-3 px-6';
+    'block rounded py-2 px-4';
 
   const selectedPillClasses = cx(
     basePillClasses,

@@ -153,7 +153,15 @@ class EntriesIndexStack extends React.Component {
           </Button>
         </div>
 
-        <div className="border rounded shadow p-4">
+        <ul class="list-reset flex">
+          <li class="ml-3 -mb-px mr-1">
+            <a class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-dark font-semibold" href="#">My Entries</a>
+          </li>
+          <li class="mr-1">
+            <a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold" href="#">Reports</a>
+          </li>
+        </ul>
+        <div className="border rounded p-4">
           <EntriesFilterForm
             initialValues={query}
             location={location}
