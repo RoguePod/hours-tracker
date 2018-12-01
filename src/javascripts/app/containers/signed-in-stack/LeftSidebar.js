@@ -55,7 +55,8 @@ class LeftSidebar extends React.Component {
   }
 
   render() {
-    const { location: { hash }, width } = this.props;
+    const { location, width } = this.props;
+    const { hash } = location;
 
     const open = hash.match(/stopwatch/u);
 
@@ -78,7 +79,7 @@ class LeftSidebar extends React.Component {
           key="sidebar"
           pose={(open || width >= 768) ? 'enter' : 'exit'}
         >
-          <StopWatch />
+          <StopWatch location={location} />
           <RecentsList />
         </Slider>
       </React.Fragment>

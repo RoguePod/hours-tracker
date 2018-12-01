@@ -6,7 +6,6 @@ import cx from 'classnames';
 
 class CheckboxField extends React.Component {
   static propTypes = {
-    className: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
@@ -17,10 +16,6 @@ class CheckboxField extends React.Component {
       errpr: PropTypes.string,
       touched: PropTypes.bool
     }).isRequired
-  }
-
-  static defaultProps = {
-    className: ''
   }
 
   constructor(props) {
@@ -74,7 +69,10 @@ class CheckboxField extends React.Component {
             {label}
           </div>
         </label>
-        <FieldError {...meta} />
+        <FieldError
+          error={meta.error}
+          touched={meta.touched}
+        />
       </div>
     );
   }

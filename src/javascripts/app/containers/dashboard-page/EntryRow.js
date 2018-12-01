@@ -12,6 +12,7 @@ import nl2br from 'react-nl2br';
 class EntryRow extends React.Component {
   static propTypes = {
     entry: PropTypes.entry.isRequired,
+    location: PropTypes.routerLocation.isRequired,
     onDestroyEntry: PropTypes.func.isRequired,
     timezone: PropTypes.string.isRequired
   }
@@ -74,7 +75,7 @@ class EntryRow extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { entry, timezone } = this.props;
+    const { entry, location, timezone } = this.props;
     const { project } = entry;
 
     const startedAt = moment.tz(entry.startedAt, entry.timezone);
@@ -114,7 +115,9 @@ class EntryRow extends React.Component {
               size={8}
               title="Edit"
               to={{
-                pathname: `/entries/${entry.id}/edit`, state: { modal: true }
+                ...location,
+                pathname: `/entries/${entry.id}/edit`,
+                state: { modal: true }
               }}
             >
               <FontAwesomeIcon

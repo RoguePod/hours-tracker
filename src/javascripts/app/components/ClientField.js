@@ -172,7 +172,10 @@ class ClientField extends React.Component {
           clients={results}
           onClientClick={this._handleChange}
         />
-        <FieldError {...meta} />
+        <FieldError
+          error={meta.error}
+          touched={meta.touched}
+        />
       </div>
     );
   }

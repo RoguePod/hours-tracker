@@ -135,7 +135,7 @@ class UsersFooter extends React.Component {
 
     return (
       <tfoot>
-        <tr>
+        <tr className="bg-blue-lightest">
           <th className="text-right">
             <strong className="text-green">
               {'Billable'}
@@ -159,7 +159,7 @@ class UsersFooter extends React.Component {
               </strong>
             </th>}
         </tr>
-        <tr>
+        <tr className="bg-blue-lightest">
           <th className="text-right">
             <strong className="text-blue">
               {'Total'}

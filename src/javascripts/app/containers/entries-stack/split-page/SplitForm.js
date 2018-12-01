@@ -30,7 +30,7 @@ class EntrySplitForm extends React.Component {
     super(props);
 
     this._handleSubmit = this._handleSubmit.bind(this);
-    this._handleRenderEntries = this._handleRenderEntries.bind(this);
+    this._renderEntries = this._renderEntries.bind(this);
     this._handleStartedAtChanged = this._handleStartedAtChanged.bind(this);
     this._handleStoppedAtChanged = this._handleStoppedAtChanged.bind(this);
     this._parseDate = this._parseDate.bind(this);
@@ -86,7 +86,7 @@ class EntrySplitForm extends React.Component {
     });
   }
 
-  _handleRenderEntries(props) {
+  _renderEntries(props) {
     const { change, currentValues, hours, timezone, valid } = this.props;
 
     return (
@@ -220,7 +220,7 @@ class EntrySplitForm extends React.Component {
           <Grid.Row>
             <Grid.Column>
               <FieldArray
-                component={this._handleRenderEntries}
+                component={this._renderEntries}
                 name="entries"
               />
             </Grid.Column>

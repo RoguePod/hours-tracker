@@ -67,7 +67,10 @@ class InputField extends React.Component {
           className={inputClassName}
           id={inputId}
         />
-        <FieldError {...meta} />
+        <FieldError
+          error={meta.error}
+          touched={meta.touched}
+        />
       </React.Fragment>
     );
   }

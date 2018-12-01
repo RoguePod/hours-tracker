@@ -2,6 +2,8 @@ export App from './app/App';
 export ClientsStack from './clients-stack/ClientsStack';
 export DashboardPage from './dashboard-page/DashboardPage';
 export EntriesStack from './entries-stack/EntriesStack';
+export EntryEditModal from './entries-stack/edit-page/EditModal';
+export EntryNewModal from './entries-stack/new-page/NewModal';
 export ForgotPasswordPage from './forgot-password-page/ForgotPasswordPage';
 export ProfilePage from './profile-page/ProfilePage';
 export RecentsList from './recents-list/RecentsList';

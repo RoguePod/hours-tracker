@@ -135,7 +135,9 @@ class DashboardPage extends React.Component {
         <h2 className="text-blue mb-2">
           {'Latest Entries'}
         </h2>
-        <EntriesTable />
+        <EntriesTable
+          location={location}
+        />
         <Spinner
           page
           spinning={Boolean(fetching)}

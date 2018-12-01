@@ -1,118 +1,71 @@
-import ExportEntriesButton from './ExportEntriesButton';
-import { Pill } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import cx from 'classnames';
 
-class EntriesIndexStack extends React.Component {
-  static propTypes = {
-    admin: PropTypes.bool.isRequired,
-    location: PropTypes.routerLocation.isRequired,
-    rawQuery: PropTypes.entriesQuery.isRequired,
-    timezone: PropTypes.string.isRequired
-  }
+const EntriesIndexMenu = ({ location }) => {
+  const { pathname } = location;
 
-  shouldComponentUpdate() {
-    return true;
-  }
+  const isRoot    = pathname === '/entries';
+  const isSummary = pathname === '/entries/summary';
 
-  /* eslint-disable max-lines-per-function */
-  _renderAdminMenu() {
-    const { location, rawQuery, timezone } = this.props;
-    const { pathname } = location;
+  const basePillClasses       = 'block py-2 px-4 text-center';
+  const selectedPillClasses   = 'bg-blue text-white border-blue';
+  const unselectedPillClasses = 'hover:bg-blue-lighter text-blue';
 
-    const isReports        = pathname === '/entries/reports';
-    const isReportsSummary = pathname === '/entries/reports/summary';
+  const leftPillClasses = cx(
+    basePillClasses,
+    'rounded-l-lg border-t border-l border-b', {
+      [selectedPillClasses]: isRoot,
+      [unselectedPillClasses]: !isRoot
+    }
+  );
 
-    return (
-      <ul className="list-reset flex flex-row">
-        <li
-          className="mr-3"
-        >
-          <Pill
-            selected={isReports}
-            to={{ ...location, pathname: '/entries/reports' }}
-          >
-            {'List'}
-          </Pill>
-        </li>
-        <li
-          className="mr-3"
-        >
-          <Pill
-            selected={isReportsSummary}
-            to={{ ...location, pathname: '/entries/reports/summary' }}
-          >
-            {'Summary'}
-          </Pill>
-        </li>
-        <li
-          className="mr-3"
-        >
-          <ExportEntriesButton
-            func="entriesCsv"
-            query={rawQuery}
-            timezone={timezone}
-            title="Entries CSV"
-          />
-        </li>
-        <li
-          className="mr-3"
-        >
-          <ExportEntriesButton
-            func="billableCsv"
-            query={rawQuery}
-            timezone={timezone}
-            title="Billable CSV"
-          />
-        </li>
-        <li>
-          <ExportEntriesButton
-            func="payrollCsv"
-            query={rawQuery}
-            timezone={timezone}
-            title="Payroll CSV"
-          />
-        </li>
-      </ul>
-    );
-  }
-  /* eslint-enable max-lines-per-function */
+  const rightPillClasses = cx(
+    basePillClasses,
+    'rounded-r-lg border-t border-r border-b', {
+      [selectedPillClasses]: isSummary,
+      [unselectedPillClasses]: !isSummary
+    }
+  );
 
-  render() {
-    const { admin, location } = this.props;
-    const { pathname } = location;
-
-    const isRoot    = pathname === '/entries';
-    const isSummary = pathname === '/entries/summary';
-
-    return (
-      <div
-        className="flex flex-wrap justify-between flex-row items-center my-4"
+  return (
+    <ul className="list-reset flex">
+      <li
+        className="flex-1"
       >
-        <ul className="list-reset flex flex-row">
-          <li
-            className="mr-3"
-          >
-            <Pill
-              selected={isRoot}
-              to={{ ...location, pathname: '/entries' }}
-            >
-              {'List'}
-            </Pill>
-          </li>
-          <li>
-            <Pill
-              selected={isSummary}
-              to={{ ...location, pathname: '/entries/summary' }}
-            >
-              {'Summary'}
-            </Pill>
-          </li>
-        </ul>
-        {admin && this._renderAdminMenu()}
-      </div>
-    );
-  }
-}
+        <Link
+          className={leftPillClasses}
+          to={{ ...location, pathname: '/entries' }}
+        >
+          <FontAwesomeIcon
+            icon="list"
+          />
+          {' '}
+          {'List'}
+        </Link>
+      </li>
+      <li
+        className="flex-1"
+      >
+        <Link
+          className={rightPillClasses}
+          to={{ ...location, pathname: '/entries/summary' }}
+        >
+          <FontAwesomeIcon
+            icon="layer-group"
+          />
+          {' '}
+          {'Summary'}
+        </Link>
+      </li>
+    </ul>
+  );
+};
 
-export default EntriesIndexStack;
+EntriesIndexMenu.propTypes = {
+  location: PropTypes.routerLocation.isRequired
+};
+
+export default EntriesIndexMenu;

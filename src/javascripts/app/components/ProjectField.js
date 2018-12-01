@@ -183,7 +183,10 @@ class ProjectField extends React.Component {
           clients={results}
           onProjectClick={this._handleChange}
         />
-        <FieldError {...meta} />
+        <FieldError
+          error={meta.error}
+          touched={meta.touched}
+        />
       </div>
     );
   }

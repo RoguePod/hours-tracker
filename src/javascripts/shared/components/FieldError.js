@@ -1,74 +1,90 @@
-import posed, { PoseGroup } from 'react-pose';
-
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import posed from 'react-pose';
+
+const DURATION = 250;
 
 const FadeIn = posed.div({
-  enter: { height: 'auto', opacity: 1 },
-  exit: { height: 0, opacity: 0 }
+  enter: { height: 'auto', opacity: 1, transition: { duration: DURATION } },
+  exit: { height: 0, opacity: 0, transition: { duration: DURATION } }
 });
 
-class FieldError extends React.Component {
-  state = {
+class FieldError extends React.PureComponent {
+  static propTypes = {
+    error: PropTypes.string,
+    touched: PropTypes.bool
+  };
+
+  static defaultProps = {
     error: null,
-    show: false
+    touched: false
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const { touched, error } = this.props;
-    const { error: stateError, show } = this.state;
+  constructor(props) {
+    super(props);
 
-    return (
-      nextProps.touched !== touched ||
-      nextProps.error !== error ||
-      nextState.error !== stateError ||
-      nextState.show !== show
-    );
+    this.state = {
+      error: props.error,
+      open: props.error && props.touched,
+      show: props.error && props.touched
+    };
   }
 
   componentDidUpdate() {
     const { error, touched } = this.props;
-    const { error: stateError } = this.state;
+    const { error: stateError, open: stateOpen, show } = this.state;
 
-    /* eslint-disable react/no-did-update-set-state */
-    if (touched) {
-      if (error && error !== stateError) {
-        this.setState({ error, show: true });
-      } else if (!error && stateError) {
-        this.setState({ show: false });
-        setTimeout(() => {
-          this.setState({ error: null });
-        }, 300);
-      }
+    if (error && error !== stateError) {
+      this.setState({ error });
     }
-    /* eslint-enable react/no-did-update-set-state */
+
+    const open = Boolean(touched && error);
+
+    if (!stateOpen && open) {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+      this.timeout = null;
+
+      this.setState({ open: true, show: false });
+      this.timeout = setTimeout(() => {
+        this.setState({ open: true, show: true });
+      }, 1);
+    } else if (show && !open) {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+      this.timeout = null;
+      this.setState({ open: true, show: false });
+
+      this.timeout = setTimeout(() => {
+        this.setState({ error: null, open: false, show: false });
+      }, DURATION);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
   }
 
   render() {
-    const { error, show } = this.state;
+    const { error, open, show } = this.state;
+
+    if (!open) {
+      return null;
+    }
 
     return (
-      <PoseGroup>
-        {show &&
-          <FadeIn
-            className="text-red text-sm pt-1 overflow-hidden"
-            key="fadeIn"
-          >
-            {error}
-          </FadeIn>}
-      </PoseGroup>
+      <FadeIn
+        className="text-red text-sm pt-1 overflow-hidden"
+        pose={show ? 'enter' : 'exit'}
+      >
+        {error}
+      </FadeIn>
     );
   }
 }
-
-FieldError.propTypes = {
-  error: PropTypes.string,
-  touched: PropTypes.bool
-};
-
-FieldError.defaultProps = {
-  error: null,
-  touched: false
-};
 
 export default FieldError;

@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+
 import {
   all,
   cancelled,
@@ -235,6 +236,7 @@ function* handleEntriesSubscribe({ snapshot }) {
   if (!currentState.ready) {
     yield put(ready());
   }
+  // yield delay(1000);
   yield put(setFetching(null));
 }
 

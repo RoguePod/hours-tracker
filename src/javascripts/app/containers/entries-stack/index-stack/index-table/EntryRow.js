@@ -13,6 +13,7 @@ class EntryRow extends React.Component {
   static propTypes = {
     admin: PropTypes.bool.isRequired,
     entry: PropTypes.entry.isRequired,
+    location: PropTypes.routerLocation.isRequired,
     onCheckEntry: PropTypes.func.isRequired,
     onDestroyEntry: PropTypes.func.isRequired,
     showAdmin: PropTypes.bool.isRequired,
@@ -85,7 +86,7 @@ class EntryRow extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { admin, entry, showAdmin, timezone } = this.props;
+    const { admin, entry, location, showAdmin, timezone } = this.props;
     const { project } = entry;
 
     const startedAt = moment.tz(entry.startedAt, entry.timezone);
@@ -137,7 +138,9 @@ class EntryRow extends React.Component {
               size={8}
               title="Edit"
               to={{
-                pathname: `/entries/${entry.id}/edit`, state: { modal: true }
+                ...location,
+                pathname: `/entries/${entry.id}/edit`,
+                state: { modal: true }
               }}
             >
               <FontAwesomeIcon

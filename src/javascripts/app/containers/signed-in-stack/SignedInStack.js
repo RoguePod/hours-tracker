@@ -2,6 +2,8 @@ import {
   ClientsStack,
   DashboardPage,
   EntriesStack,
+  EntryEditModal,
+  EntryNewModal,
   ProfilePage
 } from 'javascripts/app/containers';
 import { Redirect, Route, Switch } from 'react-router-dom';
@@ -11,6 +13,8 @@ import LeftSidebar from './LeftSidebar';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import RightSidebar from './RightSidebar';
+import _get from 'lodash/get';
+import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
@@ -22,53 +26,119 @@ const Content = styled.div`
   max-width: 1120px;
 `;
 
-const SignedInStack = (props) => {
-  const { auth } = props;
-
-  if (!auth) {
-    return <Redirect to="/sign-in" />;
+class SignedInStack extends React.Component {
+  static propTypes = {
+    auth: PropTypes.auth,
+    location: PropTypes.routerLocation.isRequired
   }
 
-  return (
-    <React.Fragment>
-      <Container className="md:ml-64 transition relative overflow-auto">
-        <Content className="mx-auto">
-          <Switch>
-            <Route
-              component={ClientsStack}
-              path="/clients"
-            />
-            <Route
-              component={EntriesStack}
-              path="/entries"
-            />
-            <Route
-              component={ProfilePage}
-              path="/profile"
-            />
-            <Route
-              component={DashboardPage}
-              exact
-              path="/"
-            />
-          </Switch>
-        </Content>
-      </Container>
+  static defaultProps = {
+    auth: null
+  }
 
-      <Header {...props} />
-      <LeftSidebar {...props} />
-      <RightSidebar {...props} />
-    </React.Fragment>
-  );
-};
+  constructor(props) {
+    super(props);
 
-SignedInStack.propTypes = {
-  auth: PropTypes.auth
-};
+    const { location } = props;
 
-SignedInStack.defaultProps = {
-  auth: null
-};
+    this.state = {
+      location,
+      open: false
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { history: { action } } = nextProps;
+    const modal = _get(nextProps, 'location.state.modal', false);
+
+    if (action !== 'POP' && modal) {
+      return {
+        open: true
+      };
+    } else if (action === 'POP' && prevState.open) {
+      return {
+        open: false
+      };
+    }
+
+    return null;
+  }
+
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location } = this.props;
+    const { open } = this.state;
+
+    if (!open && !_isEqual(prevProps.location, location)) {
+      this.setState({ location });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+  }
+
+  timeout = null
+
+  render() {
+    const { auth, location } = this.props;
+    const { open, location: previousLocation } = this.state;
+
+    if (!auth) {
+      return <Redirect to="/sign-in" />;
+    }
+
+    return (
+      <React.Fragment>
+        <Container className="md:ml-64 transition relative overflow-auto">
+          <Content className="mx-auto">
+            <Switch
+              location={open ? previousLocation : location}
+            >
+              <Route
+                component={ClientsStack}
+                path="/clients"
+              />
+              <Route
+                component={EntriesStack}
+                path="/entries"
+              />
+              <Route
+                component={ProfilePage}
+                path="/profile"
+              />
+              <Route
+                component={DashboardPage}
+                exact
+                path="/"
+              />
+            </Switch>
+            {open &&
+              <Switch>
+                <Route
+                  component={EntryNewModal}
+                  path="/entries/new"
+                />
+                <Route
+                  component={EntryEditModal}
+                  path="/entries/:id/edit"
+                />
+              </Switch>}
+          </Content>
+        </Container>
+
+        <Header {...this.props} />
+        <LeftSidebar {...this.props} />
+        <RightSidebar {...this.props} />
+      </React.Fragment>
+    );
+  }
+}
 
 const props = (state) => {
   return {

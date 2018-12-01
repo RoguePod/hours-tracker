@@ -56,7 +56,10 @@ const SelectField = (props) => {
           />
         </div>
       </div>
-      <FieldError {...meta} />
+      <FieldError
+        error={meta.error}
+        touched={meta.touched}
+      />
     </React.Fragment>
   );
 };

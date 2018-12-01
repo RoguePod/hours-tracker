@@ -21,6 +21,7 @@ class StopWatch extends React.Component {
   static propTypes = {
     entry: PropTypes.entry,
     fetching: PropTypes.string,
+    location: PropTypes.routerLocation.isRequired,
     onFormChange: PropTypes.func.isRequired,
     onStartEntry: PropTypes.func.isRequired,
     onStopEntry: PropTypes.func.isRequired,
@@ -93,7 +94,9 @@ class StopWatch extends React.Component {
     onStopEntry();
   }
 
-  _renderRunningButtons(entry) {
+  _renderRunningButtons() {
+    const { entry, location } = this.props;
+
     return (
       <div className="flex flex-row justify-between flex-no-wrap py-4">
         <ActionButton
@@ -134,7 +137,9 @@ class StopWatch extends React.Component {
           color="orange"
           title="Edit"
           to={{
-            pathname: `/entries/${entry.id}/edit`, state: { modal: true }
+            ...location,
+            pathname: `/entries/${entry.id}/edit`,
+            state: { modal: true }
           }}
         >
           <FontAwesomeIcon
@@ -172,7 +177,7 @@ class StopWatch extends React.Component {
             {...this.props}
             disabled={!hasEntry}
           />
-          {hasEntry && this._renderRunningButtons(entry)}
+          {hasEntry && this._renderRunningButtons()}
           {!hasEntry && this._renderNotRunningButtons()}
           <EntryForm
             initialValues={entry}

@@ -172,7 +172,10 @@ class UserField extends React.Component {
           onUserClick={this._handleChange}
           users={results}
         />
-        <FieldError {...meta} />
+        <FieldError
+          error={meta.error}
+          touched={meta.touched}
+        />
       </div>
     );
   }

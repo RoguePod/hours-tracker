@@ -9,6 +9,7 @@ import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
 import EntriesFilterForm from './EntriesFilterForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import IndexAdminMenu from './IndexAdminMenu';
 import IndexMenu from './IndexMenu';
 import IndexTable from './index-table/IndexTable';
 import PayrollTable from './payroll-table/PayrollTable';
@@ -16,6 +17,7 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SummaryTable from './summary-table/SummaryTable';
 import { connect } from 'react-redux';
+import cx from 'classnames';
 
 class EntriesIndexStack extends React.Component {
   static propTypes = {
@@ -36,10 +38,11 @@ class EntriesIndexStack extends React.Component {
   constructor(props) {
     super(props);
 
-    this._handleRenderReportsPage = this._handleRenderReportsPage.bind(this);
-    this._handleRenderIndexPage = this._handleRenderIndexPage.bind(this);
-    this._handleRenderSummaryTable = this._handleRenderSummaryTable.bind(this);
-    this._handleRenderPayrollTable = this._handleRenderPayrollTable.bind(this);
+    this._renderReportsPage = this._renderReportsPage.bind(this);
+    this._renderIndexPage = this._renderIndexPage.bind(this);
+    this._renderSummaryTable = this._renderSummaryTable.bind(this);
+    this._renderPayrollTable = this._renderPayrollTable.bind(this);
+    this._renderTabs = this._renderTabs.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -52,7 +55,7 @@ class EntriesIndexStack extends React.Component {
     onReset();
   }
 
-  _handleRenderIndexPage() {
+  _renderIndexPage() {
     const { location } = this.props;
 
     return (
@@ -62,7 +65,7 @@ class EntriesIndexStack extends React.Component {
     );
   }
 
-  _handleRenderReportsPage() {
+  _renderReportsPage() {
     const { location } = this.props;
 
     return (
@@ -73,7 +76,7 @@ class EntriesIndexStack extends React.Component {
     );
   }
 
-  _handleRenderSummaryTable() {
+  _renderSummaryTable() {
     const { location } = this.props;
 
     return (
@@ -83,13 +86,51 @@ class EntriesIndexStack extends React.Component {
     );
   }
 
-  _handleRenderPayrollTable() {
+  _renderPayrollTable() {
     const { location } = this.props;
 
     return (
       <PayrollTable
         location={location}
       />
+    );
+  }
+
+  _renderTabs(showAdmin) {
+    const { location } = this.props;
+
+    const baseTabClasses =
+      'inline-block text-blue py-2 px-4 border-l border-t border-r rounded-t';
+
+    const selectedTabClasses = cx(
+      baseTabClasses, 'bg-white'
+    );
+
+    const unselectedTabClasses = cx(
+      baseTabClasses,
+      'bg-transparent border-transparent hover:text-blue-dark ' +
+      'hover:bg-blue-lighter'
+    );
+
+    return (
+      <ul className="list-reset flex">
+        <li className="ml-3 -mb-px mr-1">
+          <Link
+            className={showAdmin ? unselectedTabClasses : selectedTabClasses}
+            to={{ ...location, pathname: '/entries' }}
+          >
+            {'My Entries'}
+          </Link>
+        </li>
+        <li className="-mb-px">
+          <Link
+            className={showAdmin ? selectedTabClasses : unselectedTabClasses}
+            to={{ ...location, pathname: '/entries/reports' }}
+          >
+            {'Reports'}
+          </Link>
+        </li>
+      </ul>
     );
   }
 
@@ -101,38 +142,38 @@ class EntriesIndexStack extends React.Component {
         {admin &&
           <Route
             path={`${match.url}/reports/payroll`}
-            render={this._handleRenderPayrollTable}
+            render={this._renderPayrollTable}
           />}
         {admin &&
           <Route
             path={`${match.url}/reports/summary`}
-            render={this._handleRenderSummaryTable}
+            render={this._renderSummaryTable}
           />}
         {admin &&
           <Route
             path={`${match.url}/reports`}
-            render={this._handleRenderReportsPage}
+            render={this._renderReportsPage}
           />}
         <Route
           path={`${match.url}/summary`}
-          render={this._handleRenderSummaryTable}
+          render={this._renderSummaryTable}
         />
         <Route
           exact
           path={match.url}
-          render={this._handleRenderIndexPage}
+          render={this._renderIndexPage}
         />
       </Switch>
     );
   }
 
   render() {
-    const { fetching, location, query } = this.props;
+    const { admin, fetching, location, query } = this.props;
     const { pathname } = location;
 
     const isReports        = pathname === '/entries/reports';
     const isReportsSummary = pathname === '/entries/reports/summary';
-    const showAdmin        = isReports || isReportsSummary;
+    const showAdmin        = admin && (isReports || isReportsSummary);
 
     return (
       <div className="p-4">
@@ -143,7 +184,11 @@ class EntriesIndexStack extends React.Component {
           <Button
             as={Link}
             color="green"
-            to={{ pathname: '/entries/new', state: { modal: true } }}
+            to={{
+              ...location,
+              pathname: '/entries/new',
+              state: { modal: true }
+            }}
           >
             <FontAwesomeIcon
               icon="plus"
@@ -152,15 +197,7 @@ class EntriesIndexStack extends React.Component {
             {'New Entry'}
           </Button>
         </div>
-
-        <ul class="list-reset flex">
-          <li class="ml-3 -mb-px mr-1">
-            <a class="bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-blue-dark font-semibold" href="#">My Entries</a>
-          </li>
-          <li class="mr-1">
-            <a class="bg-white inline-block py-2 px-4 text-blue hover:text-blue-darker font-semibold" href="#">Reports</a>
-          </li>
-        </ul>
+        {admin && this._renderTabs(showAdmin)}
         <div className="border rounded p-4">
           <EntriesFilterForm
             initialValues={query}
@@ -169,7 +206,10 @@ class EntriesIndexStack extends React.Component {
             showAdmin={showAdmin}
           />
         </div>
-        <IndexMenu {...this.props} />
+        <div className="my-4">
+          {showAdmin && <IndexAdminMenu {...this.props} />}
+          {!showAdmin && <IndexMenu {...this.props} />}
+        </div>
         {this._renderRoutes()}
         <Spinner
           page

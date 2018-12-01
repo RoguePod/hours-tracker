@@ -146,7 +146,10 @@ class TextAreaField extends React.Component {
           onChange={this._handleChange}
           ref={this.ref}
         />
-        <FieldError {...meta} />
+        <FieldError
+          error={meta.error}
+          touched={meta.touched}
+        />
       </React.Fragment>
     );
   }
