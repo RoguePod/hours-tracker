@@ -27,18 +27,37 @@ class InputField extends React.Component {
     label: null
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      id: props.id ? props.id : _uniqueId('input_')
+    };
+  }
+
   shouldComponentUpdate() {
     return true;
   }
 
+  componentDidUpdate(prevProps) {
+    const { id } = this.props;
+
+    if (id !== prevProps.id) {
+      if (id) {
+        this.setState({ id });
+      } else if (!id && prevProps.id) {
+        this.setState({ id: _uniqueId('input_') });
+      }
+    }
+  }
+
   render() {
-    const { className, id, input, label, meta, ...rest } = this.props;
+    const { className, input, label, meta, ...rest } = this.props;
+    const { id } = this.state;
 
     /* eslint-disable no-unneeded-ternary */
     const isError = meta.touched && meta.error ? true : false;
     /* eslint-enable no-unneeded-ternary */
-
-    const inputId = id ? id : _uniqueId('input_');
 
     const inputClassName = cx(
       'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
@@ -57,7 +76,7 @@ class InputField extends React.Component {
         {label &&
           <Label
             error={isError}
-            htmlFor={inputId}
+            htmlFor={id}
           >
             {label}
           </Label>}
@@ -65,7 +84,7 @@ class InputField extends React.Component {
           {...input}
           {...rest}
           className={inputClassName}
-          id={inputId}
+          id={id}
         />
         <FieldError
           error={meta.error}

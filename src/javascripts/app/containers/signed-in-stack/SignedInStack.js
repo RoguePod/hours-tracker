@@ -10,12 +10,14 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import Header from './Header';
 import LeftSidebar from './LeftSidebar';
+import { Modal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import RightSidebar from './RightSidebar';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
+import { history } from 'javascripts/app/redux/store';
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -52,13 +54,9 @@ class SignedInStack extends React.Component {
     const modal = _get(nextProps, 'location.state.modal', false);
 
     if (action !== 'POP' && modal) {
-      return {
-        open: true
-      };
+      return { open: true };
     } else if (action === 'POP' && prevState.open) {
-      return {
-        open: false
-      };
+      return { open: false };
     }
 
     return null;
@@ -70,10 +68,16 @@ class SignedInStack extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { location } = this.props;
-    const { open } = this.state;
+    const { location: stateLocation, open, modal } = this.state;
 
-    if (!open && !_isEqual(prevProps.location, location)) {
-      this.setState({ location });
+    if (!_isEqual(prevProps.location, location)) {
+      if (open && !_isEqual(modal, location)) {
+        this.setState({ modal: location });
+      }
+
+      if (!open && !_isEqual(stateLocation, location)) {
+        this.setState({ location });
+      }
     }
   }
 
@@ -87,7 +91,9 @@ class SignedInStack extends React.Component {
 
   render() {
     const { auth, location } = this.props;
-    const { open, location: previousLocation } = this.state;
+    const {
+      open, location: previousLocation, modal: modalLocation
+    } = this.state;
 
     if (!auth) {
       return <Redirect to="/sign-in" />;
@@ -118,8 +124,13 @@ class SignedInStack extends React.Component {
                 path="/"
               />
             </Switch>
-            {open &&
-              <Switch>
+            <Modal
+              onClose={history.goBack}
+              open={open}
+            >
+              <Switch
+                location={modalLocation}
+              >
                 <Route
                   component={EntryNewModal}
                   path="/entries/new"
@@ -128,7 +139,8 @@ class SignedInStack extends React.Component {
                   component={EntryEditModal}
                   path="/entries/:id/edit"
                 />
-              </Switch>}
+              </Switch>
+            </Modal>
           </Content>
         </Container>
 

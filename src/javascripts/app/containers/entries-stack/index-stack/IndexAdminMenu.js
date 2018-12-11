@@ -11,7 +11,9 @@ const EntriesIndexAdminMenu = ({ location, rawQuery, timezone }) => {
   const isReports        = pathname === '/entries/reports';
   const isReportsSummary = pathname === '/entries/reports/summary';
 
-  const basePillClasses       = 'block py-2 px-4 text-center border-r';
+  const basePillClasses =
+    'block py-2 px-2 text-center border-r cursor-pointer ' +
+    'flex flex-no-wrap flex-1';
   const selectedPillClasses   = 'bg-blue text-white border-blue';
   const unselectedPillClasses = 'hover:bg-blue-lighter text-blue';
 
@@ -41,59 +43,51 @@ const EntriesIndexAdminMenu = ({ location, rawQuery, timezone }) => {
   );
 
   return (
-    <ul className="list-reset flex">
-      <li className="flex-1">
-        <Link
-          className={leftPillClasses}
-          to={{ ...location, pathname: '/entries/reports' }}
-        >
-          <FontAwesomeIcon
-            icon="list"
-          />
-          {' '}
+    <div className="flex">
+      <Link
+        className={leftPillClasses}
+        to={{ ...location, pathname: '/entries/reports' }}
+      >
+        <FontAwesomeIcon
+          icon="list"
+        />
+        <div className="ml-2">
           {'List'}
-        </Link>
-      </li>
-      <li className="flex-1">
-        <Link
-          className={summaryPillClasses}
-          to={{ ...location, pathname: '/entries/reports/summary' }}
-        >
-          <FontAwesomeIcon
-            icon="layer-group"
-          />
-          {' '}
+        </div>
+      </Link>
+      <Link
+        className={summaryPillClasses}
+        to={{ ...location, pathname: '/entries/reports/summary' }}
+      >
+        <FontAwesomeIcon
+          icon="layer-group"
+        />
+        <div className="ml-2">
           {'Summary'}
-        </Link>
-      </li>
-      <li className="flex-1">
-        <ExportEntriesButton
-          className={middlePillClasses}
-          func="entriesCsv"
-          query={rawQuery}
-          timezone={timezone}
-          title="Entries CSV"
-        />
-      </li>
-      <li className="flex-1">
-        <ExportEntriesButton
-          className={middlePillClasses}
-          func="billableCsv"
-          query={rawQuery}
-          timezone={timezone}
-          title="Billable CSV"
-        />
-      </li>
-      <li className="flex-1">
-        <ExportEntriesButton
-          className={rightPillClasses}
-          func="payrollCsv"
-          query={rawQuery}
-          timezone={timezone}
-          title="Payroll CSV"
-        />
-      </li>
-    </ul>
+        </div>
+      </Link>
+      <ExportEntriesButton
+        className={middlePillClasses}
+        func="entriesCsv"
+        query={rawQuery}
+        timezone={timezone}
+        title="Entries CSV"
+      />
+      <ExportEntriesButton
+        className={middlePillClasses}
+        func="billableCsv"
+        query={rawQuery}
+        timezone={timezone}
+        title="Billable CSV"
+      />
+      <ExportEntriesButton
+        className={rightPillClasses}
+        func="payrollCsv"
+        query={rawQuery}
+        timezone={timezone}
+        title="Payroll CSV"
+      />
+    </div>
   );
 };
 

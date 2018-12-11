@@ -28,16 +28,6 @@ const ActionButton = (props) => {
     </Tag>
   );
 
-  if (title) {
-    action = (
-      <Tooltip
-        title={title}
-      >
-        {action}
-      </Tooltip>
-    );
-  }
-
   if (confirm && confirm.length > 0) {
     action = (
       <ConfirmAction
@@ -46,6 +36,16 @@ const ActionButton = (props) => {
       >
         {action}
       </ConfirmAction>
+    );
+  }
+
+  if (title) {
+    action = (
+      <Tooltip
+        title={title}
+      >
+        {action}
+      </Tooltip>
     );
   }
 

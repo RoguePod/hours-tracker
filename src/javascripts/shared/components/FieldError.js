@@ -2,11 +2,20 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import posed from 'react-pose';
 
-const DURATION = 250;
+const DURATION = 300;
 
 const FadeIn = posed.div({
-  enter: { height: 'auto', opacity: 1, transition: { duration: DURATION } },
-  exit: { height: 0, opacity: 0, transition: { duration: DURATION } }
+  enter: {
+    height: 'auto',
+    opacity: 1,
+    transition: { duration: DURATION }
+  },
+  exit: {
+    applyAtStart: { position: 'static' },
+    height: 0,
+    opacity: 0,
+    transition: { duration: DURATION }
+  }
 });
 
 class FieldError extends React.PureComponent {
@@ -25,14 +34,15 @@ class FieldError extends React.PureComponent {
 
     this.state = {
       error: props.error,
-      open: props.error && props.touched,
       show: props.error && props.touched
     };
+
+    this._handlePoseComplete = this._handlePoseComplete.bind(this);
   }
 
   componentDidUpdate() {
     const { error, touched } = this.props;
-    const { error: stateError, open: stateOpen, show } = this.state;
+    const { error: stateError, show } = this.state;
 
     if (error && error !== stateError) {
       this.setState({ error });
@@ -40,48 +50,36 @@ class FieldError extends React.PureComponent {
 
     const open = Boolean(touched && error);
 
-    if (!stateOpen && open) {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
-      this.timeout = null;
-
-      this.setState({ open: true, show: false });
-      this.timeout = setTimeout(() => {
-        this.setState({ open: true, show: true });
-      }, 1);
-    } else if (show && !open) {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
-      this.timeout = null;
-      this.setState({ open: true, show: false });
-
-      this.timeout = setTimeout(() => {
-        this.setState({ error: null, open: false, show: false });
-      }, DURATION);
+    if (open && !show) {
+      this.setState({ show: true });
     }
   }
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
+  _handlePoseComplete() {
+    const { error, touched } = this.props;
+    const show = Boolean(touched && error);
+
+    this.setState({ show });
   }
 
   render() {
-    const { error, open, show } = this.state;
+    const { error, touched } = this.props;
+    const { error: stateError, show } = this.state;
 
-    if (!open) {
+    if (!show) {
       return null;
     }
+
+    const open = Boolean(touched && error);
 
     return (
       <FadeIn
         className="text-red text-sm pt-1 overflow-hidden"
-        pose={show ? 'enter' : 'exit'}
+        initialPose="exit"
+        onPoseComplete={this._handlePoseComplete}
+        pose={open ? 'enter' : 'exit'}
       >
-        {error}
+        {stateError}
       </FadeIn>
     );
   }

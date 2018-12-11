@@ -6,6 +6,7 @@ import { ConfirmAction } from 'javascripts/shared/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import cx from 'classnames';
 
 class ExportEntriesButton extends React.Component {
   static propTypes = {
@@ -44,10 +45,7 @@ class ExportEntriesButton extends React.Component {
 
   render() {
     const { className, func, query, timezone, title } = this.props;
-    const newQuery = {
-      ...query,
-      timezone
-    };
+    const newQuery = { ...query, timezone };
 
     let warning = true;
 
@@ -58,13 +56,19 @@ class ExportEntriesButton extends React.Component {
       }
     }
 
+    const titleClassName = cx(
+      'cursor-pointer whitespace-no-wrap w-100 overflow-hidden ' +
+      'text-overflow-ellipsis ml-2'
+    );
+
     const children = (
       <React.Fragment>
         <FontAwesomeIcon
           icon="download"
         />
-        {' '}
-        {title}
+        <div className={titleClassName}>
+          {title}
+        </div>
       </React.Fragment>
     );
 
@@ -75,9 +79,11 @@ class ExportEntriesButton extends React.Component {
       return (
         <ConfirmAction
           message={message}
-          onClick={this._handleOpen}
+          onConfirm={this._handleOpen}
         >
-          <div className={className}>
+          <div
+            className={className}
+          >
             {children}
           </div>
         </ConfirmAction>

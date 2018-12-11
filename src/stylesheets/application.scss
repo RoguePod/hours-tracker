@@ -1,4 +1,4 @@
-@import url('//fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Mono');
+@import url('//use.typekit.net/pbd6lbw.css');
 @import '~react-datepicker/dist/react-datepicker.css';
 
 /* stylelint-disable at-rule-no-unknown, at-rule-empty-line-before */
@@ -64,4 +64,8 @@ hr {
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   height: 0;
+}
+
+.text-overflow-ellipsis {
+  text-overflow: ellipsis;
 }

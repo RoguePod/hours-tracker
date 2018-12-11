@@ -1,6 +1,8 @@
 import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import ReactDOM from 'react-dom';
+import _isElement from 'lodash/isElement';
 import cx from 'classnames';
 import posed from 'react-pose';
 import styled from 'styled-components';
@@ -38,16 +40,22 @@ const Title = styled(FadeIn)`
 class Tooltip extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
+    onMouseEnter: PropTypes.func,
+    onMouseLeave: PropTypes.func,
     title: PropTypes.string.isRequired
+  }
+
+  static defaultProps = {
+    onMouseEnter: null,
+    onMouseLeave: null
   }
 
   constructor(props) {
     super(props);
 
-    this._handleMouseOut = this._handleMouseOut.bind(this);
-    this._handleMouseOver = this._handleMouseOver.bind(this);
-
-    this.element = React.createRef();
+    this._handleMouseEnter = this._handleMouseEnter.bind(this);
+    this._handleMouseLeave = this._handleMouseLeave.bind(this);
+    this._handlePoseComplete = this._handlePoseComplete.bind(this);
   }
 
   state = {
@@ -59,28 +67,36 @@ class Tooltip extends React.Component {
     return true;
   }
 
-  _handleMouseOut() {
-    this.setState({ hover: false });
+  _element = null
 
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-
-    this.timeout = setTimeout(() => {
-      this.setState({ show: false });
-    }, 250);
-  }
-
-  _handleMouseOver() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
+  _handleMouseEnter(event) {
+    const { onMouseEnter } = this.props;
 
     this.setState({ hover: true, show: true });
+
+    if (onMouseEnter) {
+      onMouseEnter(event);
+    }
+  }
+
+  _handleMouseLeave(event) {
+    const { onMouseLeave } = this.props;
+
+    this.setState({ hover: false });
+
+    if (onMouseLeave) {
+      onMouseLeave(event);
+    }
+  }
+
+  _handlePoseComplete() {
+    const { hover } = this.state;
+
+    this.setState({ show: hover });
   }
 
   render() {
-    const { children, title } = this.props;
+    const { children, title, ...rest } = this.props;
     const { hover, show } = this.state;
 
     const titleClasses = cx(
@@ -89,8 +105,8 @@ class Tooltip extends React.Component {
     );
 
     let tooltipStyles = {};
-    if (show && this.element) {
-      const rect = this.element.current.getBoundingClientRect();
+    if (show && this._element) {
+      const rect = this._element.getBoundingClientRect();
 
       tooltipStyles = {
         left: rect.left + (rect.width / 2),
@@ -98,25 +114,47 @@ class Tooltip extends React.Component {
       };
     }
 
+    const child = React.Children.only(children);
+    const trigger = React.cloneElement(child, {
+      ...rest,
+      onMouseEnter: this._handleMouseEnter,
+      onMouseLeave: this._handleMouseLeave,
+      ref: (node) => {
+        // Keep your own reference
+        if (_isElement(node)) {
+          this._element = node;
+        } else {
+          /* eslint-disable react/no-find-dom-node */
+          this._element = ReactDOM.findDOMNode(node);
+          /* eslint-enable react/no-find-dom-node */
+        }
+
+        // Call the original ref, if any
+        const { ref } = child;
+
+        if (typeof ref === 'function') {
+          ref(node);
+        }
+      }
+    });
+
+    // console.log('TOOLTIP', this.props, child, trigger);
+
     return (
       <React.Fragment>
-        <Portal>
-          {show &&
+        {trigger}
+        {show &&
+          <Portal>
             <Title
               className={titleClasses}
+              initialPose="hide"
+              onPoseComplete={this._handlePoseComplete}
               pose={hover ? 'show' : 'hide'}
               style={tooltipStyles}
             >
               {title}
-            </Title>}
-        </Portal>
-        <div
-          onMouseOut={this._handleMouseOut}
-          onMouseOver={this._handleMouseOver}
-          ref={this.element}
-        >
-          {children}
-        </div>
+            </Title>
+          </Portal>}
       </React.Fragment>
     );
   }

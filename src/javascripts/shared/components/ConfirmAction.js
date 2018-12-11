@@ -1,46 +1,21 @@
-import posed, { PoseGroup } from 'react-pose';
-
 import Button from './Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Portal from './Portal';
+import Modal from './Modal';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-
-const duration = 200;
-
-const FadeIn = posed.div({
-  enter: { beforeChildren: true, opacity: 1, transition: { duration } },
-  exit: { opacity: 0, transition: { duration } }
-});
-
-/* eslint-disable id-length */
-const SlideIn = posed.div({
-  enter: {
-    opacity: 1,
-    transition: {
-      default: { duration },
-      y: -50
-    },
-    y: 0
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration },
-    y: -50
-  }
-});
-/* eslint-disable id-length */
 
 class ConfirmAction extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     message: PropTypes.string,
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    title: PropTypes.string
   }
 
   static defaultProps = {
     message: null,
-    onClick: null
+    onClick: null,
+    title: null
   }
 
   constructor(props) {
@@ -52,111 +27,75 @@ class ConfirmAction extends React.Component {
   }
 
   state = {
-    open: false,
-    show: false
+    open: false
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-  }
-
-  timeout = null
-
-  _handleOpen() {
-    this.setState({ open: true }, () => {
-      this.setState({ show: true });
-    }, 1);
+  _handleOpen(event) {
+    this.setState({ event, open: true });
   }
 
   _handleConfirm() {
+    const { event } = this.state;
     const { onClick } = this.props;
 
     if (onClick) {
-      onClick();
+      onClick(event);
     }
 
     this._handleClose();
   }
 
   _handleClose() {
-    this.setState({ show: false }, () => {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
-
-      this.timeout = setTimeout(() => {
-        this.setState({ open: false });
-      }, duration);
-    });
+    this.setState({ event: null, open: false });
   }
 
   render() {
-    const { children, message } = this.props;
-    const { open, show } = this.state;
+    const { children, message, ...rest } = this.props;
+    const { open } = this.state;
 
-    const overlayClassName =
-      'fixed pin z-40 flex items-center justify-center pt-8 px-4 pb-4 ' +
-      'overflow-auto bg-smoke';
-
-    const slideInClasses =
-      'flex flex-col items-center bg-white p-4 rounded z-40 shadow-lg';
+    const child   = React.Children.only(children);
+    const trigger = React.cloneElement(child, {
+      ...rest,
+      onClick: this._handleOpen
+    });
 
     return (
       <React.Fragment>
-        <span
-          onClick={this._handleOpen}
+        {trigger}
+        <Modal
+          onClose={this._handleClose}
+          open={open}
         >
-          {children}
-        </span>
-        {open &&
-          <Portal>
-            <PoseGroup>
-              {show &&
-                <FadeIn
-                  className={overlayClassName}
-                  key="overlay"
-                >
-                  <div
-                    className="absolute pin"
-                    onClick={this._handleClose}
-                  />
-                  <SlideIn
-                    className={slideInClasses}
-                    pose={show ? 'enter' : 'exit'}
-                  >
-                    <FontAwesomeIcon
-                      className="text-red"
-                      icon="exclamation-circle"
-                      size="4x"
-                    />
-                    <div className="text-2xl py-4">
-                      {message}
-                    </div>
-                    <div>
-                      <Button
-                        color="green"
-                        onClick={this._handleConfirm}
-                      >
-                        {'Confirm'}
-                      </Button>
-                      {' '}
-                      <Button
-                        color="red"
-                        onClick={this._handleClose}
-                      >
-                        {'Cancel'}
-                      </Button>
-                    </div>
-                  </SlideIn>
-                </FadeIn>}
-            </PoseGroup>
-          </Portal>}
+          <div className="flex flex-col items-center p-4">
+            <FontAwesomeIcon
+              className="text-red"
+              icon="exclamation-circle"
+              size="4x"
+            />
+            <div className="text-2xl py-4">
+              {message}
+            </div>
+            <div>
+              <Button
+                color="green"
+                onClick={this._handleConfirm}
+              >
+                {'Confirm'}
+              </Button>
+              {' '}
+              <Button
+                color="red"
+                onClick={this._handleClose}
+              >
+                {'Cancel'}
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </React.Fragment>
     );
   }
