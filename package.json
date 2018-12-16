@@ -28,7 +28,6 @@
     "redux-form": "8.0.4",
     "redux-saga": "0.16.2",
     "reselect": "4.0.0",
-    "semantic-ui-react": "0.82.5",
     "styled-components": "4.1.2"
   },
   "devDependencies": {
@@ -80,7 +79,6 @@
     "resolve-url-loader": "3.0.0",
     "robotstxt-webpack-plugin": "4.0.1",
     "sass-loader": "7.1.0",
-    "semantic-ui": "2.3.2",
     "style-loader": "0.23.1",
     "stylelint": "9.9.0",
     "stylelint-config-standard": "18.2.0",

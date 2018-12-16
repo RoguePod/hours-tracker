@@ -1,9 +1,13 @@
-import { Grid, Icon } from 'semantic-ui-react';
 import {
-  InputField, TextAreaField, TimeField
+  InputField,
+  TextAreaField,
+  TimeField
 } from 'javascripts/shared/components';
 import {
-  betweenValue, isParsedTime, isRequired, isStoppedAt
+  betweenValue,
+  isParsedTime,
+  isRequired,
+  isStoppedAt
 } from 'javascripts/validators';
 
 import { Field } from 'redux-form';
@@ -148,95 +152,90 @@ class SplitFormEntry extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { fields, member, submitting, timezone } = this.props;
+    const { member, submitting, timezone } = this.props;
+
+    // {fields.length > 1 &&
+    //   <Grid.Column
+    //     verticalAlign="middle"
+    //     width={1}
+    //   >
+    //     <Icon
+    //       color="red"
+    //       name="remove"
+    //       onClick={this._handleRemove}
+    //       size="huge"
+    //     />
+    //   </Grid.Column>}
 
     return (
-      <Grid.Row>
-        <Grid.Column>
-          <Field
-            component={ProjectField}
-            disabled={submitting}
-            label="Project"
-            name={`${member}.projectName`}
-            nameClient={`${member}.clientRef`}
-            nameProject={`${member}.projectRef`}
-            onProjectChange={this._handleProjectChange}
-          />
-          <Field
-            autoCapitalize="sentences"
-            autoCorrect="on"
-            autoHeight
-            component={TextAreaField}
-            disabled={submitting}
-            label="Description"
-            name={`${member}.description`}
-            rows={1}
-          />
-        </Grid.Column>
-        <Grid.Column>
-          <Field
-            autoCapitalize="none"
-            autoCorrect="off"
-            component={InputField}
-            disabled={submitting}
-            format={formatFloatPositive}
-            label="Hours"
-            name={`${member}.hours`}
-            onChange={this._handleHoursChange}
-            type="text"
-            validate={[isRequired, this._handleValidateHours]}
-          />
-          <Field
-            autoCapitalize="none"
-            autoCorrect="off"
-            autoFocus
-            component={TimeField}
-            disabled
-            label="Started"
-            name={`${member}.startedAt`}
-            timezone={timezone}
-            type="text"
-            validate={[isRequired, isParsedTime]}
-          />
-        </Grid.Column>
-        <Grid.Column>
-          <Field
-            autoCapitalize="none"
-            autoCorrect="off"
-            component={InputField}
-            disabled={submitting}
-            format={formatFloatPositive}
-            label="%"
-            name={`${member}.percent`}
-            onChange={this._handlePercentChange}
-            type="text"
-            validate={[isRequired, betweenValue0and100]}
-          />
-          <Field
-            autoCapitalize="none"
-            autoCorrect="off"
-            component={TimeField}
-            disabled
-            label="Stopped"
-            name={`${member}.stoppedAt`}
-            timezone={timezone}
-            type="text"
-            validate={[isRequired, isParsedTime, isStoppedAt]}
-          />
-        </Grid.Column>
-        {fields.length > 1 &&
-          <Grid.Column
-            verticalAlign="middle"
-            width={1}
-          >
-            <Icon
-              color="red"
-              name="remove"
-              onClick={this._handleRemove}
-              size="huge"
-            />
-          </Grid.Column>}
-      </Grid.Row>
+      <div>
+        <Field
+          component={ProjectField}
+          disabled={submitting}
+          label="Project"
+          name={`${member}.projectName`}
+          nameClient={`${member}.clientRef`}
+          nameProject={`${member}.projectRef`}
+          onProjectChange={this._handleProjectChange}
+        />
+        <Field
+          autoCapitalize="sentences"
+          autoCorrect="on"
+          autoHeight
+          component={TextAreaField}
+          disabled={submitting}
+          label="Description"
+          name={`${member}.description`}
+          rows={1}
+        />
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          component={InputField}
+          disabled={submitting}
+          format={formatFloatPositive}
+          label="Hours"
+          name={`${member}.hours`}
+          onChange={this._handleHoursChange}
+          type="text"
+          validate={[isRequired, this._handleValidateHours]}
+        />
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoFocus
+          component={TimeField}
+          disabled
+          label="Started"
+          name={`${member}.startedAt`}
+          timezone={timezone}
+          type="text"
+          validate={[isRequired, isParsedTime]}
+        />
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          component={InputField}
+          disabled={submitting}
+          format={formatFloatPositive}
+          label="%"
+          name={`${member}.percent`}
+          onChange={this._handlePercentChange}
+          type="text"
+          validate={[isRequired, betweenValue0and100]}
+        />
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          component={TimeField}
+          disabled
+          label="Stopped"
+          name={`${member}.stoppedAt`}
+          timezone={timezone}
+          type="text"
+          validate={[isRequired, isParsedTime, isStoppedAt]}
+        />
+      </div>
     );
   }
   /* eslint-enable max-lines-per-function */

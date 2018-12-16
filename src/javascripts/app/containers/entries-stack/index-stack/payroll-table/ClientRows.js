@@ -1,7 +1,6 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Row from './Row';
-import { Table } from 'semantic-ui-react';
 import styles from './ClientRows.scss';
 
 class ProjectsRow extends React.Component {
@@ -85,39 +84,39 @@ class ProjectsRow extends React.Component {
     });
 
     return (
-      <Table.Body>
-        <Table.Row
+      <tbody>
+        <tr
           className={styles.clientRow}
         >
-          <Table.Cell
+          <td
             colSpan={5}
           >
             {client.name}
-          </Table.Cell>
-        </Table.Row>
+          </td>
+        </tr>
         {rows}
-        <Table.Row>
-          <Table.Cell />
-          <Table.Cell
+        <tr>
+          <td />
+          <td
             positive
           >
             {this._calcBillable().toFixed(1)}
-          </Table.Cell>
-          <Table.Cell
+          </td>
+          <td
             warning
           >
             {this._calcNonBillable().toFixed(1)}
-          </Table.Cell>
-          <Table.Cell
+          </td>
+          <td
             collapsing
           >
             {this._calcTotal().toFixed(1)}
-          </Table.Cell>
-          <Table.Cell>
+          </td>
+          <td>
             {`${(this._calcPercentBillable() * 100).toFixed(2)}%`}
-          </Table.Cell>
-        </Table.Row>
-      </Table.Body>
+          </td>
+        </tr>
+      </tbody>
     );
   }
 }

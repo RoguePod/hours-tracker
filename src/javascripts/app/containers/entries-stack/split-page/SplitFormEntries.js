@@ -1,5 +1,5 @@
-import { Button, Grid, Header } from 'semantic-ui-react';
-
+import { Button } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SplitFormChart from './SplitFormChart';
@@ -70,47 +70,33 @@ class SplitFormEntries extends React.Component {
     const rows = this._renderRows();
 
     return (
-      <Grid
-        columns="equal"
-        stackable
-      >
-        <Grid.Row>
-          <Grid.Column>
-            <Header
-              as="h3"
-              color="blue"
-            >
-              {'Entries'}
-            </Header>
-          </Grid.Column>
-        </Grid.Row>
+      <div>
+        <h3 className="text-blue">
+          {'Entries'}
+        </h3>
         {rows}
-        <Grid.Row>
-          <Grid.Column>
-            <Header
-              as="h3"
-              color="blue"
-            >
-              {'Chart'}
-            </Header>
-            <SplitFormChart
-              entries={currentValues.entries || []}
-            />
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row>
-          <Grid.Column>
-            <Button
-              color="blue"
-              content="Add Entry"
-              fluid
-              icon="exchange"
-              onClick={this._handleAdd}
-              type="button"
-            />
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+        <h3 className="text-blue">
+          {'Chart'}
+        </h3>
+        <SplitFormChart
+          entries={currentValues.entries || []}
+        />
+        <Button
+          color="blue"
+          content="Add Entry"
+          fluid
+          icon="exchange"
+          onClick={this._handleAdd}
+          type="button"
+        >
+          <FontAwesomeIcon
+            icon="exchange-alt"
+            size="3x"
+          />
+          {' '}
+          {'Add Entry'}
+        </Button>
+      </div>
     );
   }
 }

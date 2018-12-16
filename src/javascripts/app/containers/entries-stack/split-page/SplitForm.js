@@ -1,6 +1,5 @@
+import { Button, FormError, TimeField } from 'javascripts/shared/components';
 import { Field, FieldArray, reduxForm } from 'redux-form';
-import { Form, Grid } from 'semantic-ui-react';
-import { FormError, TimeField } from 'javascripts/shared/components';
 import { isParsedTime, isRequired, isStoppedAt } from 'javascripts/validators';
 
 import PropTypes from 'javascripts/prop-types';
@@ -177,69 +176,50 @@ class EntrySplitForm extends React.Component {
     const { error, handleSubmit, submitting, timezone } = this.props;
 
     return (
-      <Form
+      <form
         noValidate
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Grid
-          columns="equal"
-          stackable
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoFocus
+          component={TimeField}
+          disabled={submitting}
+          label="Started"
+          name="startedAt"
+          onChange={this._handleStartedAtChanged}
+          timezone={timezone}
+          type="text"
+          validate={[isRequired, isParsedTime]}
+        />
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          component={TimeField}
+          disabled={submitting}
+          label="Stopped"
+          name="stoppedAt"
+          onChange={this._handleStoppedAtChanged}
+          timezone={timezone}
+          type="text"
+          validate={[isRequired, isParsedTime, isStoppedAt]}
+        />
+        <FieldArray
+          component={this._renderEntries}
+          name="entries"
+        />
+        <Button
+          className="py-2"
+          color="green"
+          disabled={submitting}
+          loading={submitting}
+          type="submit"
         >
-          <Grid.Row>
-            <Grid.Column>
-              <Field
-                autoCapitalize="none"
-                autoCorrect="off"
-                autoFocus
-                component={TimeField}
-                disabled={submitting}
-                label="Started"
-                name="startedAt"
-                onChange={this._handleStartedAtChanged}
-                timezone={timezone}
-                type="text"
-                validate={[isRequired, isParsedTime]}
-              />
-            </Grid.Column>
-            <Grid.Column>
-              <Field
-                autoCapitalize="none"
-                autoCorrect="off"
-                component={TimeField}
-                disabled={submitting}
-                label="Stopped"
-                name="stoppedAt"
-                onChange={this._handleStoppedAtChanged}
-                timezone={timezone}
-                type="text"
-                validate={[isRequired, isParsedTime, isStoppedAt]}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <FieldArray
-                component={this._renderEntries}
-                name="entries"
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Form.Button
-                color="green"
-                disabled={submitting}
-                fluid
-                loading={submitting}
-                size="big"
-              >
-                {'Save'}
-              </Form.Button>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Form>
+          {submitting ? 'Submitting...' : 'Submit'}
+        </Button>
+      </form>
     );
   }
   /* eslint-enable max-lines-per-function */

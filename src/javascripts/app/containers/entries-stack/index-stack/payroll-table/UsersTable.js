@@ -1,7 +1,6 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Row from './Row';
-import { Table } from 'semantic-ui-react';
 
 const ProjectsTable = ({ users }) => {
   const rows = Object.keys(users).map((key) => {
@@ -14,32 +13,30 @@ const ProjectsTable = ({ users }) => {
     );
   });
 
-  return [
-    <Table.Header
-      key="users-header"
-    >
-      <Table.Row>
-        <Table.HeaderCell />
-        <Table.HeaderCell>
-          {'Billable'}
-        </Table.HeaderCell>
-        <Table.HeaderCell>
-          {'Non-Billable'}
-        </Table.HeaderCell>
-        <Table.HeaderCell>
-          {'Total'}
-        </Table.HeaderCell>
-        <Table.HeaderCell>
-          {'Billable %'}
-        </Table.HeaderCell>
-      </Table.Row>
-    </Table.Header>,
-    <Table.Body
-      key="users-body"
-    >
-      {rows}
-    </Table.Body>
-  ];
+  return (
+    <React.Fragment>
+      <thead>
+        <tr>
+          <th />
+          <th>
+            {'Billable'}
+          </th>
+          <th>
+            {'Non-Billable'}
+          </th>
+          <th>
+            {'Total'}
+          </th>
+          <th>
+            {'Billable %'}
+          </th>
+        </tr>
+      </thead>,
+      <tbody>
+        {rows}
+      </tbody>
+    </React.Fragment>
+  );
 };
 
 ProjectsTable.propTypes = {

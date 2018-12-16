@@ -1,13 +1,12 @@
-import { Dimmer, Header, Loader, Segment } from 'semantic-ui-react';
 import { getEntry, splitEntry } from 'javascripts/app/redux/entry';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import SplitForm from './SplitForm';
 import _get from 'lodash/get';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import styles from './SplitPage.scss';
 
 class EntrySplitPage extends React.Component {
   static propTypes = {
@@ -89,38 +88,31 @@ class EntrySplitPage extends React.Component {
 
     const { hours, initialValues } = this._getInitialValuesAndHours(entry);
 
+    if (!entry) {
+      return (
+        <Spinner
+          page
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      );
+    }
+
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
-        {entry &&
-          <div>
-            <Header
-              as="h1"
-              color="blue"
-            >
-              {'Edit Entry'}
-            </Header>
-            <Segment>
-              <SplitForm
-                currentValues={values}
-                hours={Number(hours)}
-                initialValues={initialValues}
-                onSplitEntry={onSplitEntry}
-                timezone={entry.timezone}
-              />
-            </Segment>
-          </div>}
-      </Segment>
+      <div className="p-4">
+        <h1 className="text-blue">
+          {'Edit Entry'}
+        </h1>
+        <div className="border rounded shadow mb-4 p-4">
+          <SplitForm
+            currentValues={values}
+            hours={Number(hours)}
+            initialValues={initialValues}
+            onSplitEntry={onSplitEntry}
+            timezone={entry.timezone}
+          />
+        </div>
+      </div>
     );
   }
 }

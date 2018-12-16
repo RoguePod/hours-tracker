@@ -1,10 +1,11 @@
 import {
-  selectEntriesWithHours, selectQuery, subscribeEntries
+  selectEntriesWithHours,
+  selectQuery,
+  subscribeEntries
 } from 'javascripts/app/redux/entries';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Table } from 'semantic-ui-react';
 import _first from 'lodash/first';
 import _groupBy from 'lodash/groupBy';
 import _isEqual from 'lodash/isEqual';
@@ -70,20 +71,20 @@ class EntriesPayrollTable extends React.Component {
       weekTotal += total;
 
       return (
-        <Table.Cell
+        <td
           key={`${startValue}-${endValue}-${overtime}`}
         >
           {total.toFixed(1)}
-        </Table.Cell>
+        </td>
       );
     });
 
     cells.push(
-      <Table.Cell
+      <td
         key={`total-${overtime ? 1 : 0}`}
       >
         {weekTotal.toFixed(1)}
-      </Table.Cell>
+      </td>
     );
 
     return cells;
@@ -91,34 +92,34 @@ class EntriesPayrollTable extends React.Component {
 
   _renderHeaderRow(weeks) {
     return (
-      <Table.Row>
-        <Table.HeaderCell />
+      <tr>
+        <th />
         {weeks.map((week) => {
           const range =
             `${week.start.format('MM/DD')} - ${week.end.format('MM/DD')}`;
           return (
-            <Table.HeaderCell key={`${range}-0`}>
+            <th key={`${range}-0`}>
               {range}
-            </Table.HeaderCell>
+            </th>
           );
         })}
-        <Table.HeaderCell>
+        <th>
           {'Overtime Total'}
-        </Table.HeaderCell>
-        <Table.HeaderCell />
+        </th>
+        <th />
         {weeks.map((week) => {
           const range =
             `${week.start.format('MM/DD')} - ${week.end.format('MM/DD')}`;
           return (
-            <Table.HeaderCell key={`${range}-1`}>
+            <th key={`${range}-1`}>
               {range}
-            </Table.HeaderCell>
+            </th>
           );
         })}
-        <Table.HeaderCell>
+        <th>
           {'Regular Total'}
-        </Table.HeaderCell>
-      </Table.Row>
+        </th>
+      </tr>
     );
   }
 
@@ -128,14 +129,14 @@ class EntriesPayrollTable extends React.Component {
 
     for (const userName of Object.keys(users).sort()) {
       rows.push(
-        <Table.Row key={userName}>
-          <Table.Cell>
+        <tr key={userName}>
+          <td>
             {userName}
-          </Table.Cell>
+          </td>
           {this._renderUserCells(weeks, users[userName], true)}
-          <Table.Cell />
+          <td />
           {this._renderUserCells(weeks, users[userName], false)}
-        </Table.Row>
+        </tr>
       );
     }
 
@@ -167,18 +168,18 @@ class EntriesPayrollTable extends React.Component {
 
     return (
       <div className={styles.container}>
-        <Table
+        <table
           celled
           selectable
           unstackable
         >
-          <Table.Header>
+          <thead>
             {this._renderHeaderRow(weeks)}
-          </Table.Header>
-          <Table.Body>
+          </thead>
+          <tbody>
             {this._renderRows(weeks, entries)}
-          </Table.Body>
-        </Table>
+          </tbody>
+        </table>
       </div>
     );
   }

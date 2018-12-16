@@ -1,4 +1,3 @@
-import { Button, Header, Icon, Table } from 'semantic-ui-react';
 import {
   selectClientsByEntries,
   selectQuery,
@@ -6,6 +5,8 @@ import {
   subscribeEntries
 } from 'javascripts/app/redux/entries';
 
+import { Button } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ProjectsTable from './ProjectsTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -89,27 +90,23 @@ class EntriesSummaryTable extends React.Component {
 
     return (
       <div className={styles.warning}>
-        <Header
-          as="h2"
-          color="yellow"
-          icon
-          textAlign="center"
-        >
-          <Icon
-            name="warning sign"
+        <h2 className="text-yellow text-center">
+          <FontAwesomeIcon
+            icon="exclamation-triangle "
+            size="3x"
           />
           {'Caution'}
-          <Header.Subheader>
-            {text}
-          </Header.Subheader>
-        </Header>
+        </h2>
+        <h4>
+          {text}
+        </h4>
         <div className={styles.button}>
           <Button
             color="yellow"
-            content="Do it Anyway"
             onClick={this._handleSubscribe}
-            size="huge"
-          />
+          >
+            {'Do it Anyway'}
+          </Button>
         </div>
       </div>
     );
@@ -124,27 +121,27 @@ class EntriesSummaryTable extends React.Component {
 
     return (
       <div className={styles.container}>
-        <Table
+        <table
           celled
           unstackable
         >
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell colSpan={5}>
+          <thead>
+            <tr>
+              <th colSpan={5}>
                 {'Summary by Users'}
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
+              </th>
+            </tr>
+          </thead>
           <UsersTable {...this.props} />
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell colSpan={5}>
+          <thead>
+            <tr>
+              <th colSpan={5}>
                 {'Summary by Clients/Projects'}
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
+              </th>
+            </tr>
+          </thead>
           <ProjectsTable {...this.props} />
-        </Table>
+        </table>
       </div>
     );
   }

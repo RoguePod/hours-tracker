@@ -3,17 +3,8 @@
 ```
 npm i -g firebase-tools
 yarn install
-gulp build --gulpfile semantic/gulpfile.js
 yarn start
 ```
-
-### Semantic UI
-
-The semantic-ui package has issues installing through yarn, outlined here: https://github.com/yarnpkg/yarn/issues/976.  To get this to work do the usual: `yarn upgrade`, and cancel it when it freezes.   Then run `npm install semantic-ui`, and follow the dialogs.  Then do another `yarn upgrade`, and it should complete.
-
-##### Semantic UI Changes
-
-Any changes to semantic ui variables will require a rebuild compile of semantic ui, via the `gulp build --gulpfile semantic/gulpfile.js` command.
 
 ## Firebase
 

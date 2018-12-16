@@ -1,6 +1,5 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Table } from 'semantic-ui-react';
 
 class Row extends React.Component {
   static propTypes = {
@@ -66,29 +65,29 @@ class Row extends React.Component {
     const { name } = this.props;
 
     return (
-      <Table.Row>
-        <Table.Cell>
+      <tr>
+        <td>
           {name}
-        </Table.Cell>
-        <Table.Cell
+        </td>
+        <td
           positive
         >
           {this._calcBillable().toFixed(1)}
-        </Table.Cell>
-        <Table.Cell
+        </td>
+        <td
           warning
         >
           {this._calcNonBillable().toFixed(1)}
-        </Table.Cell>
-        <Table.Cell
+        </td>
+        <td
           collapsing
         >
           {this._calcTotal().toFixed(1)}
-        </Table.Cell>
-        <Table.Cell>
+        </td>
+        <td>
           {`${(this._calcPercentBillable() * 100).toFixed(2)}%`}
-        </Table.Cell>
-      </Table.Row>
+        </td>
+      </tr>
     );
   }
 }

@@ -1,7 +1,6 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Row from './Row';
-import { Table } from 'semantic-ui-react';
 
 class UsersTable extends React.Component {
   static propTypes = {
@@ -85,53 +84,51 @@ class UsersTable extends React.Component {
   }
 
   render() {
-    return [
-      <Table.Header
-        key="users-header"
-      >
-        <Table.Row>
-          <Table.HeaderCell />
-          <Table.HeaderCell>
-            {'Billable'}
-          </Table.HeaderCell>
-          <Table.HeaderCell>
-            {'Non-Billable'}
-          </Table.HeaderCell>
-          <Table.HeaderCell>
-            {'Total'}
-          </Table.HeaderCell>
-          <Table.HeaderCell>
-            {'Billable %'}
-          </Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>,
-      <Table.Body
-        key="users-body"
-      >
-        {this._renderRows()}
-        <Table.Row>
-          <Table.Cell />
-          <Table.Cell
-            positive
-          >
-            {this._calcBillable().toFixed(1)}
-          </Table.Cell>
-          <Table.Cell
-            warning
-          >
-            {this._calcNonBillable().toFixed(1)}
-          </Table.Cell>
-          <Table.Cell
-            collapsing
-          >
-            {this._calcTotal().toFixed(1)}
-          </Table.Cell>
-          <Table.Cell>
-            {`${(this._calcPercentBillable() * 100).toFixed(2)}%`}
-          </Table.Cell>
-        </Table.Row>
-      </Table.Body>
-    ];
+    return (
+      <React.Fragment>
+        <thead>
+          <tr>
+            <th />
+            <th>
+              {'Billable'}
+            </th>
+            <th>
+              {'Non-Billable'}
+            </th>
+            <th>
+              {'Total'}
+            </th>
+            <th>
+              {'Billable %'}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {this._renderRows()}
+          <tr>
+            <td />
+            <td
+              positive
+            >
+              {this._calcBillable().toFixed(1)}
+            </td>
+            <td
+              warning
+            >
+              {this._calcNonBillable().toFixed(1)}
+            </td>
+            <td
+              collapsing
+            >
+              {this._calcTotal().toFixed(1)}
+            </td>
+            <td>
+              {`${(this._calcPercentBillable() * 100).toFixed(2)}%`}
+            </td>
+          </tr>
+        </tbody>
+      </React.Fragment>
+    );
   }
 }
 
