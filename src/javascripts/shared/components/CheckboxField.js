@@ -9,7 +9,7 @@ class CheckboxField extends React.Component {
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
       onChange: PropTypes.func.isRequired,
-      value: PropTypes.bool
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
     }).isRequired,
     label: PropTypes.node.isRequired,
     meta: PropTypes.shape({

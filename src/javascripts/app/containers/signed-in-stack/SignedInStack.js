@@ -11,6 +11,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import Header from './Header';
 import LeftSidebar from './LeftSidebar';
 import { Modal } from 'javascripts/shared/components';
+import { NoMatchPage } from 'javascripts/shared/containers';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import RightSidebar from './RightSidebar';
@@ -122,6 +123,9 @@ class SignedInStack extends React.Component {
                 component={DashboardPage}
                 exact
                 path="/"
+              />
+              <Route
+                component={NoMatchPage}
               />
             </Switch>
             <Modal

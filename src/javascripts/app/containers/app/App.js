@@ -12,7 +12,6 @@ import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 import { history } from 'javascripts/app/redux/store';
-import jQuery from 'jquery';
 import { signOutUser } from 'javascripts/app/redux/user';
 import { withRouter } from 'react-router-dom';
 
@@ -75,7 +74,7 @@ class App extends React.Component {
     const prevModal = _get(prevProps, 'location.state.modal', false);
 
     if (!modal && !prevModal && pathname !== prevProps.location.pathname) {
-      jQuery('html, body').animate({ scrollTop: 0 }, 150);
+      window.scrollTo(0, 0);
     }
 
     if (hash.match(/sidebar/u) || hash.match(/stopwatch/u)) {
@@ -90,7 +89,7 @@ class App extends React.Component {
       clearTimeout(this.timeout);
     }
 
-    window.addEventListener('resize', this._handleUpdateWindow);
+    window.removeEventListener('resize', this._handleUpdateWindow);
   }
 
   _handleUpdateWindow() {

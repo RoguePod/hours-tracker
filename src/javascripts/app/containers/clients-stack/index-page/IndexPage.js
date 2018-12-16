@@ -1,8 +1,7 @@
-import {
-  Button, Dimmer, Header, Loader, Segment, Table
-} from 'semantic-ui-react';
+import { Button, Spinner } from 'javascripts/shared/components';
 
 import ClientBody from './ClientBody';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -10,7 +9,6 @@ import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { selectAdmin } from 'javascripts/app/redux/app';
 import { startEntry } from 'javascripts/app/redux/running';
-import styles from './IndexPage.scss';
 
 class ClientsIndexPage extends React.Component {
   static propTypes = {
@@ -42,61 +40,52 @@ class ClientsIndexPage extends React.Component {
     });
   }
 
-  /* eslint-disable max-lines-per-function */
   render() {
     const { admin, clients, ready } = this.props;
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Header
-          as="h1"
-          color="blue"
-        >
+      <div className="p-4">
+        <div className="text-blue flex items-center">
+          <h1 className="flex-1 text-blue">
+            {'Clients/Projects'}
+          </h1>
           {admin &&
             <Button
               as={Link}
               color="green"
-              content="New Client"
-              floated="right"
-              icon="plus"
               to="/clients/new"
-            />}
-          {'Clients/Projects'}
-        </Header>
-        <Dimmer
-          active={!ready}
-          inverted
-        >
-          <Loader>
-            {'Loading...'}
-          </Loader>
-        </Dimmer>
-        <div className={styles.table}>
-          <Table
-            celled
-            unstackable
-          >
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>
-                  {'Name'}
-                </Table.HeaderCell>
-                <Table.HeaderCell>
-                  {'Active'}
-                </Table.HeaderCell>
-                <Table.HeaderCell />
-              </Table.Row>
-            </Table.Header>
-            {this._renderBodies(clients)}
-          </Table>
+            >
+              <FontAwesomeIcon
+                icon="plus"
+              />
+              {' '}
+              {'New Client'}
+            </Button>}
         </div>
-      </Segment>
+        <div className="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  {'Name'}
+                </th>
+                <th>
+                  {'Active'}
+                </th>
+                <th />
+              </tr>
+            </thead>
+            {this._renderBodies(clients)}
+          </table>
+        </div>
+        <Spinner
+          page
+          spinning={!ready}
+          text="Loading..."
+        />
+      </div>
     );
   }
-  /* eslint-enable max-lines-per-function */
 }
 
 const props = (state) => {

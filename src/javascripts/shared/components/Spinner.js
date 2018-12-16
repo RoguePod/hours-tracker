@@ -6,11 +6,11 @@ import cx from 'classnames';
 import posed from 'react-pose';
 import styled from 'styled-components';
 
-const DURATION = 250;
+const duration = 250;
 
 const FadeIn = posed.div({
-  enter: { opacity: 1, transition: { duration: DURATION } },
-  exit: { opacity: 0, transition: { duration: DURATION } }
+  enter: { opacity: 1, transition: { duration } },
+  exit: { opacity: 0, transition: { duration } }
 });
 
 const Page = styled(FadeIn)`
@@ -45,45 +45,31 @@ class Spinner extends React.PureComponent {
       show: props.spinning,
       text: props.text
     };
+
+    this._handlePoseComplete = this._handlePoseComplete.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     const { spinning, text } = this.props;
 
-    if (spinning !== prevProps.spinning) {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
-      this.timeout = null;
-
-      if (spinning && !prevProps.spinning) {
-        this.setState({ open: true, show: false, text });
-        this.timeout = setTimeout(() => {
-          this.setState({ open: true, show: true });
-        }, 1);
-      } else if (!spinning && prevProps.spinning) {
-        this.setState({ open: true, show: false });
-
-        this.timeout = setTimeout(() => {
-          this.setState({ open: false, show: false, text: null });
-        }, DURATION);
-      }
+    if (spinning && !prevProps.spinning) {
+      this.setState({ open: true, show: true, text });
+    } else if (!spinning && prevProps.spinning) {
+      this.setState({ open: false });
     }
   }
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-  }
+  _handlePoseComplete() {
+    const { open } = this.state;
 
-  timeout = null
+    this.setState({ show: open });
+  }
 
   render() {
     const { page } = this.props;
     const { open, show, text } = this.state;
 
-    if (!open) {
+    if (!show) {
       return false;
     }
 
@@ -112,7 +98,9 @@ class Spinner extends React.PureComponent {
         <Portal>
           <Page
             className={cx(shadeClassName, 'fixed')}
-            pose={show ? 'enter' : 'exit'}
+            initialPose="exit"
+            onPoseComplete={this._handlePoseComplete}
+            pose={open ? 'enter' : 'exit'}
           >
             {children}
           </Page>
@@ -123,7 +111,9 @@ class Spinner extends React.PureComponent {
     return (
       <FadeIn
         className={cx(shadeClassName, 'absolute')}
-        pose={show ? 'enter' : 'exit'}
+        initialPose="exit"
+        onPoseComplete={this._handlePoseComplete}
+        pose={open ? 'enter' : 'exit'}
       >
         {children}
       </FadeIn>

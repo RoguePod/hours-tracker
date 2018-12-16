@@ -1,9 +1,11 @@
 import {
-  CheckboxField, FormError, InputField
+  Button,
+  CheckboxField,
+  FormError,
+  InputField
 } from 'javascripts/shared/components';
 import { Field, reduxForm } from 'redux-form';
 
-import { Form } from 'semantic-ui-react';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { isRequired } from 'javascripts/validators';
@@ -44,37 +46,42 @@ class ClientForm extends React.Component {
     } = this.props;
 
     return (
-      <Form
+      <form
         noValidate
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Field
-          autoCapitalize="sentences"
-          autoCorrect="on"
-          autoFocus
-          component={InputField}
-          disabled={submitting}
-          label="Name"
-          name="name"
-          type="text"
-          validate={[isRequired]}
-        />
-        <Field
-          component={CheckboxField}
-          label="Active?"
-          name="active"
-        />
-        <Form.Button
+        <div className="mb-4">
+          <Field
+            autoCapitalize="sentences"
+            autoCorrect="on"
+            autoFocus
+            component={InputField}
+            disabled={submitting}
+            label="Name"
+            name="name"
+            type="text"
+            validate={[isRequired]}
+          />
+        </div>
+        <div className="mb-4">
+          <Field
+            component={CheckboxField}
+            disabled={submitting}
+            label="Active?"
+            name="active"
+          />
+        </div>
+        <Button
+          className="py-2"
           color="green"
           disabled={submitting}
-          fluid
           loading={submitting}
-          size="big"
+          type="submit"
         >
-          {'Save'}
-        </Form.Button>
-      </Form>
+          {submitting ? 'Signing in...' : 'Submit'}
+        </Button>
+      </form>
     );
   }
 }

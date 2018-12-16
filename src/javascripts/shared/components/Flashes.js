@@ -1,69 +1,45 @@
-import posed, { PoseGroup } from 'react-pose';
+import { removeFlash, updateFlash } from 'javascripts/shared/redux/flashes';
 
 import Flash from './Flash';
 import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import { removeFlash } from 'javascripts/shared/redux/flashes';
-import styled from 'styled-components';
 
-const Container = styled.div`
-  bottom: 1rem;
-`;
-
-/* eslint-disable id-length */
-const FlashWrapper = posed.div({
-  enter: {
-    // delay: 250,
-    opacity: 1,
-    transition: {
-      default: { duration: 250 },
-      y: { damping: 15, stiffness: 1000, type: 'spring' }
-    },
-    y: 0
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration: 250 },
-    y: 50
+class Flashes extends React.Component {
+  static propTypes = {
+    flashes: PropTypes.arrayOf(PropTypes.flash).isRequired
   }
-});
-/* eslint-disable id-length */
 
-const Flashes = (props) => {
-  const { flashes } = props;
+  shouldComponentUpdate(nextProps) {
+    const { flashes } = this.props;
 
-  const flashChildren = flashes.map((flash) => {
     return (
-      <FlashWrapper
-        className="max-w-sm mx-auto"
-        key={flash.id}
-      >
-        <Flash
-          {...props}
-          flash={flash}
-        />
-      </FlashWrapper>
+      !_isEqual(flashes, nextProps.flashes)
     );
-  });
+  }
 
-  return (
-    <Portal>
-      <Container
-        className="fixed w-full z-50"
-      >
-        <PoseGroup>
-          {flashChildren}
-        </PoseGroup>
-      </Container>
-    </Portal>
-  );
-};
+  render() {
+    const { flashes } = this.props;
 
-Flashes.propTypes = {
-  flashes: PropTypes.arrayOf(PropTypes.flash).isRequired
-};
+    const flashChildren = flashes.map((flash) => {
+      return (
+        <Flash
+          {...this.props}
+          flash={flash}
+          key={flash.id}
+        />
+      );
+    });
+
+    return (
+      <Portal>
+        {flashChildren}
+      </Portal>
+    );
+  }
+}
 
 const props = (state) => {
   return {
@@ -72,7 +48,8 @@ const props = (state) => {
 };
 
 const actions = {
-  onRemoveFlash: removeFlash
+  onRemoveFlash: removeFlash,
+  onUpdateFlash: updateFlash
 };
 
 export default connect(props, actions)(Flashes);

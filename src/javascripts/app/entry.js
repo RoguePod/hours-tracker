@@ -38,7 +38,6 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 
 import { ConnectedRouter } from 'connected-react-router';
-import { NoMatchPage } from 'javascripts/shared/containers';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -88,9 +87,6 @@ ReactDOM.render(
           <Route
             component={SignedInStack}
             path="/"
-          />
-          <Route
-            component={NoMatchPage}
           />
         </Switch>
       </App>

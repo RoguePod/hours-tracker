@@ -116,13 +116,13 @@ module.exports = {
   },
   plugins: [
     new Dotenv({ safe: true }),
-    new Webpack.ProvidePlugin({
-      /* eslint-disable id-length */
-      $: 'jquery',
-      /* eslint-enable id-length */
-      jQuery: 'jquery',
-      jquery: 'jquery'
-    }),
+    // new Webpack.ProvidePlugin({
+    //   /* eslint-disable id-length */
+    //   $: 'jquery',
+    //   /* eslint-enable id-length */
+    //   jQuery: 'jquery',
+    //   jquery: 'jquery'
+    // }),
     new Webpack.IgnorePlugin(/^\.\/locale$/u, /moment$/u),
     new HtmlWebpackPlugin({
       chunks: ['app'],

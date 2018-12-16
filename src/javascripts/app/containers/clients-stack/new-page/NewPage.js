@@ -1,39 +1,28 @@
-import { Dimmer, Header, Loader, Segment } from 'semantic-ui-react';
-
 import ClientForm from '../ClientForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import { connect } from 'react-redux';
 import { createClient } from 'javascripts/app/redux/client';
-import styles from './NewPage.scss';
 
 const ClientNewPage = ({ fetching, onCreateClient }) => {
   return (
-    <Segment
-      basic
-      className={styles.container}
-    >
-      <Dimmer
-        active={Boolean(fetching)}
-        inverted
-      >
-        <Loader>
-          {fetching}
-        </Loader>
-      </Dimmer>
-      <Header
-        as="h1"
-        color="blue"
-      >
+    <div className="p-4">
+      <h1 className="text-blue mb-2">
         {'New Client'}
-      </Header>
-      <Segment>
+      </h1>
+      <div className="border rounded shadow mb-4 p-4">
         <ClientForm
           initialValues={{ active: true }}
           onSaveClient={onCreateClient}
         />
-      </Segment>
-    </Segment>
+      </div>
+      <Spinner
+        page
+        spinning={Boolean(fetching)}
+        text={fetching}
+      />
+    </div>
   );
 };
 

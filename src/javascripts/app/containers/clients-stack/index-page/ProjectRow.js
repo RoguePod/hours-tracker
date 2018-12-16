@@ -1,11 +1,12 @@
-import { Button, Popup, Table } from 'semantic-ui-react';
-
+import { ActionButton } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _find from 'lodash/find';
 import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
+import cx from 'classnames';
 
 class ProjectRow extends React.Component {
   static propTypes = {
@@ -53,48 +54,44 @@ class ProjectRow extends React.Component {
   render() {
     const { admin, client, project } = this.props;
 
+    const nameClasses = cx({
+      'text-green': project.billable
+    });
+
     return (
-      <Table.Row>
-        <Table.Cell
-          positive={project && project.billable}
-          warning={project && !project.billable}
-        >
-          {project ? project.name : 'No Project'}
-        </Table.Cell>
-        <Table.Cell>
+      <tr>
+        <td className={nameClasses}>
+          {project.name}
+        </td>
+        <td>
           {project.active ? 'Yes' : 'No'}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-        >
-          <Popup
-            content="Start"
-            position="top center"
-            size="small"
-            trigger={
-              <Button
-                color="green"
-                icon="play"
-                onClick={this._handleStart}
-              />
-            }
-          />
+        </td>
+        <td className="w-px whitespace-no-wrap">
+          <ActionButton
+            as="button"
+            color="green"
+            onClick={this._handleStart}
+            size={8}
+            title="Start"
+          >
+            <FontAwesomeIcon
+              icon="play"
+            />
+          </ActionButton>
           {admin &&
-            <Popup
-              content="Edit Project"
-              position="top center"
-              size="small"
-              trigger={
-                <Button
-                  as={Link}
-                  color="blue"
-                  icon="pencil"
-                  to={`/clients/${client.id}/projects/${project.id}/edit`}
-                />
-              }
-            />}
-        </Table.Cell>
-      </Table.Row>
+            <ActionButton
+              as={Link}
+              color="orange"
+              size={8}
+              title="Edit Project"
+              to={`/clients/${client.id}/projects/${project.id}/edit`}
+            >
+              <FontAwesomeIcon
+                icon="pencil-alt"
+              />
+            </ActionButton>}
+        </td>
+      </tr>
     );
   }
 }

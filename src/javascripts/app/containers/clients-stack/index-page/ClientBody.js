@@ -1,11 +1,10 @@
-import { Button, Popup, Table } from 'semantic-ui-react';
-
+import { ActionButton } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import ProjectRow from './ProjectRow';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
-import styles from './ClientBody.scss';
 
 class ClientBody extends React.Component {
   static propTypes = {
@@ -37,36 +36,30 @@ class ClientBody extends React.Component {
 
   _renderAdminCells(client) {
     return (
-      <Table.Cell
-        collapsing
-      >
-        <Popup
-          content="New Project"
-          position="top center"
-          size="small"
-          trigger={
-            <Button
-              as={Link}
-              color="blue"
-              icon="plus"
-              to={`/clients/${client.id}/projects/new`}
-            />
-          }
-        />
-        <Popup
-          content="Edit Client"
-          position="top center"
-          size="small"
-          trigger={
-            <Button
-              as={Link}
-              color="blue"
-              icon="edit"
-              to={`/clients/${client.id}/edit`}
-            />
-          }
-        />
-      </Table.Cell>
+      <td className="w-px whitespace-no-wrap">
+        <ActionButton
+          as={Link}
+          color="orange"
+          size={8}
+          title="Edit Client"
+          to={`/clients/${client.id}/edit`}
+        >
+          <FontAwesomeIcon
+            icon="pencil-alt"
+          />
+        </ActionButton>
+        <ActionButton
+          as={Link}
+          color="blue"
+          size={8}
+          title="New Project"
+          to={`/clients/${client.id}/projects/new`}
+        >
+          <FontAwesomeIcon
+            icon="plus"
+          />
+        </ActionButton>
+      </td>
     );
   }
 
@@ -74,24 +67,20 @@ class ClientBody extends React.Component {
     const { admin, client } = this.props;
 
     return (
-      <Table.Body
-        key={`body-${client.id}`}
-      >
-        <Table.Row
-          className={styles.row}
-        >
-          <Table.Cell
+      <tbody>
+        <tr className="bg-grey-dark text-white">
+          <td
             colSpan={admin ? 1 : 2}
           >
             {client.name}
-          </Table.Cell>
-          <Table.Cell>
+          </td>
+          <td>
             {client.active ? 'Yes' : 'No'}
-          </Table.Cell>
+          </td>
           {admin && this._renderAdminCells(client)}
-        </Table.Row>
+        </tr>
         {this._renderRows(client)}
-      </Table.Body>
+      </tbody>
     );
   }
 }

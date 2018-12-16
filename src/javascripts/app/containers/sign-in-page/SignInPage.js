@@ -1,6 +1,7 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SignInForm from './SignInForm';
+import { addFlash } from 'javascripts/shared/redux/flashes';
 import { connect } from 'react-redux';
 import { signInUser } from 'javascripts/app/redux/user';
 
@@ -24,6 +25,7 @@ const props = () => {
 };
 
 const actions = {
+  onAddFlash: addFlash,
   onSignInUser: signInUser
 };
 

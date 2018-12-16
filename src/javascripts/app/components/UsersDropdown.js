@@ -6,12 +6,8 @@ import posed from 'react-pose';
 import styled from 'styled-components';
 
 const FadeIn = posed.div({
-  hide: {
-    height: 0, opacity: 0.5, transition: { duration: 250 }
-  },
-  show: {
-    height: 'auto', opacity: 1, transition: { duration: 250 }
-  }
+  hide: { height: 0, opacity: 0.5, transition: { duration: 250 } },
+  show: { height: 'auto', opacity: 1, transition: { duration: 250 } }
 });
 
 const Dropdown = styled(FadeIn)`
