@@ -12,10 +12,15 @@ class ProjectRow extends React.Component {
   static propTypes = {
     admin: PropTypes.bool.isRequired,
     client: PropTypes.client.isRequired,
+    first: PropTypes.bool,
     onStartEntry: PropTypes.func.isRequired,
     project: PropTypes.project.isRequired,
     recents: PropTypes.arrayOf(PropTypes.recent).isRequired,
     user: PropTypes.user.isRequired
+  }
+
+  static defaultProps = {
+    first: false
   }
 
   constructor(props) {
@@ -52,21 +57,28 @@ class ProjectRow extends React.Component {
   }
 
   render() {
-    const { admin, client, project } = this.props;
+    const { admin, client, first, project } = this.props;
 
-    const nameClasses = cx({
+    const nameClasses = cx('flex-1', {
       'text-green': project.billable
     });
 
+    const containerClasses = cx(
+      'flex p-3 items-center',
+      {
+        'border-t': !first
+      }
+    );
+
     return (
-      <tr>
-        <td className={nameClasses}>
+      <div className={containerClasses}>
+        <div className={nameClasses}>
           {project.name}
-        </td>
-        <td>
+        </div>
+        <div className="flex-1">
           {project.active ? 'Yes' : 'No'}
-        </td>
-        <td className="w-px whitespace-no-wrap">
+        </div>
+        <div className="flex">
           <ActionButton
             as="button"
             color="green"
@@ -81,6 +93,7 @@ class ProjectRow extends React.Component {
           {admin &&
             <ActionButton
               as={Link}
+              className="ml-1"
               color="orange"
               size={8}
               title="Edit Project"
@@ -90,8 +103,8 @@ class ProjectRow extends React.Component {
                 icon="pencil-alt"
               />
             </ActionButton>}
-        </td>
-      </tr>
+        </div>
+      </div>
     );
   }
 }

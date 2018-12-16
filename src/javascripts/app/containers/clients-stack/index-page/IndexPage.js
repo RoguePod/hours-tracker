@@ -1,6 +1,6 @@
 import { Button, Spinner } from 'javascripts/shared/components';
 
-import ClientBody from './ClientBody';
+import ClientRow from './ClientRow';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
@@ -28,31 +28,29 @@ class ClientsIndexPage extends React.Component {
     );
   }
 
-  _renderBodies(clients) {
-    return clients.map((client) => {
+  render() {
+    const { admin, clients, ready } = this.props;
+
+    const clientRows = clients.map((client) => {
       return (
-        <ClientBody
+        <ClientRow
           {...this.props}
           client={client}
           key={client.id}
         />
       );
     });
-  }
-
-  render() {
-    const { admin, clients, ready } = this.props;
 
     return (
       <div className="p-4">
-        <div className="text-blue flex items-center">
+        <div className="text-blue flex items-center pb-4">
           <h1 className="flex-1 text-blue">
             {'Clients/Projects'}
           </h1>
           {admin &&
             <Button
               as={Link}
-              color="green"
+              color="blue"
               to="/clients/new"
             >
               <FontAwesomeIcon
@@ -62,22 +60,7 @@ class ClientsIndexPage extends React.Component {
               {'New Client'}
             </Button>}
         </div>
-        <div className="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>
-                  {'Name'}
-                </th>
-                <th>
-                  {'Active'}
-                </th>
-                <th />
-              </tr>
-            </thead>
-            {this._renderBodies(clients)}
-          </table>
-        </div>
+        {clientRows}
         <Spinner
           page
           spinning={!ready}

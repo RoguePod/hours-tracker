@@ -1,12 +1,10 @@
-import { Dimmer, Header, Loader, Segment } from 'semantic-ui-react';
-
 import ProjectForm from '../ProjectForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import { connect } from 'react-redux';
 import { createProject } from 'javascripts/app/redux/project';
 import { getClient } from 'javascripts/app/redux/client';
-import styles from './NewPage.scss';
 
 class ProjectNewPage extends React.PureComponent {
   static propTypes = {
@@ -32,36 +30,28 @@ class ProjectNewPage extends React.PureComponent {
     const { client, fetching, onCreateProject } = this.props;
 
     if (!client) {
-      return null;
+      return (
+        <Spinner
+          page
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      );
     }
 
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
-        <Header
-          as="h1"
-          color="blue"
-        >
+      <div className="p-4">
+        <h1 className="text-blue mb-2">
           {'New Project'}
-        </Header>
-        <Segment>
+        </h1>
+        <div className="border rounded shadow mb-4 p-4">
           <ProjectForm
             client={client}
             initialValues={{ active: true, billable: true }}
             onSaveProject={onCreateProject}
           />
-        </Segment>
-      </Segment>
+        </div>
+      </div>
     );
   }
 }

@@ -79,7 +79,7 @@ class ClientForm extends React.Component {
           loading={submitting}
           type="submit"
         >
-          {submitting ? 'Signing in...' : 'Submit'}
+          {submitting ? 'Submitting...' : 'Submit'}
         </Button>
       </form>
     );

@@ -1,12 +1,11 @@
-import { Dimmer, Header, Loader, Segment } from 'semantic-ui-react';
 import { getProject, updateProject } from 'javascripts/app/redux/project';
 
 import ProjectForm from '../ProjectForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import styles from './EditPage.scss';
 
 class ProjectEditPage extends React.Component {
   static propTypes = {
@@ -40,45 +39,34 @@ class ProjectEditPage extends React.Component {
   render() {
     const { project, fetching, onUpdateProject } = this.props;
 
-    let initialValues = {};
-
-    if (project) {
-      initialValues = {
-        active: project.active,
-        billable: project.billable,
-        name: project.name
-      };
+    if (!project) {
+      return (
+        <Spinner
+          page
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      );
     }
 
+    const initialValues = {
+      active: project.active,
+      billable: project.billable,
+      name: project.name
+    };
+
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
-        {project &&
-          <div>
-            <Header
-              as="h1"
-              color="blue"
-            >
-              {'Edit Project'}
-            </Header>
-            <Segment>
-              <ProjectForm
-                initialValues={initialValues}
-                onSaveProject={onUpdateProject}
-              />
-            </Segment>
-          </div>}
-      </Segment>
+      <div className="p-4">
+        <h1 className="text-blue mb-2">
+          {'Edit Project'}
+        </h1>
+        <div className="border rounded shadow mb-4 p-4">
+          <ProjectForm
+            initialValues={initialValues}
+            onSaveProject={onUpdateProject}
+          />
+        </div>
+      </div>
     );
   }
 }

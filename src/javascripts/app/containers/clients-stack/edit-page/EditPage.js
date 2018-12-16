@@ -1,12 +1,11 @@
-import { Dimmer, Header, Loader, Segment } from 'semantic-ui-react';
 import { getClient, updateClient } from 'javascripts/app/redux/client';
 
 import ClientForm from '../ClientForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import styles from './EditPage.scss';
 
 class ClientEditPage extends React.Component {
   static propTypes = {
@@ -40,44 +39,33 @@ class ClientEditPage extends React.Component {
   render() {
     const { client, fetching, onUpdateClient } = this.props;
 
-    let initialValues = {};
-
-    if (client) {
-      initialValues = {
-        active: client.active,
-        name: client.name
-      };
+    if (!client) {
+      return (
+        <Spinner
+          page
+          spinning={Boolean(fetching)}
+          text={fetching}
+        />
+      );
     }
 
+    const initialValues = {
+      active: client.active,
+      name: client.name
+    };
+
     return (
-      <Segment
-        basic
-        className={styles.container}
-      >
-        <Dimmer
-          active={Boolean(fetching)}
-          inverted
-        >
-          <Loader>
-            {fetching}
-          </Loader>
-        </Dimmer>
-        {client &&
-          <div>
-            <Header
-              as="h1"
-              color="blue"
-            >
-              {'Edit Client'}
-            </Header>
-            <Segment>
-              <ClientForm
-                initialValues={initialValues}
-                onSaveClient={onUpdateClient}
-              />
-            </Segment>
-          </div>}
-      </Segment>
+      <div className="p-4">
+        <h1 className="text-blue mb-2">
+          {'Edit Client'}
+        </h1>
+        <div className="border rounded shadow mb-4 p-4">
+          <ClientForm
+            initialValues={initialValues}
+            onSaveClient={onUpdateClient}
+          />
+        </div>
+      </div>
     );
   }
 }

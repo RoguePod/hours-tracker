@@ -183,7 +183,7 @@ class EntriesIndexStack extends React.Component {
           </h1>
           <Button
             as={Link}
-            color="green"
+            color="blue"
             to={{
               ...location,
               pathname: '/entries/new',
