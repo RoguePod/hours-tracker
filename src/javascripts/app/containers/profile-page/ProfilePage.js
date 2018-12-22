@@ -46,7 +46,7 @@ class ProfilePage extends React.Component {
         <h1 className="text-blue mb-2">
           {'Profile'}
         </h1>
-        <div className="border rounded shadow mb-4 p-4">
+        <div className="border rounded mb-4 p-4">
           <h3 className="text-blue mb-2">
             {'Settings'}
           </h3>
@@ -55,7 +55,7 @@ class ProfilePage extends React.Component {
             onUpdateUser={onUpdateUser}
           />
         </div>
-        <div className="border rounded shadow p-4">
+        <div className="border rounded p-4">
           <h3 className="text-blue mb-2">
             {'Password'}
           </h3>

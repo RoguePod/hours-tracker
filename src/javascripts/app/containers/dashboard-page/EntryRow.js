@@ -87,7 +87,7 @@ class EntryRow extends React.Component {
       stoppedAt = moment().tz(entry.timezone);
     }
 
-    const baseHighlightClasses = 'whitespace-no-wrap';
+    const baseHighlightClasses = 'w-px whitespace-no-wrap';
 
     let highlightClasses = cx(
       'text-green',
@@ -107,7 +107,7 @@ class EntryRow extends React.Component {
 
     return (
       <tr className="hover:bg-blue-lightest">
-        <td className="whitespace-no-wrap">
+        <td className="w-px whitespace-no-wrap">
           <div className="flex flex-row">
             <ActionIcon
               as={Link}
@@ -152,12 +152,12 @@ class EntryRow extends React.Component {
           {_get(entry, 'project.name', 'No Project')}
         </td>
         <td
-          className="text-center whitespace-no-wrap"
+          className="w-px text-center whitespace-no-wrap"
         >
           {startedAt.format('ddd, MM/DD')}
         </td>
         <td
-          className="text-center whitespace-no-wrap"
+          className="w-px text-center whitespace-no-wrap"
         >
           {startedAt.format('h:mma ')}
           {entry.timezone !== timezone &&
@@ -166,7 +166,7 @@ class EntryRow extends React.Component {
             </sup>}
         </td>
         <td
-          className="text-center whitespace-no-wrap"
+          className="w-px text-center whitespace-no-wrap"
         >
           {entry.stoppedAt && stoppedAt.format('h:mma')}
           {!entry.stoppedAt &&
@@ -180,7 +180,7 @@ class EntryRow extends React.Component {
             </sup>}
         </td>
         <td
-          className="text-center whitespace-no-wrap"
+          className="w-px text-center whitespace-no-wrap"
         >
           {stoppedAt.diff(startedAt, 'hours', true).toFixed(1)}
         </td>
