@@ -137,7 +137,7 @@ class Tooltip extends React.Component {
     return (
       <React.Fragment>
         {trigger}
-        {show &&
+        {show && this._element &&
           <Portal>
             <Title
               className={titleClasses}

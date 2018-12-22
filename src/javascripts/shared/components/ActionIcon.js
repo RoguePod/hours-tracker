@@ -1,31 +1,17 @@
 import ConfirmAction from './ConfirmAction';
+import Icon from './Icon';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Tooltip from './Tooltip';
 import cx from 'classnames';
 
-const ActionButton = (props) => {
-  const {
-    as, children, className, color, confirm, onClick, size, title, ...rest
-  } = props;
-
-  const actionClasses = cx(
-    `text-white bg-${color} hover:bg-${color}-dark shadow hover:shadow-md`,
-    `cursor-pointer w-${size} h-${size} items-center justify-center`,
-    'transition flex rounded-full appearance-none',
-    className
-  );
-
-  const Tag = as;
-
+const ActionIcon = ({ className, confirm, onClick, title, ...rest }) => {
   let action = (
-    <Tag
+    <Icon
       {...rest}
-      className={actionClasses}
+      className={cx(className, 'cursor-pointer')}
       onClick={confirm ? null : onClick}
-    >
-      {children}
-    </Tag>
+    />
   );
 
   if (confirm && confirm.length > 0) {
@@ -52,25 +38,18 @@ const ActionButton = (props) => {
   return action;
 };
 
-ActionButton.propTypes = {
-  as: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  children: PropTypes.node.isRequired,
+ActionIcon.propTypes = {
   className: PropTypes.string,
-  color: PropTypes.string,
   confirm: PropTypes.string,
   onClick: PropTypes.func,
-  size: PropTypes.number,
   title: PropTypes.string
 };
 
-ActionButton.defaultProps = {
-  as: 'button',
+ActionIcon.defaultProps = {
   className: null,
-  color: 'green',
   confirm: null,
   onClick: null,
-  size: 10,
   title: null
 };
 
-export default ActionButton;
+export default ActionIcon;

@@ -9,6 +9,7 @@ import 'firebase/firestore';
 import _find from 'lodash/find';
 import _isNil from 'lodash/isNil';
 import _isString from 'lodash/isString';
+import _snakeCase from 'lodash/snakeCase';
 import _sortBy from 'lodash/sortBy';
 
 const firebaseConfig = {
@@ -45,7 +46,7 @@ export const toQuery = (params) => {
 
     if (!isBlank(value)) {
       query.push(
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+        `${encodeURIComponent(_snakeCase(key))}=${encodeURIComponent(value)}`
       );
     }
   });

@@ -1,4 +1,4 @@
-import { ActionButton, Spinner } from 'javascripts/shared/components';
+import { ActionIcon, Spinner } from 'javascripts/shared/components';
 import { change, formValueSelector } from 'redux-form';
 import {
   selectRunningEntry,
@@ -9,7 +9,6 @@ import {
 } from 'javascripts/app/redux/running';
 
 import EntryForm from './EntryForm';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -99,53 +98,41 @@ class StopWatch extends React.Component {
 
     return (
       <div className="flex flex-row justify-between flex-no-wrap py-4">
-        <ActionButton
+        <ActionIcon
           color="red"
+          icon="stop"
           onClick={this._handleStop}
           title="Stop"
           type="button"
-        >
-          <FontAwesomeIcon
-            icon="stop"
-          />
-        </ActionButton>
+        />
 
-        <ActionButton
+        <ActionIcon
           color="purple"
+          icon="sync-alt"
           onClick={this._handleSwap}
           title="Swap"
           type="button"
-        >
-          <FontAwesomeIcon
-            icon="sync-alt"
-          />
-        </ActionButton>
+        />
 
-        <ActionButton
+        <ActionIcon
           as={Link}
           color="teal"
+          icon="exchange-alt"
           title="Split"
           to={`/entries/${entry.id}/split`}
-        >
-          <FontAwesomeIcon
-            icon="exchange-alt"
-          />
-        </ActionButton>
+        />
 
-        <ActionButton
+        <ActionIcon
           as={Link}
           color="orange"
+          icon="pencil-alt"
           title="Edit"
           to={{
             ...location,
             pathname: `/entries/${entry.id}/edit`,
             state: { modal: true }
           }}
-        >
-          <FontAwesomeIcon
-            icon="pencil-alt"
-          />
-        </ActionButton>
+        />
       </div>
     );
   }
@@ -153,14 +140,11 @@ class StopWatch extends React.Component {
   _renderNotRunningButtons() {
     return (
       <div className="flex flex-row justify-center flex-no-wrap py-4">
-        <ActionButton
+        <ActionIcon
+          icon="play"
           onClick={this._handleStart}
           title="Start"
-        >
-          <FontAwesomeIcon
-            icon="play"
-          />
-        </ActionButton>
+        />
       </div>
     );
   }

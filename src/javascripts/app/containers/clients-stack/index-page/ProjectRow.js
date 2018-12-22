@@ -1,5 +1,5 @@
-import { ActionButton } from 'javascripts/shared/components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ActionIcon, Icon, Tooltip } from 'javascripts/shared/components';
+
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -64,7 +64,8 @@ class ProjectRow extends React.Component {
     });
 
     const containerClasses = cx(
-      'flex p-3 items-center',
+      'flex p-3 items-center flex-1 hover:bg-blue-lightest transition',
+      'md:border-l',
       {
         'border-t': !first
       }
@@ -75,34 +76,36 @@ class ProjectRow extends React.Component {
         <div className={nameClasses}>
           {project.name}
         </div>
-        <div className="flex-1">
-          {project.active ? 'Yes' : 'No'}
-        </div>
-        <div className="flex">
-          <ActionButton
-            as="button"
-            color="green"
-            onClick={this._handleStart}
-            size={8}
-            title="Start"
-          >
-            <FontAwesomeIcon
-              icon="play"
-            />
-          </ActionButton>
+        <div className="flex items-center">
+          {project.active &&
+            <Tooltip
+              title="Active Project"
+            >
+              <Icon
+                className="mr-1"
+                color="blue"
+                icon="check"
+                size={8}
+              />
+            </Tooltip>}
           {admin &&
-            <ActionButton
+            <ActionIcon
               as={Link}
-              className="ml-1"
+              className="mr-1"
               color="orange"
+              icon="pencil-alt"
               size={8}
               title="Edit Project"
               to={`/clients/${client.id}/projects/${project.id}/edit`}
-            >
-              <FontAwesomeIcon
-                icon="pencil-alt"
-              />
-            </ActionButton>}
+            />}
+          <ActionIcon
+            as="button"
+            color="green"
+            icon="play"
+            onClick={this._handleStart}
+            size={8}
+            title="Start"
+          />
         </div>
       </div>
     );

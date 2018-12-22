@@ -1,4 +1,4 @@
-import { ActionButton } from 'javascripts/shared/components';
+import { ActionIcon } from 'javascripts/shared/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
@@ -109,9 +109,10 @@ class EntryRow extends React.Component {
       <tr className="hover:bg-blue-lightest">
         <td className="whitespace-no-wrap">
           <div className="flex flex-row">
-            <ActionButton
+            <ActionIcon
               as={Link}
               color="orange"
+              icon="pencil-alt"
               size={8}
               title="Edit"
               to={{
@@ -119,35 +120,25 @@ class EntryRow extends React.Component {
                 pathname: `/entries/${entry.id}/edit`,
                 state: { modal: true }
               }}
-            >
-              <FontAwesomeIcon
-                icon="pencil-alt"
-              />
-            </ActionButton>
-            <ActionButton
+            />
+            <ActionIcon
               as={Link}
               className="mx-1"
               color="teal"
+              icon="exchange-alt"
               size={8}
               title="Split"
               to={`/entries/${entry.id}/split`}
-            >
-              <FontAwesomeIcon
-                icon="exchange-alt"
-              />
-            </ActionButton>
-            <ActionButton
+            />
+            <ActionIcon
               color="red"
               confirm="This will remove this entry.  Are you sure?"
+              icon="times"
               onClick={this._handleDestroy}
               size={8}
               title="Remove"
               type="button"
-            >
-              <FontAwesomeIcon
-                icon="times"
-              />
-            </ActionButton>
+            />
           </div>
         </td>
         <td

@@ -1,5 +1,4 @@
-import { ActionButton } from 'javascripts/shared/components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ActionIcon } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _get from 'lodash/get';
@@ -69,15 +68,12 @@ class RecentRow extends React.Component {
               {recent.project.name}
             </Ellipsis>
           </div>
-          <ActionButton
+          <ActionIcon
+            icon="play"
             onClick={this._handleStart}
             title="Start"
             type="button"
-          >
-            <FontAwesomeIcon
-              icon="play"
-            />
-          </ActionButton>
+          />
         </div>
       </div>
     );

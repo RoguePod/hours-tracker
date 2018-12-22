@@ -29,13 +29,19 @@ const propTypes = {
     message: PropTypes.string.isRequired
   }),
   pagination: PropTypes.shape({
-    next: PropTypes.shape({
-      id: PropTypes.string
-    }),
-    prev: PropTypes.shape({
-      id: PropTypes.string
-    })
+    page: PropTypes.number.isRequired,
+    perPage: PropTypes.number,
+    totalCount: PropTypes.number,
+    totalPages: PropTypes.number.isRequired
   }),
+  // pagination: PropTypes.shape({
+  //   next: PropTypes.shape({
+  //     id: PropTypes.string
+  //   }),
+  //   prev: PropTypes.shape({
+  //     id: PropTypes.string
+  //   })
+  // }),
   project,
   recent: PropTypes.shape({
     description: PropTypes.string

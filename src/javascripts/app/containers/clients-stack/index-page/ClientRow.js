@@ -1,5 +1,4 @@
-import { ActionButton } from 'javascripts/shared/components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ActionIcon } from 'javascripts/shared/components';
 import { Link } from 'react-router-dom';
 import ProjectRow from './ProjectRow';
 import PropTypes from 'javascripts/prop-types';
@@ -26,16 +25,13 @@ class ClientRow extends React.Component {
     const { admin, client } = this.props;
 
     const clientClasses = cx(
-      'w-48 bg-blue-lightest p-4 border-r border-l-4 self-stretch',
+      'md:w-48 bg-blue-lightest p-4 md:border-t-0 md:border-l-4 border-t-4',
+      'border-r-0',
       {
         'border-green': client.active,
         'border-red': !client.active
       }
     );
-
-    const clientStyles = {
-      borderRightColor: '#dae1e7'
-    };
 
     const projects = client.projects.map((project, index) => {
       return (
@@ -50,45 +46,39 @@ class ClientRow extends React.Component {
     });
 
     const containerClasses =
-      'border rounded shadow mb-4 flex overflow-hidden items-center';
+      'border rounded shadow mb-4 flex overflow-hidden md:flex-row flex-col ' +
+      'flex-1';
 
     return (
       <div className={containerClasses}>
         <div
           className={clientClasses}
-          style={clientStyles}
         >
           <h3 className="mb-2">
             {client.name}
           </h3>
           {admin &&
             <div className="flex items-center">
-              <ActionButton
+              <ActionIcon
                 as={Link}
                 className="mr-1"
                 color="orange"
+                icon="pencil-alt"
                 size={8}
                 title="Edit Client"
                 to={`/clients/${client.id}/edit`}
-              >
-                <FontAwesomeIcon
-                  icon="pencil-alt"
-                />
-              </ActionButton>
-              <ActionButton
+              />
+              <ActionIcon
                 as={Link}
                 color="blue"
+                icon="plus"
                 size={8}
                 title="New Project"
                 to={`/clients/${client.id}/projects/new`}
-              >
-                <FontAwesomeIcon
-                  icon="plus"
-                />
-              </ActionButton>
+              />
             </div>}
         </div>
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col border-t md:border-t-0">
           {projects}
         </div>
       </div>

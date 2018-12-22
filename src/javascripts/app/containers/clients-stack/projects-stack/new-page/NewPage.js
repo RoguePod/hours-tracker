@@ -33,7 +33,7 @@ class ProjectNewPage extends React.PureComponent {
       return (
         <Spinner
           page
-          spinning={Boolean(fetching)}
+          spinning
           text={fetching}
         />
       );
@@ -59,7 +59,7 @@ class ProjectNewPage extends React.PureComponent {
 const props = (state) => {
   return {
     client: state.client.client,
-    fetching: state.project.fetching
+    fetching: state.client.fetching || state.project.fetching
   };
 };
 

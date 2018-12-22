@@ -13,12 +13,18 @@ import {
 } from 'javascripts/app/containers';
 import { Route, Switch } from 'react-router-dom';
 import {
+  faAngleDoubleLeft,
+  faAngleDoubleRight,
+  faAngleLeft,
+  faAngleRight,
   faBars,
   faCaretDown,
   faCaretLeft,
   faCaretRight,
+  faCheck,
   faClock,
   faDownload,
+  faEllipsisH,
   faExchangeAlt,
   faExclamationCircle,
   faFilter,
@@ -47,13 +53,19 @@ import registerServiceWorker from './registerServiceWorker';
 /* eslint-enable sort-imports */
 
 library.add(
+  faAngleDoubleLeft,
+  faAngleDoubleRight,
+  faAngleLeft,
+  faAngleRight,
   faBars,
   faCaretDown,
   faCaretLeft,
   faCaretRight,
+  faCheck,
   faCheckSquare,
   faClock,
   faDownload,
+  faEllipsisH,
   faExchangeAlt,
   faExclamationCircle,
   faFilter,
