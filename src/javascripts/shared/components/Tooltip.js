@@ -95,6 +95,7 @@ class Tooltip extends React.Component {
 
     const titleClasses = cx(
       'fixed bg-black text-white p-2 rounded text-sm z-20 shadow-md',
+      'text-center',
       { hidden: !show }
     );
 
@@ -131,8 +132,6 @@ class Tooltip extends React.Component {
         }
       }
     });
-
-    // console.log('TOOLTIP', this.props, child, trigger);
 
     return (
       <React.Fragment>

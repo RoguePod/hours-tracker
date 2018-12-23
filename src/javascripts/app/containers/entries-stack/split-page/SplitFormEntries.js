@@ -71,9 +71,22 @@ class SplitFormEntries extends React.Component {
 
     return (
       <div>
-        <h3 className="text-blue">
-          {'Entries'}
-        </h3>
+        <div className="flex items-center mb-4">
+          <h2 className="text-blue flex-1">
+            {'Entries'}
+          </h2>
+          <Button
+            color="blue"
+            onClick={this._handleAdd}
+            type="button"
+          >
+            <FontAwesomeIcon
+              icon="plus"
+            />
+            {' '}
+            {'Add Entry'}
+          </Button>
+        </div>
         {rows}
         <h3 className="text-blue">
           {'Chart'}
@@ -81,21 +94,6 @@ class SplitFormEntries extends React.Component {
         <SplitFormChart
           entries={currentValues.entries || []}
         />
-        <Button
-          color="blue"
-          content="Add Entry"
-          fluid
-          icon="exchange"
-          onClick={this._handleAdd}
-          type="button"
-        >
-          <FontAwesomeIcon
-            icon="exchange-alt"
-            size="3x"
-          />
-          {' '}
-          {'Add Entry'}
-        </Button>
       </div>
     );
   }

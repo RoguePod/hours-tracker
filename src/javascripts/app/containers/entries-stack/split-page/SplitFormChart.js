@@ -1,7 +1,6 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _nth from 'lodash/nth';
-import styles from './SplitFormChart.scss';
 
 class SplitFormChart extends React.Component {
   static propTypes = {
@@ -18,19 +17,20 @@ class SplitFormChart extends React.Component {
     const { entries } = this.props;
 
     const colors = [
-      'red', 'orange', 'yellow', 'olive', 'green', 'teal', 'blue', 'violet',
-      'purple', 'pink', 'brown', 'grey', 'black'
+      'red', 'purple', 'orange', 'yellow-darker', 'green', 'teal-dark', 'blue',
+      'purple-dark', 'grey-dark', 'red-dark', 'orange-dark',
+      'yellow-light', 'green-dark', 'teal', 'blue-dark'
     ];
 
     const segments = entries.map((entry, index) => {
+      const color = _nth(colors, index);
       const segmentStyles = {
-        backgroundColor: _nth(colors, index),
         flex: Number(entry.percent) * 10
       };
 
       return (
         <div
-          className={styles.segment}
+          className={`h-8 bg-${color} transition`}
           key={index}
           style={segmentStyles}
         />
@@ -38,7 +38,7 @@ class SplitFormChart extends React.Component {
     });
 
     return (
-      <div className={styles.container}>
+      <div className="flex">
         {segments}
       </div>
     );

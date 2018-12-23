@@ -181,35 +181,43 @@ class EntrySplitForm extends React.Component {
         onSubmit={handleSubmit(this._handleSubmit)}
       >
         <FormError error={error} />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          autoFocus
-          component={TimeField}
-          disabled={submitting}
-          label="Started"
-          name="startedAt"
-          onChange={this._handleStartedAtChanged}
-          timezone={timezone}
-          type="text"
-          validate={[isRequired, isParsedTime]}
-        />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          component={TimeField}
-          disabled={submitting}
-          label="Stopped"
-          name="stoppedAt"
-          onChange={this._handleStoppedAtChanged}
-          timezone={timezone}
-          type="text"
-          validate={[isRequired, isParsedTime, isStoppedAt]}
-        />
-        <FieldArray
-          component={this._renderEntries}
-          name="entries"
-        />
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full md:w-1/2 px-2 mb-4">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              autoFocus
+              component={TimeField}
+              disabled={submitting}
+              label="Started"
+              name="startedAt"
+              onChange={this._handleStartedAtChanged}
+              timezone={timezone}
+              type="text"
+              validate={[isRequired, isParsedTime]}
+            />
+          </div>
+          <div className="w-full md:w-1/2 px-2 mb-4">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              component={TimeField}
+              disabled={submitting}
+              label="Stopped"
+              name="stoppedAt"
+              onChange={this._handleStoppedAtChanged}
+              timezone={timezone}
+              type="text"
+              validate={[isRequired, isParsedTime, isStoppedAt]}
+            />
+          </div>
+        </div>
+        <div className="mb-4">
+          <FieldArray
+            component={this._renderEntries}
+            name="entries"
+          />
+        </div>
         <Button
           className="py-2"
           color="green"
@@ -217,7 +225,7 @@ class EntrySplitForm extends React.Component {
           loading={submitting}
           type="submit"
         >
-          {submitting ? 'Submitting...' : 'Submit'}
+          {submitting ? 'Splitting...' : 'Split'}
         </Button>
       </form>
     );

@@ -101,9 +101,9 @@ class EntrySplitPage extends React.Component {
     return (
       <div className="p-4">
         <h1 className="text-blue">
-          {'Edit Entry'}
+          {'Split Entry'}
         </h1>
-        <div className="border rounded shadow mb-4 p-4">
+        <div className="border rounded mb-4 p-4">
           <SplitForm
             currentValues={values}
             hours={Number(hours)}

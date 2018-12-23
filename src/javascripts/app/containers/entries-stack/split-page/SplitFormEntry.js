@@ -1,7 +1,8 @@
 import {
   InputField,
   TextAreaField,
-  TimeField
+  TimeField,
+  Tooltip
 } from 'javascripts/shared/components';
 import {
   betweenValue,
@@ -11,12 +12,19 @@ import {
 } from 'javascripts/validators';
 
 import { Field } from 'redux-form';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ProjectField } from 'javascripts/app/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { formatFloatPositive } from 'javascripts/normalizers';
+import styled from 'styled-components';
 
 const betweenValue0and100 = betweenValue(0, 100);
+
+const Close = styled.div`
+  top: -0.75rem;
+  right: -0.75rem;
+`;
 
 class SplitFormEntry extends React.Component {
   static propTypes = {
@@ -152,7 +160,7 @@ class SplitFormEntry extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { member, submitting, timezone } = this.props;
+    const { fields, member, submitting, timezone } = this.props;
 
     // {fields.length > 1 &&
     //   <Grid.Column
@@ -167,74 +175,107 @@ class SplitFormEntry extends React.Component {
     //     />
     //   </Grid.Column>}
 
+    const closeClasses =
+      'absolute bg-red text-white w-8 h-8 flex items-center cursor-pointer ' +
+      'justify-center rounded-full text-center border-4 border-white';
+
     return (
-      <div>
-        <Field
-          component={ProjectField}
-          disabled={submitting}
-          label="Project"
-          name={`${member}.projectName`}
-          nameClient={`${member}.clientRef`}
-          nameProject={`${member}.projectRef`}
-          onProjectChange={this._handleProjectChange}
-        />
-        <Field
-          autoCapitalize="sentences"
-          autoCorrect="on"
-          autoHeight
-          component={TextAreaField}
-          disabled={submitting}
-          label="Description"
-          name={`${member}.description`}
-          rows={1}
-        />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          component={InputField}
-          disabled={submitting}
-          format={formatFloatPositive}
-          label="Hours"
-          name={`${member}.hours`}
-          onChange={this._handleHoursChange}
-          type="text"
-          validate={[isRequired, this._handleValidateHours]}
-        />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          autoFocus
-          component={TimeField}
-          disabled
-          label="Started"
-          name={`${member}.startedAt`}
-          timezone={timezone}
-          type="text"
-          validate={[isRequired, isParsedTime]}
-        />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          component={InputField}
-          disabled={submitting}
-          format={formatFloatPositive}
-          label="%"
-          name={`${member}.percent`}
-          onChange={this._handlePercentChange}
-          type="text"
-          validate={[isRequired, betweenValue0and100]}
-        />
-        <Field
-          autoCapitalize="none"
-          autoCorrect="off"
-          component={TimeField}
-          disabled
-          label="Stopped"
-          name={`${member}.stoppedAt`}
-          timezone={timezone}
-          type="text"
-          validate={[isRequired, isParsedTime, isStoppedAt]}
-        />
+      <div className="border rounded mb-4 px-4 pt-4 relative">
+        {fields.length > 1 &&
+          <Tooltip
+            title="Remove Entry"
+          >
+            <Close
+              className={closeClasses}
+              onClick={this._handleRemove}
+            >
+              <FontAwesomeIcon
+                icon="times"
+              />
+            </Close>
+          </Tooltip>}
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full md:w-1/3 px-2 mb-4">
+            <Field
+              component={ProjectField}
+              disabled={submitting}
+              label="Project"
+              name={`${member}.projectName`}
+              nameClient={`${member}.clientRef`}
+              nameProject={`${member}.projectRef`}
+              onProjectChange={this._handleProjectChange}
+            />
+          </div>
+          <div className="w-full md:w-1/3 px-2 mb-4">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              component={InputField}
+              disabled={submitting}
+              format={formatFloatPositive}
+              label="Hours"
+              name={`${member}.hours`}
+              onChange={this._handleHoursChange}
+              type="text"
+              validate={[isRequired, this._handleValidateHours]}
+            />
+          </div>
+          <div className="w-full md:w-1/3 px-2 mb-4">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              component={InputField}
+              disabled={submitting}
+              format={formatFloatPositive}
+              label="%"
+              name={`${member}.percent`}
+              onChange={this._handlePercentChange}
+              type="text"
+              validate={[isRequired, betweenValue0and100]}
+            />
+          </div>
+        </div>
+        <div className="flex flex-wrap -mx-2">
+          <div className="w-full md:w-1/3 px-2 mb-4">
+            <Field
+              autoCapitalize="sentences"
+              autoCorrect="on"
+              autoHeight
+              component={TextAreaField}
+              disabled={submitting}
+              label="Description"
+              name={`${member}.description`}
+              rows={1}
+            />
+          </div>
+          <div className="w-full md:w-1/3 px-2 mb-4">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              autoFocus
+              component={TimeField}
+              disabled
+              label="Started"
+              name={`${member}.startedAt`}
+              timezone={timezone}
+              type="text"
+              validate={[isRequired, isParsedTime]}
+            />
+          </div>
+          <div className="w-full md:w-1/3 px-2 mb-4">
+            <Field
+              autoCapitalize="none"
+              autoCorrect="off"
+              component={TimeField}
+              disabled
+              label="Stopped"
+              name={`${member}.stoppedAt`}
+              timezone={timezone}
+              type="text"
+              validate={[isRequired, isParsedTime, isStoppedAt]}
+            />
+          </div>
+        </div>
       </div>
     );
   }
