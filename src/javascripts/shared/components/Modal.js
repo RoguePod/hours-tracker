@@ -81,7 +81,7 @@ class Modal extends React.Component {
 
     const closeClasses =
       'absolute bg-blue text-white w-8 h-8 flex items-center cursor-pointer ' +
-      'justify-center rounded-full text-center border-4 border-white';
+      'justify-center rounded-full text-center border-4 border-white z-20';
 
     return (
       <Portal>

@@ -45,24 +45,41 @@ class Spinner extends React.PureComponent {
       show: props.spinning,
       text: props.text
     };
-
-    this._handlePoseComplete = this._handlePoseComplete.bind(this);
   }
 
-  componentDidUpdate(prevProps) {
-    const { spinning, text } = this.props;
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { spinning, text } = nextProps;
+    const { open } = prevState;
 
-    if (spinning && !prevProps.spinning) {
-      this.setState({ open: true, show: true, text });
-    } else if (!spinning && prevProps.spinning) {
-      this.setState({ open: false });
+    if (spinning && !open) {
+      return { open: true, show: true, text };
+    } else if (!spinning && open) {
+      return { open: false };
+    }
+
+    return null;
+  }
+
+  componentDidUpdate(_prevProps, nextState) {
+    const { open } = this.state;
+
+    if (open !== nextState.open) {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+
+      this.timeout = setTimeout(() => {
+        this.setState({ show: false });
+      }, duration);
     }
   }
 
-  _handlePoseComplete() {
-    const { open } = this.state;
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
 
-    this.setState({ show: open });
+    this.timeout = null;
   }
 
   render() {
@@ -98,8 +115,6 @@ class Spinner extends React.PureComponent {
         <Portal>
           <Page
             className={cx(shadeClassName, 'fixed')}
-            initialPose="exit"
-            onPoseComplete={this._handlePoseComplete}
             pose={open ? 'enter' : 'exit'}
           >
             {children}
@@ -111,8 +126,6 @@ class Spinner extends React.PureComponent {
     return (
       <FadeIn
         className={cx(shadeClassName, 'absolute')}
-        initialPose="exit"
-        onPoseComplete={this._handlePoseComplete}
         pose={open ? 'enter' : 'exit'}
       >
         {children}

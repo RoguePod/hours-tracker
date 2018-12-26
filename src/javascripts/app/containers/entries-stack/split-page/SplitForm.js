@@ -219,7 +219,7 @@ class EntrySplitForm extends React.Component {
           />
         </div>
         <Button
-          className="py-2"
+          className="py-2 w-full text-lg"
           color="green"
           disabled={submitting}
           loading={submitting}
