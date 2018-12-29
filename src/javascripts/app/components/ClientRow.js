@@ -28,7 +28,8 @@ class ClientRow extends React.Component {
   render() {
     const { client } = this.props;
     const clientClasses =
-      'hover:bg-yellow-light cursor-pointer px-3 py-2 text-sm transition';
+      'hover:bg-blue-lighter cursor-pointer px-3 py-2 text-sm transition ' +
+      'text-blue';
 
     return (
       <li

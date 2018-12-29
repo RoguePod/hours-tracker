@@ -28,7 +28,8 @@ class UserRow extends React.Component {
   render() {
     const { user } = this.props;
     const userClasses =
-      'hover:bg-yellow-light cursor-pointer px-3 py-2 text-sm transition';
+      'hover:bg-blue-lighter cursor-pointer px-3 py-2 text-sm transition ' +
+      'text-blue';
 
     return (
       <li

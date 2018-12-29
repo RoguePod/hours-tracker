@@ -17,9 +17,9 @@ class SplitFormChart extends React.Component {
     const { entries } = this.props;
 
     const colors = [
-      'red', 'purple', 'orange', 'yellow-darker', 'green', 'teal-dark', 'blue',
+      'red', 'purple', 'orange', 'green', 'teal-dark', 'blue',
       'purple-dark', 'grey-dark', 'red-dark', 'orange-dark',
-      'yellow-light', 'green-dark', 'teal', 'blue-dark'
+      'green-dark', 'teal', 'blue-dark'
     ];
 
     const segments = entries.map((entry, index) => {
