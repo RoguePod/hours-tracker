@@ -79,7 +79,7 @@ class ExportEntriesButton extends React.Component {
       return (
         <ConfirmAction
           message={message}
-          onConfirm={this._handleOpen}
+          onClick={this._handleOpen}
         >
           <div
             className={className}

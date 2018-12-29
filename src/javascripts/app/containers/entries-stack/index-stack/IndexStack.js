@@ -12,7 +12,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import IndexAdminMenu from './IndexAdminMenu';
 import IndexMenu from './IndexMenu';
 import IndexTable from './index-table/IndexTable';
-import PayrollTable from './payroll-table/PayrollTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SummaryTable from './summary-table/SummaryTable';
@@ -41,7 +40,6 @@ class EntriesIndexStack extends React.Component {
     this._renderReportsPage = this._renderReportsPage.bind(this);
     this._renderIndexPage = this._renderIndexPage.bind(this);
     this._renderSummaryTable = this._renderSummaryTable.bind(this);
-    this._renderPayrollTable = this._renderPayrollTable.bind(this);
     this._renderTabs = this._renderTabs.bind(this);
   }
 
@@ -81,16 +79,6 @@ class EntriesIndexStack extends React.Component {
 
     return (
       <SummaryTable
-        location={location}
-      />
-    );
-  }
-
-  _renderPayrollTable() {
-    const { location } = this.props;
-
-    return (
-      <PayrollTable
         location={location}
       />
     );
@@ -139,11 +127,6 @@ class EntriesIndexStack extends React.Component {
 
     return (
       <Switch>
-        {admin &&
-          <Route
-            path={`${match.url}/reports/payroll`}
-            render={this._renderPayrollTable}
-          />}
         {admin &&
           <Route
             path={`${match.url}/reports/summary`}

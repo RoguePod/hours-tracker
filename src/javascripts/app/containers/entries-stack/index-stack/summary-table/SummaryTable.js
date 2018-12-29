@@ -13,10 +13,8 @@ import React from 'react';
 import UsersTable from './UsersTable';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import { history } from 'javascripts/app/redux/store';
 import { isBlank } from 'javascripts/globals';
 import { selectTimezone } from 'javascripts/app/redux/app';
-import styles from './SummaryTable.scss';
 
 class EntriesSummaryTable extends React.Component {
   static propTypes = {
@@ -58,7 +56,7 @@ class EntriesSummaryTable extends React.Component {
   }
 
   _checkWarning() {
-    const { location, onSubscribeEntries, query } = this.props;
+    const { onSubscribeEntries, query } = this.props;
     let warning = true;
 
     for (const value of Object.values(query)) {
@@ -72,8 +70,6 @@ class EntriesSummaryTable extends React.Component {
 
     if (!warning) {
       onSubscribeEntries(null);
-    } else if (!location.hash.match(/filter/u)) {
-      history.replace({ ...location, hash: '#filter' });
     }
   }
 
@@ -89,25 +85,23 @@ class EntriesSummaryTable extends React.Component {
       'which can be slow.';
 
     return (
-      <div className={styles.warning}>
-        <h2 className="text-yellow text-center">
-          <FontAwesomeIcon
-            icon="exclamation-triangle "
-            size="3x"
-          />
-          {'Caution'}
-        </h2>
-        <h4>
+      <div className="text-center">
+        <FontAwesomeIcon
+          className="text-red"
+          icon="exclamation-circle"
+          size="5x"
+        />
+        <div className="py-4 text-xl">
           {text}
-        </h4>
-        <div className={styles.button}>
-          <Button
-            color="yellow"
-            onClick={this._handleSubscribe}
-          >
-            {'Do it Anyway'}
-          </Button>
         </div>
+        <Button
+          className="py-4 text-lg"
+          color="red"
+          onClick={this._handleSubscribe}
+          type="submit"
+        >
+          {'Do it Anyway'}
+        </Button>
       </div>
     );
   }
@@ -120,11 +114,8 @@ class EntriesSummaryTable extends React.Component {
     }
 
     return (
-      <div className={styles.container}>
-        <table
-          celled
-          unstackable
-        >
+      <div className="table-responsive">
+        <table>
           <thead>
             <tr>
               <th colSpan={5}>

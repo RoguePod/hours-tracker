@@ -162,19 +162,6 @@ class SplitFormEntry extends React.Component {
   render() {
     const { fields, member, submitting, timezone } = this.props;
 
-    // {fields.length > 1 &&
-    //   <Grid.Column
-    //     verticalAlign="middle"
-    //     width={1}
-    //   >
-    //     <Icon
-    //       color="red"
-    //       name="remove"
-    //       onClick={this._handleRemove}
-    //       size="huge"
-    //     />
-    //   </Grid.Column>}
-
     const closeClasses =
       'absolute bg-red text-white w-8 h-8 flex items-center cursor-pointer ' +
       'justify-center rounded-full text-center border-4 border-white';

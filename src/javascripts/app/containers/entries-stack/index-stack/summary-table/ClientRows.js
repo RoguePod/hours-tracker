@@ -1,7 +1,6 @@
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import Row from './Row';
-import styles from './ClientRows.scss';
 
 class ProjectsRow extends React.Component {
   static propTypes = {
@@ -88,7 +87,7 @@ class ProjectsRow extends React.Component {
     return (
       <tbody>
         <tr
-          className={styles.clientRow}
+          className="bg-blue-lighter text-blue"
         >
           <td
             colSpan={5}
@@ -99,19 +98,13 @@ class ProjectsRow extends React.Component {
         {this._renderRows(client)}
         <tr>
           <td />
-          <td
-            positive
-          >
+          <td className="text-green">
             {this._calcBillable().toFixed(1)}
           </td>
-          <td
-            warning
-          >
+          <td>
             {this._calcNonBillable().toFixed(1)}
           </td>
-          <td
-            collapsing
-          >
+          <td className="w-px whitespace-no-wrap">
             {this._calcTotal().toFixed(1)}
           </td>
           <td>

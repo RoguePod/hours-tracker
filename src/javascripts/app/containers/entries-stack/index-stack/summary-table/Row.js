@@ -69,19 +69,13 @@ class Row extends React.Component {
         <td>
           {name}
         </td>
-        <td
-          positive
-        >
+        <td className="text-green">
           {this._calcBillable().toFixed(1)}
         </td>
-        <td
-          warning
-        >
+        <td>
           {this._calcNonBillable().toFixed(1)}
         </td>
-        <td
-          collapsing
-        >
+        <td className="w-px whitespace-no-wrap">
           {this._calcTotal().toFixed(1)}
         </td>
         <td>
