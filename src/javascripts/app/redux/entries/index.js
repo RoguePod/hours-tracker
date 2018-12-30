@@ -29,8 +29,8 @@ const selectEntries = (state) => state.entries.entries;
 const selectChecked = (state) => state.entries.checked;
 
 export const selectQuery = createSelector(
-  [selectTimezone, selectRouterSearch],
-  (timezone, query) => {
+  [selectRouterSearch],
+  (query) => {
     const parsedQuery = fromQuery(query);
     const defaults    = {
       endDate: '',
@@ -54,8 +54,8 @@ export const selectQuery = createSelector(
 );
 
 export const selectRawQuery = createSelector(
-  [selectTimezone, selectRouterSearch],
-  (timezone, query) => {
+  [selectRouterSearch],
+  (query) => {
     const parsedQuery = fromQuery(query);
     const defaults    = {
       endDate: '',
@@ -188,6 +188,11 @@ export default (state = initialState, action) => {
     return update(state, { ready: { $set: true } });
 
   case RESET:
+    if (channel) {
+      channel.close();
+      channel = null;
+    }
+
     return initialState;
 
   default:

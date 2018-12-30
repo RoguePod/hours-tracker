@@ -4,12 +4,12 @@ import {
   batchCommit,
   deleteDoc,
   firestore,
-  getDoc,
   parseEntry,
   updateRef
 } from 'javascripts/globals';
 import {
   call,
+  cancelled,
   fork,
   put,
   select,
@@ -17,12 +17,58 @@ import {
 } from 'redux-saga/effects';
 
 import { addFlash } from 'javascripts/shared/redux/flashes';
+import { createSelector } from 'reselect';
+import { eventChannel } from 'redux-saga';
 import { history } from 'javascripts/app/redux/store';
 import moment from 'moment';
 import { selectTimezone } from 'javascripts/app/redux/app';
 import update from 'immutability-helper';
 
+// Selectors
+
+const selectRunning = (state) => state.running.entry;
+const selectEntry = (state) => state.entry.entry;
+
+export const selectEntryForForm = createSelector(
+  [selectEntry, selectRunning],
+  (entry, running) => {
+    if (!entry) {
+      return {
+        entry: {
+          id: 'null',
+          timezone: 'America/Denver'
+        },
+        isRunning: Boolean(running)
+      };
+    }
+
+    const startedAt = moment.tz(entry.startedAt, entry.timezone)
+      .format('MM/DD/YYYY hh:mm A z');
+
+    let stoppedAt = null;
+
+    if (entry.stoppedAt) {
+      stoppedAt = moment.tz(entry.stoppedAt, entry.timezone)
+        .format('MM/DD/YYYY hh:mm A z');
+    }
+
+    return {
+      entry: {
+        clientRef: entry.clientRef,
+        description: entry.description,
+        projectRef: entry.projectRef,
+        startedAt,
+        stoppedAt,
+        timezone: entry.timezone
+      },
+      isRunning: Boolean(running && running.id === entry.id)
+    };
+  }
+);
+
 // Constants
+
+let channel = null;
 
 const path = 'hours-tracker/app/entry';
 
@@ -51,6 +97,11 @@ export default (state = initialState, action) => {
     return update(state, { fetching: { $set: action.fetching } });
 
   case RESET:
+    if (channel) {
+      channel.close();
+      channel = null;
+    }
+
     return initialState;
 
   default:
@@ -94,17 +145,41 @@ const setFetching = (fetching) => {
 
 // Sagas
 
+function* handleEntrySubscribe({ snapshot }) {
+  let entry = null;
+
+  if (snapshot) {
+    entry = yield parseEntry(snapshot);
+  }
+
+  yield put(setEntry(entry));
+  yield put(setFetching(null));
+}
+
 function* entryGet({ id }) {
+  yield put(setEntry(null));
+  yield put(setFetching('Getting Entry...'));
+
+  if (channel) {
+    channel.close();
+  }
+
+  channel = eventChannel((emit) => {
+    const unsubscribe = firestore
+      .doc(`entries/${id}`)
+      .onSnapshot((snapshot) => {
+        emit({ snapshot });
+      });
+
+    return () => unsubscribe();
+  });
+
   try {
-    yield put(setEntry(null));
-    yield put(setFetching('Getting Entry...'));
-
-    const doc   = yield call(getDoc, `entries/${id}`);
-    const entry = yield parseEntry(doc);
-
-    yield put(setEntry(entry));
+    yield takeLatest(channel, handleEntrySubscribe);
   } finally {
-    yield put(setFetching(null));
+    if (yield cancelled()) {
+      channel.close();
+    }
   }
 }
 
@@ -180,13 +255,13 @@ function* entryUpdate({ params, reject, resolve }) {
       reject(new SubmissionError({ _error: error.message }));
     } else {
       yield put(addFlash('Entry has saved.'));
-      resolve();
 
       if (history.action === 'POP') {
         yield call(history.push, '/entries');
       } else {
         yield call(history.goBack);
       }
+      resolve();
     }
   } finally {
     yield put(setFetching(null));

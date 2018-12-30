@@ -22,6 +22,11 @@ const propTypes = {
     startedAt: PropTypes.number,
     stoppedAt: PropTypes.number
   }),
+  entryForm: PropTypes.shape({
+    description: PropTypes.string,
+    startedAt: PropTypes.string,
+    stoppedAt: PropTypes.string
+  }),
   flash: PropTypes.shape({
     color: PropTypes.string,
     icon: PropTypes.string,

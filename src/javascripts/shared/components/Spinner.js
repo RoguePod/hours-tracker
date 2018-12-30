@@ -60,10 +60,10 @@ class Spinner extends React.PureComponent {
     return null;
   }
 
-  componentDidUpdate(_prevProps, nextState) {
+  componentDidUpdate(_prevProps, prevState) {
     const { open } = this.state;
 
-    if (open !== nextState.open) {
+    if (!open && prevState.open) {
       if (this.timeout) {
         clearTimeout(this.timeout);
       }

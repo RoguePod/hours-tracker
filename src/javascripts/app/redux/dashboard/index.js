@@ -1,5 +1,11 @@
 import {
-  all, cancelled, fork, put, select, takeEvery, takeLatest
+  all,
+  cancelled,
+  fork,
+  put,
+  select,
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects';
 import { firestore, fromQuery, isBlank, parseEntry } from 'javascripts/globals';
 
@@ -159,6 +165,11 @@ export default (state = initialState, action) => {
     return update(state, { ready: { $set: true } });
 
   case RESET:
+    if (channel) {
+      channel.close();
+      channel = null;
+    }
+
     return initialState;
 
   default:

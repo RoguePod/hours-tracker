@@ -5,11 +5,11 @@ import React from 'react';
 import posed from 'react-pose';
 import styled from 'styled-components';
 
-const duration = 125;
+const duration = 250;
 
 const FadeIn = posed.div({
-  enter: { beforeChildren: true, opacity: 1, transition: { duration } },
-  exit: { afterChildren: true, opacity: 0, transition: { duration } }
+  enter: { opacity: 1, transition: { duration } },
+  exit: { opacity: 0, transition: { duration } }
 });
 
 /* eslint-disable id-length */
@@ -40,38 +40,52 @@ class Modal extends React.Component {
     super(props);
 
     this.state = {
-      open: props.open,
-      show: props.open
+      closing: false,
+      open: props.open
     };
+  }
 
-    this._handlePoseComplete = this._handlePoseComplete.bind(this);
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.open && !nextProps.open) {
+      return { closing: true, open: false };
+    }
+
+    return { open: nextProps.open };
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  componentDidUpdate(prevProps) {
-    const { open } = this.props;
+  componentDidUpdate(_prevProps, prevState) {
+    const { closing } = this.state;
 
-    if (open && !prevProps.open) {
-      this.setState({ open: true, show: true });
-    } else if (!open && prevProps.open) {
-      this.setState({ open: false });
+    if (!prevState.closing && closing) {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+
+      this.timeout = setTimeout(() => {
+        this.setState({ closing: false });
+      }, duration);
     }
   }
 
-  _handlePoseComplete() {
-    const { open } = this.state;
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
 
-    this.setState({ show: open });
+    this.timeout = null;
   }
+
+  timeout = null
 
   render() {
     const { children, onClose } = this.props;
-    const { open, show } = this.state;
+    const { closing, open } = this.state;
 
-    if (!show) {
+    if (!open && !closing) {
       return null;
     }
 
@@ -88,7 +102,6 @@ class Modal extends React.Component {
         <FadeIn
           className={overlayClassName}
           initialPose="exit"
-          onPoseComplete={this._handlePoseComplete}
           pose={open ? 'enter' : 'exit'}
         >
           <div
@@ -97,6 +110,7 @@ class Modal extends React.Component {
           />
           <SlideIn
             className="bg-white rounded shadow-lg relative"
+            initialPose="exit"
             pose={open ? 'enter' : 'exit'}
           >
             <Close

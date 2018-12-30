@@ -30,15 +30,14 @@ class EntryForm extends React.Component {
     change: PropTypes.func.isRequired,
     error: PropTypes.string,
     handleSubmit: PropTypes.func.isRequired,
+    isRunning: PropTypes.bool.isRequired,
     onSaveEntry: PropTypes.func.isRequired,
-    running: PropTypes.entry,
     submitting: PropTypes.bool.isRequired,
     timezone: PropTypes.string.isRequired
   }
 
   static defaultProps = {
-    error: null,
-    running: null
+    error: null
   }
 
   constructor(props) {
@@ -93,12 +92,12 @@ class EntryForm extends React.Component {
   /* eslint-disable max-lines-per-function */
   render() {
     const {
-      error, handleSubmit, running, submitting, timezone
+      error, handleSubmit, isRunning, submitting, timezone
     } = this.props;
 
     const stoppedAtValidation = [isParsedTime, isStoppedAt];
 
-    if (running) {
+    if (isRunning) {
       stoppedAtValidation.unshift(isRequired);
     }
 

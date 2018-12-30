@@ -2,44 +2,44 @@ import EntryForm from '../EntryForm';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { Spinner } from 'javascripts/shared/components';
-import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { createEntry } from 'javascripts/app/redux/entry';
+import { formValueSelector } from 'redux-form';
 import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntryNewForm extends React.Component {
   static propTypes = {
     fetching: PropTypes.string,
+    isRunning: PropTypes.bool.isRequired,
     onCreateEntry: PropTypes.func.isRequired,
     page: PropTypes.bool,
-    running: PropTypes.entry,
     timezone: PropTypes.string.isRequired
   }
 
   static defaultProps = {
     fetching: null,
-    page: false,
-    running: null
+    page: false
   }
 
   shouldComponentUpdate(nextProps) {
-    const { fetching, running } = this.props;
+    const { fetching, isRunning, timezone } = this.props;
 
     return (
       fetching !== nextProps.fetching ||
-      !_isEqual(running, nextProps.running)
+      isRunning !== nextProps.isRunning ||
+      timezone !== nextProps.timezone
     );
   }
 
   render() {
-    const { fetching, onCreateEntry, page, running, timezone } = this.props;
+    const { fetching, onCreateEntry, page, isRunning, timezone } = this.props;
 
     return (
       <React.Fragment>
         <EntryForm
           initialValues={{ timezone }}
+          isRunning={isRunning}
           onSaveEntry={onCreateEntry}
-          running={running}
           timezone={timezone}
         />
         <Spinner
@@ -53,10 +53,13 @@ class EntryNewForm extends React.Component {
 }
 
 const props = (state) => {
+  const timezone =
+    formValueSelector('EntryForm')(state, 'timezone') || selectTimezone(state);
+
   return {
     fetching: state.entry.fetching,
-    running: state.running.entry,
-    timezone: selectTimezone(state)
+    isRunning: Boolean(state.running.entry),
+    timezone
   };
 };
 

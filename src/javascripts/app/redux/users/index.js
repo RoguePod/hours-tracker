@@ -44,6 +44,11 @@ export default (state = initialState, action) => {
     return update(state, { ready: { $set: true } });
 
   case RESET:
+    if (channel) {
+      channel.close();
+      channel = null;
+    }
+
     return initialState;
 
   default:

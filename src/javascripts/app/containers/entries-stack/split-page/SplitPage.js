@@ -8,6 +8,8 @@ import _get from 'lodash/get';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
+// import { randomColor } from 'javascripts/globals';
+
 class EntrySplitPage extends React.Component {
   static propTypes = {
     entry: PropTypes.entry,

@@ -16,7 +16,6 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import RightSidebar from './RightSidebar';
 import _get from 'lodash/get';
-import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { history } from 'javascripts/app/redux/store';
 import styled from 'styled-components';
@@ -55,31 +54,16 @@ class SignedInStack extends React.Component {
     const modal = _get(nextProps, 'location.state.modal', false);
 
     if (action !== 'POP' && modal) {
-      return { open: true };
+      return { modalLocation: nextProps.location, open: true };
     } else if (action === 'POP' && prevState.open) {
-      return { open: false };
+      return { location: nextProps.location, open: false };
     }
 
-    return null;
+    return { location: nextProps.location };
   }
 
   shouldComponentUpdate() {
     return true;
-  }
-
-  componentDidUpdate(prevProps) {
-    const { location } = this.props;
-    const { location: stateLocation, open, modal } = this.state;
-
-    if (!_isEqual(prevProps.location, location)) {
-      if (open && !_isEqual(modal, location)) {
-        this.setState({ modal: location });
-      }
-
-      if (!open && !_isEqual(stateLocation, location)) {
-        this.setState({ location });
-      }
-    }
   }
 
   componentWillUnmount() {
@@ -92,9 +76,7 @@ class SignedInStack extends React.Component {
 
   render() {
     const { auth, location } = this.props;
-    const {
-      open, location: previousLocation, modal: modalLocation
-    } = this.state;
+    const { open, modalLocation, location: previousLocation } = this.state;
 
     if (!auth) {
       return <Redirect to="/sign-in" />;

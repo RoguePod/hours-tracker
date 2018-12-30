@@ -1,4 +1,9 @@
-import { getEntry, updateEntry } from 'javascripts/app/redux/entry';
+import {
+  getEntry,
+  reset,
+  selectEntryForForm,
+  updateEntry
+} from 'javascripts/app/redux/entry';
 
 import EntryForm from '../EntryForm';
 import PropTypes from 'javascripts/prop-types';
@@ -6,24 +11,26 @@ import React from 'react';
 import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import moment from 'moment';
+import { formValueSelector } from 'redux-form';
+import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntryEditPage extends React.Component {
   static propTypes = {
-    entry: PropTypes.entry,
+    entry: PropTypes.entryForm.isRequired,
     fetching: PropTypes.string,
+    form: PropTypes.string.isRequired,
+    isRunning: PropTypes.bool.isRequired,
     match: PropTypes.routerMatch.isRequired,
     onGetEntry: PropTypes.func.isRequired,
+    onReset: PropTypes.func.isRequired,
     onUpdateEntry: PropTypes.func.isRequired,
     page: PropTypes.bool,
-    running: PropTypes.entry
+    timezone: PropTypes.string.isRequired
   }
 
   static defaultProps = {
-    entry: null,
     fetching: null,
-    page: false,
-    running: null
+    page: false
   }
 
   componentDidMount() {
@@ -33,65 +40,38 @@ class EntryEditPage extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { entry, fetching, running } = this.props;
+    const { entry, fetching, isRunning, timezone } = this.props;
 
     return (
       fetching !== nextProps.fetching ||
-      !_isEqual(entry, nextProps.entry) ||
-      !_isEqual(running, nextProps.running)
+      isRunning !== nextProps.isRunning ||
+      timezone !== nextProps.timezone ||
+      !_isEqual(entry, nextProps.entry)
     );
   }
 
-  _getInitialValuesAndIsRequired() {
-    const { entry, running } = this.props;
+  componentWillUnmount() {
+    const { onReset } = this.props;
 
-    let initialValues = {};
-    let isRequired    = null;
-
-    if (entry) {
-      const startedAt = moment.tz(entry.startedAt, entry.timezone)
-        .format('MM/DD/YYYY hh:mm A z');
-
-      let stoppedAt = null;
-
-      if (entry.stoppedAt) {
-        stoppedAt = moment.tz(entry.stoppedAt, entry.timezone)
-          .format('MM/DD/YYYY hh:mm A z');
-      }
-
-      initialValues = {
-        clientRef: entry.clientRef,
-        description: entry.description,
-        projectRef: entry.projectRef,
-        startedAt,
-        stoppedAt,
-        timezone: entry.timezone
-      };
-
-      isRequired = running;
-
-      if (running && running.id === entry.id) {
-        isRequired = null;
-      }
-    }
-
-    return { initialValues, isRequired };
+    onReset();
   }
 
   render() {
-    const { entry, fetching, onUpdateEntry, page } = this.props;
-
-    const { initialValues, isRequired } = this._getInitialValuesAndIsRequired();
+    const {
+      entry, fetching, form, isRunning, onUpdateEntry, page, timezone
+    } = this.props;
 
     return (
       <React.Fragment>
-        {entry &&
-          <EntryForm
-            initialValues={initialValues}
-            onSaveEntry={onUpdateEntry}
-            running={isRequired}
-            timezone={entry.timezone}
-          />}
+        <EntryForm
+          enableReinitialize
+          form={form}
+          initialValues={entry}
+          isRunning={isRunning}
+          key={form}
+          onSaveEntry={onUpdateEntry}
+          timezone={timezone}
+        />
         <Spinner
           page={page}
           spinning={Boolean(fetching)}
@@ -103,15 +83,24 @@ class EntryEditPage extends React.Component {
 }
 
 const props = (state) => {
+  const { entry, isRunning } = selectEntryForForm(state);
+  const form = `EntryForm-${entry ? entry.id : 'new'}`;
+
+  const timezone =
+    formValueSelector(form)(state, 'timezone') || selectTimezone(state);
+
   return {
-    entry: state.entry.entry,
+    entry,
     fetching: state.entry.fetching,
-    running: state.running.entry
+    form,
+    isRunning,
+    timezone
   };
 };
 
 const actions = {
   onGetEntry: getEntry,
+  onReset: reset,
   onUpdateEntry: updateEntry
 };
 

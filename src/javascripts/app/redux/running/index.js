@@ -1,6 +1,12 @@
 import { add, firestore, parseEntry } from 'javascripts/globals';
 import {
-  call, cancelled, fork, put, select, takeEvery, takeLatest
+  call,
+  cancelled,
+  fork,
+  put,
+  select,
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects';
 
 import { addFlash } from 'javascripts/shared/redux/flashes';
@@ -45,6 +51,11 @@ export default (state = initialState, action) => {
     return update(state, { ready: { $set: true } });
 
   case RESET:
+    if (channel) {
+      channel.close();
+      channel = null;
+    }
+
     return initialState;
 
   default:
