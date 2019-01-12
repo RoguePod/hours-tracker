@@ -51,7 +51,7 @@ class RecentsList extends React.Component {
       'flex flex-col items-center justify-center flex-1 text-blue';
 
     return (
-      <React.Fragment>
+      <>
         <div className="bg-blue text-white p-4 font-bold">
           {'Recent Projects'}
         </div>
@@ -71,7 +71,7 @@ class RecentsList extends React.Component {
           <div className="overflow-y-auto overflow-x-hidden">
             {rows}
           </div>}
-      </React.Fragment>
+      </>
     );
   }
 }

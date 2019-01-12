@@ -51,7 +51,7 @@ class TextAreaField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { autoHeight, value } = this.props;
+    const { autoHeight, input: { value } } = this.props;
 
     // removed autoHeight
     if (!autoHeight && prevProps.autoHeight) {
@@ -59,8 +59,9 @@ class TextAreaField extends React.Component {
     }
 
     // added autoHeight or value changed
-    if ((autoHeight && !prevProps.autoHeight) || prevProps.value !== value) {
-      this.updateHeight();
+    if ((autoHeight && !prevProps.autoHeight) ||
+        (prevProps.input.value !== value)) {
+      this._updateHeight();
     }
   }
 
@@ -130,7 +131,7 @@ class TextAreaField extends React.Component {
     const inputId = id ? id : _uniqueId('input_');
 
     return (
-      <React.Fragment>
+      <>
         {label &&
           <Label
             error={isError}
@@ -150,7 +151,7 @@ class TextAreaField extends React.Component {
           error={meta.error}
           touched={meta.touched}
         />
-      </React.Fragment>
+      </>
     );
   }
 }

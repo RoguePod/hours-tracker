@@ -85,7 +85,7 @@ class UsersTable extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <thead>
           <tr>
             <th />
@@ -121,7 +121,7 @@ class UsersTable extends React.Component {
             </td>
           </tr>
         </tbody>
-      </React.Fragment>
+      </>
     );
   }
 }

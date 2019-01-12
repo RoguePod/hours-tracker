@@ -129,7 +129,7 @@ class App extends React.Component {
     });
 
     return (
-      <React.Fragment>
+      <>
         <Helmet>
           <html className={htmlClasses} />
         </Helmet>
@@ -140,7 +140,7 @@ class App extends React.Component {
           loading={!isReady}
         />
         <Flashes />
-      </React.Fragment>
+      </>
     );
   }
 }

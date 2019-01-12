@@ -65,7 +65,7 @@ class LeftSidebar extends React.Component {
       'transition z-10';
 
     return (
-      <React.Fragment>
+      <>
         <PoseGroup>
           {open &&
             <Overlay
@@ -82,7 +82,7 @@ class LeftSidebar extends React.Component {
           <StopWatch location={location} />
           <RecentsList />
         </Slider>
-      </React.Fragment>
+      </>
     );
   }
 }

@@ -46,6 +46,7 @@ Button.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
   color: PropTypes.string,
+  disabled: PropTypes.bool,
   loading: PropTypes.bool,
   textColor: PropTypes.string,
   type: PropTypes.string
@@ -55,6 +56,7 @@ Button.defaultProps = {
   as: 'button',
   className: null,
   color: 'blue',
+  disabled: false,
   loading: false,
   textColor: 'white',
   type: 'button'

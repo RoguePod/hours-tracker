@@ -64,7 +64,7 @@ class ConfirmAction extends React.Component {
     });
 
     return (
-      <React.Fragment>
+      <>
         {trigger}
         <Modal
           onClose={this._handleClose}
@@ -96,7 +96,7 @@ class ConfirmAction extends React.Component {
             </div>
           </div>
         </Modal>
-      </React.Fragment>
+      </>
     );
   }
 }

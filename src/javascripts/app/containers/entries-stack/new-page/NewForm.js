@@ -35,7 +35,7 @@ class EntryNewForm extends React.Component {
     const { fetching, onCreateEntry, page, isRunning, timezone } = this.props;
 
     return (
-      <React.Fragment>
+      <>
         <EntryForm
           initialValues={{ timezone }}
           isRunning={isRunning}
@@ -47,7 +47,7 @@ class EntryNewForm extends React.Component {
           spinning={Boolean(fetching)}
           text={fetching}
         />
-      </React.Fragment>
+      </>
     );
   }
 }

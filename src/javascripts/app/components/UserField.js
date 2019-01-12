@@ -15,6 +15,7 @@ import { formValueSelector } from 'redux-form';
 
 class UserField extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     id: PropTypes.string,
     input: PropTypes.shape({
       name: PropTypes.string.isRequired,
@@ -34,6 +35,7 @@ class UserField extends React.Component {
   }
 
   static defaultProps = {
+    className: null,
     id: null,
     label: null,
     userRef: null

@@ -15,6 +15,7 @@ import { formValueSelector } from 'redux-form';
 
 class ProjectField extends React.Component {
   static propTypes = {
+    className: PropTypes.string,
     clientRef: PropTypes.docRef,
     clients: PropTypes.docRef.isRequired,
     id: PropTypes.string,
@@ -39,6 +40,7 @@ class ProjectField extends React.Component {
   }
 
   static defaultProps = {
+    className: null,
     clientRef: null,
     id: null,
     label: null,

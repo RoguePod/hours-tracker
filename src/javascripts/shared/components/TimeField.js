@@ -29,7 +29,7 @@ const TimeField = (props) => {
   }
 
   return (
-    <React.Fragment>
+    <>
       <InputField {...props} />
       <FadeIn
         className="text-green text-sm"
@@ -40,7 +40,7 @@ const TimeField = (props) => {
             {realTime}
           </div>}
       </FadeIn>
-    </React.Fragment>
+    </>
   );
 };
 

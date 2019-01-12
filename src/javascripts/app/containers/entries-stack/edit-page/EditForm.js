@@ -62,7 +62,7 @@ class EntryEditPage extends React.Component {
     } = this.props;
 
     return (
-      <React.Fragment>
+      <>
         <EntryForm
           enableReinitialize
           form={form}
@@ -77,7 +77,7 @@ class EntryEditPage extends React.Component {
           spinning={Boolean(fetching)}
           text={fetching}
         />
-      </React.Fragment>
+      </>
     );
   }
 }

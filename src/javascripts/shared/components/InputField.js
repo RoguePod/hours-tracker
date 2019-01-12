@@ -72,7 +72,7 @@ class InputField extends React.Component {
     );
 
     return (
-      <React.Fragment>
+      <>
         {label &&
           <Label
             error={isError}
@@ -90,7 +90,7 @@ class InputField extends React.Component {
           error={meta.error}
           touched={meta.touched}
         />
-      </React.Fragment>
+      </>
     );
   }
 }

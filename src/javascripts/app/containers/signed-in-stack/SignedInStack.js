@@ -31,6 +31,7 @@ const Content = styled.div`
 class SignedInStack extends React.Component {
   static propTypes = {
     auth: PropTypes.auth,
+    history: PropTypes.routerHistory.isRequired,
     location: PropTypes.routerLocation.isRequired
   }
 
@@ -83,7 +84,7 @@ class SignedInStack extends React.Component {
     }
 
     return (
-      <React.Fragment>
+      <>
         <Container className="md:ml-64 transition relative overflow-auto">
           <Content className="mx-auto">
             <Switch
@@ -133,7 +134,7 @@ class SignedInStack extends React.Component {
         <Header {...this.props} />
         <LeftSidebar {...this.props} />
         <RightSidebar {...this.props} />
-      </React.Fragment>
+      </>
     );
   }
 }

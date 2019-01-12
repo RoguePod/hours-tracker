@@ -64,6 +64,9 @@ const propTypes = {
   routerAction: PropTypes.shape({
     action: PropTypes.string.isRequired
   }),
+  routerHistory: PropTypes.shape({
+    action: PropTypes.string.isRequired
+  }),
   routerLocation: PropTypes.shape({
     pathname: PropTypes.string.isRequired,
     search: PropTypes.string

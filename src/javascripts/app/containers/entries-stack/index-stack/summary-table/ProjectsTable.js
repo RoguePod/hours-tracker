@@ -15,7 +15,7 @@ const ProjectsTable = (props) => {
   });
 
   return (
-    <React.Fragment>
+    <>
       <thead>
         <tr>
           <th />
@@ -34,7 +34,7 @@ const ProjectsTable = (props) => {
         </tr>
       </thead>
       {tbodies}
-    </React.Fragment>
+    </>
   );
 };
 

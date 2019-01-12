@@ -20,6 +20,7 @@ class ClientsIndexPage extends React.Component {
     admin: PropTypes.bool.isRequired,
     clients: PropTypes.arrayOf(PropTypes.client).isRequired,
     onStartEntry: PropTypes.func.isRequired,
+    pagination: PropTypes.pagination.isRequired,
     query: PropTypes.object.isRequired,
     ready: PropTypes.bool.isRequired
   }

@@ -32,7 +32,7 @@ const SelectField = (props) => {
   const inputId = id ? id : _uniqueId('input_');
 
   return (
-    <React.Fragment>
+    <>
       {label &&
         <Label
           error={isError}
@@ -60,7 +60,7 @@ const SelectField = (props) => {
         error={meta.error}
         touched={meta.touched}
       />
-    </React.Fragment>
+    </>
   );
 };
 

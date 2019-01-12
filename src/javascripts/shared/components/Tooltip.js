@@ -134,7 +134,7 @@ class Tooltip extends React.Component {
     });
 
     return (
-      <React.Fragment>
+      <>
         {trigger}
         {show && this._element &&
           <Portal>
@@ -148,7 +148,7 @@ class Tooltip extends React.Component {
               {title}
             </Title>
           </Portal>}
-      </React.Fragment>
+      </>
     );
   }
 }

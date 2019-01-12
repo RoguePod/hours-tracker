@@ -62,14 +62,14 @@ class ExportEntriesButton extends React.Component {
     );
 
     const children = (
-      <React.Fragment>
+      <>
         <FontAwesomeIcon
           icon="download"
         />
         <div className={titleClassName}>
           {title}
         </div>
-      </React.Fragment>
+      </>
     );
 
     if (warning) {

@@ -95,7 +95,7 @@ class Spinner extends React.PureComponent {
       'justify-center text-white flex-col';
 
     const children = (
-      <React.Fragment>
+      <>
         <div className="flex flex-row items-center">
           <FontAwesomeIcon
             icon="clock"
@@ -107,7 +107,7 @@ class Spinner extends React.PureComponent {
           <div className="pt-4 px-4 text-center">
             {text}
           </div>}
-      </React.Fragment>
+      </>
     );
 
     if (page) {
