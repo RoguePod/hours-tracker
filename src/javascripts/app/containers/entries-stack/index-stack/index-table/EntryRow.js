@@ -12,6 +12,7 @@ import nl2br from 'react-nl2br';
 class EntryRow extends React.Component {
   static propTypes = {
     admin: PropTypes.bool.isRequired,
+    allChecked: PropTypes.bool.isRequired,
     entry: PropTypes.entry.isRequired,
     location: PropTypes.routerLocation.isRequired,
     onCheckEntry: PropTypes.func.isRequired,
@@ -36,10 +37,11 @@ class EntryRow extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { admin, entry } = this.props;
+    const { admin, allChecked, entry } = this.props;
 
     return (
       admin !== nextProps.admin ||
+      allChecked !== nextProps.allChecked ||
       !_isEqual(entry, nextProps.entry)
     );
   }
@@ -86,7 +88,9 @@ class EntryRow extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { admin, entry, location, showAdmin, timezone } = this.props;
+    const {
+      admin, allChecked, entry, location, showAdmin, timezone
+    } = this.props;
     const { project } = entry;
 
     const startedAt = moment.tz(entry.startedAt, entry.timezone);
@@ -115,17 +119,19 @@ class EntryRow extends React.Component {
       );
     }
 
+    const isChecked = entry.checked || allChecked;
+
     return (
       <tr className="hover:bg-blue-lightest">
         <td
           className="w-px text-center cursor-pointer text-grey-darker"
           onClick={this._handleChecked}
         >
-          {!entry.checked &&
+          {!isChecked &&
             <FontAwesomeIcon
               icon={['far', 'square']}
             />}
-          {entry.checked &&
+          {isChecked &&
             <FontAwesomeIcon
               icon={['far', 'check-square']}
             />}

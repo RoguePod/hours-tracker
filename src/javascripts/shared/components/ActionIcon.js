@@ -5,16 +5,26 @@ import React from 'react';
 import Tooltip from './Tooltip';
 import cx from 'classnames';
 
-const ActionIcon = ({ className, confirm, onClick, title, ...rest }) => {
+const ActionIcon = (props) => {
+  const { className, confirm, disabled, onClick, title, ...rest } = props;
+
+  const actionClasses = cx(
+    className, {
+      'cursor-not-allowed': disabled,
+      'cursor-pointer': !disabled
+    }
+  );
+
   let action = (
     <Icon
       {...rest}
-      className={cx(className, 'cursor-pointer')}
-      onClick={confirm ? null : onClick}
+      className={actionClasses}
+      disabled={disabled}
+      onClick={disabled || confirm ? null : onClick}
     />
   );
 
-  if (confirm && confirm.length > 0) {
+  if (!disabled && confirm && confirm.length > 0) {
     action = (
       <ConfirmAction
         message={confirm}
@@ -41,6 +51,7 @@ const ActionIcon = ({ className, confirm, onClick, title, ...rest }) => {
 ActionIcon.propTypes = {
   className: PropTypes.string,
   confirm: PropTypes.string,
+  disabled: PropTypes.bool,
   onClick: PropTypes.func,
   title: PropTypes.string
 };
@@ -48,6 +59,7 @@ ActionIcon.propTypes = {
 ActionIcon.defaultProps = {
   className: null,
   confirm: null,
+  disabled: false,
   onClick: null,
   title: null
 };

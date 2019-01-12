@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import { SubmissionError, reset as resetForm } from 'redux-form';
 import {
   add,
@@ -97,11 +99,6 @@ export default (state = initialState, action) => {
     return update(state, { fetching: { $set: action.fetching } });
 
   case RESET:
-    if (channel) {
-      channel.close();
-      channel = null;
-    }
-
     return initialState;
 
   default:
@@ -132,6 +129,11 @@ export const destroyEntry = (id) => {
 };
 
 export const reset = () => {
+  if (channel) {
+    channel.close();
+    channel = null;
+  }
+
   return { type: RESET };
 };
 
@@ -179,6 +181,7 @@ function* entryGet({ id }) {
   } finally {
     if (yield cancelled()) {
       channel.close();
+      channel = null;
     }
   }
 }

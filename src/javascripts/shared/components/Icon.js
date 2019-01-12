@@ -9,6 +9,7 @@ class Icon extends React.PureComponent {
     as: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
     className: PropTypes.string,
     color: PropTypes.string,
+    disabled: PropTypes.bool,
     icon: PropTypes.string.isRequired,
     size: PropTypes.number
   };
@@ -17,16 +18,21 @@ class Icon extends React.PureComponent {
     as: 'div',
     className: null,
     color: 'green',
+    disabled: false,
     size: 10
   }
 
   render() {
-    const { as, className, color, icon, size, ...rest } = this.props;
+    const { as, className, color, disabled, icon, size, ...rest } = this.props;
+
     const iconClasses = cx(
-      `text-white bg-${color} hover:bg-${color}-dark shadow hover:shadow-md`,
+      'text-white shadow hover:shadow-md',
       `w-${size} h-${size} items-center justify-center`,
       'transition flex rounded-full appearance-none',
-      className
+      className, {
+        'bg-grey-dark': disabled,
+        [`bg-${color} hover:bg-${color}-dark`]: !disabled
+      }
     );
 
     const Tag = as;

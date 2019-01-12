@@ -44,11 +44,6 @@ export default (state = initialState, action) => {
     return update(state, { ready: { $set: true } });
 
   case RESET:
-    if (channel) {
-      channel.close();
-      channel = null;
-    }
-
     return initialState;
 
   default:
@@ -65,6 +60,7 @@ export const subscribeUsers = () => {
 export const reset = () => {
   if (channel) {
     channel.close();
+    channel = null;
   }
 
   return { type: RESET };
@@ -115,6 +111,7 @@ function* usersSubscribe() {
   } finally {
     if (yield cancelled()) {
       channel.close();
+      channel = null;
     }
   }
 }

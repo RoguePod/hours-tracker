@@ -1,13 +1,20 @@
-import { Button, ConfirmAction } from 'javascripts/shared/components';
+import {
+  ActionIcon,
+  Button,
+  Tooltip
+} from 'javascripts/shared/components';
 import {
   checkEntry,
+  destroyEntries,
   selectGroupedEntries,
   selectQuery,
+  setAllChecked,
   subscribeEntries
 } from 'javascripts/app/redux/entries';
 
 import EntryRow from './EntryRow';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
@@ -17,13 +24,16 @@ import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntriesIndexTable extends React.Component {
   static propTypes = {
+    allChecked: PropTypes.bool.isRequired,
     checked: PropTypes.arrayOf(PropTypes.string).isRequired,
     /* eslint-disable react/forbid-prop-types */
     entries: PropTypes.object.isRequired,
     /* eslint-enable react/forbid-prop-types */
     location: PropTypes.routerLocation.isRequired,
     onCheckEntry: PropTypes.func.isRequired,
+    onDestroyEntries: PropTypes.func.isRequired,
     onDestroyEntry: PropTypes.func.isRequired,
+    onSetAllChecked: PropTypes.func.isRequired,
     onSubscribeEntries: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
     showAdmin: PropTypes.bool,
@@ -39,6 +49,7 @@ class EntriesIndexTable extends React.Component {
 
     this._handleMore = this._handleMore.bind(this);
     this._handleDestroy = this._handleDestroy.bind(this);
+    this._handleAllChecked = this._handleAllChecked.bind(this);
   }
 
   componentDidMount() {
@@ -77,12 +88,15 @@ class EntriesIndexTable extends React.Component {
   }
 
   _handleDestroy() {
-    const { checked, onCheckEntry, onDestroyEntry } = this.props;
+    const { onDestroyEntries } = this.props;
 
-    for (const id of checked) {
-      onCheckEntry(id);
-      onDestroyEntry(id);
-    }
+    onDestroyEntries();
+  }
+
+  _handleAllChecked() {
+    const { allChecked, onSetAllChecked } = this.props;
+
+    onSetAllChecked(!allChecked);
   }
 
   _renderTbodies(entries, showAdmin) {
@@ -123,40 +137,68 @@ class EntriesIndexTable extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { checked, entries, showAdmin } = this.props;
+    const { allChecked, checked, entries, location, showAdmin } = this.props;
+
+    const message =
+      'This will remove all checked entries and cannot be undone. ' +
+      'Are you sure?';
 
     return (
-      <div>
-        <div className="flex flex-row items-center justify-between mb-4">
-          <ConfirmAction
-            message="This will remove all checked entries.  Are you sure?"
-            onClick={this._handleDestroy}
-          >
-            <Button
-              color="red"
-              disabled={checked.length === 0}
-            >
-              <FontAwesomeIcon
-                icon="times"
-              />
-              {' '}
-              {'Remove Checked'}
-            </Button>
-          </ConfirmAction>
-          <Button
-            onClick={this._handleMore}
-          >
-            {'More'}
-          </Button>
-        </div>
+      <>
         <div className="table-responsive">
           <table>
             <thead>
               <tr>
                 <th
-                  className="w-px"
-                  colSpan={2}
-                />
+                  className="w-px cursor-pointer"
+                >
+                  <Tooltip
+                    title="Check ALL Entries"
+                  >
+                    <div
+
+                      className="cursor-pointer"
+                      onClick={this._handleAllChecked}
+                    >
+                      {!allChecked &&
+                        <FontAwesomeIcon
+                          icon={['far', 'square']}
+                        />}
+                      {allChecked &&
+                        <FontAwesomeIcon
+                          icon={['far', 'check-square']}
+                        />}
+                    </div>
+                  </Tooltip>
+                </th>
+                <th className="w-px whitespace-no-wrap">
+                  <div className="flex flex-row">
+                    <ActionIcon
+                      as={Link}
+                      className="mr-1"
+                      color="orange"
+                      disabled={!allChecked && checked.length === 0}
+                      icon="pencil-alt"
+                      size={8}
+                      title="Edit Checked"
+                      to={{
+                        ...location,
+                        pathname: '/entries/all/edit',
+                        state: { modal: true }
+                      }}
+                    />
+                    <ActionIcon
+                      color="red"
+                      confirm={message}
+                      disabled={!allChecked && checked.length === 0}
+                      icon="times"
+                      onClick={this._handleDestroy}
+                      size={8}
+                      title="Remove Checked"
+                      type="button"
+                    />
+                  </div>
+                </th>
                 {showAdmin &&
                   <th className="w-px">
                     {'User'}
@@ -191,7 +233,7 @@ class EntriesIndexTable extends React.Component {
             {'More'}
           </Button>
         </div>
-      </div>
+      </>
     );
   }
   /* eslint-enable max-lines-per-function */
@@ -199,6 +241,7 @@ class EntriesIndexTable extends React.Component {
 
 const props = (state) => {
   return {
+    allChecked: state.entries.allChecked,
     checked: state.entries.checked,
     entries: selectGroupedEntries(state),
     query: selectQuery(state),
@@ -208,7 +251,9 @@ const props = (state) => {
 
 const actions = {
   onCheckEntry: checkEntry,
+  onDestroyEntries: destroyEntries,
   onDestroyEntry: destroyEntry,
+  onSetAllChecked: setAllChecked,
   onSubscribeEntries: subscribeEntries
 };
 

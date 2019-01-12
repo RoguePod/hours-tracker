@@ -61,10 +61,6 @@ export const subscribeRecents = () => {
 };
 
 export const reset = () => {
-  if (channel) {
-    channel.close();
-  }
-
   return { type: RESET };
 };
 
@@ -135,6 +131,7 @@ function* recentsSubscribe() {
   } finally {
     if (yield cancelled()) {
       channel.close();
+      channel = null;
     }
   }
 }

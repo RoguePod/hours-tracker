@@ -106,7 +106,7 @@ class Flash extends React.Component {
               icon={icon}
             />
           </div>
-          <div className="flex-1">
+          <div className="flex-1 self-center">
             {flash.message}
           </div>
           <div className="p-2 cursor-pointer">

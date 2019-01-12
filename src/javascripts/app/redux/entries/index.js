@@ -144,8 +144,10 @@ let channel = null;
 
 const path = 'hours-tracker/app/entries';
 
+const ALL_CHECKED_SET   = `${path}/ALL_CHECKED_SET`;
 const ENTRY_CHECK       = `${path}/ENTRY_CHECK`;
 const ENTRIES_SUBSCRIBE = `${path}/ENTRIES_SUBSCRIBE`;
+const ENTRIES_DESTROY   = `${path}/ENTRIES_DESTROY`;
 const ENTRIES_SET       = `${path}/ENTRIES_SET`;
 const FETCHING_SET      = `${path}/FETCHING_SET`;
 const READY             = `${path}/READY`;
@@ -154,6 +156,7 @@ const RESET             = `${path}/RESET`;
 // Reducer
 
 const initialState = {
+  allChecked: false,
   checked: [],
   entries: [],
   fetching: null,
@@ -184,6 +187,9 @@ export default (state = initialState, action) => {
   case FETCHING_SET:
     return update(state, { fetching: { $set: action.fetching } });
 
+  case ALL_CHECKED_SET:
+    return update(state, { allChecked: { $set: action.allChecked } });
+
   case READY:
     return update(state, { ready: { $set: true } });
 
@@ -206,15 +212,19 @@ export const subscribeEntries = (limit) => {
   return { limit, type: ENTRIES_SUBSCRIBE };
 };
 
+export const destroyEntries = () => {
+  return { type: ENTRIES_DESTROY };
+};
+
 export const checkEntry = (id) => {
   return { id, type: ENTRY_CHECK };
 };
 
-export const reset = () => {
-  if (channel) {
-    channel.close();
-  }
+export const setAllChecked = (allChecked) => {
+  return { allChecked, type: ALL_CHECKED_SET };
+};
 
+export const reset = () => {
   return { type: RESET };
 };
 
@@ -324,6 +334,7 @@ function* entriesSubscribe({ limit }) {
   } finally {
     if (yield cancelled()) {
       channel.close();
+      channel = null;
     }
   }
 }
@@ -332,4 +343,34 @@ function* watchEntriesSubscribe() {
   yield takeLatest(ENTRIES_SUBSCRIBE, entriesSubscribe);
 }
 
-export const sagas = [fork(watchEntriesSubscribe)];
+function* entriesDestroy() {
+  try {
+    yield put(setFetching('Deleting Entries...'));
+
+    const { allChecked, checked } = yield select((state) => {
+      return {
+        allChecked: state.entries.allChecked,
+        checked: state.entries.checked
+      };
+    });
+
+    const { error } = yield call(deleteDoc, `entries/${id}`);
+
+    if (error) {
+      yield put(addFlash(error.message, 'red'));
+    } else {
+      yield put(addFlash('Entry has been removed'));
+    }
+  } finally {
+    yield put(setFetching(null));
+  }
+}
+
+function* watchEntriesDestroy() {
+  yield takeLatest(ENTRIES_DESTROY, entriesDestroy);
+}
+
+export const sagas = [
+  fork(watchEntriesSubscribe),
+  fork(watchEntriesDestroy)
+];

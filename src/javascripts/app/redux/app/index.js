@@ -1,14 +1,24 @@
+/* eslint-disable max-lines */
+
 /* global document */
 
 import {
-  call, cancelled, fork, put, select, takeEvery, takeLatest
+  call,
+  cancelled,
+  fork,
+  put,
+  select,
+  takeEvery,
+  takeLatest
 } from 'redux-saga/effects';
 import { firebase, firestore } from 'javascripts/globals';
 import {
-  reset as resetClients, subscribeClients
+  reset as resetClients,
+  subscribeClients
 } from 'javascripts/app/redux/clients';
 import {
-  reset as resetUsers, subscribeUsers
+  reset as resetUsers,
+  subscribeUsers
 } from 'javascripts/app/redux/users';
 
 import { addFlash } from 'javascripts/shared/redux/flashes';
@@ -191,12 +201,13 @@ function* userSignIn(auth, initial) {
 
 function* userSignOut() {
   yield put(resetRunning());
-  yield put(resetClients());
   yield put(resetRecents());
   yield put(resetUsers());
+  yield put(resetClients());
 
   if (userChannel) {
     userChannel.close();
+    userChannel = null;
   }
 
   yield put(setAuth(null));
