@@ -4,12 +4,12 @@ import { call, select } from 'redux-saga/effects';
 import baseFirebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
+import 'firebase/functions';
 /* eslint-enable sort-imports */
 
 import _find from 'lodash/find';
 import _isNil from 'lodash/isNil';
 import _isString from 'lodash/isString';
-import _snakeCase from 'lodash/snakeCase';
 import _sortBy from 'lodash/sortBy';
 
 const firebaseConfig = {
@@ -46,7 +46,7 @@ export const toQuery = (params) => {
 
     if (!isBlank(value)) {
       query.push(
-        `${encodeURIComponent(_snakeCase(key))}=${encodeURIComponent(value)}`
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
       );
     }
   });

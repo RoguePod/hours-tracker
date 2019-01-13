@@ -2,6 +2,7 @@
 
 import {
   all,
+  call,
   cancelled,
   fork,
   put,
@@ -9,13 +10,19 @@ import {
   takeEvery,
   takeLatest
 } from 'redux-saga/effects';
-import { firestore, fromQuery, parseEntry } from 'javascripts/globals';
+import {
+  firebase,
+  firestore,
+  fromQuery,
+  parseEntry
+} from 'javascripts/globals';
 
 import _filter from 'lodash/filter';
 import _groupBy from 'lodash/groupBy';
 import _includes from 'lodash/includes';
 import _sortBy from 'lodash/sortBy';
 import _without from 'lodash/without';
+import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
 import moment from 'moment-timezone';
@@ -347,19 +354,42 @@ function* entriesDestroy() {
   try {
     yield put(setFetching('Deleting Entries...'));
 
-    const { allChecked, checked } = yield select((state) => {
+    const {
+      allChecked, checked, pathname, query, timezone, user
+    } = yield select((state) => {
       return {
         allChecked: state.entries.allChecked,
-        checked: state.entries.checked
+        checked: state.entries.checked,
+        pathname: state.router.location.pathname,
+        query: selectRawQuery(state),
+        timezone: selectTimezone(state),
+        user: state.app.user
       };
     });
 
-    const { error } = yield call(deleteDoc, `entries/${id}`);
+    const params = {};
+    let method   = null;
+
+    if (allChecked) {
+      method = 'deleteEntriesByQuery';
+      params.query = { ...query, timezone };
+
+      if (!pathname.match(/reports/u)) {
+        params.query = { ...params.query, userRef: `users/${user.id}` };
+      }
+    } else {
+      method = 'deleteEntriesById';
+      params.ids = checked;
+    }
+
+    const { data: { error } } = yield call(
+      firebase.functions().httpsCallable(method), params
+    );
 
     if (error) {
-      yield put(addFlash(error.message, 'red'));
+      yield put(addFlash(error, 'red'));
     } else {
-      yield put(addFlash('Entry has been removed'));
+      yield put(addFlash('Entries have been removed'));
     }
   } finally {
     yield put(setFetching(null));

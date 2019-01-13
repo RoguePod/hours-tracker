@@ -1,12 +1,11 @@
 {
   "presets": [
-    "es2017"
+    "@babel/preset-env"
   ],
   "plugins": [
     [
-      "transform-runtime",
+      "@babel/plugin-transform-runtime",
       {
-        "polyfill": false,
         "regenerator": true
       }
     ]

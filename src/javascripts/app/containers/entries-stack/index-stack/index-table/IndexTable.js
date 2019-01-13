@@ -139,9 +139,15 @@ class EntriesIndexTable extends React.Component {
   render() {
     const { allChecked, checked, entries, location, showAdmin } = this.props;
 
-    const message =
-      'This will remove all checked entries and cannot be undone. ' +
+    let message =
+      'This will remove all checked entries, and cannot be undone. ' +
       'Are you sure?';
+
+    if (allChecked) {
+      message =
+        'This will remove all checked entries, matching the filters, and may ' +
+        'include entries you do not see. This cannot be undone. Are you sure?';
+    }
 
     return (
       <>

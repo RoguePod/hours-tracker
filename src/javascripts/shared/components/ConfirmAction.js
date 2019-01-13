@@ -76,7 +76,7 @@ class ConfirmAction extends React.Component {
               icon="exclamation-circle"
               size="4x"
             />
-            <div className="text-2xl py-4">
+            <div className="text-2xl py-4 text-center max-w-lg">
               {message}
             </div>
             <div>
