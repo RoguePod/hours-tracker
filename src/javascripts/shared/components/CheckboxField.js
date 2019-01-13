@@ -6,16 +6,15 @@ import cx from 'classnames';
 
 class CheckboxField extends React.Component {
   static propTypes = {
-    input: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      onChange: PropTypes.func.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool])
-    }).isRequired,
-    label: PropTypes.node.isRequired,
-    meta: PropTypes.shape({
-      errpr: PropTypes.string,
-      touched: PropTypes.bool
-    }).isRequired
+    disabled: PropTypes.bool,
+    field: PropTypes.field.isRequired,
+    form: PropTypes.form.isRequired,
+    label: PropTypes.string
+  }
+
+  static defaultProps = {
+    disabled: false,
+    label: null
   }
 
   constructor(props) {
@@ -29,40 +28,45 @@ class CheckboxField extends React.Component {
   }
 
   _handleChange() {
-    const { input: { onChange, value } } = this.props;
+    const {
+      disabled, field: { name, value }, form: { isSubmitting, setFieldValue }
+    } = this.props;
 
-    onChange(!value);
+    if (disabled || isSubmitting) {
+      return;
+    }
+
+    setFieldValue(name, !value);
   }
 
   render() {
-    const { input, label, meta } = this.props;
+    const {
+      disabled, field: { name, value },
+      form: { errors, isSubmitting, touched }, label
+    } = this.props;
 
-    /* eslint-disable no-unneeded-ternary */
-    const isError = meta.touched && meta.error ? true : false;
-    /* eslint-enable no-unneeded-ternary */
+    const hasError   = errors[name] && touched[name];
+    const isDisabled = disabled || isSubmitting;
+    const icon       = value ? ['far', 'check-square'] : ['far', 'square'];
 
     const labelClassName = cx(
       'block flex flex-row items-center cursor-pointer',
       {
-        'text-grey-darker': !isError,
-        'text-red': isError
+        'text-grey-darker': !hasError && !isDisabled,
+        'text-grey-light': !hasError && isDisabled,
+        'text-red': hasError
       }
     );
 
     return (
-      <div className="mb-4">
+      <>
         <label
           className={labelClassName}
           onClick={this._handleChange}
         >
-          {!input.value &&
-            <FontAwesomeIcon
-              icon={['far', 'square']}
-            />}
-          {input.value &&
-            <FontAwesomeIcon
-              icon={['far', 'check-square']}
-            />}
+          <FontAwesomeIcon
+            icon={icon}
+          />
           <div
             className="ml-2"
           >
@@ -70,10 +74,10 @@ class CheckboxField extends React.Component {
           </div>
         </label>
         <FieldError
-          error={meta.error}
-          touched={meta.touched}
+          error={errors[name]}
+          touched={touched[name]}
         />
-      </div>
+      </>
     );
   }
 }

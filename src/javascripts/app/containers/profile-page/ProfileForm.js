@@ -5,41 +5,24 @@ import {
   InputField,
   SelectField
 } from 'javascripts/shared/components';
-import { Field, reduxForm } from 'redux-form';
+import { Field, Form } from 'formik';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { isRequired } from 'javascripts/validators';
 import moment from 'moment';
 
 class ProfileForm extends React.Component {
   static propTypes = {
-    error: PropTypes.string,
-    handleSubmit: PropTypes.func.isRequired,
-    onUpdateUser: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired
+    isSubmitting: PropTypes.bool.isRequired,
+    status: PropTypes.string
   }
 
   static defaultProps = {
-    error: null
-  }
-
-  constructor(props) {
-    super(props);
-
-    this._handleSubmit = this._handleSubmit.bind(this);
+    status: null
   }
 
   shouldComponentUpdate() {
     return true;
-  }
-
-  _handleSubmit(data) {
-    const { onUpdateUser } = this.props;
-
-    return new Promise((resolve, reject) => {
-      onUpdateUser(data, resolve, reject);
-    });
   }
 
   _convertToOptions(values) {
@@ -81,24 +64,22 @@ class ProfileForm extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { error, handleSubmit, submitting } = this.props;
+    const { isSubmitting, status } = this.props;
 
     return (
-      <form
+      <Form
         noValidate
-        onSubmit={handleSubmit(this._handleSubmit)}
       >
-        <FormError error={error} />
+        <FormError error={status} />
         <div className="mb-4">
           <Field
             autoCapitalize="sentences"
             autoCorrect="off"
             component={InputField}
-            disabled={submitting}
             label="Name"
             name="name"
+            required
             type="text"
-            validate={[isRequired]}
           />
         </div>
         <div className="mb-4">
@@ -106,20 +87,18 @@ class ProfileForm extends React.Component {
             autoCapitalize="off"
             autoCorrect="off"
             component={InputField}
-            disabled={submitting}
             label="Recent Projects List Size"
             name="recentProjectsListSize"
+            required
             type="number"
-            validate={[isRequired]}
           />
         </div>
         <div className="mb-4">
           <Field
             component={SelectField}
-            disabled={submitting}
             label="Recent Projects Sort"
             name="recentProjectsSort"
-            validate={[isRequired]}
+            required
           >
             <option value="">
               {'--Select--'}
@@ -144,10 +123,9 @@ class ProfileForm extends React.Component {
         <div className="mb-4">
           <Field
             component={SelectField}
-            disabled={submitting}
             label="Timezone"
             name="timezone"
-            validate={[isRequired]}
+            required
           >
             <option value="">
               {'--Select--'}
@@ -158,7 +136,6 @@ class ProfileForm extends React.Component {
         <div className="mb-4">
           <Field
             component={CheckboxField}
-            disabled={submitting}
             label="Autoload Last Description"
             name="autoloadLastDescription"
           />
@@ -166,18 +143,16 @@ class ProfileForm extends React.Component {
         <Button
           className="py-2"
           color="green"
-          disabled={submitting}
-          loading={submitting}
+          disabled={isSubmitting}
+          loading={isSubmitting}
           type="submit"
         >
-          {submitting ? 'Submitting...' : 'Submit'}
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </Button>
-      </form>
+      </Form>
     );
   }
   /* eslint-enable max-lines-per-function */
 }
 
-export default reduxForm({
-  form: 'ProfileForm'
-})(ProfileForm);
+export default ProfileForm;

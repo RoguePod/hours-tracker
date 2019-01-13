@@ -8,30 +8,29 @@ import cx from 'classnames';
 class InputField extends React.Component {
   static propTypes = {
     className: PropTypes.string,
+    disabled: PropTypes.bool,
+    field: PropTypes.field.isRequired,
+    form: PropTypes.form.isRequired,
     id: PropTypes.string,
-    input: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      onChange: PropTypes.func.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    }).isRequired,
     label: PropTypes.string,
-    meta: PropTypes.shape({
-      error: PropTypes.string,
-      touched: PropTypes.bool
-    }).isRequired
+    required: PropTypes.bool,
+    type: PropTypes.string
   }
 
   static defaultProps = {
     className: null,
+    disabled: false,
     id: null,
-    label: null
+    label: null,
+    required: false,
+    type: 'text'
   }
 
   constructor(props) {
     super(props);
 
     this.state = {
-      id: props.id ? props.id : _uniqueId('input_')
+      id: props.id || _uniqueId('input_')
     };
   }
 
@@ -52,43 +51,46 @@ class InputField extends React.Component {
   }
 
   render() {
-    const { className, input, label, meta, ...rest } = this.props;
+    const {
+      className, disabled, field, form: { errors, isSubmitting, touched },
+      label, required, ...rest
+    } = this.props;
     const { id } = this.state;
 
-    /* eslint-disable no-unneeded-ternary */
-    const isError = meta.touched && meta.error ? true : false;
-    /* eslint-enable no-unneeded-ternary */
+    const hasError = errors[field.name] && touched[field.name];
 
     const inputClassName = cx(
       'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
       'leading-tight focus:outline-none transition',
       {
-        'border-grey-light': !isError,
-        'border-red': isError,
-        'focus:border-blue-light': !isError,
-        'focus:border-red': isError
+        'border-grey-light': !hasError,
+        'border-red': hasError,
+        'focus:border-blue-light': !hasError,
+        'focus:border-red': hasError
       },
       className
     );
 
     return (
       <>
-        {label &&
+        {label && label.length > 0 &&
           <Label
-            error={isError}
+            error={hasError}
             htmlFor={id}
+            required={required}
           >
             {label}
           </Label>}
         <input
-          {...input}
+          {...field}
           {...rest}
           className={inputClassName}
+          disabled={disabled || isSubmitting}
           id={id}
         />
         <FieldError
-          error={meta.error}
-          touched={meta.touched}
+          error={errors[field.name]}
+          touched={touched[field.name]}
         />
       </>
     );

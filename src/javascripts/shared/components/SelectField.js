@@ -6,85 +6,110 @@ import React from 'react';
 import _uniqueId from 'lodash/uniqueId';
 import cx from 'classnames';
 
-const SelectField = (props) => {
-  const { children, className, label, id, input, meta, ...rest } = props;
+class SelectField extends React.Component {
+  static propTypes = {
+    children: PropTypes.node,
+    className: PropTypes.string,
+    disabled: PropTypes.bool,
+    field: PropTypes.field.isRequired,
+    form: PropTypes.form.isRequired,
+    id: PropTypes.string,
+    label: PropTypes.string,
+    required: PropTypes.bool
+  }
 
-  /* eslint-disable no-unneeded-ternary */
-  const isError = meta.touched && meta.error ? true : false;
-  /* eslint-enable no-unneeded-ternary */
+  static defaultProps = {
+    children: null,
+    className: null,
+    disabled: false,
+    id: null,
+    label: null,
+    required: false
+  }
 
-  const inputClassName = cx(
-    'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-    'leading-tight focus:outline-none bg-white cursor-pointer h-full ' +
-    'transition',
-    {
-      'border-grey-light': !isError,
-      'border-red': isError,
-      'focus:border-blue-light': !isError,
-      'focus:border-red': isError
-    },
-    className
-  );
+  constructor(props) {
+    super(props);
 
-  const arrowClasses =
-    'pointer-events-none absolute pin-y pin-r flex items-center px-4';
+    this.state = {
+      id: props.id || _uniqueId('input_')
+    };
+  }
 
-  const inputId = id ? id : _uniqueId('input_');
+  shouldComponentUpdate() {
+    return true;
+  }
 
-  return (
-    <>
-      {label &&
-        <Label
-          error={isError}
-          htmlFor={inputId}
-        >
-          {label}
-        </Label>}
+  componentDidUpdate(prevProps) {
+    const { id } = this.props;
 
-      <div className="relative">
-        <select
-          {...input}
-          {...rest}
-          className={inputClassName}
-          id={inputId}
-        >
-          {children}
-        </select>
-        <div className={arrowClasses}>
-          <FontAwesomeIcon
-            icon="caret-down"
-          />
+    if (id !== prevProps.id) {
+      if (id) {
+        this.setState({ id });
+      } else if (!id && prevProps.id) {
+        this.setState({ id: _uniqueId('input_') });
+      }
+    }
+  }
+
+  render() {
+    const {
+      children, className, disabled, field,
+      form: { errors, isSubmitting, touched }, label, required, ...rest
+    } = this.props;
+    const { id } = this.state;
+
+    const hasError = errors[field.name] && touched[field.name];
+
+    const inputClassName = cx(
+      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
+      'leading-tight focus:outline-none bg-white cursor-pointer h-full ' +
+      'transition',
+      {
+        'border-grey-light': !hasError,
+        'border-red': hasError,
+        'focus:border-blue-light': !hasError,
+        'focus:border-red': hasError
+      },
+      className
+    );
+
+    const arrowClasses =
+      'pointer-events-none absolute pin-y pin-r flex items-center px-4';
+
+    return (
+      <>
+        {label && label.length > 0 &&
+          <Label
+            error={hasError}
+            htmlFor={id}
+            required={required}
+          >
+            {label}
+          </Label>}
+
+        <div className="relative">
+          <select
+            {...field}
+            {...rest}
+            className={inputClassName}
+            disabled={disabled || isSubmitting}
+            id={id}
+          >
+            {children}
+          </select>
+          <div className={arrowClasses}>
+            <FontAwesomeIcon
+              icon="caret-down"
+            />
+          </div>
         </div>
-      </div>
-      <FieldError
-        error={meta.error}
-        touched={meta.touched}
-      />
-    </>
-  );
-};
-
-SelectField.propTypes = {
-  children: PropTypes.node,
-  className: PropTypes.string,
-  id: PropTypes.string,
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-  }).isRequired,
-  label: PropTypes.string,
-  meta: PropTypes.shape({
-    errpr: PropTypes.string,
-    touched: PropTypes.bool
-  }).isRequired
-};
-
-SelectField.defaultProps = {
-  children: null,
-  className: null,
-  id: null,
-  label: null
-};
+        <FieldError
+          error={errors[field.name]}
+          touched={touched[field.name]}
+        />
+      </>
+    );
+  }
+}
 
 export default SelectField;

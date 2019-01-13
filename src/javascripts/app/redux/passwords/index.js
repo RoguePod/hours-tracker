@@ -1,4 +1,3 @@
-import { SubmissionError, reset } from 'redux-form';
 import { call, fork, put, select, takeLatest } from 'redux-saga/effects';
 import { startFetching, stopFetching } from 'javascripts/shared/redux/fetching';
 
@@ -15,12 +14,12 @@ const PASSWORD_UPDATE = `${path}/PASSWORD_UPDATE`;
 
 // Actions
 
-export const forgotPassword = (params, resolve, reject) => {
-  return { params, reject, resolve, type: PASSWORD_FORGOT };
+export const forgotPassword = (params, actions) => {
+  return { actions, params, type: PASSWORD_FORGOT };
 };
 
-export const updatePassword = (params, resolve, reject) => {
-  return { params, reject, resolve, type: PASSWORD_UPDATE };
+export const updatePassword = (params, actions) => {
+  return { actions, params, type: PASSWORD_UPDATE };
 };
 
 // Sagas
@@ -40,18 +39,18 @@ const handlePasswordForgot = (email) => {
   );
 };
 
-function* passwordForgot({ params: { email }, resolve, reject }) {
+function* passwordForgot({ actions, params: { email } }) {
   try {
     yield put(startFetching(PASSWORD_FORGOT));
 
     const { error } = yield call(handlePasswordForgot, email);
 
     if (error) {
-      reject(new SubmissionError({ _error: error }));
+      actions.setSubmitting(false);
+      actions.setStatus(error);
     } else {
       yield put(addFlash('Reset Password Instructions sent!'));
       yield call(history.push, '/sign-in');
-      resolve();
     }
   } finally {
     yield put(stopFetching(PASSWORD_FORGOT));
@@ -77,7 +76,7 @@ const handleUpdatePassword = (auth, password) => {
   );
 };
 
-function* passwordUpdate({ params, resolve, reject }) {
+function* passwordUpdate({ actions, params }) {
   try {
     yield put(startFetching(PASSWORD_UPDATE));
 
@@ -87,11 +86,12 @@ function* passwordUpdate({ params, resolve, reject }) {
     const { error } = yield call(handleUpdatePassword, auth, password);
 
     if (error) {
-      reject(new SubmissionError({ _error: error.message }));
+      actions.setSubmitting(false);
+      actions.resetForm();
+      actions.setStatus(error.message);
     } else {
       yield put(addFlash('Password has been updated'));
-      yield put(reset('PasswordForm'));
-      resolve();
+      actions.resetForm();
     }
   } finally {
     yield put(stopFetching(PASSWORD_UPDATE));

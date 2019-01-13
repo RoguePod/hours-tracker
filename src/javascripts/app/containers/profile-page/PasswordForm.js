@@ -1,77 +1,48 @@
 import { Button, FormError, InputField } from 'javascripts/shared/components';
-import { Field, reduxForm } from 'redux-form';
+import { Field, Form } from 'formik';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { isRequired } from 'javascripts/validators';
 
-class PasswordForm extends React.Component {
-  static propTypes = {
-    error: PropTypes.string,
-    handleSubmit: PropTypes.func.isRequired,
-    onUpdatePassword: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired
-  }
+const PasswordForm = (props) => {
+  const { isSubmitting, status } = props;
 
-  static defaultProps = {
-    error: null
-  }
-
-  constructor(props) {
-    super(props);
-
-    this._handleSubmit = this._handleSubmit.bind(this);
-  }
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  _handleSubmit(data) {
-    const { onUpdatePassword } = this.props;
-
-    return new Promise((resolve, reject) => {
-      onUpdatePassword(data, resolve, reject);
-    });
-  }
-
-  render() {
-    const {
-      error, handleSubmit, submitting
-    } = this.props;
-
-    return (
-      <form
-        noValidate
-        onSubmit={handleSubmit(this._handleSubmit)}
+  return (
+    <Form
+      noValidate
+    >
+      <FormError error={status} />
+      <div className="mb-4">
+        <Field
+          autoCapitalize="off"
+          autoCorrect="off"
+          component={InputField}
+          label="New Password"
+          name="password"
+          required
+          type="password"
+        />
+      </div>
+      <Button
+        className="py-2"
+        color="green"
+        disabled={isSubmitting}
+        loading={isSubmitting}
+        type="submit"
       >
-        <FormError error={error} />
-        <div className="mb-4">
-          <Field
-            autoCapitalize="off"
-            autoCorrect="off"
-            component={InputField}
-            disabled={submitting}
-            label="New Password"
-            name="password"
-            type="password"
-            validate={[isRequired]}
-          />
-        </div>
-        <Button
-          className="py-2"
-          color="green"
-          disabled={submitting}
-          loading={submitting}
-          type="submit"
-        >
-          {submitting ? 'Submitting...' : 'Submit'}
-        </Button>
-      </form>
-    );
-  }
-}
+        {isSubmitting ? 'Submitting...' : 'Submit'}
+      </Button>
+    </Form>
+  );
+};
 
-export default reduxForm({
-  form: 'PasswordForm'
-})(PasswordForm);
+PasswordForm.propTypes = {
+  isSubmitting: PropTypes.bool.isRequired,
+  status: PropTypes.string
+};
+
+PasswordForm.defaultProps = {
+  status: null
+};
+
+export default PasswordForm;

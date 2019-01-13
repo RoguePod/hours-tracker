@@ -2,7 +2,6 @@ import { call, fork, put, select, takeLatest } from 'redux-saga/effects';
 import { firebase, updateRef } from 'javascripts/globals';
 import { startFetching, stopFetching } from 'javascripts/shared/redux/fetching';
 
-import { SubmissionError } from 'redux-form';
 import { addFlash } from 'javascripts/shared/redux/flashes';
 import update from 'immutability-helper';
 
@@ -33,16 +32,16 @@ export default (state = initialState, action) => {
 
 // Actions
 
-export const signInUser = (params, reject) => {
-  return { params, reject, type: USER_SIGN_IN };
+export const signInUser = (params, actions) => {
+  return { actions, params, type: USER_SIGN_IN };
 };
 
 export const signOutUser = () => {
   return { type: USER_SIGN_OUT };
 };
 
-export const updateUser = (params, resolve, reject) => {
-  return { params, reject, resolve, type: USER_UPDATE };
+export const updateUser = (params, actions) => {
+  return { actions, params, type: USER_UPDATE };
 };
 
 const setFetching = (fetching) => {
@@ -51,7 +50,7 @@ const setFetching = (fetching) => {
 
 // Sagas
 
-function* userSignIn({ params: { email, password }, reject }) {
+function* userSignIn({ actions, params: { email, password } }) {
   try {
     yield put(setFetching('Signing In...'));
 
@@ -59,7 +58,8 @@ function* userSignIn({ params: { email, password }, reject }) {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .catch((error) => {
-        reject(new SubmissionError({ _error: error.message }));
+        actions.setSubmitting(false);
+        actions.setStatus(error.message);
       });
   } finally {
     yield put(setFetching(null));
@@ -86,7 +86,7 @@ function* watchUserSignOut() {
   yield takeLatest(USER_SIGN_OUT, userSignOut);
 }
 
-export function* userUpdate({ params, resolve, reject }) {
+export function* userUpdate({ actions, params }) {
   try {
     yield put(startFetching(USER_UPDATE));
 
@@ -95,12 +95,12 @@ export function* userUpdate({ params, resolve, reject }) {
     const { error } = yield call(updateRef, user.snapshot.ref, params);
 
     if (error) {
-      reject(new SubmissionError({ _error: error.message }));
+      actions.setStatus(error.message);
     } else {
       yield put(addFlash('Profile has been updated'));
-      resolve();
     }
   } finally {
+    actions.setSubmitting(false);
     yield put(stopFetching(USER_UPDATE));
   }
 }

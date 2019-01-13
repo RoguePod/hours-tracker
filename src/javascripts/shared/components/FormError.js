@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import { isBlank } from 'javascripts/globals';
 
 const FormError = ({ error }) => {
-  if (error) {
+  if (!isBlank(error)) {
     const alertClasses =
       'bg-red-lightest border-t-4 border-red rounded text-red-darkest ' +
       'px-4 py-3 shadow-md flex items-center mb-4';

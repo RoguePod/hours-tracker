@@ -1,3 +1,6 @@
+import * as Yup from 'yup';
+
+import { Formik } from 'formik';
 import PasswordForm from './PasswordForm';
 import ProfileForm from './ProfileForm';
 import PropTypes from 'javascripts/prop-types';
@@ -41,6 +44,24 @@ class ProfilePage extends React.Component {
   render() {
     const { onUpdatePassword, onUpdateUser, user } = this.props;
 
+    const profileValidationSchema = Yup.object().shape({
+      autoloadLastDescription: Yup.boolean(),
+      name: Yup.string().required('Name is Required'),
+      recentProjectsListSize: Yup.number()
+        .required('Recent Projects List Size is Required'),
+      recentProjectsSort: Yup.string()
+        .required('Recent Projects Sort is Required'),
+      timezone: Yup.string().required('Timezone is Required')
+    });
+
+    const passwordValidationSchema = Yup.object().shape({
+      password: Yup.string().required('Password is Required')
+    });
+
+    const initialValues = {
+      password: ''
+    };
+
     return (
       <div className="p-4">
         <h1 className="text-blue mb-2">
@@ -50,17 +71,22 @@ class ProfilePage extends React.Component {
           <h3 className="text-blue mb-2">
             {'Settings'}
           </h3>
-          <ProfileForm
+          <Formik
+            component={ProfileForm}
             initialValues={this._getInitialValues(user)}
-            onUpdateUser={onUpdateUser}
+            onSubmit={onUpdateUser}
+            validationSchema={profileValidationSchema}
           />
         </div>
         <div className="border rounded p-4">
           <h3 className="text-blue mb-2">
             {'Password'}
           </h3>
-          <PasswordForm
-            onUpdatePassword={onUpdatePassword}
+          <Formik
+            component={PasswordForm}
+            initialValues={initialValues}
+            onSubmit={onUpdatePassword}
+            validationSchema={passwordValidationSchema}
           />
         </div>
       </div>

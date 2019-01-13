@@ -27,11 +27,23 @@ const propTypes = {
     startedAt: PropTypes.string,
     stoppedAt: PropTypes.string
   }),
+  field: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    onBlur: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired
+  }),
   flash: PropTypes.shape({
     color: PropTypes.string,
     icon: PropTypes.string,
     id: PropTypes.number.isRequired,
     message: PropTypes.string.isRequired
+  }),
+  form: PropTypes.shape({
+    errors: PropTypes.object.isRequired,
+    isSubmitting: PropTypes.bool.isRequired,
+    setFieldValue: PropTypes.func.isRequired,
+    touched: PropTypes.object.isRequired,
+    values: PropTypes.object.isRequired
   }),
   pagination: PropTypes.shape({
     page: PropTypes.number.isRequired,
@@ -77,7 +89,7 @@ const propTypes = {
   user: PropTypes.shape({
     autoloadLastDescription: PropTypes.bool,
     name: PropTypes.string,
-    recentProjectsListSize: PropTypes.string,
+    recentProjectsListSize: PropTypes.number,
     recentProjectsSort: PropTypes.oneOf(
       ['startedAt', 'client.name', 'project.name']
     ),

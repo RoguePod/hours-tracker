@@ -4,96 +4,70 @@ import {
   InputField,
   Link
 } from 'javascripts/shared/components';
-import { Field, reduxForm } from 'redux-form';
-import { isEmail, isRequired } from 'javascripts/validators';
+import { Field, Form } from 'formik';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
-class SignInForm extends React.Component {
-  static propTypes = {
-    error: PropTypes.string,
-    handleSubmit: PropTypes.func.isRequired,
-    onSignInUser: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired
-  }
+const SignInForm = (props) => {
+  const { isSubmitting, status } = props;
 
-  static defaultProps = {
-    error: null
-  }
+  return (
+    <Form
+      noValidate
+    >
+      <FormError error={status} />
+      <div className="mb-4">
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          autoFocus
+          component={InputField}
+          label="Email"
+          name="email"
+          required
+          type="email"
+        />
+      </div>
+      <div className="mb-4">
+        <Field
+          autoCapitalize="none"
+          autoCorrect="off"
+          component={InputField}
+          label="Password"
+          name="password"
+          required
+          type="password"
+        />
+      </div>
+      <div className="flex flex-row justify-between">
+        <Button
+          className="py-2"
+          color="green"
+          disabled={isSubmitting}
+          loading={isSubmitting}
+          type="submit"
+        >
+          {isSubmitting ? 'Signing in...' : 'Submit'}
+        </Button>
+        <Link
+          className="py-2"
+          to="/sign-in/forgot-password"
+        >
+          {'Forgot Password?'}
+        </Link>
+      </div>
+    </Form>
+  );
+};
 
-  constructor(props) {
-    super(props);
+SignInForm.propTypes = {
+  isSubmitting: PropTypes.bool.isRequired,
+  status: PropTypes.string
+};
 
-    this._handleSubmit = this._handleSubmit.bind(this);
-  }
+SignInForm.defaultProps = {
+  status: null
+};
 
-  _handleSubmit(data) {
-    const { onSignInUser } = this.props;
-
-    return new Promise((resolve, reject) => {
-      onSignInUser(data, reject);
-    });
-  }
-
-  render() {
-    const {
-      handleSubmit, error, submitting
-    } = this.props;
-
-    return (
-      <form
-        noValidate
-        onSubmit={handleSubmit(this._handleSubmit)}
-      >
-        <FormError error={error} />
-        <div className="mb-4">
-          <Field
-            autoCapitalize="none"
-            autoCorrect="off"
-            autoFocus
-            component={InputField}
-            disabled={submitting}
-            label="Email"
-            name="email"
-            type="email"
-            validate={[isRequired, isEmail]}
-          />
-        </div>
-        <div className="mb-4">
-          <Field
-            autoCapitalize="none"
-            autoCorrect="off"
-            component={InputField}
-            disabled={submitting}
-            label="Password"
-            name="password"
-            type="password"
-            validate={isRequired}
-          />
-        </div>
-        <div className="flex flex-row justify-between">
-          <Button
-            className="py-2"
-            color="green"
-            disabled={submitting}
-            loading={submitting}
-            type="submit"
-          >
-            {submitting ? 'Signing in...' : 'Submit'}
-          </Button>
-          <Link
-            className="py-2"
-            to="/sign-in/forgot-password"
-          >
-            {'Forgot Password?'}
-          </Link>
-        </div>
-      </form>
-    );
-  }
-}
-
-export default reduxForm({
-  form: 'SignInForm'
-})(SignInForm);
+export default SignInForm;
