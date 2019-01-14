@@ -6,10 +6,8 @@ import moment from 'moment';
 
 class DateField extends React.Component {
   static propTypes = {
-    input: PropTypes.shape({
-      onChange: PropTypes.func.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    }).isRequired
+    field: PropTypes.field.isRequired,
+    form: PropTypes.form.isRequired
   }
 
   constructor(props) {
@@ -23,19 +21,19 @@ class DateField extends React.Component {
   }
 
   _handleChange(value) {
-    const { input: { onChange } } = this.props;
+    const { field: { name }, form: { setFieldValue } } = this.props;
 
     const date = moment(value);
 
     if (date && date.isValid()) {
-      onChange(date.format('YYYY-MM-DD'));
+      setFieldValue(name, date.format('YYYY-MM-DD'));
     } else {
-      onChange('');
+      setFieldValue(name, '');
     }
   }
 
   render() {
-    const { input: { value } } = this.props;
+    const { field: { value } } = this.props;
 
     let date = null;
     if (value && value.length > 0) {

@@ -9,14 +9,19 @@ import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
 import EntriesFilterForm from './EntriesFilterForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Formik } from 'formik';
 import IndexAdminMenu from './IndexAdminMenu';
 import IndexMenu from './IndexMenu';
 import IndexTable from './index-table/IndexTable';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SummaryTable from './summary-table/SummaryTable';
+import _compact from 'lodash/compact';
+import _get from 'lodash/get';
 import { connect } from 'react-redux';
 import cx from 'classnames';
+import { history } from 'javascripts/app/redux/store';
+import { toQuery } from 'javascripts/globals';
 
 class EntriesIndexStack extends React.Component {
   static propTypes = {
@@ -41,6 +46,9 @@ class EntriesIndexStack extends React.Component {
     this._renderIndexPage = this._renderIndexPage.bind(this);
     this._renderSummaryTable = this._renderSummaryTable.bind(this);
     this._renderTabs = this._renderTabs.bind(this);
+    this._renderForm = this._renderForm.bind(this);
+    this._handleSubmit = this._handleSubmit.bind(this);
+    this._handleClear = this._handleClear.bind(this);
   }
 
   shouldComponentUpdate() {
@@ -51,6 +59,48 @@ class EntriesIndexStack extends React.Component {
     const { onReset } = this.props;
 
     onReset();
+  }
+
+  _handleSubmit(data, actions) {
+    const { admin, location, query } = this.props;
+    const { pathname } = location;
+
+    const isReports        = pathname === '/entries/reports';
+    const isReportsSummary = pathname === '/entries/reports/summary';
+    const showAdmin        = admin && (isReports || isReportsSummary);
+
+    const values = _compact(Object.values(data));
+
+    if (values.length > 0) {
+      const search = {
+        clientRef: _get(data, 'clientRef.path', ''),
+        endDate: _get(data, 'endDate', ''),
+        projectRef: _get(data, 'projectRef.path', ''),
+        startDate: _get(data, 'startDate', '')
+      };
+
+      if (showAdmin) {
+        search.userRef = _get(data, 'userRef.path', '');
+      }
+
+      const route = {
+        ...location, search: `?${toQuery({ ...query, ...search })}`
+      };
+
+      history.replace(route);
+    } else {
+      this._handleClear();
+    }
+
+    actions.setSubmitting(false);
+  }
+
+  _handleClear() {
+    /* eslint-disable no-unused-vars */
+    const { location: { search, ...rest } } = this.props;
+    /* eslint-enable no-unused-vars */
+
+    history.replace(rest);
   }
 
   _renderIndexPage() {
@@ -150,6 +200,25 @@ class EntriesIndexStack extends React.Component {
     );
   }
 
+  _renderForm(props) {
+    const { admin, location, query } = this.props;
+    const { pathname } = location;
+
+    const isReports        = pathname === '/entries/reports';
+    const isReportsSummary = pathname === '/entries/reports/summary';
+    const showAdmin        = admin && (isReports || isReportsSummary);
+
+    return (
+      <EntriesFilterForm
+        {...props}
+        location={location}
+        onClear={this._handleClear}
+        query={query}
+        showAdmin={showAdmin}
+      />
+    );
+  }
+
   render() {
     const { admin, fetching, location, query } = this.props;
     const { pathname } = location;
@@ -182,11 +251,11 @@ class EntriesIndexStack extends React.Component {
         </div>
         {admin && this._renderTabs(showAdmin)}
         <div className="border rounded p-4">
-          <EntriesFilterForm
+          <Formik
+            enableReinitialize
             initialValues={query}
-            location={location}
-            query={query}
-            showAdmin={showAdmin}
+            onSubmit={this._handleSubmit}
+            render={this._renderForm}
           />
         </div>
         <div className="my-4">

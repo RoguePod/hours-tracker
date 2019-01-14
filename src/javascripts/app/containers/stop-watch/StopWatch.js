@@ -8,11 +8,13 @@ import {
   updateEntry
 } from 'javascripts/app/redux/running';
 
-import EntryForm from './EntryForm';
+import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import RunningForm from './RunningForm';
 import Timer from './Timer';
+import _get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 
@@ -41,6 +43,7 @@ class StopWatch extends React.Component {
     this._handleStart = this._handleStart.bind(this);
     this._handleSwap = this._handleSwap.bind(this);
     this._handleStop = this._handleStop.bind(this);
+    this._renderForm = this._renderForm.bind(this);
   }
 
   componentDidMount() {
@@ -149,10 +152,27 @@ class StopWatch extends React.Component {
     );
   }
 
+  _renderForm(props) {
+    const { onUpdateEntry } = this.props;
+
+    return (
+      <RunningForm
+        {...props}
+        onUpdateEntry={onUpdateEntry}
+      />
+    );
+  }
+
   render() {
-    const { entry, fetching, onUpdateEntry, ready } = this.props;
+    const { entry, fetching, ready } = this.props;
 
     const hasEntry = ready && entry.id;
+
+    const initialValues = {
+      clientRef: _get(entry, 'clientRef', ''),
+      description: _get(entry, 'description', ''),
+      projectRef: _get(entry, 'projectRef', '')
+    };
 
     return (
       <div className="relative">
@@ -163,9 +183,10 @@ class StopWatch extends React.Component {
           />
           {hasEntry && this._renderRunningButtons()}
           {!hasEntry && this._renderNotRunningButtons()}
-          <EntryForm
-            initialValues={entry}
-            onUpdateEntry={onUpdateEntry}
+          <Formik
+            enableReinitialize
+            initialValues={initialValues}
+            render={this._renderForm}
           />
         </div>
         {fetching &&

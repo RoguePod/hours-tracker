@@ -12,30 +12,31 @@ class TextAreaField extends React.Component {
   static propTypes = {
     autoHeight: PropTypes.bool,
     className: PropTypes.string,
+    disabled: PropTypes.bool,
+    field: PropTypes.field.isRequired,
+    form: PropTypes.form.isRequired,
     id: PropTypes.string,
-    input: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      onChange: PropTypes.func.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    }).isRequired,
     label: PropTypes.string,
-    meta: PropTypes.shape({
-      error: PropTypes.string,
-      touched: PropTypes.bool
-    }).isRequired
+    required: PropTypes.bool
   }
 
   static defaultProps = {
     autoHeight: false,
     className: null,
+    disabled: false,
     id: null,
-    label: null
+    label: null,
+    required: false
   }
 
   constructor(props) {
     super(props);
 
     this.ref = React.createRef();
+
+    this.state = {
+      id: props.id || _uniqueId('input_')
+    };
 
     this._removeAutoHeightStyles = this._removeAutoHeightStyles.bind(this);
     this._updateHeight = this._updateHeight.bind(this);
@@ -51,7 +52,7 @@ class TextAreaField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { autoHeight, input: { value } } = this.props;
+    const { autoHeight, field: { value }, id } = this.props;
 
     // removed autoHeight
     if (!autoHeight && prevProps.autoHeight) {
@@ -60,8 +61,16 @@ class TextAreaField extends React.Component {
 
     // added autoHeight or value changed
     if ((autoHeight && !prevProps.autoHeight) ||
-        (prevProps.input.value !== value)) {
+        (prevProps.field.value !== value)) {
       this._updateHeight();
+    }
+
+    if (id !== prevProps.id) {
+      if (id) {
+        this.setState({ id });
+      } else if (!id && prevProps.id) {
+        this.setState({ id: _uniqueId('input_') });
+      }
     }
   }
 
@@ -99,57 +108,57 @@ class TextAreaField extends React.Component {
   }
 
   _handleChange(event) {
-    const { input: { onChange } } = this.props;
+    const { field: { name }, form: { setFieldValue } } = this.props;
 
-    onChange(event);
+    setFieldValue(name, event.target.value);
     this._updateHeight();
   }
 
   render() {
     /* eslint-disable no-unused-vars */
     const {
-      autoHeight, className, id, input, label, meta, ...rest
+      autoHeight, className, disabled, field,
+      form: { errors, isSubmitting, touched }, label, required, ...rest
     } = this.props;
+    const { id } = this.state;
     /* eslint-enable no-unused-vars */
 
-    /* eslint-disable no-unneeded-ternary */
-    const isError = meta.touched && meta.error ? true : false;
-    /* eslint-enable no-unneeded-ternary */
+    const hasError = errors[field.name] && touched[field.name];
 
     const textAreaClassName = cx(
       'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
       'leading-tight focus:outline-none transition',
       {
-        'border-grey-light': !isError,
-        'border-red': isError,
-        'focus:border-blue-light': !isError,
-        'focus:border-red': isError
+        'border-grey-light': !hasError,
+        'border-red': hasError,
+        'focus:border-blue-light': !hasError,
+        'focus:border-red': hasError
       },
       className
     );
-
-    const inputId = id ? id : _uniqueId('input_');
 
     return (
       <>
         {label &&
           <Label
-            error={isError}
-            htmlFor={inputId}
+            error={hasError}
+            htmlFor={id}
+            required={required}
           >
             {label}
           </Label>}
         <textarea
-          {...input}
+          {...field}
           {...rest}
           className={textAreaClassName}
-          id={inputId}
+          disabled={disabled || isSubmitting}
+          id={id}
           onChange={this._handleChange}
           ref={this.ref}
         />
         <FieldError
-          error={meta.error}
-          touched={meta.touched}
+          error={errors[field.name]}
+          touched={touched[field.name]}
         />
       </>
     );

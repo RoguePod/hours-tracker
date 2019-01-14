@@ -11,29 +11,23 @@ import _get from 'lodash/get';
 import _uniqueId from 'lodash/uniqueId';
 import { connect } from 'react-redux';
 import cx from 'classnames';
-import { formValueSelector } from 'redux-form';
 
 class ProjectField extends React.Component {
   static propTypes = {
     className: PropTypes.string,
     clientRef: PropTypes.docRef,
     clients: PropTypes.docRef.isRequired,
+    disabled: PropTypes.bool,
+    field: PropTypes.field.isRequired,
+    form: PropTypes.form.isRequired,
     id: PropTypes.string,
-    input: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      onChange: PropTypes.func.isRequired,
-      value: PropTypes.string
-    }).isRequired,
     label: PropTypes.string,
-    meta: PropTypes.shape({
-      errpr: PropTypes.string,
-      touched: PropTypes.bool
-    }).isRequired,
     nameClient: PropTypes.string.isRequired,
     nameProject: PropTypes.string.isRequired,
     onProjectChange: PropTypes.func.isRequired,
     projectRef: PropTypes.docRef,
     ready: PropTypes.bool.isRequired,
+    required: PropTypes.bool,
     results: PropTypes.shape({
       clientName: PropTypes.shape({ name: PropTypes.string })
     }).isRequired
@@ -42,13 +36,20 @@ class ProjectField extends React.Component {
   static defaultProps = {
     className: null,
     clientRef: null,
+    disabled: false,
     id: null,
     label: null,
-    projectRef: null
+    projectRef: null,
+    required: false
   }
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      focused: false,
+      id: props.id || _uniqueId('input_')
+    };
 
     this._handleChange = this._handleChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
@@ -56,12 +57,20 @@ class ProjectField extends React.Component {
     this._findValue = this._findValue.bind(this);
   }
 
-  state = {
-    focused: false
-  }
-
   shouldComponentUpdate() {
     return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { id } = this.props;
+
+    if (id !== prevProps.id) {
+      if (id) {
+        this.setState({ id });
+      } else if (!id && prevProps.id) {
+        this.setState({ id: _uniqueId('input_') });
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -74,7 +83,9 @@ class ProjectField extends React.Component {
   timeout = null
 
   _handleChange(project) {
-    const { input: { onChange }, onProjectChange } = this.props;
+    const {
+      field: { name }, form: { setFieldValue }, onProjectChange
+    } = this.props;
 
     if (this.timeout) {
       clearTimeout(this.timeout);
@@ -82,28 +93,30 @@ class ProjectField extends React.Component {
     }
 
     onProjectChange(project.clientRef, project.projectRef);
-    onChange('');
+    setFieldValue(name, '');
     this.setState({ focused: false });
   }
 
   _handleBlur() {
-    const { input: { onChange, value }, onProjectChange } = this.props;
+    const {
+      field: { name, value }, form: { setFieldValue }, onProjectChange
+    } = this.props;
 
     this.timeout = setTimeout(() => {
       if (value.length === 0) {
         onProjectChange(null, null);
       }
-      onChange('');
+      setFieldValue(name, '');
       this.setState({ focused: false });
     }, 250);
   }
 
   _handleFocus(event) {
-    const { input: { onChange } } = this.props;
+    const { field: { name }, form: { setFieldValue } } = this.props;
 
     const { target } = event;
 
-    onChange(this._findValue());
+    setFieldValue(name, this._findValue());
 
     this.setState({ focused: true }, () => {
       setTimeout(() => {
@@ -132,14 +145,19 @@ class ProjectField extends React.Component {
   }
 
   render() {
-    const { className, id, input, label, meta, ready, results } = this.props;
-    const { focused } = this.state;
+    /* eslint-disable no-unused-vars */
+    const {
+      className, clients, clientRef, disabled, field,
+      form: { errors, isSubmitting, touched },
+      label, nameClient, nameProject, onProjectChange, projectRef, ready,
+      required, results, ...rest
+    } = this.props;
+    /* eslint-enable no-unused-vars */
+    const { focused, id } = this.state;
 
-    /* eslint-disable no-unneeded-ternary */
-    const isError = meta.touched && meta.error ? true : false;
-    /* eslint-enable no-unneeded-ternary */
+    const hasError = errors[field.name] && touched[field.name];
 
-    let { value } = input;
+    let { value } = field;
 
     if (!focused) {
       value = this._findValue();
@@ -151,32 +169,32 @@ class ProjectField extends React.Component {
       'appearance-none border w-full py-2 px-3 text-grey-darker',
       'leading-tight focus:outline-none transition',
       {
-        'border-grey-light': !isError,
-        'border-red': isError,
-        'focus:border-blue-light': !isError,
-        'focus:border-red': isError,
+        'border-grey-light': !hasError,
+        'border-red': hasError,
+        'focus:border-blue-light': !hasError,
+        'focus:border-red': hasError,
         'rounded': keys.length === 0,
         'rounded-t': keys.length > 0
       },
       className
     );
 
-    const inputId = id ? id : _uniqueId('input_');
-
     return (
       <div className="relative">
-        {label &&
+        {label && label.length > 0 &&
           <Label
-            error={isError}
-            htmlFor={inputId}
+            error={hasError}
+            htmlFor={id}
+            required={required}
           >
             {label}
           </Label>}
         <input
-          {...input}
+          {...field}
+          {...rest}
           className={inputClassName}
-          disabled={!ready}
-          id={inputId}
+          disabled={!ready || disabled || isSubmitting}
+          id={id}
           onBlur={this._handleBlur}
           onFocus={this._handleFocus}
           value={value}
@@ -186,8 +204,8 @@ class ProjectField extends React.Component {
           onProjectClick={this._handleChange}
         />
         <FieldError
-          error={meta.error}
-          touched={meta.touched}
+          error={errors[field.name]}
+          touched={touched[field.name]}
         />
       </div>
     );
@@ -195,17 +213,16 @@ class ProjectField extends React.Component {
 }
 
 const props = (state, ownProps) => {
-  const { input: { name }, meta: { form }, nameClient, nameProject } = ownProps;
-
-  const formSelector = formValueSelector(form);
-  const query        = formSelector(state, name);
+  const {
+    field: { value }, form: { values }, nameClient, nameProject
+  } = ownProps;
 
   return {
-    clientRef: formSelector(state, nameClient),
+    clientRef: values[nameClient],
     clients: selectClientsByKey(state),
-    projectRef: formSelector(state, nameProject),
+    projectRef: values[nameProject],
     ready: state.clients.ready,
-    results: selectQueriedProjects(state, query)
+    results: selectQueriedProjects(state, value)
   };
 };
 

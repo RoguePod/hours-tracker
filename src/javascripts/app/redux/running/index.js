@@ -72,8 +72,8 @@ export const subscribeEntry = () => {
   return { type: ENTRY_SUBSCRIBE };
 };
 
-export const updateEntry = (params, reject) => {
-  return { params, reject, type: ENTRY_UPDATE };
+export const updateEntry = (params) => {
+  return { params, type: ENTRY_UPDATE };
 };
 
 export const reset = () => {
