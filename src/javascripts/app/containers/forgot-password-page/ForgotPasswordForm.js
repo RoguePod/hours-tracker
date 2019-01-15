@@ -9,9 +9,7 @@ import { Field, Form } from 'formik';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
-const ForgotPasswordForm = (props) => {
-  const { isSubmitting, status } = props;
-
+const ForgotPasswordForm = ({ isSubmitting, status }) => {
   return (
     <Form
       noValidate

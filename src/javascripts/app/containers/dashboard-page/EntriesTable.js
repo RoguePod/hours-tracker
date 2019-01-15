@@ -54,7 +54,7 @@ class EntriesTable extends React.Component {
     const { entries, fetching } = this.props;
 
     return (
-      <div className="relative min-h-300">
+      <div className="relative min-h-200">
         <div className="table-responsive">
           <table>
             <thead>

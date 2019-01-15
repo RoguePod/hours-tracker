@@ -9,9 +9,7 @@ import { Field, Form } from 'formik';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
-const SignInForm = (props) => {
-  const { isSubmitting, status } = props;
-
+const SignInForm = ({ isSubmitting, status }) => {
   return (
     <Form
       noValidate

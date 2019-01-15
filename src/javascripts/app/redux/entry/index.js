@@ -223,7 +223,7 @@ function* entryCreate({ params, reject, resolve }) {
       reject(new SubmissionError({ _error: error.message }));
     } else {
       yield put(resetForm('EntryForm'));
-      yield put(addFlash('Entry has saved.'));
+      yield put(addFlash('Entry has been created.'));
       resolve();
 
       if (history.action === 'POP') {
@@ -257,7 +257,7 @@ function* entryUpdate({ params, reject, resolve }) {
     if (error) {
       reject(new SubmissionError({ _error: error.message }));
     } else {
-      yield put(addFlash('Entry has saved.'));
+      yield put(addFlash('Entry has been updated.'));
 
       if (history.action === 'POP') {
         yield call(history.push, '/entries');

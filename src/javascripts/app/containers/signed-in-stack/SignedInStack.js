@@ -1,10 +1,14 @@
 import {
+  ClientEditModal,
+  ClientNewModal,
   ClientsStack,
   DashboardPage,
   EntriesStack,
   EntryEditModal,
   EntryNewModal,
-  ProfilePage
+  ProfilePage,
+  ProjectEditModal,
+  ProjectNewModal
 } from 'javascripts/app/containers';
 import { Redirect, Route, Switch } from 'react-router-dom';
 
@@ -118,6 +122,22 @@ class SignedInStack extends React.Component {
               <Switch
                 location={modalLocation}
               >
+                <Route
+                  component={ClientNewModal}
+                  path="/clients/new"
+                />
+                <Route
+                  component={ProjectNewModal}
+                  path="/clients/:clientId/projects/new"
+                />
+                <Route
+                  component={ProjectEditModal}
+                  path="/clients/:clientId/projects/:id"
+                />
+                <Route
+                  component={ClientEditModal}
+                  path="/clients/:id"
+                />
                 <Route
                   component={EntryNewModal}
                   path="/entries/new"

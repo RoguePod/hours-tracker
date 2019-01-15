@@ -1,5 +1,16 @@
+/* eslint-disable max-lines */
+
+import {
+  add,
+  firestore,
+  fromQuery,
+  isBlank,
+  parseClient,
+  updateRef
+} from 'javascripts/globals';
 import {
   all,
+  call,
   cancelled,
   fork,
   put,
@@ -7,20 +18,17 @@ import {
   takeEvery,
   takeLatest
 } from 'redux-saga/effects';
-import {
-  firestore,
-  fromQuery,
-  isBlank,
-  parseClient
-} from 'javascripts/globals';
 
 import Fuse from 'fuse.js';
 import _filter from 'lodash/filter';
+import _find from 'lodash/find';
 import _groupBy from 'lodash/groupBy';
 import _keyBy from 'lodash/keyBy';
 import _sortBy from 'lodash/sortBy';
+import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
+import { history } from 'javascripts/app/redux/store';
 import update from 'immutability-helper';
 
 // Selectors
@@ -39,13 +47,36 @@ const fuseOptions = {
 const selectRouterSearch = (state) => state.router.location.search;
 const selectClients = (state) => state.clients.clients;
 
+export const selectClient = createSelector(
+  [selectClients, (_state, id) => id],
+  (clients, id) => _find(clients, ['id', id])
+);
+
+export const selectProject = createSelector(
+  [
+    selectClients,
+    (_state, clientId) => clientId,
+    (_state, _clientId, id) => id
+  ],
+  (clients, clientId, id) => {
+    const client = _find(clients, ['id', clientId]);
+
+    if (!client) {
+      return null;
+    }
+
+    return _find(client.projects, ['id', id]);
+  }
+);
+
 export const selectQuery = createSelector(
   [selectRouterSearch],
   (query) => {
     const parsedQuery = fromQuery(query);
 
     const defaults = {
-      page: 1
+      page: 1,
+      search: ''
     };
 
     return { ...defaults, ...parsedQuery };
@@ -198,7 +229,10 @@ const path = 'hours-tracker/app/clients';
 
 const CLIENTS_SET       = `${path}/CLIENTS_SET`;
 const CLIENTS_SUBSCRIBE = `${path}/CLIENTS_SUBSCRIBE`;
+const CLIENT_UPDATE     = `${path}/CLIENT_UPDATE`;
+const CLIENT_CREATE     = `${path}/CLIENT_CREATE`;
 const READY             = `${path}/READY`;
+const FETCHING_SET  = `${path}/FETCHING_SET`;
 const RESET             = `${path}/RESET`;
 
 // Reducer
@@ -211,6 +245,9 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+  case FETCHING_SET:
+    return update(state, { fetching: { $set: action.fetching } });
+
   case CLIENTS_SET:
     return update(state, { clients: { $set: action.clients } });
 
@@ -231,6 +268,14 @@ export const subscribeClients = () => {
   return { type: CLIENTS_SUBSCRIBE };
 };
 
+export const createClient = (params, actions) => {
+  return { actions, params, type: CLIENT_CREATE };
+};
+
+export const updateClient = (client, params, actions) => {
+  return { actions, client, params, type: CLIENT_UPDATE };
+};
+
 export const reset = () => {
   if (channel) {
     channel.close();
@@ -238,6 +283,10 @@ export const reset = () => {
   }
 
   return { type: RESET };
+};
+
+const setFetching = (fetching) => {
+  return { fetching, type: FETCHING_SET };
 };
 
 const ready = () => {
@@ -290,4 +339,64 @@ function* watchClientsSubscribe() {
   yield takeLatest(CLIENTS_SUBSCRIBE, clientsSubscribe);
 }
 
-export const sagas = [fork(watchClientsSubscribe)];
+function* clientCreate({ actions, params }) {
+  try {
+    yield put(setFetching('Creating Client...'));
+
+    const { error } = yield call(add, 'clients', params);
+
+    if (error) {
+      actions.setStatus(error.message);
+    } else {
+      yield put(addFlash('Client has been created.'));
+
+      if (history.action === 'POP') {
+        yield call(history.push, '/clients');
+      } else {
+        yield call(history.goBack);
+      }
+    }
+  } finally {
+    actions.setSubmitting(false);
+    yield put(setFetching(null));
+  }
+}
+
+function* watchClientCreate() {
+  yield takeLatest(CLIENT_CREATE, clientCreate);
+}
+
+function* clientUpdate({ actions, client, params }) {
+  try {
+    yield put(setFetching('Updating Client...'));
+
+    const { error } = yield call(
+      updateRef, client.snapshot.ref, params
+    );
+
+    if (error) {
+      actions.setStatus(error.message);
+    } else {
+      yield put(addFlash('Client has been updated.'));
+
+      if (history.action === 'POP') {
+        yield call(history.push, '/clients');
+      } else {
+        yield call(history.goBack);
+      }
+    }
+  } finally {
+    actions.setSubmitting(false);
+    yield put(setFetching(null));
+  }
+}
+
+function* watchClientUpdate() {
+  yield takeLatest(CLIENT_UPDATE, clientUpdate);
+}
+
+export const sagas = [
+  fork(watchClientsSubscribe),
+  fork(watchClientCreate),
+  fork(watchClientUpdate)
+];

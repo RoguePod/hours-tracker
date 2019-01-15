@@ -13,6 +13,7 @@ class ProjectRow extends React.Component {
     admin: PropTypes.bool.isRequired,
     client: PropTypes.client.isRequired,
     first: PropTypes.bool,
+    location: PropTypes.routerLocation.isRequired,
     onStartEntry: PropTypes.func.isRequired,
     project: PropTypes.project.isRequired,
     recents: PropTypes.arrayOf(PropTypes.recent).isRequired,
@@ -57,7 +58,7 @@ class ProjectRow extends React.Component {
   }
 
   render() {
-    const { admin, client, first, project } = this.props;
+    const { admin, client, first, location, project } = this.props;
 
     const nameClasses = cx('flex-1', {
       'text-green': project.billable
@@ -96,7 +97,11 @@ class ProjectRow extends React.Component {
               icon="pencil-alt"
               size={8}
               title="Edit Project"
-              to={`/clients/${client.id}/projects/${project.id}/edit`}
+              to={{
+                ...location,
+                pathname: `/clients/${client.id}/projects/${project.id}/edit`,
+                state: { modal: true }
+              }}
             />}
           <ActionIcon
             as="button"

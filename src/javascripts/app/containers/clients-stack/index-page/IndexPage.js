@@ -1,4 +1,5 @@
 import { Button, Pagination, Spinner } from 'javascripts/shared/components';
+import { fromQuery, toQuery } from 'javascripts/globals';
 import {
   selectPaginatedClients,
   selectQuery
@@ -6,12 +7,15 @@ import {
 
 import ClientRow from './ClientRow';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Formik } from 'formik';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SearchForm from './SearchForm';
+import _compact from 'lodash/compact';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
+import { history } from 'javascripts/app/redux/store';
 import { selectAdmin } from 'javascripts/app/redux/app';
 import { startEntry } from 'javascripts/app/redux/running';
 
@@ -19,10 +23,19 @@ class ClientsIndexPage extends React.Component {
   static propTypes = {
     admin: PropTypes.bool.isRequired,
     clients: PropTypes.arrayOf(PropTypes.client).isRequired,
+    location: PropTypes.routerLocation.isRequired,
     onStartEntry: PropTypes.func.isRequired,
     pagination: PropTypes.pagination.isRequired,
     query: PropTypes.object.isRequired,
     ready: PropTypes.bool.isRequired
+  }
+
+  constructor(props) {
+    super(props);
+
+    this._handleClear = this._handleClear.bind(this);
+    this._handleSubmit = this._handleSubmit.bind(this);
+    this._renderForm = this._renderForm.bind(this);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -37,8 +50,45 @@ class ClientsIndexPage extends React.Component {
     );
   }
 
+  _handleSubmit(data, actions) {
+    const { location } = this.props;
+    const { search } = location;
+
+    const values = _compact(Object.values(data));
+
+    if (values.length > 0) {
+      const route = {
+        ...location,
+        search: toQuery({ ...fromQuery(search), ...data, page: 1 })
+      };
+
+      history.push(route);
+    } else {
+      this._handleClear();
+    }
+
+    actions.setSubmitting(false);
+  }
+
+  _handleClear() {
+    /* eslint-disable no-unused-vars */
+    const { location: { search, ...rest } } = this.props;
+    /* eslint-enable no-unused-vars */
+
+    history.replace(rest);
+  }
+
+  _renderForm(props) {
+    return (
+      <SearchForm
+        {...props}
+        onClear={this._handleClear}
+      />
+    );
+  }
+
   render() {
-    const { admin, clients, pagination, query, ready } = this.props;
+    const { admin, clients, location, pagination, query, ready } = this.props;
 
     const clientRows = clients.map((client) => {
       return (
@@ -64,7 +114,11 @@ class ClientsIndexPage extends React.Component {
             <Button
               as={Link}
               color="blue"
-              to="/clients/new"
+              to={{
+                ...location,
+                pathname: '/clients/new',
+                state: { modal: true }
+              }}
             >
               <FontAwesomeIcon
                 icon="plus"
@@ -74,10 +128,11 @@ class ClientsIndexPage extends React.Component {
             </Button>}
         </div>
         <div className="border rounded p-4 mb-4">
-          <SearchForm
-            {...this.props}
+          <Formik
             enableReinitialize
             initialValues={query}
+            onSubmit={this._handleSubmit}
+            render={this._renderForm}
           />
         </div>
         <div className="flex -mx-2 flex-wrap">

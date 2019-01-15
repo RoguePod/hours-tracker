@@ -9,7 +9,8 @@ import cx from 'classnames';
 class ClientRow extends React.Component {
   static propTypes = {
     admin: PropTypes.bool.isRequired,
-    client: PropTypes.client.isRequired
+    client: PropTypes.client.isRequired,
+    location: PropTypes.routerLocation.isRequired
   }
 
   shouldComponentUpdate(nextProps) {
@@ -22,7 +23,7 @@ class ClientRow extends React.Component {
   }
 
   render() {
-    const { admin, client } = this.props;
+    const { admin, client, location } = this.props;
 
     const clientClasses = cx(
       'md:w-48 bg-blue-lightest p-4 md:border-t-0 md:border-l-4 border-t-4',
@@ -66,7 +67,11 @@ class ClientRow extends React.Component {
                 icon="pencil-alt"
                 size={8}
                 title="Edit Client"
-                to={`/clients/${client.id}/edit`}
+                to={{
+                  ...location,
+                  pathname: `/clients/${client.id}/edit`,
+                  state: { modal: true }
+                }}
               />
               <ActionIcon
                 as={Link}
@@ -74,7 +79,11 @@ class ClientRow extends React.Component {
                 icon="plus"
                 size={8}
                 title="New Project"
-                to={`/clients/${client.id}/projects/new`}
+                to={{
+                  ...location,
+                  pathname: `/clients/${client.id}/projects/new`,
+                  state: { modal: true }
+                }}
               />
             </div>}
         </div>

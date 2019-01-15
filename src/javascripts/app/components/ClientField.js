@@ -106,10 +106,8 @@ class ClientField extends React.Component {
     }, 250);
   }
 
-  _handleFocus(event) {
+  _handleFocus({ target }) {
     const { field: { name }, form: { setFieldValue } } = this.props;
-
-    const { target } = event;
 
     setFieldValue(name, this._findValue());
 

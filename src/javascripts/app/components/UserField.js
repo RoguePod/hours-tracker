@@ -11,24 +11,19 @@ import _get from 'lodash/get';
 import _uniqueId from 'lodash/uniqueId';
 import { connect } from 'react-redux';
 import cx from 'classnames';
-import { formValueSelector } from 'redux-form';
 
 class UserField extends React.Component {
   static propTypes = {
     className: PropTypes.string,
+    disabled: PropTypes.bool,
+    field: PropTypes.field.isRequired,
+    form: PropTypes.form.isRequired,
     id: PropTypes.string,
-    input: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      onChange: PropTypes.func.isRequired,
-      value: PropTypes.string
-    }).isRequired,
     label: PropTypes.string,
-    meta: PropTypes.shape({
-      errpr: PropTypes.string,
-      touched: PropTypes.bool
-    }).isRequired,
+    nameUser: PropTypes.string.isRequired,
     onUserChange: PropTypes.func.isRequired,
     ready: PropTypes.bool.isRequired,
+    required: PropTypes.bool,
     results: PropTypes.arrayOf(PropTypes.user).isRequired,
     userRef: PropTypes.docRef,
     users: PropTypes.docRef.isRequired
@@ -36,13 +31,20 @@ class UserField extends React.Component {
 
   static defaultProps = {
     className: null,
+    disabled: false,
     id: null,
     label: null,
+    required: false,
     userRef: null
   }
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      focused: false,
+      id: props.id || _uniqueId('input_')
+    };
 
     this._handleChange = this._handleChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
@@ -58,6 +60,18 @@ class UserField extends React.Component {
     return true;
   }
 
+  componentDidUpdate(prevProps) {
+    const { id } = this.props;
+
+    if (id !== prevProps.id) {
+      if (id) {
+        this.setState({ id });
+      } else if (!id && prevProps.id) {
+        this.setState({ id: _uniqueId('input_') });
+      }
+    }
+  }
+
   componentWillUnmount() {
     if (this.timeout) {
       clearTimeout(this.timeout);
@@ -68,7 +82,9 @@ class UserField extends React.Component {
   timeout = null
 
   _handleChange(user) {
-    const { input: { onChange }, onUserChange } = this.props;
+    const {
+      field: { name }, form: { setFieldValue }, onUserChange
+    } = this.props;
 
     if (this.timeout) {
       clearTimeout(this.timeout);
@@ -76,28 +92,28 @@ class UserField extends React.Component {
     }
 
     onUserChange(user.userRef);
-    onChange('');
+    setFieldValue(name, '');
     this.setState({ focused: false });
   }
 
   _handleBlur() {
-    const { input: { onChange, value }, onUserChange } = this.props;
+    const {
+      field: { name, value }, form: { setFieldValue }, onUserChange
+    } = this.props;
 
     this.timeout = setTimeout(() => {
       if (value.length === 0) {
         onUserChange(null);
       }
-      onChange('');
+      setFieldValue(name, '');
       this.setState({ focused: false });
     }, 250);
   }
 
-  _handleFocus(event) {
-    const { input: { onChange } } = this.props;
+  _handleFocus({ target }) {
+    const { field: { name }, form: { setFieldValue } } = this.props;
 
-    const { target } = event;
-
-    onChange(this._findValue());
+    setFieldValue(name, this._findValue());
 
     this.setState({ focused: true }, () => {
       setTimeout(() => {
@@ -123,14 +139,19 @@ class UserField extends React.Component {
   }
 
   render() {
-    const { className, id, input, label, meta, ready, results } = this.props;
-    const { focused } = this.state;
+    /* eslint-disable no-unused-vars */
+    const {
+      className, disabled, field,
+      form: { errors, isSubmitting, touched },
+      label, nameUser, onUserChange, ready, required, results, userRef,
+      users, ...rest
+    } = this.props;
+    /* eslint-enable no-unused-vars */
+    const { focused, id } = this.state;
 
-    /* eslint-disable no-unneeded-ternary */
-    const isError = meta.touched && meta.error ? true : false;
-    /* eslint-enable no-unneeded-ternary */
+    const hasError = errors[field.name] && touched[field.name];
 
-    let { value } = input;
+    let { value } = field;
 
     if (!focused) {
       value = this._findValue();
@@ -140,32 +161,32 @@ class UserField extends React.Component {
       'appearance-none border w-full py-2 px-3 text-grey-darker',
       'leading-tight focus:outline-none transition',
       {
-        'border-grey-light': !isError,
-        'border-red': isError,
-        'focus:border-blue-light': !isError,
-        'focus:border-red': isError,
+        'border-grey-light': !hasError,
+        'border-red': hasError,
+        'focus:border-blue-light': !hasError,
+        'focus:border-red': hasError,
         'rounded': results.length === 0,
         'rounded-t': results.length > 0
       },
       className
     );
 
-    const inputId = id ? id : _uniqueId('input_');
-
     return (
       <div className="relative">
-        {label &&
+        {label && label.length > 0 &&
           <Label
-            error={isError}
-            htmlFor={inputId}
+            error={hasError}
+            htmlFor={id}
+            required={required}
           >
             {label}
           </Label>}
         <input
-          {...input}
+          {...field}
+          {...rest}
           className={inputClassName}
-          disabled={!ready}
-          id={inputId}
+          disabled={!ready || disabled || isSubmitting}
+          id={id}
           onBlur={this._handleBlur}
           onFocus={this._handleFocus}
           value={value}
@@ -175,8 +196,8 @@ class UserField extends React.Component {
           users={results}
         />
         <FieldError
-          error={meta.error}
-          touched={meta.touched}
+          error={errors[field.name]}
+          touched={touched[field.name]}
         />
       </div>
     );
@@ -184,15 +205,12 @@ class UserField extends React.Component {
 }
 
 const props = (state, ownProps) => {
-  const { input: { name }, meta: { form }, nameUser } = ownProps;
-
-  const formSelector = formValueSelector(form);
-  const query        = formSelector(state, name);
+  const { field: { value }, form: { values }, nameUser } = ownProps;
 
   return {
     ready: state.users.ready,
-    results: selectQueriedUsers(state, query),
-    userRef: formSelector(state, nameUser),
+    results: selectQueriedUsers(state, value),
+    userRef: values[nameUser],
     users: selectUsersByKey(state)
   };
 };
