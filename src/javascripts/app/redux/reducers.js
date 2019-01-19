@@ -7,7 +7,6 @@ import entries from 'javascripts/app/redux/entries';
 import entry from 'javascripts/app/redux/entry';
 import fetching from 'javascripts/shared/redux/fetching';
 import flashes from 'javascripts/shared/redux/flashes';
-import { reducer as form } from 'redux-form';
 import projects from 'javascripts/app/redux/projects';
 import recents from 'javascripts/app/redux/recents';
 import running from 'javascripts/app/redux/running';
@@ -22,7 +21,6 @@ export default (history) => combineReducers({
   entry,
   fetching,
   flashes,
-  form,
   projects,
   recents,
   router: connectRouter(history),

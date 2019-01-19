@@ -5,11 +5,11 @@ import { ProjectField } from 'javascripts/app/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 
-class RunningForm extends React.Component {
+class StopWatchForm extends React.Component {
   static propTypes = {
-    onUpdateEntry: PropTypes.func.isRequired,
     setFieldValue: PropTypes.func.isRequired,
     status: PropTypes.string,
+    submitForm: PropTypes.func.isRequired,
     values: PropTypes.object.isRequired
   }
 
@@ -25,7 +25,7 @@ class RunningForm extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      onUpdateEntry, values: { clientRef, description, projectRef }
+      submitForm, values: { description }
     } = this.props;
 
     if (description !== prevProps.values.description) {
@@ -34,23 +34,19 @@ class RunningForm extends React.Component {
       }
 
       this.timeout = setTimeout(() => {
-        onUpdateEntry({ description });
+        submitForm();
       }, 1000);
-    }
-
-    if (clientRef !== prevProps.values.clientRef ||
-        projectRef !== prevProps.values.projectRef) {
-      onUpdateEntry({ clientRef, projectRef });
     }
   }
 
   timeout = null
 
   _handleProjectChange(clientRef, projectRef) {
-    const { setFieldValue } = this.props;
+    const { setFieldValue, submitForm } = this.props;
 
     setFieldValue('clientRef', clientRef);
     setFieldValue('projectRef', projectRef);
+    setTimeout(submitForm, 1);
   }
 
   render() {
@@ -85,4 +81,4 @@ class RunningForm extends React.Component {
   }
 }
 
-export default RunningForm;
+export default StopWatchForm;

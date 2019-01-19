@@ -174,16 +174,18 @@ function* watchEntryStop() {
 
 function* entryUpdate({ params }) {
   try {
-    yield put(setFetching('Updating...'));
-
     const entry = yield select((state) => state.running.entry);
 
-    if (entry) {
-      const updatedAt = moment()
-        .utc()
-        .valueOf();
-      entry.snapshot.ref.update({ ...params, updatedAt });
+    if (!entry) {
+      return;
     }
+
+    yield put(setFetching('Updating...'));
+
+    const updatedAt = moment()
+      .utc()
+      .valueOf();
+    entry.snapshot.ref.update({ ...params, updatedAt });
   } finally {
     yield put(setFetching(null));
   }

@@ -69,7 +69,7 @@ class EntryEditPage extends React.Component {
           initialValues={entry}
           isRunning={isRunning}
           key={form}
-          onSaveEntry={onUpdateEntry}
+          onSubmit={onUpdateEntry}
           timezone={timezone}
         />
         <Spinner
