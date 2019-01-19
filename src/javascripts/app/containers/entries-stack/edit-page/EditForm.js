@@ -1,3 +1,5 @@
+import * as Yup from 'yup';
+
 import {
   getEntry,
   reset,
@@ -6,19 +8,20 @@ import {
 } from 'javascripts/app/redux/entry';
 
 import EntryForm from '../EntryForm';
+import { Formik } from 'formik';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
+import chrono from 'chrono-node';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
+import moment from 'moment';
 import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntryEditPage extends React.Component {
   static propTypes = {
     entry: PropTypes.entryForm.isRequired,
     fetching: PropTypes.string,
-    form: PropTypes.string.isRequired,
     isRunning: PropTypes.bool.isRequired,
     match: PropTypes.routerMatch.isRequired,
     onGetEntry: PropTypes.func.isRequired,
@@ -31,6 +34,12 @@ class EntryEditPage extends React.Component {
   static defaultProps = {
     fetching: null,
     page: false
+  }
+
+  constructor(props) {
+    super(props);
+
+    this._handleSubmit = this._handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -56,21 +65,51 @@ class EntryEditPage extends React.Component {
     onReset();
   }
 
+  _parseDate(value, timezone) {
+    const parsed = chrono.parseDate(value);
+
+    if (!parsed) {
+      return null;
+    }
+
+    const values = [
+      parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
+      parsed.getHours(), parsed.getMinutes()
+    ];
+
+    return moment.tz(values, timezone)
+      .utc()
+      .valueOf();
+  }
+
+  _handleSubmit(data, actions) {
+    const { onUpdateEntry } = this.props;
+
+    const params = {
+      ...data,
+      startedAt: this._parseDate(data.startedAt, data.timezone),
+      stoppedAt: this._parseDate(data.stoppedAt, data.timezone)
+    };
+
+    onUpdateEntry(params, actions);
+  }
+
   render() {
-    const {
-      entry, fetching, form, isRunning, onUpdateEntry, page, timezone
-    } = this.props;
+    const { entry, fetching, page } = this.props;
+
+    const validationSchema = Yup.object().shape({
+      startedAt: Yup.string().required('Started is Required'),
+      timezone: Yup.string().required('Timezone is Required')
+    });
 
     return (
       <>
-        <EntryForm
+        <Formik
+          component={EntryForm}
           enableReinitialize
-          form={form}
           initialValues={entry}
-          isRunning={isRunning}
-          key={form}
-          onSubmit={onUpdateEntry}
-          timezone={timezone}
+          onSubmit={this._handleSubmit}
+          validationSchema={validationSchema}
         />
         <Spinner
           page={page}
@@ -83,18 +122,11 @@ class EntryEditPage extends React.Component {
 }
 
 const props = (state) => {
-  const { entry, isRunning } = selectEntryForForm(state);
-  const form = `EntryForm-${entry ? entry.id : 'new'}`;
-
-  const timezone =
-    formValueSelector(form)(state, 'timezone') || selectTimezone(state);
-
   return {
-    entry,
     fetching: state.entry.fetching,
-    form,
-    isRunning,
-    timezone
+    running: state.running.entry,
+    timezone: selectTimezone(state),
+    ...selectEntryForForm(state)
   };
 };
 

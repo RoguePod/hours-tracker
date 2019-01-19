@@ -1,6 +1,5 @@
 /* eslint-disable max-lines */
 
-import { SubmissionError, reset as resetForm } from 'redux-form';
 import {
   add,
   batchCommit,
@@ -37,7 +36,6 @@ export const selectEntryForForm = createSelector(
     if (!entry) {
       return {
         entry: {
-          id: 'null',
           timezone: 'America/Denver'
         },
         isRunning: Boolean(running)
@@ -112,16 +110,16 @@ export const getEntry = (id) => {
   return { id, type: ENTRY_GET };
 };
 
-export const createEntry = (params, resolve, reject) => {
-  return { params, reject, resolve, type: ENTRY_CREATE };
+export const createEntry = (params, actions) => {
+  return { actions, params, type: ENTRY_CREATE };
 };
 
-export const updateEntry = (params, resolve, reject) => {
-  return { params, reject, resolve, type: ENTRY_UPDATE };
+export const updateEntry = (params, actions) => {
+  return { actions, params, type: ENTRY_UPDATE };
 };
 
-export const splitEntry = (entries, resolve, reject) => {
-  return { entries, reject, resolve, type: ENTRY_SPLIT };
+export const splitEntry = (entries, actions) => {
+  return { actions, entries, type: ENTRY_SPLIT };
 };
 
 export const destroyEntry = (id) => {
@@ -190,7 +188,7 @@ function* watchEntryGet() {
   yield takeLatest(ENTRY_GET, entryGet);
 }
 
-function* entryCreate({ params, reject, resolve }) {
+function* entryCreate({ actions, params }) {
   try {
     yield put(setFetching('Creating Entry...'));
 
@@ -220,11 +218,9 @@ function* entryCreate({ params, reject, resolve }) {
     const { error } = yield call(add, 'entries', { ...defaults, ...params });
 
     if (error) {
-      reject(new SubmissionError({ _error: error.message }));
+      actions.setStatus(error.message);
     } else {
-      yield put(resetForm('EntryForm'));
       yield put(addFlash('Entry has been created.'));
-      resolve();
 
       if (history.action === 'POP') {
         yield call(history.push, '/entries');
@@ -233,6 +229,7 @@ function* entryCreate({ params, reject, resolve }) {
       }
     }
   } finally {
+    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }
@@ -241,7 +238,7 @@ function* watchEntryCreate() {
   yield takeLatest(ENTRY_CREATE, entryCreate);
 }
 
-function* entryUpdate({ params, reject, resolve }) {
+function* entryUpdate({ actions, params }) {
   try {
     yield put(setFetching('Updating Entry...'));
 
@@ -255,7 +252,7 @@ function* entryUpdate({ params, reject, resolve }) {
     );
 
     if (error) {
-      reject(new SubmissionError({ _error: error.message }));
+      actions.setStatus(error.message);
     } else {
       yield put(addFlash('Entry has been updated.'));
 
@@ -264,9 +261,9 @@ function* entryUpdate({ params, reject, resolve }) {
       } else {
         yield call(history.goBack);
       }
-      resolve();
     }
   } finally {
+    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }
@@ -275,7 +272,7 @@ function* watchEntryUpdate() {
   yield takeLatest(ENTRY_UPDATE, entryUpdate);
 }
 
-function* entrySplit({ entries, reject, resolve }) {
+function* entrySplit({ actions, entries }) {
   try {
     yield put(setFetching('Splitting Entry...'));
 
@@ -315,13 +312,13 @@ function* entrySplit({ entries, reject, resolve }) {
     const { error } = yield call(batchCommit, batch);
 
     if (error) {
-      reject(new SubmissionError({ _error: error.message }));
+      actions.setStatus(error.message);
     } else {
       yield put(addFlash('Entry has been split'));
-      resolve();
       history.push('/entries');
     }
   } finally {
+    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }
