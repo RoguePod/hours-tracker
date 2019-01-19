@@ -1,21 +1,16 @@
-import { InputField } from 'javascripts/shared/components';
+import FieldHelper from './FieldHelper';
+import InputField from './InputField';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import chrono from 'chrono-node';
 import moment from 'moment';
-import posed from 'react-pose';
-
-const FadeIn = posed.div({
-  hide: { height: 0, opacity: 0 },
-  show: { height: 'auto', opacity: 1 }
-});
 
 const TimeField = (props) => {
-  const { input, timezone } = props;
+  const { field: { value }, timezone } = props;
 
   let realTime = null;
-  if (input.value && input.value.length > 0) {
-    const parsed = chrono.parseDate(input.value);
+  if (value && value.length > 0) {
+    const parsed = chrono.parseDate(value);
 
     if (parsed) {
       const values = [
@@ -30,32 +25,25 @@ const TimeField = (props) => {
 
   return (
     <>
-      <InputField {...props} />
-      <FadeIn
-        className="text-green text-sm"
-        pose={realTime ? 'show' : 'hide'}
-      >
-        {realTime &&
-          <div className="pt-1">
-            {realTime}
-          </div>}
-      </FadeIn>
+      <InputField
+        {...props}
+        type="text"
+      />
+      <FieldHelper
+        className="text-green"
+        color="green"
+        message={realTime}
+        open={Boolean(realTime)}
+      />
     </>
   );
 };
 
 TimeField.propTypes = {
+  field: PropTypes.field.isRequired,
+  form: PropTypes.form.isRequired,
   id: PropTypes.string,
-  input: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired,
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-  }).isRequired,
   label: PropTypes.string,
-  meta: PropTypes.shape({
-    error: PropTypes.string,
-    touched: PropTypes.bool
-  }).isRequired,
   timezone: PropTypes.string.isRequired
 };
 

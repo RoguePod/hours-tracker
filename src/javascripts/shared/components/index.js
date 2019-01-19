@@ -4,6 +4,7 @@ export CheckboxField from './CheckboxField';
 export ConfirmAction from './ConfirmAction';
 export DateField from './DateField';
 export FieldError from './FieldError';
+export FieldHelper from './FieldHelper';
 export Flashes from './Flashes';
 export FormError from './FormError';
 export HardRedirect from './HardRedirect';
