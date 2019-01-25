@@ -1,7 +1,6 @@
-import { fork, put, takeEvery } from 'redux-saga/effects';
+import { delay, fork, put, takeEvery } from 'redux-saga/effects';
 
 import _findIndex from 'lodash/findIndex';
-import { delay } from 'redux-saga';
 import update from 'immutability-helper';
 
 // Constants
