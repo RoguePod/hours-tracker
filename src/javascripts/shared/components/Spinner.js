@@ -1,17 +1,32 @@
+import { CSSTransition } from 'react-transition-group';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
-import posed from 'react-pose';
 import styled from 'styled-components';
 
-const duration = 250;
+const DURATION = 300;
 
-const FadeIn = posed.div({
-  enter: { opacity: 1, transition: { duration } },
-  exit: { opacity: 0, transition: { duration } }
-});
+const FadeIn = styled.div`
+  &.fade-enter {
+    opacity: 0.01;
+  }
+
+  &.fade-enter-active {
+    opacity: 1;
+    transition: opacity ${DURATION}ms ease;
+  }
+
+  &.fade-exit {
+    opacity: 1;
+  }
+
+  &.fade-exit-active {
+    opacity: 0.01;
+    transition: opacity ${DURATION}ms ease;
+  }
+`;
 
 const Page = styled(FadeIn)`
   bottom: 0;
@@ -24,114 +39,74 @@ const Page = styled(FadeIn)`
   }
 `;
 
-class Spinner extends React.PureComponent {
-  static propTypes = {
-    page: PropTypes.bool,
-    spinning: PropTypes.bool,
-    text: PropTypes.string
-  }
+const Spinner = ({ page, spinning, text }) => {
+  const shadeClassName =
+    'pin z-10 overflow-hidden bg-smoke flex items-center ' +
+    'justify-center text-white flex-col';
 
-  static defaultProps = {
-    page: false,
-    spinning: false,
-    text: null
-  }
+  const children = (
+    <>
+      <div className="flex flex-row items-center">
+        <FontAwesomeIcon
+          icon="clock"
+          pulse
+          size="3x"
+        />
+      </div>
+      {text && text.length > 0 &&
+        <div className="pt-4 px-4 text-center">
+          {text}
+        </div>}
+    </>
+  );
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      open: props.spinning,
-      show: props.spinning,
-      text: props.text
-    };
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { spinning, text } = nextProps;
-    const { open } = prevState;
-
-    if (spinning && !open) {
-      return { open: true, show: true, text };
-    } else if (!spinning && open) {
-      return { open: false };
-    }
-
-    return null;
-  }
-
-  componentDidUpdate(_prevProps, prevState) {
-    const { open } = this.state;
-
-    if (!open && prevState.open) {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
-
-      this.timeout = setTimeout(() => {
-        this.setState({ show: false });
-      }, duration);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-
-    this.timeout = null;
-  }
-
-  render() {
-    const { page } = this.props;
-    const { open, show, text } = this.state;
-
-    if (!show) {
-      return false;
-    }
-
-    const shadeClassName =
-      'pin z-10 overflow-hidden bg-smoke flex items-center ' +
-      'justify-center text-white flex-col';
-
-    const children = (
-      <>
-        <div className="flex flex-row items-center">
-          <FontAwesomeIcon
-            icon="clock"
-            pulse
-            size="3x"
-          />
-        </div>
-        {text && text.length > 0 &&
-          <div className="pt-4 px-4 text-center">
-            {text}
-          </div>}
-      </>
-    );
-
-    if (page) {
-      return (
-        <Portal>
+  if (page) {
+    return (
+      <Portal>
+        <CSSTransition
+          classNames="fade"
+          in={spinning}
+          mountOnEnter
+          timeout={DURATION}
+          unmountOnExit
+        >
           <Page
             className={cx(shadeClassName, 'fixed')}
-            pose={open ? 'enter' : 'exit'}
           >
             {children}
           </Page>
-        </Portal>
-      );
-    }
+        </CSSTransition>
+      </Portal>
+    );
+  }
 
-    return (
+  return (
+    <CSSTransition
+      classNames="fade"
+      in={spinning}
+      mountOnEnter
+      timeout={DURATION}
+      unmountOnExit
+    >
       <FadeIn
         className={cx(shadeClassName, 'absolute')}
-        pose={open ? 'enter' : 'exit'}
       >
         {children}
       </FadeIn>
-    );
-  }
-}
+    </CSSTransition>
+  );
+};
+
+Spinner.propTypes = {
+  page: PropTypes.bool,
+  spinning: PropTypes.bool,
+  text: PropTypes.string
+};
+
+Spinner.defaultProps = {
+  page: false,
+  spinning: false,
+  text: null
+};
 
 export default Spinner;

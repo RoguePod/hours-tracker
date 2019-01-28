@@ -1,16 +1,33 @@
+import { CSSTransition } from 'react-transition-group';
 import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _isElement from 'lodash/isElement';
 import cx from 'classnames';
-import posed from 'react-pose';
 import styled from 'styled-components';
 
-const FadeIn = posed.div({
-  hide: { opacity: 0, transition: { duration: 250 } },
-  show: { opacity: 1, transition: { duration: 250 } }
-});
+const DURATION = 300;
+
+const FadeIn = styled.div`
+  &.fade-enter {
+    opacity: 0.01;
+  }
+
+  &.fade-enter-active {
+    opacity: 1;
+    transition: opacity ${DURATION}ms ease;
+  }
+
+  &.fade-exit {
+    opacity: 1;
+  }
+
+  &.fade-exit-active {
+    opacity: 0.01;
+    transition: opacity ${DURATION}ms ease;
+  }
+`;
 
 const Title = styled(FadeIn)`
   transform: translate(-50%, -100%) !important;
@@ -138,15 +155,22 @@ class Tooltip extends React.Component {
         {trigger}
         {show && this._element &&
           <Portal>
-            <Title
-              className={titleClasses}
-              initialPose="hide"
-              onPoseComplete={this._handlePoseComplete}
-              pose={hover ? 'show' : 'hide'}
-              style={tooltipStyles}
+            <CSSTransition
+              classNames="fade"
+              in={hover}
+              mountOnEnter
+              onEnter={this._handleEnter}
+              onExit={this._handleExit}
+              timeout={DURATION}
+              unmountOnExit
             >
-              {title}
-            </Title>
+              <Title
+                className={titleClasses}
+                style={tooltipStyles}
+              >
+                {title}
+              </Title>
+            </CSSTransition>
           </Portal>}
       </>
     );

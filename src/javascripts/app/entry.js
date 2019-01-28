@@ -1,6 +1,7 @@
 /* global document */
 
 import 'stylesheets/application.scss?main';
+import 'javascript-detect-element-resize';
 
 /* eslint-disable sort-imports */
 import { history, store } from 'javascripts/app/redux/store'; // must be first

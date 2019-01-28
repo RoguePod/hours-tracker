@@ -1,14 +1,31 @@
-import posed, { PoseGroup } from 'react-pose';
-
+import { CSSTransition } from 'react-transition-group';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import styled from 'styled-components';
 
-const FadeIn = posed.div({
-  enter: { opacity: 1 },
-  exit: { opacity: 0 }
-});
+const DURATION = 300;
+
+const FadeIn = styled.div`
+  &.fade-enter {
+    opacity: 0.01;
+  }
+
+  &.fade-enter-active {
+    opacity: 1;
+    transition: opacity ${DURATION}ms ease;
+  }
+
+  &.fade-exit {
+    opacity: 1;
+  }
+
+  &.fade-exit-active {
+    opacity: 0.01;
+    transition: opacity ${DURATION}ms ease;
+  }
+`;
 
 const Loader = ({ loading }) => {
   const shadeClassName =
@@ -17,24 +34,28 @@ const Loader = ({ loading }) => {
 
   return (
     <Portal>
-      <PoseGroup>
-        {loading &&
-          <FadeIn
-            className={shadeClassName}
-            key="shade"
-          >
-            <div className="flex flex-row items-center">
-              <FontAwesomeIcon
-                icon="clock"
-                pulse
-                size="3x"
-              />
-              <div className="pl-2 text-4xl">
-                {'Hours Tracker'}
-              </div>
+      <CSSTransition
+        classNames="fade"
+        in={loading}
+        mountOnEnter
+        timeout={DURATION}
+        unmountOnExit
+      >
+        <FadeIn
+          className={shadeClassName}
+        >
+          <div className="flex flex-row items-center">
+            <FontAwesomeIcon
+              icon="clock"
+              pulse
+              size="3x"
+            />
+            <div className="pl-2 text-4xl">
+              {'Hours Tracker'}
             </div>
-          </FadeIn>}
-      </PoseGroup>
+          </div>
+        </FadeIn>
+      </CSSTransition>
     </Portal>
   );
 };

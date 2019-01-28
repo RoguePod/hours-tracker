@@ -1,23 +1,53 @@
 import { RecentsList, StopWatch } from 'javascripts/app/containers';
-import posed, { PoseGroup } from 'react-pose';
 
+import { CSSTransition } from 'react-transition-group';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
 import { history } from 'javascripts/app/redux/store';
 import styled from 'styled-components';
 
-const FadeIn = posed.div({
-  enter: { opacity: 1 },
-  exit: { opacity: 0 }
-});
+const DURATION = 300;
 
-/* eslint-disable id-length */
-const SlideIn = posed.div({
-  enter: { x: 0 },
-  exit: { x: '-100%' }
-});
-/* eslint-disable id-length */
+const FadeIn = styled.div`
+  &.fade-enter {
+    opacity: 0.01;
+  }
+
+  &.fade-enter-active {
+    opacity: 1;
+    transition: opacity ${DURATION}ms ease;
+  }
+
+  &.fade-exit {
+    opacity: 1;
+  }
+
+  &.fade-exit-active {
+    opacity: 0.01;
+    transition: opacity ${DURATION}ms ease;
+  }
+`;
+
+const SlideIn = styled.div`
+  &.slide-enter {
+    transform: translateX(-100%);
+  }
+
+  &.slide-enter-active {
+    transform: translateX(0);
+    transition: transform ${DURATION}ms ease;
+  }
+
+  &.slide-exit {
+    transform: translateX(0);
+  }
+
+  &.slide-exit-active {
+    transform: translateX(-100%);
+    transition: transform ${DURATION}ms ease;
+  }
+`;
 
 const Overlay = styled(FadeIn)`
   top: 62px;
@@ -62,26 +92,37 @@ class LeftSidebar extends React.Component {
 
     const sliderClasses =
       'fixed pin-l pin-b w-64 flex bg-blue-lightest md:shadow-md flex-col ' +
-      'transition z-10';
+      'z-10';
 
     return (
       <>
-        <PoseGroup>
-          {open &&
-            <Overlay
-              className="fixed pin bg-smoke z-10"
-              key="overlay"
-              onClick={this._handleClose}
-            />}
-        </PoseGroup>
-        <Slider
-          className={sliderClasses}
-          key="sidebar"
-          pose={(open || width >= 768) ? 'enter' : 'exit'}
+        <CSSTransition
+          appear={width >= 768}
+          classNames="fade"
+          in={Boolean(open)}
+          mountOnEnter
+          timeout={DURATION}
+          unmountOnExit
         >
-          <StopWatch location={location} />
-          <RecentsList />
-        </Slider>
+          <Overlay
+            className="fixed pin bg-smoke z-10"
+            onClick={this._handleClose}
+          />
+        </CSSTransition>
+        <CSSTransition
+          classNames="slide"
+          in={Boolean(open || width >= 768)}
+          mountOnEnter
+          timeout={DURATION}
+          unmountOnExit
+        >
+          <Slider
+            className={sliderClasses}
+          >
+            <StopWatch location={location} />
+            <RecentsList />
+          </Slider>
+        </CSSTransition>
       </>
     );
   }
