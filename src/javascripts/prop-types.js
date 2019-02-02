@@ -24,8 +24,10 @@ const propTypes = {
   }),
   entryForm: PropTypes.shape({
     description: PropTypes.string,
-    startedAt: PropTypes.string,
-    stoppedAt: PropTypes.string
+    startedAt: PropTypes.number,
+    startedAtText: PropTypes.string,
+    stoppedAt: PropTypes.number,
+    stoppedAtText: PropTypes.string
   }),
   field: PropTypes.shape({
     name: PropTypes.string.isRequired,

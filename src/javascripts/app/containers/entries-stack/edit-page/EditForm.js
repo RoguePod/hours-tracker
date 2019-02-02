@@ -13,33 +13,24 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
-import chrono from 'chrono-node';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntryEditPage extends React.Component {
   static propTypes = {
     entry: PropTypes.entryForm.isRequired,
     fetching: PropTypes.string,
-    isRunning: PropTypes.bool.isRequired,
     match: PropTypes.routerMatch.isRequired,
     onGetEntry: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
     onUpdateEntry: PropTypes.func.isRequired,
     page: PropTypes.bool,
-    timezone: PropTypes.string.isRequired
+    running: PropTypes.entry
   }
 
   static defaultProps = {
     fetching: null,
-    page: false
-  }
-
-  constructor(props) {
-    super(props);
-
-    this._handleSubmit = this._handleSubmit.bind(this);
+    page: false,
+    running: null
   }
 
   componentDidMount() {
@@ -49,12 +40,11 @@ class EntryEditPage extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { entry, fetching, isRunning, timezone } = this.props;
+    const { entry, fetching, running } = this.props;
 
     return (
       fetching !== nextProps.fetching ||
-      isRunning !== nextProps.isRunning ||
-      timezone !== nextProps.timezone ||
+      !_isEqual(running, nextProps.running) ||
       !_isEqual(entry, nextProps.entry)
     );
   }
@@ -65,42 +55,24 @@ class EntryEditPage extends React.Component {
     onReset();
   }
 
-  _parseDate(value, timezone) {
-    const parsed = chrono.parseDate(value);
+  render() {
+    const { entry, fetching, onUpdateEntry, page, running } = this.props;
 
-    if (!parsed) {
-      return null;
-    }
-
-    const values = [
-      parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
-      parsed.getHours(), parsed.getMinutes()
-    ];
-
-    return moment.tz(values, timezone)
-      .utc()
-      .valueOf();
-  }
-
-  _handleSubmit(data, actions) {
-    const { onUpdateEntry } = this.props;
-
-    const params = {
-      ...data,
-      startedAt: this._parseDate(data.startedAt, data.timezone),
-      stoppedAt: this._parseDate(data.stoppedAt, data.timezone)
+    const validationRules = {
+      startedAt: Yup.string()
+        .parsedTime('Started is not a valid date/time')
+        .required('Started is Required'),
+      stoppedAt: Yup.string()
+        .parsedTime('Started is not a valid date/time'),
+      timezone: Yup.string().required('Timezone is Required')
     };
 
-    onUpdateEntry(params, actions);
-  }
+    if (running && running.id !== entry.id) {
+      validationRules.stoppedAt = validationRules.stoppedAt
+        .required('Stopped is Required');
+    }
 
-  render() {
-    const { entry, fetching, page } = this.props;
-
-    const validationSchema = Yup.object().shape({
-      startedAt: Yup.string().required('Started is Required'),
-      timezone: Yup.string().required('Timezone is Required')
-    });
+    const validationSchema = Yup.object().shape(validationRules);
 
     return (
       <>
@@ -108,7 +80,7 @@ class EntryEditPage extends React.Component {
           component={EntryForm}
           enableReinitialize
           initialValues={entry}
-          onSubmit={this._handleSubmit}
+          onSubmit={onUpdateEntry}
           validationSchema={validationSchema}
         />
         <Spinner
@@ -123,10 +95,9 @@ class EntryEditPage extends React.Component {
 
 const props = (state) => {
   return {
+    entry: selectEntryForForm(state),
     fetching: state.entry.fetching,
-    running: state.running.entry,
-    timezone: selectTimezone(state),
-    ...selectEntryForForm(state)
+    running: state.running.entry
   };
 };
 

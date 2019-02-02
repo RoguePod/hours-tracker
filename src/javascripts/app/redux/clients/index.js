@@ -311,6 +311,10 @@ function* handleClientsSubscribe({ snapshot }) {
 }
 
 function* clientsSubscribe() {
+  /* eslint-disable no-console */
+  console.log('clientsSubscribe');
+  /* eslint-enable no-console */
+
   if (channel) {
     channel.close();
   }

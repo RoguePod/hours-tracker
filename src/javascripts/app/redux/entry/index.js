@@ -27,41 +27,41 @@ import update from 'immutability-helper';
 
 // Selectors
 
-const selectRunning = (state) => state.running.entry;
 const selectEntry = (state) => state.entry.entry;
 
 export const selectEntryForForm = createSelector(
-  [selectEntry, selectRunning],
-  (entry, running) => {
+  [selectEntry, selectTimezone],
+  (entry, timezone) => {
     if (!entry) {
       return {
-        entry: {
-          timezone: 'America/Denver'
-        },
-        isRunning: Boolean(running)
+        description: '',
+        startedAt: null,
+        startedAtText: '',
+        stoppedAt: null,
+        stoppedAtText: '',
+        timezone
       };
     }
 
-    const startedAt = moment.tz(entry.startedAt, entry.timezone)
+    const startedAtText = moment.tz(entry.startedAt, entry.timezone)
       .format('MM/DD/YYYY hh:mm A z');
 
-    let stoppedAt = null;
+    let stoppedAtText = null;
 
     if (entry.stoppedAt) {
-      stoppedAt = moment.tz(entry.stoppedAt, entry.timezone)
+      stoppedAtText = moment.tz(entry.stoppedAt, entry.timezone)
         .format('MM/DD/YYYY hh:mm A z');
     }
 
     return {
-      entry: {
-        clientRef: entry.clientRef,
-        description: entry.description,
-        projectRef: entry.projectRef,
-        startedAt,
-        stoppedAt,
-        timezone: entry.timezone
-      },
-      isRunning: Boolean(running && running.id === entry.id)
+      clientRef: entry.clientRef,
+      description: entry.description,
+      projectRef: entry.projectRef,
+      startedAt: entry.startedAt,
+      startedAtText,
+      stoppedAt: entry.stoppedAt,
+      stoppedAtText,
+      timezone: entry.timezone || timezone
     };
   }
 );

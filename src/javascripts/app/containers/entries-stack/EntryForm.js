@@ -1,27 +1,15 @@
 import {
   Button,
   FormError,
-  SelectField,
   TextAreaField,
-  TimeField
+  TimeField,
+  TimezoneField
 } from 'javascripts/shared/components';
 import { Field, Form } from 'formik';
 
 import { ProjectField } from 'javascripts/app/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import moment from 'moment';
-
-const timezoneOptions = moment.tz.names().map((timezone) => {
-  return (
-    <option
-      key={timezone}
-      value={timezone}
-    >
-      {timezone}
-    </option>
-  );
-});
 
 class EntryForm extends React.Component {
   static propTypes = {
@@ -71,7 +59,8 @@ class EntryForm extends React.Component {
               autoFocus
               component={TimeField}
               label="Started"
-              name="startedAt"
+              name="startedAtText"
+              nameField="startedAt"
               timezone={timezone}
               type="text"
             />
@@ -82,7 +71,8 @@ class EntryForm extends React.Component {
               autoCorrect="off"
               component={TimeField}
               label="Stopped"
-              name="stoppedAt"
+              name="stoppedAtText"
+              nameField="stoppedAt"
               timezone={timezone}
               type="text"
             />
@@ -101,15 +91,10 @@ class EntryForm extends React.Component {
           </div>
           <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
-              component={SelectField}
+              component={TimezoneField}
               label="Timezone"
               name="timezone"
-            >
-              <option value="">
-                {'--Select--'}
-              </option>
-              {timezoneOptions}
-            </Field>
+            />
           </div>
         </div>
         <div className="mb-4">

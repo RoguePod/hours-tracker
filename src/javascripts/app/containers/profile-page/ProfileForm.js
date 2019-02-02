@@ -3,13 +3,13 @@ import {
   CheckboxField,
   FormError,
   InputField,
-  SelectField
+  SelectField,
+  TimezoneField
 } from 'javascripts/shared/components';
 import { Field, Form } from 'formik';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import moment from 'moment';
 
 class ProfileForm extends React.Component {
   static propTypes = {
@@ -44,15 +44,6 @@ class ProfileForm extends React.Component {
       { text: 'Clients', value: 'client.name' },
       { text: 'Projects', value: 'project.name' }
     ]);
-  }
-
-  _getTimezoneOptions() {
-    return this._convertToOptions(moment.tz.names().map((timezone) => {
-      return {
-        text: timezone,
-        value: timezone
-      };
-    }));
   }
 
   _getEntriesTabOptions() {
@@ -122,16 +113,11 @@ class ProfileForm extends React.Component {
         </div> */}
         <div className="mb-4">
           <Field
-            component={SelectField}
+            component={TimezoneField}
             label="Timezone"
             name="timezone"
             required
-          >
-            <option value="">
-              {'--Select--'}
-            </option>
-            {this._getTimezoneOptions()}
-          </Field>
+          />
         </div>
         <div className="mb-4">
           <Field

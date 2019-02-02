@@ -22,4 +22,5 @@ export SelectField from './SelectField';
 export Spinner from './Spinner';
 export TextAreaField from './TextAreaField';
 export TimeField from './TimeField';
+export TimezoneField from './TimezoneField';
 export Tooltip from './Tooltip';

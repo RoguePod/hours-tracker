@@ -2,6 +2,7 @@
 
 import 'stylesheets/application.scss?main';
 import 'javascript-detect-element-resize';
+import 'javascripts/validators';
 
 /* eslint-disable sort-imports */
 import { history, store } from 'javascripts/app/redux/store'; // must be first
