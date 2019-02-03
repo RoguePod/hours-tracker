@@ -59,8 +59,7 @@ class EntryForm extends React.Component {
               autoFocus
               component={TimeField}
               label="Started"
-              name="startedAtText"
-              nameField="startedAt"
+              name="startedAt"
               timezone={timezone}
               type="text"
             />
@@ -71,8 +70,7 @@ class EntryForm extends React.Component {
               autoCorrect="off"
               component={TimeField}
               label="Stopped"
-              name="stoppedAtText"
-              nameField="stoppedAt"
+              name="stoppedAt"
               timezone={timezone}
               type="text"
             />
@@ -81,12 +79,10 @@ class EntryForm extends React.Component {
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
+              clientField="clientRef"
               component={ProjectField}
               label="Project"
-              name="projectName"
-              nameClient="clientRef"
-              nameProject="projectRef"
-              onProjectChange={this._handleProjectChange}
+              name="projectRef"
             />
           </div>
           <div className="w-full md:w-1/2 px-2 mb-4">

@@ -11,6 +11,7 @@ export Flashes from './Flashes';
 export FormError from './FormError';
 export HardRedirect from './HardRedirect';
 export Icon from './Icon';
+export InputBase from './InputBase';
 export InputField from './InputField';
 export Label from './Label';
 export Link from './Link';

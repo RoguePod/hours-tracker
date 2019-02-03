@@ -8,12 +8,16 @@ import styled from 'styled-components';
 
 const DURATION = 300;
 
-const Container =  styled.div`
-  max-height: 100px;
+const Container = styled.div`
+  max-height: 300px;
+`;
+
+const Spacer = styled.div`
+  height: 4px;
 `;
 
 const FadeIn = styled.div`
-  top: 100%;
+  top: calc(100% - 5px);
 
   &.fade-enter {
     opacity: 0.5;
@@ -37,10 +41,14 @@ const FadeIn = styled.div`
 class Dropdown extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
+    error: PropTypes.bool,
+    focused: PropTypes.bool,
     open: PropTypes.bool
   }
 
   static defaultProps = {
+    error: false,
+    focused: false,
     open: false
   }
 
@@ -55,6 +63,8 @@ class Dropdown extends React.Component {
 
     this._handleEnter = this._handleEnter.bind(this);
     this._handleExit = this._handleExit.bind(this);
+
+    // setTimeout(() => { debugger; }, 2000);
   }
 
   shouldComponentUpdate() {
@@ -81,15 +91,21 @@ class Dropdown extends React.Component {
   }
 
   render() {
-    const { open } = this.props;
+    const { error, focused, open } = this.props;
     const { children, slide } = this.state;
 
     const dropdownClasses = cx(
-      'bg-white border-blue rounded-b shadow-md z-10 ' +
-      'overflow-x-hidden overflow-y-auto list-reset',
+      'bg-white rounded-b z-10 overflow-hidden border-l border-b border-r ' +
+      'shadow-md',
       {
-        'border-b border-l border-r': children.length > 0
+        'border-blue-light': !error && focused,
+        'border-grey-light': !error && focused,
+        'border-red': error
       }
+    );
+
+    const containerClasses = cx(
+      'overflow-x-hidden overflow-y-auto list-reset'
     );
 
     return (
@@ -107,11 +123,14 @@ class Dropdown extends React.Component {
             duration={DURATION}
             open={slide}
           >
-            <Container
+            <div
               className={dropdownClasses}
             >
-              {children}
-            </Container>
+              <Spacer className="transition" />
+              <Container className={containerClasses}>
+                {children}
+              </Container>
+            </div>
           </Collapse>
         </FadeIn>
       </CSSTransition>

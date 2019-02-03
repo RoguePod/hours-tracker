@@ -1,40 +1,66 @@
+import FieldError from './FieldError';
 import FieldHelper from './FieldHelper';
-import InputField from './InputField';
+import InputBase from './InputBase';
+import Label from './Label';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import chrono from 'chrono-node';
+import { isBlank } from 'javascripts/globals';
 import moment from 'moment';
 
 class TimeField extends React.Component {
   static propTypes = {
+    disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
     id: PropTypes.string,
     label: PropTypes.string,
-    nameField: PropTypes.string.isRequired,
+    required: PropTypes.bool,
     timezone: PropTypes.string.isRequired
   }
 
   static defaultProps = {
+    disabled: false,
     id: null,
-    label: null
+    label: null,
+    required: false
   }
 
   constructor(props) {
     super(props);
 
+    this.input = React.createRef();
     this._handleChange = this._handleChange.bind(this);
+
+    this.state = {
+      value: this._formatValue(props.field.value, props.timezone)
+    };
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
+  componentDidUpdate(prevProps) {
+    const { field: { name, value }, form: { touched }, timezone } = this.props;
+
+    const isTouched = touched[name];
+    if (!isTouched && prevProps.field.value !== value) {
+      this.setState({
+        value: this._formatValue(value, timezone)
+      });
+    }
+  }
+
   _parseDate(value, timezone) {
+    if (isBlank(value)) {
+      return 0;
+    }
+
     const parsed = chrono.parseDate(value);
 
     if (!parsed) {
-      return null;
+      return -1;
     }
 
     const values = [
@@ -47,42 +73,60 @@ class TimeField extends React.Component {
       .valueOf();
   }
 
-  _handleChange({ target: { value } }) {
-    const {
-      field: { name }, nameField, form: { setFieldValue }, timezone
-    } = this.props;
+  _formatValue(value, timezone) {
+    if (value > 0) {
+      const date = moment.tz(value, timezone);
 
-    setFieldValue(name, value);
-    setFieldValue(nameField, this._parseDate(value, timezone));
-  }
-
-  render() {
-    const { field: { value }, timezone } = this.props;
-    /* eslint-disable no-unused-vars */
-    const { nameField, ...rest } = this.props;
-    /* eslint-enable no-unused-vars */
-
-    let realTime = null;
-    if (value && value.length > 0) {
-      const parsed = chrono.parseDate(value);
-
-      if (parsed) {
-        const values = [
-          parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
-          parsed.getHours(), parsed.getMinutes()
-        ];
-
-        realTime = moment.tz(values, timezone)
-          .format('MM/DD/YYYY [a]t hh:mm A z');
+      if (date && date.isValid()) {
+        return date.format('MM/DD/YYYY [a]t hh:mm A z');
       }
     }
 
+    return '';
+  }
+
+  _handleChange({ target: { value } }) {
+    const {
+      field: { name }, form: { setFieldTouched, setFieldValue }, timezone
+    } = this.props;
+
+    setFieldTouched(name, true);
+    setFieldValue(name, this._parseDate(value, timezone));
+    this.setState({ value });
+  }
+
+  render() {
+    const {
+      disabled, field, form: { errors, isSubmitting, touched },
+      label, required, timezone, ...rest
+    } = this.props;
+    const { value } = this.state;
+
+    const hasError = errors[field.name] && touched[field.name];
+    const realTime = this._formatValue(field.value, timezone);
+
     return (
       <>
-        <InputField
+        {label && label.length > 0 &&
+          <Label
+            error={hasError}
+            htmlFor={this.input?.current?.id()}
+            required={required}
+          >
+            {label}
+          </Label>}
+        <InputBase
           {...rest}
+          disabled={disabled || isSubmitting}
+          error={hasError}
+          name={field.name}
           onChange={this._handleChange}
-          type="text"
+          ref={this.input}
+          value={value}
+        />
+        <FieldError
+          error={errors[field.name]}
+          touched={touched[field.name]}
         />
         <FieldHelper
           className="text-green"

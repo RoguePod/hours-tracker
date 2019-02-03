@@ -28,20 +28,12 @@ class EntriesFilterForm extends React.Component {
   constructor(props) {
     super(props);
 
-    this._handleProjectChange = this._handleProjectChange.bind(this);
     this._handleClientChange = this._handleClientChange.bind(this);
     this._handleUserChange = this._handleUserChange.bind(this);
   }
 
   shouldComponentUpdate() {
     return true;
-  }
-
-  _handleProjectChange(clientRef, projectRef) {
-    const { setFieldValue } = this.props;
-
-    setFieldValue('clientRef', clientRef);
-    setFieldValue('projectRef', projectRef);
   }
 
   _handleClientChange(clientRef) {
@@ -93,12 +85,10 @@ class EntriesFilterForm extends React.Component {
           </div>
           <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
+              clientField="clientRef"
               component={ProjectField}
               label="Project"
-              name="projectName"
-              nameClient="clientRef"
-              nameProject="projectRef"
-              onProjectChange={this._handleProjectChange}
+              name="projectRef"
             />
           </div>
         </div>

@@ -59,17 +59,17 @@ class EntryEditPage extends React.Component {
     const { entry, fetching, onUpdateEntry, page, running } = this.props;
 
     const validationRules = {
-      startedAt: Yup.string()
+      startedAt: Yup.number()
         .parsedTime('Started is not a valid date/time')
-        .required('Started is Required'),
-      stoppedAt: Yup.string()
+        .positive('Started is Required'),
+      stoppedAt: Yup.number()
         .parsedTime('Started is not a valid date/time'),
       timezone: Yup.string().required('Timezone is Required')
     };
 
     if (running && running.id !== entry.id) {
       validationRules.stoppedAt = validationRules.stoppedAt
-        .required('Stopped is Required');
+        .positive('Stopped is Required');
     }
 
     const validationSchema = Yup.object().shape(validationRules);

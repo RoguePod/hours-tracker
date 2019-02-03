@@ -8,8 +8,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   height: 0;
-  overflow-y: hidden;
-  transition-property: height;
+  transition-property: all;
   transition-timing-function: ease;
 `;
 
@@ -33,7 +32,7 @@ class Collapse extends React.Component {
   }
 
   state = {
-    height: 'none'
+    height: 0
   }
 
   componentDidMount() {
@@ -57,17 +56,40 @@ class Collapse extends React.Component {
   }
 
   componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
+    }
+
     if (this._element) {
       removeResizeListener(this._element, this._handleUpdateHeight);
     }
   }
 
+  timeout = null
+
   _handleUpdateHeight() {
+    const { duration, open } = this.props;
+    const { height: currentHeight } = this.state;
+
     if (!this._element) {
       return;
     }
 
-    this.setState({ height: this._element.offsetHeight });
+    const height = currentHeight === 0 || open ? this._element.offsetHeight : 0;
+
+    if (currentHeight !== height) {
+      this.setState({ animating: true, height }, () => {
+        if (this.timeout) {
+          clearTimeout(this.timeout);
+          this.timeout = null;
+        }
+
+        this.timeout = setTimeout(() => {
+          this.setState({ animating: false });
+        }, duration);
+      });
+    }
   }
 
   _findElement(node) {
@@ -86,10 +108,8 @@ class Collapse extends React.Component {
   }
 
   render() {
-    const { children, duration, open, ...rest } = this.props;
-    const { height: stateHeight } = this.state;
-
-    const height = stateHeight === 'none' || open ? stateHeight : 0;
+    const { children, duration, ...rest } = this.props;
+    const { animating, height } = this.state;
 
     const child = React.Children.only(children);
     const trigger = React.cloneElement(child, {
@@ -110,9 +130,17 @@ class Collapse extends React.Component {
       }
     });
 
+    const containerStyles = {
+      height, transitionDuration: `${duration}ms`
+    };
+
+    if (animating) {
+      containerStyles.overflowY = 'hidden';
+    }
+
     return (
       <Container
-        style={{ height, transitionDuration: `${duration}ms` }}
+        style={containerStyles}
       >
         {trigger}
       </Container>

@@ -22,7 +22,6 @@ import {
 import Fuse from 'fuse.js';
 import _filter from 'lodash/filter';
 import _find from 'lodash/find';
-import _groupBy from 'lodash/groupBy';
 import _keyBy from 'lodash/keyBy';
 import _sortBy from 'lodash/sortBy';
 import { addFlash } from 'javascripts/shared/redux/flashes';
@@ -147,45 +146,6 @@ export const selectQueryableProjects = createSelector(
     });
 
     return projects;
-  }
-);
-
-export const selectQueriedProjects = createSelector(
-  [selectQueryableProjects, (_state, query) => query],
-  (projects, query) => {
-    if (projects.length === 0 || isBlank(query)) {
-      return {};
-    }
-
-    const options = {
-      ...fuseOptions,
-      keys: ['clientName', 'projectName']
-    };
-
-    const searchResults = new Fuse(projects, options).search(query);
-    const results       = {};
-    const groups        = _groupBy(searchResults, 'clientId');
-
-    for (const clientId of Object.keys(groups)) {
-      const group = groups[clientId];
-
-      results[clientId] = {
-        name: group[0].clientName,
-        projects: group.map((result) => {
-          const projectRef = firestore
-            .doc(`clients/${result.clientId}/projects/${result.projectId}`);
-
-          return {
-            clientRef: firestore.doc(`clients/${result.clientId}`),
-            id: result.projectId,
-            name: result.projectName,
-            projectRef
-          };
-        })
-      };
-    }
-
-    return results;
   }
 );
 

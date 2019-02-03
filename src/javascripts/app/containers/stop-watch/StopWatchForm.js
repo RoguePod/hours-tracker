@@ -7,7 +7,6 @@ import React from 'react';
 
 class StopWatchForm extends React.Component {
   static propTypes = {
-    setFieldValue: PropTypes.func.isRequired,
     status: PropTypes.string,
     submitForm: PropTypes.func.isRequired,
     values: PropTypes.object.isRequired
@@ -17,15 +16,9 @@ class StopWatchForm extends React.Component {
     status: null
   }
 
-  constructor(props) {
-    super(props);
-
-    this._handleProjectChange = this._handleProjectChange.bind(this);
-  }
-
   componentDidUpdate(prevProps) {
     const {
-      submitForm, values: { description }
+      submitForm, values: { clientRef, description, projectRef }
     } = this.props;
 
     if (description !== prevProps.values.description) {
@@ -36,18 +29,13 @@ class StopWatchForm extends React.Component {
       this.timeout = setTimeout(() => {
         submitForm();
       }, 1000);
+    } else if (clientRef !== prevProps.values.clientRef ||
+               projectRef !== prevProps.values.projectRef) {
+      submitForm();
     }
   }
 
   timeout = null
-
-  _handleProjectChange(clientRef, projectRef) {
-    const { setFieldValue, submitForm } = this.props;
-
-    setFieldValue('clientRef', clientRef);
-    setFieldValue('projectRef', projectRef);
-    setTimeout(submitForm, 1);
-  }
 
   render() {
     const { status } = this.props;
@@ -59,12 +47,10 @@ class StopWatchForm extends React.Component {
         <FormError error={status} />
         <div className="mb-2">
           <Field
+            clientField="clientRef"
             component={ProjectField}
             label="Project"
-            name="projectName"
-            nameClient="clientRef"
-            nameProject="projectRef"
-            onProjectChange={this._handleProjectChange}
+            name="projectRef"
           />
         </div>
         <Field

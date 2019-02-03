@@ -34,23 +34,13 @@ export const selectEntryForForm = createSelector(
   (entry, timezone) => {
     if (!entry) {
       return {
+        clientRef: null,
         description: '',
-        startedAt: null,
-        startedAtText: '',
-        stoppedAt: null,
-        stoppedAtText: '',
+        projectRef: null,
+        startedAt: 0,
+        stoppedAt: 0,
         timezone
       };
-    }
-
-    const startedAtText = moment.tz(entry.startedAt, entry.timezone)
-      .format('MM/DD/YYYY hh:mm A z');
-
-    let stoppedAtText = null;
-
-    if (entry.stoppedAt) {
-      stoppedAtText = moment.tz(entry.stoppedAt, entry.timezone)
-        .format('MM/DD/YYYY hh:mm A z');
     }
 
     return {
@@ -58,9 +48,7 @@ export const selectEntryForForm = createSelector(
       description: entry.description,
       projectRef: entry.projectRef,
       startedAt: entry.startedAt,
-      startedAtText,
       stoppedAt: entry.stoppedAt,
-      stoppedAtText,
       timezone: entry.timezone || timezone
     };
   }

@@ -1,9 +1,8 @@
-import { FieldError, Label } from 'javascripts/shared/components';
-
+import FieldError from './FieldError';
+import InputBase from './InputBase';
+import Label from './Label';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import _uniqueId from 'lodash/uniqueId';
-import cx from 'classnames';
 
 class InputField extends React.Component {
   static propTypes = {
@@ -29,64 +28,37 @@ class InputField extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      id: props.id || _uniqueId('input_')
-    };
+    this.input = React.createRef();
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  componentDidUpdate(prevProps) {
-    const { id } = this.props;
-
-    if (id !== prevProps.id) {
-      if (id) {
-        this.setState({ id });
-      } else if (!id && prevProps.id) {
-        this.setState({ id: _uniqueId('input_') });
-      }
-    }
-  }
-
   render() {
     const {
-      className, disabled, field, form: { errors, isSubmitting, touched },
+      disabled, field, form: { errors, isSubmitting, touched },
       label, required, ...rest
     } = this.props;
-    const { id } = this.state;
 
     const hasError = errors[field.name] && touched[field.name];
-
-    const inputClassName = cx(
-      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none transition',
-      {
-        'border-grey-light': !hasError,
-        'border-red': hasError,
-        'focus:border-blue-light': !hasError,
-        'focus:border-red': hasError
-      },
-      className
-    );
 
     return (
       <>
         {label && label.length > 0 &&
           <Label
             error={hasError}
-            htmlFor={id}
+            htmlFor={this.input?.current?.id()}
             required={required}
           >
             {label}
           </Label>}
-        <input
+        <InputBase
           {...field}
           {...rest}
-          className={inputClassName}
           disabled={disabled || isSubmitting}
-          id={id}
+          error={hasError}
+          ref={this.input}
         />
         <FieldError
           error={errors[field.name]}

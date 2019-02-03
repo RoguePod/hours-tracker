@@ -8,7 +8,7 @@ const Divider = styled.div`
   height: 1px;
 `;
 
-const ProjectsDropdown = ({ clients, ...rest }) => {
+const ProjectsDropdown = ({ clients, onProjectClick, ...rest }) => {
   const keys = Object.keys(clients);
 
   const rows = keys.map((clientId) => {
@@ -20,7 +20,7 @@ const ProjectsDropdown = ({ clients, ...rest }) => {
         >
           <Divider className="bg-grey-lighter" />
           <ProjectRow
-            {...rest}
+            onProjectClick={onProjectClick}
             project={project}
           />
         </React.Fragment>
@@ -43,6 +43,7 @@ const ProjectsDropdown = ({ clients, ...rest }) => {
 
   return (
     <Dropdown
+      {...rest}
       open={keys.length > 0}
     >
       {rows}
@@ -53,7 +54,8 @@ const ProjectsDropdown = ({ clients, ...rest }) => {
 ProjectsDropdown.propTypes = {
   clients: PropTypes.shape({
     clientName: PropTypes.shape({ name: PropTypes.string })
-  }).isRequired
+  }).isRequired,
+  onProjectClick: PropTypes.func.isRequired
 };
 
 export default ProjectsDropdown;

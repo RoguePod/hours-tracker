@@ -42,14 +42,8 @@ export const isStoppedAt = (value, { startedAt, timezone }) => {
   return undefined;
 };
 
-Yup.addMethod(Yup.string, 'parsedTime', (message) => {
-  return Yup.string().test('parsedTime', message, (value) => {
-    if (value) {
-      const time = parseTime(value);
-
-      return time && time.isValid();
-    }
-
-    return false;
+Yup.addMethod(Yup.number, 'parsedTime', (message) => {
+  return Yup.number().test('parsedTime', message, (value) => {
+    return value !== -1;
   });
 });

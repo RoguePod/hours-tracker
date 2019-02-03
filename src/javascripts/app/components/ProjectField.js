@@ -1,60 +1,62 @@
-import { FieldError, Label } from 'javascripts/shared/components';
-import {
-  selectClientsByKey,
-  selectQueriedProjects
-} from 'javascripts/app/redux/clients';
+import { FieldError, InputBase, Label } from 'javascripts/shared/components';
+import { firestore, isBlank } from 'javascripts/globals';
 
+import Fuse from 'fuse.js';
 import ProjectsDropdown from './ProjectsDropdown';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import _get from 'lodash/get';
-import _uniqueId from 'lodash/uniqueId';
+import _find from 'lodash/find';
+import _groupBy from 'lodash/groupBy';
+import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import cx from 'classnames';
+import { selectQueryableProjects } from 'javascripts/app/redux/clients';
+
+const fuseOptions = {
+  distance: 100,
+  keys: ['name', 'projects.name'],
+  location: 0,
+  maxPatternLength: 32,
+  minMatchCharLength: 2,
+  threshold: 0.1
+};
 
 class ProjectField extends React.Component {
   static propTypes = {
-    className: PropTypes.string,
-    clientRef: PropTypes.docRef,
-    clients: PropTypes.docRef.isRequired,
+    clientField: PropTypes.string.isRequired,
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
-    id: PropTypes.string,
     label: PropTypes.string,
-    nameClient: PropTypes.string.isRequired,
-    nameProject: PropTypes.string.isRequired,
-    onProjectChange: PropTypes.func.isRequired,
-    projectRef: PropTypes.docRef,
+    projects: PropTypes.arrayOf(PropTypes.shape({
+      clientId: PropTypes.string.isRequired,
+      clientName: PropTypes.string.isRequired,
+      projectId: PropTypes.string.isRequired,
+      projectName: PropTypes.string.isRequired
+    })).isRequired,
     ready: PropTypes.bool.isRequired,
-    required: PropTypes.bool,
-    results: PropTypes.shape({
-      clientName: PropTypes.shape({ name: PropTypes.string })
-    }).isRequired
+    required: PropTypes.bool
   }
 
   static defaultProps = {
-    className: null,
-    clientRef: null,
     disabled: false,
-    id: null,
     label: null,
-    projectRef: null,
     required: false
   }
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      focused: false,
-      id: props.id || _uniqueId('input_')
-    };
-
+    this.input = React.createRef();
     this._handleChange = this._handleChange.bind(this);
+    this._handleDropdownChange = this._handleDropdownChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
     this._handleFocus = this._handleFocus.bind(this);
     this._findValue = this._findValue.bind(this);
+
+    this.state = {
+      focused: false,
+      value: this._findValue(props.field.value)
+    };
   }
 
   shouldComponentUpdate() {
@@ -62,14 +64,16 @@ class ProjectField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { id } = this.props;
+    const {
+      field: { name, value }, form: { touched }, projects, ready
+    } = this.props;
 
-    if (id !== prevProps.id) {
-      if (id) {
-        this.setState({ id });
-      } else if (!id && prevProps.id) {
-        this.setState({ id: _uniqueId('input_') });
-      }
+    const isTouched = touched[name];
+    if (!isTouched && (prevProps.field.value !== value ||
+        !_isEqual(projects, prevProps.projects) || ready !== prevProps.ready)) {
+      this.setState({
+        value: this._findValue(value)
+      });
     }
   }
 
@@ -82,124 +86,150 @@ class ProjectField extends React.Component {
 
   timeout = null
 
-  _handleChange(project) {
+  _handleChange({ target: { value } }) {
+    const { field: { name }, form: { setFieldTouched } } = this.props;
+
+    setFieldTouched(name, true);
+    this.setState({ value });
+  }
+
+  _handleDropdownChange(project) {
     const {
-      field: { name }, form: { setFieldValue }, onProjectChange
+      clientField, field: { name }, form: { setFieldTouched, setFieldValue }
     } = this.props;
+
+    setFieldTouched(name, true);
+    setFieldValue(name, project.projectRef);
+    setFieldValue(clientField, project.clientRef);
+    this.setState({
+      focused: false, value: this._findValue(project.projectRef)
+    });
 
     if (this.timeout) {
       clearTimeout(this.timeout);
       this.timeout = null;
     }
-
-    onProjectChange(project.clientRef, project.projectRef);
-    setFieldValue(name, '');
-    this.setState({ focused: false });
   }
 
   _handleBlur() {
     const {
-      field: { name, value }, form: { setFieldValue }, onProjectChange
+      clientField, field, form: { setFieldValue }
     } = this.props;
+    const { value } = this.state;
 
     this.timeout = setTimeout(() => {
       if (value.length === 0) {
-        onProjectChange(null, null);
+        setFieldValue(field.name, null);
+        setFieldValue(clientField, null);
+        this.setState({ focused: false, value: this._findValue(null) });
+      } else {
+        this.setState({ focused: false, value: this._findValue(field.value) });
       }
-      setFieldValue(name, '');
-      this.setState({ focused: false });
-    }, 250);
+    }, 300);
   }
 
   _handleFocus({ target }) {
-    const { field: { name }, form: { setFieldValue } } = this.props;
+    const { field: { value } } = this.props;
 
-    setFieldValue(name, this._findValue());
-
-    this.setState({ focused: true }, () => {
+    this.setState({ focused: true, value: this._findValue(value) }, () => {
       setTimeout(() => {
         target.select();
       }, 1);
     });
   }
 
-  _findValue() {
-    const { clients, clientRef, projectRef, ready } = this.props;
+  _findValue(projectRef) {
+    const { projects, ready } = this.props;
 
-    if (!ready) {
+    if (!ready || isBlank(projectRef)) {
       return '';
     }
 
-    const clientId  = _get(clientRef, 'id');
-    const projectId = _get(projectRef, 'id');
-    const client    = _get(clients, clientId);
-    const project   = _get(clients, `${clientId}.projects.${projectId}`);
+    const foundProject = _find(projects, (project) => {
+      return project.projectId === projectRef.id;
+    });
 
-    if (client && project) {
-      return `${client.name} - ${project.name}`;
+    if (foundProject) {
+      return `${foundProject.clientName} - ${foundProject.projectName}`;
     }
 
     return '';
   }
 
+  _findResults(value) {
+    const { projects } = this.props;
+
+    if (projects.length === 0 || isBlank(value)) {
+      return {};
+    }
+
+    const options = {
+      ...fuseOptions,
+      keys: ['clientName', 'projectName']
+    };
+
+    const searchResults = new Fuse(projects, options).search(value);
+    const results       = {};
+    const groups        = _groupBy(searchResults, 'clientId');
+
+    for (const clientId of Object.keys(groups)) {
+      const group = groups[clientId];
+
+      results[clientId] = {
+        name: group[0].clientName,
+        projects: group.map((result) => {
+          const projectRef = firestore
+            .doc(`clients/${result.clientId}/projects/${result.projectId}`);
+
+          return {
+            clientRef: firestore.doc(`clients/${result.clientId}`),
+            id: result.projectId,
+            name: result.projectName,
+            projectRef
+          };
+        })
+      };
+    }
+
+    return results;
+  }
+
   render() {
     /* eslint-disable no-unused-vars */
     const {
-      className, clients, clientRef, disabled, field,
-      form: { errors, isSubmitting, touched },
-      label, nameClient, nameProject, onProjectChange, projectRef, ready,
-      required, results, ...rest
+      clientField, disabled, field, form: { errors, isSubmitting, touched },
+      label, ready, required, ...rest
     } = this.props;
     /* eslint-enable no-unused-vars */
-    const { focused, id } = this.state;
 
+    const { focused, value } = this.state;
     const hasError = errors[field.name] && touched[field.name];
-
-    let { value } = field;
-
-    if (!focused) {
-      value = this._findValue();
-    }
-
-    const keys = Object.keys(results);
-
-    const inputClassName = cx(
-      'appearance-none border w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none transition',
-      {
-        'border-grey-light': !hasError,
-        'border-red': hasError,
-        'focus:border-blue-light': !hasError,
-        'focus:border-red': hasError,
-        'rounded': keys.length === 0,
-        'rounded-t': keys.length > 0
-      },
-      className
-    );
+    const results = focused ? this._findResults(value) : {};
 
     return (
       <div className="relative">
         {label && label.length > 0 &&
           <Label
             error={hasError}
-            htmlFor={id}
+            htmlFor={this.input?.current?.id()}
             required={required}
           >
             {label}
           </Label>}
-        <input
-          {...field}
+        <InputBase
           {...rest}
-          className={inputClassName}
           disabled={!ready || disabled || isSubmitting}
-          id={id}
           onBlur={this._handleBlur}
+          onChange={this._handleChange}
           onFocus={this._handleFocus}
+          ref={this.input}
           value={value}
         />
         <ProjectsDropdown
           clients={results}
-          onProjectClick={this._handleChange}
+          error={hasError}
+          focused={focused}
+          onProjectClick={this._handleDropdownChange}
         />
         <FieldError
           error={errors[field.name]}
@@ -210,17 +240,10 @@ class ProjectField extends React.Component {
   }
 }
 
-const props = (state, ownProps) => {
-  const {
-    field: { value }, form: { values }, nameClient, nameProject
-  } = ownProps;
-
+const props = (state) => {
   return {
-    clientRef: values[nameClient],
-    clients: selectClientsByKey(state),
-    projectRef: values[nameProject],
-    ready: state.clients.ready,
-    results: selectQueriedProjects(state, value)
+    projects: selectQueryableProjects(state),
+    ready: state.clients.ready
   };
 };
 
