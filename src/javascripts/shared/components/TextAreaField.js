@@ -7,6 +7,13 @@ import React from 'react';
 import _sum from 'lodash/sum';
 import _uniqueId from 'lodash/uniqueId';
 import cx from 'classnames';
+import styled from 'styled-components';
+
+const TextArea = styled.textarea`
+  &:disabled {
+    background-color: #dae1e7;
+  }
+`;
 
 class TextAreaField extends React.Component {
   static propTypes = {
@@ -147,7 +154,7 @@ class TextAreaField extends React.Component {
           >
             {label}
           </Label>}
-        <textarea
+        <TextArea
           {...field}
           {...rest}
           className={textAreaClassName}

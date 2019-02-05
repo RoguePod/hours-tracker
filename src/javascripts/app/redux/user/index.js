@@ -96,11 +96,11 @@ export function* userUpdate({ actions, params }) {
 
     if (error) {
       actions.setStatus(error.message);
+      actions.setSubmitting(false);
     } else {
       yield put(addFlash('Profile has been updated'));
     }
   } finally {
-    actions.setSubmitting(false);
     yield put(stopFetching(USER_UPDATE));
   }
 }

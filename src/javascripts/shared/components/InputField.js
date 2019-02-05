@@ -6,20 +6,16 @@ import React from 'react';
 
 class InputField extends React.Component {
   static propTypes = {
-    className: PropTypes.string,
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
-    id: PropTypes.string,
     label: PropTypes.string,
     required: PropTypes.bool,
     type: PropTypes.string
   }
 
   static defaultProps = {
-    className: null,
     disabled: false,
-    id: null,
     label: null,
     required: false,
     type: 'text'

@@ -1,28 +1,32 @@
-import { FieldError, InputBase, Label } from 'javascripts/shared/components';
+import {
+  Dropdown,
+  FieldError,
+  InputBase,
+  Label
+} from 'javascripts/shared/components';
 import { firestore, isBlank } from 'javascripts/globals';
+import {
+  fuseOptions,
+  selectQueryableProjects
+} from 'javascripts/app/redux/clients';
 
 import Fuse from 'fuse.js';
-import ProjectsDropdown from './ProjectsDropdown';
+import ProjectRow from './ProjectRow';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _find from 'lodash/find';
 import _groupBy from 'lodash/groupBy';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import { selectQueryableProjects } from 'javascripts/app/redux/clients';
+import styled from 'styled-components';
 
-const fuseOptions = {
-  distance: 100,
-  keys: ['name', 'projects.name'],
-  location: 0,
-  maxPatternLength: 32,
-  minMatchCharLength: 2,
-  threshold: 0.1
-};
+const Divider = styled.div`
+  height: 1px;
+`;
 
 class ProjectField extends React.Component {
   static propTypes = {
-    clientField: PropTypes.string.isRequired,
+    clientField: PropTypes.string,
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
@@ -38,6 +42,7 @@ class ProjectField extends React.Component {
   }
 
   static defaultProps = {
+    clientField: null,
     disabled: false,
     label: null,
     required: false
@@ -64,71 +69,72 @@ class ProjectField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      field: { name, value }, form: { touched }, projects, ready
-    } = this.props;
+    const { field: { value }, projects, ready } = this.props;
 
-    const isTouched = touched[name];
-    if (!isTouched && (prevProps.field.value !== value ||
-        !_isEqual(projects, prevProps.projects) || ready !== prevProps.ready)) {
+    if (!_isEqual(prevProps.field.value, value) ||
+        !_isEqual(projects, prevProps.projects) ||
+        ready !== prevProps.ready) {
       this.setState({
         value: this._findValue(value)
       });
     }
   }
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-      this.timeout = null;
-    }
-  }
-
-  timeout = null
+  changing = false
 
   _handleChange({ target: { value } }) {
-    const { field: { name }, form: { setFieldTouched } } = this.props;
-
-    setFieldTouched(name, true);
     this.setState({ value });
   }
 
   _handleDropdownChange(project) {
+    this.changing = true;
+
     const {
-      clientField, field: { name }, form: { setFieldTouched, setFieldValue }
+      clientField, field, form: { setFieldTouched, setFieldValue }
     } = this.props;
 
-    setFieldTouched(name, true);
-    setFieldValue(name, project.projectRef);
-    setFieldValue(clientField, project.clientRef);
+    if (!_isEqual(project.projectRef, field.value)) {
+      setFieldTouched(field.name, true);
+      setFieldValue(field.name, project.projectRef);
+
+      if (clientField) {
+        setFieldTouched(clientField, true);
+        setFieldValue(clientField, project.clientRef);
+      }
+    }
+
     this.setState({
       focused: false, value: this._findValue(project.projectRef)
     });
-
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-      this.timeout = null;
-    }
   }
 
   _handleBlur() {
     const {
-      clientField, field, form: { setFieldValue }
+      clientField, field, form: { setFieldTouched, setFieldValue }
     } = this.props;
     const { value } = this.state;
 
-    this.timeout = setTimeout(() => {
-      if (value.length === 0) {
-        setFieldValue(field.name, null);
+    if (this.changing) {
+      return;
+    }
+
+    if (value.length === 0) {
+      setFieldTouched(field.name, true);
+      setFieldValue(field.name, null);
+
+      if (clientField) {
+        setFieldTouched(clientField, true);
         setFieldValue(clientField, null);
-        this.setState({ focused: false, value: this._findValue(null) });
-      } else {
-        this.setState({ focused: false, value: this._findValue(field.value) });
       }
-    }, 300);
+
+      this.setState({ focused: false, value: this._findValue(null) });
+    } else {
+      this.setState({ focused: false, value: this._findValue(field.value) });
+    }
   }
 
   _handleFocus({ target }) {
+    this.changing = false;
     const { field: { value } } = this.props;
 
     this.setState({ focused: true, value: this._findValue(value) }, () => {
@@ -159,18 +165,19 @@ class ProjectField extends React.Component {
   _findResults(value) {
     const { projects } = this.props;
 
-    if (projects.length === 0 || isBlank(value)) {
-      return {};
-    }
-
     const options = {
       ...fuseOptions,
       keys: ['clientName', 'projectName']
     };
 
-    const searchResults = new Fuse(projects, options).search(value);
-    const results       = {};
-    const groups        = _groupBy(searchResults, 'clientId');
+    let searchResults = projects;
+
+    if (!isBlank(value)) {
+      searchResults = new Fuse(projects, options).search(value);
+    }
+
+    const results = {};
+    const groups  = _groupBy(searchResults, 'clientId');
 
     for (const clientId of Object.keys(groups)) {
       const group = groups[clientId];
@@ -204,7 +211,37 @@ class ProjectField extends React.Component {
 
     const { focused, value } = this.state;
     const hasError = errors[field.name] && touched[field.name];
-    const results = focused ? this._findResults(value) : {};
+    const clients = focused ? this._findResults(value) : {};
+
+    const rows = Object.keys(clients).map((clientId) => {
+      const result = clients[clientId];
+      const projects = result.projects.map((project) => {
+        return (
+          <React.Fragment
+            key={project.id}
+          >
+            <Divider className="bg-grey-lighter" />
+            <ProjectRow
+              onChange={this._handleDropdownChange}
+              project={project}
+            />
+          </React.Fragment>
+        );
+      });
+
+      return (
+        <React.Fragment
+          key={clientId}
+        >
+          <div className="bg-blue-light p-2 font-bold text-white">
+            {result.name}
+          </div>
+          <ul className="list-reset">
+            {projects}
+          </ul>
+        </React.Fragment>
+      );
+    });
 
     return (
       <div className="relative">
@@ -225,15 +262,15 @@ class ProjectField extends React.Component {
           ref={this.input}
           value={value}
         />
-        <ProjectsDropdown
-          clients={results}
+        <Dropdown
           error={hasError}
-          focused={focused}
-          onProjectClick={this._handleDropdownChange}
-        />
+          open={focused}
+        >
+          {rows}
+        </Dropdown>
         <FieldError
           error={errors[field.name]}
-          touched={touched[field.name]}
+          touched={Boolean(touched[field.name])}
         />
       </div>
     );

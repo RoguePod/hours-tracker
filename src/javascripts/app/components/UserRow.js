@@ -3,7 +3,7 @@ import React from 'react';
 
 class UserRow extends React.Component {
   static propTypes = {
-    onUserClick: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     user: PropTypes.shape({
       name: PropTypes.string.isRequired
     }).isRequired
@@ -12,17 +12,17 @@ class UserRow extends React.Component {
   constructor(props) {
     super(props);
 
-    this._handleClick = this._handleClick.bind(this);
+    this._handleMouseDown = this._handleMouseDown.bind(this);
   }
 
   shouldComponentUpdate() {
     return false;
   }
 
-  _handleClick() {
-    const { user, onUserClick } = this.props;
+  _handleMouseDown() {
+    const { onChange, user } = this.props;
 
-    onUserClick(user);
+    onChange(user);
   }
 
   render() {
@@ -34,7 +34,7 @@ class UserRow extends React.Component {
     return (
       <li
         className={userClasses}
-        onClick={this._handleClick}
+        onMouseDown={this._handleMouseDown}
       >
         {user.name}
       </li>

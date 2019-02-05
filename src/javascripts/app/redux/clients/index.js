@@ -22,7 +22,6 @@ import {
 import Fuse from 'fuse.js';
 import _filter from 'lodash/filter';
 import _find from 'lodash/find';
-import _keyBy from 'lodash/keyBy';
 import _sortBy from 'lodash/sortBy';
 import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
@@ -34,7 +33,7 @@ import update from 'immutability-helper';
 
 const perPage = 10;
 
-const fuseOptions = {
+export const fuseOptions = {
   distance: 100,
   keys: ['name', 'projects.name'],
   location: 0,
@@ -149,38 +148,6 @@ export const selectQueryableProjects = createSelector(
   }
 );
 
-export const selectQueriedClients = createSelector(
-  [selectQueryableClients, (_state, query) => query],
-  (clients, query) => {
-    if (clients.length === 0 || isBlank(query)) {
-      return [];
-    }
-
-    const results = new Fuse(clients, fuseOptions).search(query);
-
-    return results.map((client) => {
-      return {
-        clientRef: firestore.doc(`clients/${client.id}`),
-        id: client.id,
-        name: client.name
-      };
-    });
-  }
-);
-
-export const selectClientsByKey = createSelector(
-  [selectClients],
-  (clients) => {
-    const data = clients.map((client) => {
-      const projects = _keyBy(client.projects, 'id');
-
-      return { ...client, projects };
-    });
-
-    return _keyBy(data, 'id');
-  }
-);
-
 // Constants
 
 let channel = null;
@@ -192,7 +159,7 @@ const CLIENTS_SUBSCRIBE = `${path}/CLIENTS_SUBSCRIBE`;
 const CLIENT_UPDATE     = `${path}/CLIENT_UPDATE`;
 const CLIENT_CREATE     = `${path}/CLIENT_CREATE`;
 const READY             = `${path}/READY`;
-const FETCHING_SET  = `${path}/FETCHING_SET`;
+const FETCHING_SET      = `${path}/FETCHING_SET`;
 const RESET             = `${path}/RESET`;
 
 // Reducer
@@ -311,6 +278,7 @@ function* clientCreate({ actions, params }) {
 
     if (error) {
       actions.setStatus(error.message);
+      actions.setSubmitting(false);
     } else {
       yield put(addFlash('Client has been created.'));
 
@@ -321,7 +289,6 @@ function* clientCreate({ actions, params }) {
       }
     }
   } finally {
-    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }

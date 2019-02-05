@@ -92,6 +92,7 @@ function* projectUpdate({ actions, params, project }) {
 
     if (error) {
       actions.setStatus(error.message);
+      actions.setSubmitting(false);
     } else {
       yield put(addFlash('Project has been updated.'));
       yield put(subscribeClients());
@@ -103,7 +104,6 @@ function* projectUpdate({ actions, params, project }) {
       }
     }
   } finally {
-    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }

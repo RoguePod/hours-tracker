@@ -3,7 +3,7 @@ import React from 'react';
 
 class ProjectRow extends React.Component {
   static propTypes = {
-    onProjectClick: PropTypes.func.isRequired,
+    onChange: PropTypes.func.isRequired,
     project: PropTypes.shape({
       name: PropTypes.string.isRequired
     }).isRequired
@@ -12,17 +12,17 @@ class ProjectRow extends React.Component {
   constructor(props) {
     super(props);
 
-    this._handleClick = this._handleClick.bind(this);
+    this._handleMouseDown = this._handleMouseDown.bind(this);
   }
 
   shouldComponentUpdate() {
     return false;
   }
 
-  _handleClick() {
-    const { onProjectClick, project } = this.props;
+  _handleMouseDown() {
+    const { onChange, project } = this.props;
 
-    onProjectClick(project);
+    onChange(project);
   }
 
   render() {
@@ -34,7 +34,7 @@ class ProjectRow extends React.Component {
     return (
       <li
         className={projectClasses}
-        onClick={this._handleClick}
+        onMouseDown={this._handleMouseDown}
       >
         {project.name}
       </li>

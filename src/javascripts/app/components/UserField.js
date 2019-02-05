@@ -1,59 +1,56 @@
-import { FieldError, Label } from 'javascripts/shared/components';
 import {
-  selectQueriedUsers,
-  selectUsersByKey
-} from 'javascripts/app/redux/users';
+  Dropdown,
+  FieldError,
+  InputBase,
+  Label
+} from 'javascripts/shared/components';
+import { firestore, isBlank } from 'javascripts/globals';
 
+import Fuse from 'fuse.js';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import UsersDropdown from './UsersDropdown';
-import _get from 'lodash/get';
-import _uniqueId from 'lodash/uniqueId';
+import UserRow from './UserRow';
+import _find from 'lodash/find';
+import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
-import cx from 'classnames';
+import { fuseOptions } from 'javascripts/app/redux/users';
+import styled from 'styled-components';
+
+const Divider = styled.div`
+  height: 1px;
+`;
 
 class UserField extends React.Component {
   static propTypes = {
-    className: PropTypes.string,
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
-    id: PropTypes.string,
     label: PropTypes.string,
-    nameUser: PropTypes.string.isRequired,
-    onUserChange: PropTypes.func.isRequired,
     ready: PropTypes.bool.isRequired,
     required: PropTypes.bool,
-    results: PropTypes.arrayOf(PropTypes.user).isRequired,
-    userRef: PropTypes.docRef,
-    users: PropTypes.docRef.isRequired
+    users: PropTypes.arrayOf(PropTypes.user).isRequired
   }
 
   static defaultProps = {
-    className: null,
     disabled: false,
-    id: null,
     label: null,
-    required: false,
-    userRef: null
+    required: false
   }
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      focused: false,
-      id: props.id || _uniqueId('input_')
-    };
-
+    this.input = React.createRef();
     this._handleChange = this._handleChange.bind(this);
+    this._handleDropdownChange = this._handleDropdownChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
     this._handleFocus = this._handleFocus.bind(this);
     this._findValue = this._findValue.bind(this);
-  }
 
-  state = {
-    focused: false
+    this.state = {
+      focused: false,
+      value: this._findValue(props.field.value)
+    };
   }
 
   shouldComponentUpdate() {
@@ -61,14 +58,12 @@ class UserField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { id } = this.props;
+    const { field: { value }, ready, users } = this.props;
 
-    if (id !== prevProps.id) {
-      if (id) {
-        this.setState({ id });
-      } else if (!id && prevProps.id) {
-        this.setState({ id: _uniqueId('input_') });
-      }
+    if (!_isEqual(prevProps.field.value, value) ||
+        !_isEqual(users, prevProps.users) ||
+        ready !== prevProps.ready) {
+      this.setState({ value: this._findValue(value) });
     }
   }
 
@@ -79,139 +74,156 @@ class UserField extends React.Component {
     }
   }
 
-  timeout = null
+  changing = false
 
-  _handleChange(user) {
+  _handleChange({ target: { value } }) {
+    this.setState({ value });
+  }
+
+  _handleDropdownChange(user) {
+    this.changing = true;
+
     const {
-      field: { name }, form: { setFieldValue }, onUserChange
+      field: { name, value }, form: { setFieldTouched, setFieldValue }
     } = this.props;
 
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-      this.timeout = null;
+    if (!_isEqual(user.userRef, value)) {
+      setFieldTouched(name, true);
+      setFieldValue(name, user.userRef);
     }
 
-    onUserChange(user.userRef);
-    setFieldValue(name, '');
-    this.setState({ focused: false });
+    this.setState({
+      focused: false, value: this._findValue(user.userRef)
+    });
   }
 
   _handleBlur() {
-    const {
-      field: { name, value }, form: { setFieldValue }, onUserChange
-    } = this.props;
+    const { field, form: { setFieldTouched, setFieldValue } } = this.props;
+    const { value } = this.state;
 
-    this.timeout = setTimeout(() => {
-      if (value.length === 0) {
-        onUserChange(null);
-      }
-      setFieldValue(name, '');
-      this.setState({ focused: false });
-    }, 250);
+    if (this.changing) {
+      return;
+    }
+
+    if (value.length === 0) {
+      setFieldTouched(field.name, true);
+      setFieldValue(field.name, null);
+
+      this.setState({ focused: false, value: this._findValue(null) });
+    } else {
+      this.setState({ focused: false, value: this._findValue(field.value) });
+    }
   }
 
   _handleFocus({ target }) {
-    const { field: { name }, form: { setFieldValue } } = this.props;
+    this.changing = false;
+    const { field: { value } } = this.props;
 
-    setFieldValue(name, this._findValue());
-
-    this.setState({ focused: true }, () => {
+    this.setState({ focused: true, value: this._findValue(value) }, () => {
       setTimeout(() => {
         target.select();
       }, 1);
     });
   }
 
-  _findValue() {
-    const { users, userRef, ready } = this.props;
+  _findValue(userRef) {
+    const { ready, users } = this.props;
 
-    if (!ready) {
+    if (!ready || isBlank(userRef)) {
       return '';
     }
 
-    const user = _get(users, _get(userRef, 'id'));
+    const foundUser = _find(users, (user) => {
+      return user.id === userRef.id;
+    });
 
-    if (user) {
-      return user.name;
+    if (foundUser) {
+      return foundUser.name;
     }
 
     return '';
   }
 
+  _findResults(value) {
+    const { users } = this.props;
+    let results = users;
+
+    if (!isBlank(value)) {
+      results = new Fuse(users, fuseOptions).search(value);
+    }
+
+    return results.map((user) => {
+      return {
+        id: user.id,
+        name: user.name,
+        userRef: firestore.doc(`users/${user.id}`)
+      };
+    });
+  }
+
   render() {
     /* eslint-disable no-unused-vars */
     const {
-      className, disabled, field,
-      form: { errors, isSubmitting, touched },
-      label, nameUser, onUserChange, ready, required, results, userRef,
-      users, ...rest
+      disabled, field, form: { errors, isSubmitting, touched },
+      label, ready, required, users, ...rest
     } = this.props;
     /* eslint-enable no-unused-vars */
-    const { focused, id } = this.state;
 
+    const { focused, value } = this.state;
     const hasError = errors[field.name] && touched[field.name];
 
-    let { value } = field;
-
-    if (!focused) {
-      value = this._findValue();
-    }
-
-    const inputClassName = cx(
-      'appearance-none border w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none transition',
-      {
-        'border-grey-light': !hasError,
-        'border-red': hasError,
-        'focus:border-blue-light': !hasError,
-        'focus:border-red': hasError,
-        'rounded': results.length === 0,
-        'rounded-t': results.length > 0
-      },
-      className
-    );
+    const rows = (focused ? this._findResults(value) : []).map((user) => {
+      return (
+        <React.Fragment
+          key={user.id}
+        >
+          <Divider className="bg-grey-lighter" />
+          <UserRow
+            onChange={this._handleDropdownChange}
+            user={user}
+          />
+        </React.Fragment>
+      );
+    });
 
     return (
       <div className="relative">
-        {label && label.length > 0 &&
+        {label &&
           <Label
             error={hasError}
-            htmlFor={id}
+            htmlFor={this.input?.current?.id()}
             required={required}
           >
             {label}
           </Label>}
-        <input
-          {...field}
+        <InputBase
           {...rest}
-          className={inputClassName}
           disabled={!ready || disabled || isSubmitting}
-          id={id}
           onBlur={this._handleBlur}
+          onChange={this._handleChange}
           onFocus={this._handleFocus}
+          ref={this.input}
           value={value}
         />
-        <UsersDropdown
-          onUserClick={this._handleChange}
-          users={results}
-        />
+        <Dropdown
+          error={hasError}
+          open={focused}
+        >
+          {rows}
+        </Dropdown>
         <FieldError
           error={errors[field.name]}
-          touched={touched[field.name]}
+          touched={Boolean(touched[field.name])}
         />
       </div>
     );
   }
 }
 
-const props = (state, ownProps) => {
-  const { field: { value }, form: { values }, nameUser } = ownProps;
-
+const props = (state) => {
   return {
     ready: state.users.ready,
-    results: selectQueriedUsers(state, value),
-    userRef: values[nameUser],
-    users: selectUsersByKey(state)
+    users: state.users.users
   };
 };
 

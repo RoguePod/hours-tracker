@@ -207,6 +207,7 @@ function* entryCreate({ actions, params }) {
 
     if (error) {
       actions.setStatus(error.message);
+      actions.setSubmitting(false);
     } else {
       yield put(addFlash('Entry has been created.'));
 
@@ -217,7 +218,6 @@ function* entryCreate({ actions, params }) {
       }
     }
   } finally {
-    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }
@@ -241,6 +241,7 @@ function* entryUpdate({ actions, params }) {
 
     if (error) {
       actions.setStatus(error.message);
+      actions.setSubmitting(false);
     } else {
       yield put(addFlash('Entry has been updated.'));
 
@@ -251,7 +252,6 @@ function* entryUpdate({ actions, params }) {
       }
     }
   } finally {
-    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }
@@ -301,12 +301,12 @@ function* entrySplit({ actions, entries }) {
 
     if (error) {
       actions.setStatus(error.message);
+      actions.setSubmitting(false);
     } else {
       yield put(addFlash('Entry has been split'));
       history.push('/entries');
     }
   } finally {
-    actions.setSubmitting(false);
     yield put(setFetching(null));
   }
 }

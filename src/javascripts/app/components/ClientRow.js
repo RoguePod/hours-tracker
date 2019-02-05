@@ -6,23 +6,23 @@ class ClientRow extends React.Component {
     client: PropTypes.shape({
       name: PropTypes.string.isRequired
     }).isRequired,
-    onClientClick: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired
   }
 
   constructor(props) {
     super(props);
 
-    this._handleClick = this._handleClick.bind(this);
+    this._handleMouseDown = this._handleMouseDown.bind(this);
   }
 
   shouldComponentUpdate() {
     return false;
   }
 
-  _handleClick() {
-    const { client, onClientClick } = this.props;
+  _handleMouseDown() {
+    const { client, onChange } = this.props;
 
-    onClientClick(client);
+    onChange(client);
   }
 
   render() {
@@ -34,7 +34,7 @@ class ClientRow extends React.Component {
     return (
       <li
         className={clientClasses}
-        onClick={this._handleClick}
+        onMouseDown={this._handleMouseDown}
       >
         {client.name}
       </li>

@@ -8,6 +8,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   height: 0;
+  overflow-y: hidden;
   transition-property: all;
   transition-timing-function: ease;
 `;
@@ -69,7 +70,7 @@ class Collapse extends React.Component {
   timeout = null
 
   _handleUpdateHeight() {
-    const { duration, open } = this.props;
+    const { open } = this.props;
     const { height: currentHeight } = this.state;
 
     if (!this._element) {
@@ -79,16 +80,7 @@ class Collapse extends React.Component {
     const height = currentHeight === 0 || open ? this._element.offsetHeight : 0;
 
     if (currentHeight !== height) {
-      this.setState({ animating: true, height }, () => {
-        if (this.timeout) {
-          clearTimeout(this.timeout);
-          this.timeout = null;
-        }
-
-        this.timeout = setTimeout(() => {
-          this.setState({ animating: false });
-        }, duration);
-      });
+      this.setState({ height });
     }
   }
 
@@ -109,7 +101,7 @@ class Collapse extends React.Component {
 
   render() {
     const { children, duration, ...rest } = this.props;
-    const { animating, height } = this.state;
+    const { height } = this.state;
 
     const child = React.Children.only(children);
     const trigger = React.cloneElement(child, {
@@ -130,17 +122,9 @@ class Collapse extends React.Component {
       }
     });
 
-    const containerStyles = {
-      height, transitionDuration: `${duration}ms`
-    };
-
-    if (animating) {
-      containerStyles.overflowY = 'hidden';
-    }
-
     return (
       <Container
-        style={containerStyles}
+        style={{ height, transitionDuration: `${duration}ms` }}
       >
         {trigger}
       </Container>

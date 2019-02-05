@@ -1,8 +1,6 @@
 import { CSSTransition } from 'react-transition-group';
-import Collapse from './Collapse';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import _isEqual from 'lodash/isEqual';
 import cx from 'classnames';
 import styled from 'styled-components';
 
@@ -12,29 +10,30 @@ const Container = styled.div`
   max-height: 300px;
 `;
 
-const Spacer = styled.div`
-  height: 4px;
-`;
-
 const FadeIn = styled.div`
-  top: calc(100% - 5px);
+  top: calc(100% + 5px);
+  transform-origin: center top;
 
   &.fade-enter {
-    opacity: 0.5;
+    opacity: 0.01;
+    transform: scale(0.75);
   }
 
   &.fade-enter-active {
     opacity: 1;
-    transition: opacity ${DURATION}ms ease;
+    transform: scale(1);
+    transition: all ${DURATION}ms ease;
   }
 
   &.fade-exit {
+    transform: scale(1);
     opacity: 1;
   }
 
   &.fade-exit-active {
-    opacity: 0.5;
-    transition: opacity ${DURATION}ms ease;
+    opacity: 0.01;
+    transform: scale(0.75);
+    transition: all ${DURATION}ms ease;
   }
 `;
 
@@ -42,13 +41,11 @@ class Dropdown extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     error: PropTypes.bool,
-    focused: PropTypes.bool,
     open: PropTypes.bool
   }
 
   static defaultProps = {
     error: false,
-    focused: false,
     open: false
   }
 
@@ -56,50 +53,32 @@ class Dropdown extends React.Component {
     super(props);
 
     this.state = {
-      children: props.children.map((child) => React.cloneElement(child)),
-      prevChildren: props.children,
-      slide: props.open
+      children: props.children,
+      open: props.open
     };
+  }
 
-    this._handleEnter = this._handleEnter.bind(this);
-    this._handleExit = this._handleExit.bind(this);
+  static getDerivedStateFromProps(nextProps) {
+    if (nextProps.open) {
+      return { children: nextProps.children, open: nextProps.open };
+    }
 
-    // setTimeout(() => { debugger; }, 2000);
+    return { open: nextProps.open };
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  componentDidUpdate(nextProps) {
-    const { prevChildren } = this.state;
-
-    if (nextProps.open && !_isEqual(nextProps.children, prevChildren)) {
-      this.setState({
-        children: nextProps.children.map((child) => React.cloneElement(child)),
-        prevChildren: nextProps.children
-      });
-    }
-  }
-
-  _handleEnter() {
-    this.setState({ slide: true });
-  }
-
-  _handleExit() {
-    this.setState({ slide: false });
-  }
-
   render() {
-    const { error, focused, open } = this.props;
-    const { children, slide } = this.state;
+    const { error } = this.props;
+    const { children, open } = this.state;
 
     const dropdownClasses = cx(
-      'bg-white rounded-b z-10 overflow-hidden border-l border-b border-r ' +
-      'shadow-md',
+      'bg-white rounded z-10 overflow-hidden border ' +
+      'shadow-md absolute pin-x',
       {
-        'border-blue-light': !error && focused,
-        'border-grey-light': !error && focused,
+        'border-blue-light': !error,
         'border-red': error
       }
     );
@@ -108,30 +87,24 @@ class Dropdown extends React.Component {
       'overflow-x-hidden overflow-y-auto list-reset'
     );
 
+    const noResultsClasses = 'px-3 py-2 text-center font-bold text-sm';
+
     return (
       <CSSTransition
         classNames="fade"
         in={open}
         mountOnEnter
-        onEnter={this._handleEnter}
-        onExit={this._handleExit}
         timeout={DURATION}
         unmountOnExit
       >
-        <FadeIn className="absolute pin-x">
-          <Collapse
-            duration={DURATION}
-            open={slide}
-          >
-            <div
-              className={dropdownClasses}
-            >
-              <Spacer className="transition" />
-              <Container className={containerClasses}>
-                {children}
-              </Container>
-            </div>
-          </Collapse>
+        <FadeIn className={dropdownClasses}>
+          <Container className={containerClasses}>
+            {children.length === 0 &&
+              <div className={noResultsClasses}>
+                {'No Results Found'}
+              </div>}
+            {children.length > 0 && children}
+          </Container>
         </FadeIn>
       </CSSTransition>
     );

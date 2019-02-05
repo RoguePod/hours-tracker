@@ -8,10 +8,7 @@ import {
   takeLatest
 } from 'redux-saga/effects';
 
-import Fuse from 'fuse.js';
-import _keyBy from 'lodash/keyBy';
 import _sortBy from 'lodash/sortBy';
-import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
 import { firestore } from 'javascripts/globals';
 import update from 'immutability-helper';
@@ -26,6 +23,15 @@ const USERS_SET       = `${path}/USERS_SET`;
 const USERS_SUBSCRIBE = `${path}/USERS_SUBSCRIBE`;
 const READY           = `${path}/READY`;
 const RESET           = `${path}/RESET`;
+
+export const fuseOptions = {
+  distance: 100,
+  keys: ['name'],
+  location: 0,
+  maxPatternLength: 32,
+  minMatchCharLength: 2,
+  threshold: 0.1
+};
 
 // Reducer
 
@@ -121,51 +127,3 @@ function* watchUsersSubscribe() {
 }
 
 export const sagas = [fork(watchUsersSubscribe)];
-
-// Selectors
-
-export const selectUsers = (state) => state.users.users;
-
-const fuseOptions = {
-  distance: 100,
-  keys: ['name'],
-  location: 0,
-  maxPatternLength: 32,
-  minMatchCharLength: 2,
-  threshold: 0.1
-};
-
-export const selectQueryableUsers = createSelector(
-  [selectUsers],
-  (users) => {
-    return users.map((user) => {
-      return { id: user.id, name: user.name };
-    });
-  }
-);
-
-export const selectQueriedUsers = createSelector(
-  [selectQueryableUsers, (_state, query) => query],
-  (users, query) => {
-    if (users.length === 0 || !query || query.length === 0) {
-      return [];
-    }
-
-    const results = new Fuse(users, fuseOptions).search(query);
-
-    return results.map((user) => {
-      return {
-        id: user.id,
-        name: user.name,
-        userRef: firestore.doc(`users/${user.id}`)
-      };
-    });
-  }
-);
-
-export const selectUsersByKey = createSelector(
-  [selectUsers],
-  (users) => {
-    return _keyBy(users, 'id');
-  }
-);
