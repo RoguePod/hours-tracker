@@ -15,6 +15,7 @@ import ProjectRow from './ProjectRow';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import _find from 'lodash/find';
+import _get from 'lodash/get';
 import _groupBy from 'lodash/groupBy';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
@@ -31,6 +32,7 @@ class ProjectField extends React.Component {
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
     label: PropTypes.string,
+    onChange: PropTypes.func,
     projects: PropTypes.arrayOf(PropTypes.shape({
       clientId: PropTypes.string.isRequired,
       clientName: PropTypes.string.isRequired,
@@ -45,6 +47,7 @@ class ProjectField extends React.Component {
     clientField: null,
     disabled: false,
     label: null,
+    onChange: null,
     required: false
   }
 
@@ -90,16 +93,20 @@ class ProjectField extends React.Component {
     this.changing = true;
 
     const {
-      clientField, field, form: { setFieldTouched, setFieldValue }
+      clientField, field, form: { setFieldTouched, setFieldValue }, onChange
     } = this.props;
 
-    if (!_isEqual(project.projectRef, field.value)) {
+    if (_get(project, 'projectRef.id') !== _get(field, 'value.id')) {
       setFieldTouched(field.name, true);
       setFieldValue(field.name, project.projectRef);
 
       if (clientField) {
         setFieldTouched(clientField, true);
         setFieldValue(clientField, project.clientRef);
+      }
+
+      if (onChange) {
+        setTimeout(() => onChange(project.projectRef), 1);
       }
     }
 
@@ -110,7 +117,7 @@ class ProjectField extends React.Component {
 
   _handleBlur() {
     const {
-      clientField, field, form: { setFieldTouched, setFieldValue }
+      clientField, field, form: { setFieldTouched, setFieldValue }, onChange
     } = this.props;
     const { value } = this.state;
 
@@ -127,6 +134,10 @@ class ProjectField extends React.Component {
         setFieldValue(clientField, null);
       }
 
+      if (onChange) {
+        setTimeout(() => onChange(null), 1);
+      }
+
       this.setState({ focused: false, value: this._findValue(null) });
     } else {
       this.setState({ focused: false, value: this._findValue(field.value) });
@@ -138,9 +149,7 @@ class ProjectField extends React.Component {
     const { field: { value } } = this.props;
 
     this.setState({ focused: true, value: this._findValue(value) }, () => {
-      setTimeout(() => {
-        target.select();
-      }, 1);
+      setTimeout(() => target.select(), 1);
     });
   }
 

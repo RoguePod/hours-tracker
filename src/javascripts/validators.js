@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 import chrono from 'chrono-node';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export const betweenValue = (min, max) => (value) => {
   if (value && (Number(value) < min || Number(value) > max)) {
@@ -43,7 +43,8 @@ export const isStoppedAt = (value, { startedAt, timezone }) => {
 };
 
 Yup.addMethod(Yup.number, 'parsedTime', (message) => {
-  return Yup.number().test('parsedTime', message, (value) => {
-    return value !== -1;
-  });
+  return Yup.number().nullable()
+    .test('parsedTime', message, (value) => {
+      return value !== -1;
+    });
 });

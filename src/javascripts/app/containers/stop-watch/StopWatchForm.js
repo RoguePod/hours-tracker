@@ -7,35 +7,51 @@ import React from 'react';
 
 class StopWatchForm extends React.Component {
   static propTypes = {
+    onAutoSave: PropTypes.func,
     status: PropTypes.string,
-    submitForm: PropTypes.func.isRequired,
     values: PropTypes.object.isRequired
   }
 
   static defaultProps = {
+    onAutoSave: null,
     status: null
   }
 
-  componentDidUpdate(prevProps) {
-    const {
-      submitForm, values: { clientRef, description, projectRef }
-    } = this.props;
+  constructor(props) {
+    super(props);
 
-    if (description !== prevProps.values.description) {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
+    this._handleDescriptionChange = this._handleDescriptionChange.bind(this);
+    this._handleAutoSave = this._handleAutoSave.bind(this);
+  }
 
-      this.timeout = setTimeout(() => {
-        submitForm();
-      }, 1000);
-    } else if (clientRef !== prevProps.values.clientRef ||
-               projectRef !== prevProps.values.projectRef) {
-      submitForm();
+  shouldComponentUpdate() {
+    return true;
+  }
+
+  componentWillUnmount() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
     }
   }
 
   timeout = null
+
+  _handleDescriptionChange() {
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    this.timeout = setTimeout(this._handleAutoSave, 1000);
+  }
+
+  _handleAutoSave() {
+    const { onAutoSave, values } = this.props;
+
+    if (onAutoSave) {
+      onAutoSave(values);
+    }
+  }
 
   render() {
     const { status } = this.props;
@@ -51,6 +67,7 @@ class StopWatchForm extends React.Component {
             component={ProjectField}
             label="Project"
             name="projectRef"
+            onChange={this._handleAutoSave}
           />
         </div>
         <Field
@@ -60,6 +77,7 @@ class StopWatchForm extends React.Component {
           component={TextAreaField}
           label="Description"
           name="description"
+          onChange={this._handleDescriptionChange}
           rows={1}
         />
       </Form>

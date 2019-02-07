@@ -2,7 +2,7 @@ import DatePicker from 'react-datepicker';
 import { InputField } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 class DateField extends React.Component {
   static propTypes = {

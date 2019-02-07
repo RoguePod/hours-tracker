@@ -43,6 +43,7 @@ class StopWatch extends React.Component {
     this._handleSwap = this._handleSwap.bind(this);
     this._handleStop = this._handleStop.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
+    this._renderForm = this._renderForm.bind(this);
   }
 
   componentDidMount() {
@@ -81,9 +82,7 @@ class StopWatch extends React.Component {
     onStopEntry();
   }
 
-  _handleSubmit(data, actions) {
-    actions.setSubmitting(false);
-
+  _handleSubmit(data) {
     const { entry, onUpdateEntry } = this.props;
 
     if (entry.id) {
@@ -147,10 +146,27 @@ class StopWatch extends React.Component {
     );
   }
 
+  _renderForm(formProps) {
+    const { entry, ready } = this.props;
+
+    const hasEntry = ready && entry.id;
+
+    return (
+      <StopWatchForm
+        {...formProps}
+        onAutoSave={hasEntry ? this._handleSubmit : null}
+      />
+    );
+  }
+
   render() {
     const { entry, fetching, ready } = this.props;
 
     const hasEntry = ready && entry.id;
+
+    const initialValues = _pick(
+      entry, ['clientRef', 'description', 'projectRef']
+    );
 
     return (
       <div className="relative">
@@ -162,11 +178,11 @@ class StopWatch extends React.Component {
           {hasEntry && this._renderRunningButtons()}
           {!hasEntry && this._renderNotRunningButtons()}
           <Formik
-            component={StopWatchForm}
             enableReinitialize
-            initialValues={entry}
+            initialValues={initialValues}
             onSubmit={this._handleSubmit}
             ref={this.form}
+            render={this._renderForm}
           />
         </div>
         {fetching &&

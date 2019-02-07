@@ -21,7 +21,7 @@ import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
 import { history } from 'javascripts/app/redux/store';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { selectTimezone } from 'javascripts/app/redux/app';
 import update from 'immutability-helper';
 
@@ -37,8 +37,8 @@ export const selectEntryForForm = createSelector(
         clientRef: null,
         description: '',
         projectRef: null,
-        startedAt: 0,
-        stoppedAt: 0,
+        startedAt: null,
+        stoppedAt: null,
         timezone
       };
     }

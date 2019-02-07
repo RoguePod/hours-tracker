@@ -1,34 +1,37 @@
-import { Button, FormError, TimeField } from 'javascripts/shared/components';
-import { Field, FieldArray, reduxForm } from 'redux-form';
-import { isParsedTime, isRequired, isStoppedAt } from 'javascripts/validators';
+import {
+  Button,
+  FormError,
+  TimeField,
+  TimezoneField
+} from 'javascripts/shared/components';
+import { Field, FieldArray, Form } from 'formik';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SplitFormEntries from './SplitFormEntries';
 import chrono from 'chrono-node';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 class EntrySplitForm extends React.Component {
   static propTypes = {
-    change: PropTypes.func.isRequired,
-    currentValues: PropTypes.object.isRequired,
-    error: PropTypes.string,
-    handleSubmit: PropTypes.func.isRequired,
-    hours: PropTypes.number.isRequired,
-    onSplitEntry: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired,
-    timezone: PropTypes.string.isRequired,
-    valid: PropTypes.bool.isRequired
+    // hours: PropTypes.number.isRequired,
+    isSubmitting: PropTypes.bool.isRequired,
+    isValid: PropTypes.bool.isRequired,
+    setFieldValue: PropTypes.func.isRequired,
+    status: PropTypes.string,
+    values: PropTypes.shape({
+      timezone: PropTypes.string.isRequired
+    }).isRequired
   }
 
   static defaultProps = {
-    error: null
+    status: null
   }
 
   constructor(props) {
     super(props);
 
-    this._handleSubmit = this._handleSubmit.bind(this);
+    // this._handleSubmit = this._handleSubmit.bind(this);
     this._renderEntries = this._renderEntries.bind(this);
     this._handleStartedAtChanged = this._handleStartedAtChanged.bind(this);
     this._handleStoppedAtChanged = this._handleStoppedAtChanged.bind(this);
@@ -41,7 +44,7 @@ class EntrySplitForm extends React.Component {
   }
 
   _parseDate(value) {
-    const { timezone } = this.props;
+    const { values: { timezone } } = this.props;
 
     const parsed = chrono.parseDate(value);
 
@@ -63,49 +66,32 @@ class EntrySplitForm extends React.Component {
       .valueOf();
   }
 
-  _handleSubmit(data) {
-    const { onSplitEntry } = this.props;
+  // _handleSubmit(data) {
+  //   const { onSplitEntry } = this.props;
 
-    return new Promise((resolve, reject) => {
-      const entries = data.entries.map((entry) => {
-        const {
-          clientRef, description, projectRef, startedAt, stoppedAt
-        } = entry;
+  //   return new Promise((resolve, reject) => {
+  //     const entries = data.entries.map((entry) => {
+  //       const {
+  //         clientRef, description, projectRef, startedAt, stoppedAt
+  //       } = entry;
 
-        return {
-          clientRef,
-          description,
-          projectRef,
-          startedAt: this._parseDateValue(startedAt),
-          stoppedAt: this._parseDateValue(stoppedAt)
-        };
-      });
+  //       return {
+  //         clientRef,
+  //         description,
+  //         projectRef,
+  //         startedAt: this._parseDateValue(startedAt),
+  //         stoppedAt: this._parseDateValue(stoppedAt)
+  //       };
+  //     });
 
-      onSplitEntry(entries, resolve, reject);
-    });
-  }
-
-  _renderEntries(props) {
-    const { change, currentValues, hours, timezone, valid } = this.props;
-
-    return (
-      <SplitFormEntries
-        {...props}
-        change={change}
-        currentValues={currentValues}
-        hours={hours}
-        onParseDate={this._parseDate}
-        timezone={timezone}
-        valid={valid}
-      />
-    );
-  }
+  //     onSplitEntry(entries, resolve, reject);
+  //   });
+  // }
 
   _handleCalculate(values) {
-    const { change, valid } = this.props;
-    const { entries } = values;
+    const { isValid, setFieldValue, values: { entries } } = this.props;
 
-    if (!valid) {
+    if (!isValid) {
       return;
     }
 
@@ -130,13 +116,13 @@ class EntrySplitForm extends React.Component {
 
       const hours = totalHours * (percent / 100.0);
 
-      change(`entries.${index}.hours`, hours.toFixed(1));
-      change(`entries.${index}.percent`, percent.toFixed(1));
-      change(
+      setFieldValue(`entries.${index}.hours`, hours.toFixed(1));
+      setFieldValue(`entries.${index}.percent`, percent.toFixed(1));
+      setFieldValue(
         `entries.${index}.startedAt`,
         startedAt.format('MM/DD/YYYY hh:mm A z')
       );
-      change(
+      setFieldValue(
         `entries.${index}.stoppedAt`,
         startedAt.add(hours, 'hours').format('MM/DD/YYYY hh:mm A z')
       );
@@ -144,95 +130,99 @@ class EntrySplitForm extends React.Component {
   }
 
   _handleStartedAtChanged(event, value) {
-    const { currentValues } = this.props;
+    const { values } = this.props;
 
     let startedAt = this._parseDate(value);
 
     if (startedAt) {
       startedAt = startedAt.format('MM/DD/YYYY hh:mm A z');
 
-      const values = { ...currentValues, startedAt };
+      const newValues = { ...values, startedAt };
 
-      setTimeout(() => this._handleCalculate(values), 1);
+      setTimeout(() => this._handleCalculate(newValues), 1);
     }
   }
 
   _handleStoppedAtChanged(event, value) {
-    const { currentValues } = this.props;
+    const { values } = this.props;
 
     let stoppedAt = this._parseDate(value);
 
     if (stoppedAt) {
       stoppedAt = stoppedAt.format('MM/DD/YYYY hh:mm A z');
 
-      const values = { ...currentValues, stoppedAt };
+      const newValues = { ...values, stoppedAt };
 
-      setTimeout(() => this._handleCalculate(values), 1);
+      setTimeout(() => this._handleCalculate(newValues), 1);
     }
+  }
+
+  _renderEntries(helpers) {
+    return (
+      <SplitFormEntries
+        {...this.props}
+        helpers={helpers}
+        onParseDate={this._parseDate}
+      />
+    );
   }
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { error, handleSubmit, submitting, timezone } = this.props;
+    const { isSubmitting, status, values: { timezone } } = this.props;
 
     return (
-      <form
+      <Form
         noValidate
-        onSubmit={handleSubmit(this._handleSubmit)}
       >
-        <FormError error={error} />
+        <FormError error={status} />
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
-              autoCapitalize="none"
-              autoCorrect="off"
               autoFocus
               component={TimeField}
-              disabled={submitting}
               label="Started"
               name="startedAt"
               onChange={this._handleStartedAtChanged}
               timezone={timezone}
-              type="text"
-              validate={[isRequired, isParsedTime]}
             />
           </div>
           <div className="w-full md:w-1/2 px-2 mb-4">
             <Field
-              autoCapitalize="none"
-              autoCorrect="off"
               component={TimeField}
-              disabled={submitting}
               label="Stopped"
               name="stoppedAt"
               onChange={this._handleStoppedAtChanged}
               timezone={timezone}
-              type="text"
-              validate={[isRequired, isParsedTime, isStoppedAt]}
             />
           </div>
         </div>
         <div className="mb-4">
+          <Field
+            component={TimezoneField}
+            label="Timezone"
+            name="timezone"
+          />
+        </div>
+        <div className="mb-4">
           <FieldArray
-            component={this._renderEntries}
             name="entries"
+            render={this._renderEntries}
           />
         </div>
         <Button
           className="py-2 w-full text-lg"
           color="green"
-          disabled={submitting}
-          loading={submitting}
+          disabled={isSubmitting}
+          loading={isSubmitting}
           type="submit"
         >
-          {submitting ? 'Splitting...' : 'Split'}
+          {isSubmitting ? 'Splitting...' : 'Split'}
         </Button>
-      </form>
+      </Form>
     );
   }
   /* eslint-enable max-lines-per-function */
 }
 
-export default reduxForm({
-  form: 'EntrySplitForm'
-})(EntrySplitForm);
+export default EntrySplitForm;

@@ -20,25 +20,19 @@ const EntryForm = ({ isSubmitting, status, values: { timezone } }) => {
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-4">
           <Field
-            autoCapitalize="none"
-            autoCorrect="off"
             autoFocus
             component={TimeField}
             label="Started"
             name="startedAt"
             timezone={timezone}
-            type="text"
           />
         </div>
         <div className="w-full md:w-1/2 px-2 mb-4">
           <Field
-            autoCapitalize="none"
-            autoCorrect="off"
             component={TimeField}
             label="Stopped"
             name="stoppedAt"
             timezone={timezone}
-            type="text"
           />
         </div>
       </div>

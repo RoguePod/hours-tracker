@@ -1,6 +1,6 @@
 import React from 'react';
 import SelectField from './SelectField';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const timezoneOptions = moment.tz.names().map((timezone) => {
   return (

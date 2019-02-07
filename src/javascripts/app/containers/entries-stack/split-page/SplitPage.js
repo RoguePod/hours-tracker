@@ -1,12 +1,16 @@
-import { getEntry, splitEntry } from 'javascripts/app/redux/entry';
+import * as Yup from 'yup';
 
+import { getEntry, reset, splitEntry } from 'javascripts/app/redux/entry';
+
+import { Formik } from 'formik';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { Spinner } from 'javascripts/shared/components';
 import SplitForm from './SplitForm';
-import _get from 'lodash/get';
+// import _get from 'lodash/get';
 import { connect } from 'react-redux';
-import moment from 'moment';
+import moment from 'moment-timezone';
+import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntrySplitPage extends React.Component {
   static propTypes = {
@@ -14,8 +18,9 @@ class EntrySplitPage extends React.Component {
     fetching: PropTypes.string,
     match: PropTypes.routerMatch.isRequired,
     onGetEntry: PropTypes.func.isRequired,
+    onReset: PropTypes.func.isRequired,
     onSplitEntry: PropTypes.func.isRequired,
-    values: PropTypes.object.isRequired
+    timezone: PropTypes.string.isRequired
   }
 
   static defaultProps = {
@@ -33,8 +38,16 @@ class EntrySplitPage extends React.Component {
     return true;
   }
 
+  componentWillUnmount() {
+    const { onReset } = this.props;
+
+    onReset();
+  }
+
   _getInitialValuesAndHours(entry) {
-    let initialValues = {};
+    const { timezone } = this.props;
+
+    let initialValues = { entries: [], timezone };
     let hours         = 0;
 
     if (entry) {
@@ -76,7 +89,8 @@ class EntrySplitPage extends React.Component {
         ],
         id: entry.id,
         startedAt: startedAt.format('MM/DD/YYYY hh:mm A z'),
-        stoppedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z')
+        stoppedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z'),
+        timezone: entry.timezone
       };
     }
 
@@ -84,19 +98,18 @@ class EntrySplitPage extends React.Component {
   }
 
   render() {
-    const { entry, fetching, onSplitEntry, values } = this.props;
+    const { entry, fetching, onSplitEntry } = this.props;
 
-    const { hours, initialValues } = this._getInitialValuesAndHours(entry);
+    const { initialValues } = this._getInitialValuesAndHours(entry);
 
-    if (!entry) {
-      return (
-        <Spinner
-          page
-          spinning={Boolean(fetching)}
-          text={fetching}
-        />
-      );
-    }
+    const validationSchema = Yup.object().shape({
+      startedAt: Yup.number()
+        .parsedTime('Started is not a valid date/time')
+        .positive('Started is Required'),
+      stoppedAt: Yup.number()
+        .parsedTime('Started is not a valid date/time'),
+      timezone: Yup.string().required('Timezone is Required')
+    });
 
     return (
       <div className="p-4">
@@ -104,12 +117,17 @@ class EntrySplitPage extends React.Component {
           {'Split Entry'}
         </h1>
         <div className="border rounded mb-4 p-4">
-          <SplitForm
-            currentValues={values}
-            hours={Number(hours)}
+          <Formik
+            component={SplitForm}
+            enableReinitialize
             initialValues={initialValues}
-            onSplitEntry={onSplitEntry}
-            timezone={entry.timezone}
+            onSubmit={onSplitEntry}
+            validationSchema={validationSchema}
+          />
+          <Spinner
+            page
+            spinning={Boolean(fetching)}
+            text={fetching}
           />
         </div>
       </div>
@@ -121,12 +139,13 @@ const props = (state) => {
   return {
     entry: state.entry.entry,
     fetching: state.entry.fetching,
-    values: _get(state, 'form.EntrySplitForm.values', {})
+    timezone: selectTimezone(state)
   };
 };
 
 const actions = {
   onGetEntry: getEntry,
+  onReset: reset,
   onSplitEntry: splitEntry
 };
 

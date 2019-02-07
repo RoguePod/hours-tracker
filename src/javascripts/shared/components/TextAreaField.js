@@ -24,6 +24,7 @@ class TextAreaField extends React.Component {
     form: PropTypes.form.isRequired,
     id: PropTypes.string,
     label: PropTypes.string,
+    onChange: PropTypes.func,
     required: PropTypes.bool
   }
 
@@ -33,6 +34,7 @@ class TextAreaField extends React.Component {
     disabled: false,
     id: null,
     label: null,
+    onChange: null,
     required: false
   }
 
@@ -115,10 +117,14 @@ class TextAreaField extends React.Component {
   }
 
   _handleChange(event) {
-    const { field: { name }, form: { setFieldValue } } = this.props;
+    const { field, onChange } = this.props;
 
-    setFieldValue(name, event.target.value);
+    field.onChange(event);
     this._updateHeight();
+
+    if (onChange) {
+      setTimeout(() => onChange(event.target.value), 0);
+    }
   }
 
   render() {

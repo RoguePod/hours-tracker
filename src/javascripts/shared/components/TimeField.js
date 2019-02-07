@@ -6,7 +6,7 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import chrono from 'chrono-node';
 import { isBlank } from 'javascripts/globals';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 class TimeField extends React.Component {
   static propTypes = {
@@ -54,7 +54,7 @@ class TimeField extends React.Component {
 
   _parseDate(value, timezone) {
     if (isBlank(value)) {
-      return 0;
+      return null;
     }
 
     const parsed = chrono.parseDate(value);
@@ -74,7 +74,7 @@ class TimeField extends React.Component {
   }
 
   _formatValue(value, timezone) {
-    if (value > 0) {
+    if (value && value > 0) {
       const date = moment.tz(value, timezone);
 
       if (date && date.isValid()) {
@@ -117,11 +117,14 @@ class TimeField extends React.Component {
           </Label>}
         <InputBase
           {...rest}
+          autoCapitalize="none"
+          autoCorrect="off"
           disabled={disabled || isSubmitting}
           error={hasError}
           name={field.name}
           onChange={this._handleChange}
           ref={this.input}
+          type="text"
           value={value}
         />
         <FieldError
