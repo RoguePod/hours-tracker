@@ -81,7 +81,7 @@ EntryForm.propTypes = {
   isSubmitting: PropTypes.bool.isRequired,
   status: PropTypes.string,
   values: PropTypes.shape({
-    timezone: PropTypes.string.isRequired
+    timezone: PropTypes.string
   }).isRequired
 };
 

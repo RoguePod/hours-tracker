@@ -4,6 +4,8 @@ export ClientNewModal from './clients-stack/new-page/NewModal';
 export ClientsStack from './clients-stack/ClientsStack';
 export DashboardPage from './dashboard-page/DashboardPage';
 export EntriesStack from './entries-stack/EntriesStack';
+export EntryEditMultipleModal
+from './entries-stack/edit-multiple-page/EditMultipleModal';
 export EntryEditModal from './entries-stack/edit-page/EditModal';
 export EntryNewModal from './entries-stack/new-page/NewModal';
 export ForgotPasswordPage from './forgot-password-page/ForgotPasswordPage';

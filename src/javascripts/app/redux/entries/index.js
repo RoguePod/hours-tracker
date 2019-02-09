@@ -11,12 +11,14 @@ import {
   takeLatest
 } from 'redux-saga/effects';
 import {
+  convertEntryParamIdsToRefs,
   firebase,
   firestore,
   fromQuery,
   isBlank,
   isDate,
-  parseEntry
+  parseEntry,
+  updateRef
 } from 'javascripts/globals';
 
 import _filter from 'lodash/filter';
@@ -27,6 +29,7 @@ import _without from 'lodash/without';
 import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
+import { history } from 'javascripts/app/redux/store';
 import moment from 'moment-timezone';
 import { selectTimezone } from 'javascripts/app/redux/app';
 import update from 'immutability-helper';
@@ -133,6 +136,7 @@ const ENTRY_CHECK       = `${path}/ENTRY_CHECK`;
 const ENTRIES_SUBSCRIBE = `${path}/ENTRIES_SUBSCRIBE`;
 const ENTRIES_DESTROY   = `${path}/ENTRIES_DESTROY`;
 const ENTRIES_SET       = `${path}/ENTRIES_SET`;
+const ENTRIES_UPDATE    = `${path}/ENTRIES_UPDATE`;
 const FETCHING_SET      = `${path}/FETCHING_SET`;
 const READY             = `${path}/READY`;
 const RESET             = `${path}/RESET`;
@@ -206,6 +210,10 @@ export const checkEntry = (id) => {
 
 export const setAllChecked = (allChecked) => {
   return { allChecked, type: ALL_CHECKED_SET };
+};
+
+export const updateEntries = (params, actions) => {
+  return { actions, params, type: ENTRIES_UPDATE };
 };
 
 export const reset = () => {
@@ -381,7 +389,40 @@ function* watchEntriesDestroy() {
   yield takeLatest(ENTRIES_DESTROY, entriesDestroy);
 }
 
+function* entriesUpdate({ actions, params }) {
+  try {
+    yield put(setFetching('Updating Entries...'));
+
+    const entry     = yield select((state) => state.entry.entry);
+    const updatedAt = moment()
+      .utc()
+      .valueOf();
+
+    const { error } = yield call(
+      updateRef,
+      entry.snapshot.ref,
+      { ...convertEntryParamIdsToRefs(params), updatedAt }
+    );
+
+    if (error) {
+      actions.setStatus(error.message);
+      actions.setSubmitting(false);
+    } else {
+      yield put(addFlash('Entries have been updated.'));
+
+      yield call(history.goBack);
+    }
+  } finally {
+    yield put(setFetching(null));
+  }
+}
+
+function* watchEntriesUpdate() {
+  yield takeLatest(ENTRIES_UPDATE, entriesUpdate);
+}
+
 export const sagas = [
   fork(watchEntriesSubscribe),
-  fork(watchEntriesDestroy)
+  fork(watchEntriesDestroy),
+  fork(watchEntriesUpdate)
 ];

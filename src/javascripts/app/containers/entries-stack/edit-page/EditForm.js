@@ -15,7 +15,7 @@ import { Spinner } from 'javascripts/shared/components';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 
-class EntryEditPage extends React.Component {
+class EntryEditForm extends React.Component {
   static propTypes = {
     entry: PropTypes.entryForm.isRequired,
     fetching: PropTypes.string,
@@ -107,4 +107,4 @@ const actions = {
   onUpdateEntry: updateEntry
 };
 
-export default connect(props, actions)(EntryEditPage);
+export default connect(props, actions)(EntryEditForm);

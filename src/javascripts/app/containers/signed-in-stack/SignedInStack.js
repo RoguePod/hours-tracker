@@ -5,6 +5,7 @@ import {
   DashboardPage,
   EntriesStack,
   EntryEditModal,
+  EntryEditMultipleModal,
   EntryNewModal,
   ProfilePage,
   ProjectEditModal,
@@ -141,6 +142,10 @@ class SignedInStack extends React.Component {
                 <Route
                   component={EntryNewModal}
                   path="/entries/new"
+                />
+                <Route
+                  component={EntryEditMultipleModal}
+                  path="/entries/edit"
                 />
                 <Route
                   component={EntryEditModal}

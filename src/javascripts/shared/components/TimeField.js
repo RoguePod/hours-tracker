@@ -17,7 +17,7 @@ class TimeField extends React.Component {
     label: PropTypes.string,
     onChange: PropTypes.func,
     required: PropTypes.bool,
-    timezone: PropTypes.string.isRequired
+    timezone: PropTypes.string
   }
 
   static defaultProps = {
@@ -25,7 +25,8 @@ class TimeField extends React.Component {
     id: null,
     label: null,
     onChange: null,
-    required: false
+    required: false,
+    timezone: 'UTC'
   }
 
   constructor(props) {
