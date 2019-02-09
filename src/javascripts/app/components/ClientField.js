@@ -4,7 +4,6 @@ import {
   InputBase,
   Label
 } from 'javascripts/shared/components';
-import { firestore, isBlank } from 'javascripts/globals';
 
 import ClientRow from './ClientRow';
 import Fuse from 'fuse.js';
@@ -14,6 +13,7 @@ import _find from 'lodash/find';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { fuseOptions } from 'javascripts/app/redux/clients';
+import { isBlank } from 'javascripts/globals';
 import styled from 'styled-components';
 
 const Divider = styled.div`
@@ -90,9 +90,9 @@ class ClientField extends React.Component {
       projectField
     } = this.props;
 
-    if (!_isEqual(client.clientRef, value)) {
+    if (!_isEqual(client.id, value)) {
       setFieldTouched(name, true);
-      setFieldValue(name, client.clientRef);
+      setFieldValue(name, client.id);
 
       if (projectField) {
         setFieldTouched(projectField, true);
@@ -101,7 +101,7 @@ class ClientField extends React.Component {
     }
 
     this.setState({
-      focused: false, value: this._findValue(client.clientRef)
+      focused: false, value: this._findValue(client.id)
     });
   }
 
@@ -141,15 +141,15 @@ class ClientField extends React.Component {
     });
   }
 
-  _findValue(clientRef) {
+  _findValue(clientId) {
     const { clients, ready } = this.props;
 
-    if (!ready || isBlank(clientRef)) {
+    if (!ready || isBlank(clientId)) {
       return '';
     }
 
     const foundClient = _find(clients, (client) => {
-      return client.id === clientRef.id;
+      return client.id === clientId;
     });
 
     if (foundClient) {
@@ -167,13 +167,7 @@ class ClientField extends React.Component {
       results = new Fuse(clients, fuseOptions).search(value);
     }
 
-    return results.map((client) => {
-      return {
-        clientRef: firestore.doc(`clients/${client.id}`),
-        id: client.id,
-        name: client.name
-      };
-    });
+    return results;
   }
 
   render() {

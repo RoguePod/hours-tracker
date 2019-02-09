@@ -44,9 +44,9 @@ class RecentRow extends React.Component {
     }
 
     onStartEntry({
-      clientRef: recent.clientRef,
+      clientId: recent.clientRef.id,
       description,
-      projectRef: recent.projectRef
+      projectId: recent.projectRef.id
     });
   }
 

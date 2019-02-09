@@ -5,7 +5,7 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
 
-const EntriesIndexAdminMenu = ({ location, rawQuery, timezone }) => {
+const EntriesIndexAdminMenu = ({ location, query, timezone }) => {
   const { pathname } = location;
 
   const isReports        = pathname === '/entries/reports';
@@ -69,21 +69,21 @@ const EntriesIndexAdminMenu = ({ location, rawQuery, timezone }) => {
       <ExportEntriesButton
         className={middlePillClasses}
         func="entriesCsv"
-        query={rawQuery}
+        query={query}
         timezone={timezone}
         title="Entries CSV"
       />
       <ExportEntriesButton
         className={middlePillClasses}
         func="billableCsv"
-        query={rawQuery}
+        query={query}
         timezone={timezone}
         title="Billable CSV"
       />
       <ExportEntriesButton
         className={rightPillClasses}
         func="payrollCsv"
-        query={rawQuery}
+        query={query}
         timezone={timezone}
         title="Payroll CSV"
       />
@@ -93,7 +93,7 @@ const EntriesIndexAdminMenu = ({ location, rawQuery, timezone }) => {
 
 EntriesIndexAdminMenu.propTypes = {
   location: PropTypes.routerLocation.isRequired,
-  rawQuery: PropTypes.entriesQuery.isRequired,
+  query: PropTypes.entriesQuery.isRequired,
   timezone: PropTypes.string.isRequired
 };
 

@@ -67,7 +67,7 @@ class StopWatch extends React.Component {
 
     const params = _get(this.form, 'current.state.values', {});
 
-    onStartEntry(_pick(params, ['clientRef', 'description', 'projectRef']));
+    onStartEntry(_pick(params, ['clientId', 'description', 'projectId']));
   }
 
   _handleSwap() {
@@ -86,7 +86,7 @@ class StopWatch extends React.Component {
     const { entry, onUpdateEntry } = this.props;
 
     if (entry.id) {
-      onUpdateEntry(_pick(data, ['clientRef', 'description', 'projectRef']));
+      onUpdateEntry(_pick(data, ['clientId', 'description', 'projectId']));
     }
   }
 
@@ -165,7 +165,7 @@ class StopWatch extends React.Component {
     const hasEntry = ready && entry.id;
 
     const initialValues = _pick(
-      entry, ['clientRef', 'description', 'projectRef']
+      entry, ['clientId', 'description', 'projectId']
     );
 
     return (

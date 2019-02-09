@@ -63,10 +63,10 @@ class StopWatchForm extends React.Component {
         <FormError error={status} />
         <div className="mb-2">
           <Field
-            clientField="clientRef"
+            clientField="clientId"
             component={ProjectField}
             label="Project"
-            name="projectRef"
+            name="projectId"
             onChange={this._handleAutoSave}
           />
         </div>

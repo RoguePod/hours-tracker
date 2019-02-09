@@ -3,6 +3,7 @@
 import {
   add,
   batchCommit,
+  convertEntryParamIdsToRefs,
   deleteDoc,
   firestore,
   parseEntry,
@@ -17,6 +18,8 @@ import {
   takeLatest
 } from 'redux-saga/effects';
 
+import _get from 'lodash/get';
+import _pick from 'lodash/pick';
 import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
@@ -34,9 +37,9 @@ export const selectEntryForForm = createSelector(
   (entry, timezone) => {
     if (!entry) {
       return {
-        clientRef: null,
+        clientId: null,
         description: '',
-        projectRef: null,
+        projectId: null,
         startedAt: null,
         stoppedAt: null,
         timezone
@@ -44,9 +47,9 @@ export const selectEntryForForm = createSelector(
     }
 
     return {
-      clientRef: entry.clientRef,
+      clientId: _get(entry, 'clientRef.id'),
       description: entry.description,
-      projectRef: entry.projectRef,
+      projectId: _get(entry, 'projectRef.id'),
       startedAt: entry.startedAt,
       stoppedAt: entry.stoppedAt,
       timezone: entry.timezone || timezone
@@ -106,8 +109,8 @@ export const updateEntry = (params, actions) => {
   return { actions, params, type: ENTRY_UPDATE };
 };
 
-export const splitEntry = (entries, actions) => {
-  return { actions, entries, type: ENTRY_SPLIT };
+export const splitEntry = (params, actions) => {
+  return { actions, params, type: ENTRY_SPLIT };
 };
 
 export const destroyEntry = (id) => {
@@ -203,7 +206,9 @@ function* entryCreate({ actions, params }) {
       userRef: user.snapshot.ref
     };
 
-    const { error } = yield call(add, 'entries', { ...defaults, ...params });
+    const { error } = yield call(
+      add, 'entries', { ...defaults, ...convertEntryParamIdsToRefs(params) }
+    );
 
     if (error) {
       actions.setStatus(error.message);
@@ -236,7 +241,9 @@ function* entryUpdate({ actions, params }) {
       .valueOf();
 
     const { error } = yield call(
-      updateRef, entry.snapshot.ref, { ...params, updatedAt }
+      updateRef,
+      entry.snapshot.ref,
+      { ...convertEntryParamIdsToRefs(params), updatedAt }
     );
 
     if (error) {
@@ -260,11 +267,11 @@ function* watchEntryUpdate() {
   yield takeLatest(ENTRY_UPDATE, entryUpdate);
 }
 
-function* entrySplit({ actions, entries }) {
+function* entrySplit({ actions, params }) {
   try {
     yield put(setFetching('Splitting Entry...'));
 
-    const { entry, timezone, user } = yield select((state) => {
+    const { entry: currentEntry, timezone, user } = yield select((state) => {
       return {
         entry: state.entry.entry,
         timezone: selectTimezone(state),
@@ -288,9 +295,21 @@ function* entrySplit({ actions, entries }) {
       userRef: user.snapshot.ref
     };
 
+    const entries = params.entries.map((entry) => {
+      return convertEntryParamIdsToRefs(
+        _pick(
+          entry,
+          [
+            'clientId', 'description', 'projectId', 'startedAt', 'stoppedAt',
+            'timezone'
+          ]
+        )
+      );
+    });
+
     const batch = firestore.batch();
 
-    entry.snapshot.ref.update({ ...defaults, ...entries[0] });
+    currentEntry.snapshot.ref.update({ ...defaults, ...entries[0] });
 
     entries.slice(1).forEach((newEntry) => {
       const data = { ...defaults, ...newEntry };

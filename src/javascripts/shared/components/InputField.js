@@ -10,6 +10,7 @@ class InputField extends React.Component {
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
     label: PropTypes.string,
+    onChange: PropTypes.func,
     required: PropTypes.bool,
     type: PropTypes.string
   }
@@ -17,6 +18,7 @@ class InputField extends React.Component {
   static defaultProps = {
     disabled: false,
     label: null,
+    onChange: null,
     required: false,
     type: 'text'
   }
@@ -25,10 +27,22 @@ class InputField extends React.Component {
     super(props);
 
     this.input = React.createRef();
+
+    this._handleChange = this._handleChange.bind(this);
   }
 
   shouldComponentUpdate() {
     return true;
+  }
+
+  _handleChange(event) {
+    const { field, onChange } = this.props;
+
+    field.onChange(event);
+
+    if (onChange) {
+      setTimeout(() => onChange(event), 1);
+    }
   }
 
   render() {
@@ -54,6 +68,7 @@ class InputField extends React.Component {
           {...rest}
           disabled={disabled || isSubmitting}
           error={hasError}
+          onChange={this._handleChange}
           ref={this.input}
         />
         <FieldError

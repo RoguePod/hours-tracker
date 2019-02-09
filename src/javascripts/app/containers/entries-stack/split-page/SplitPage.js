@@ -7,7 +7,8 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { Spinner } from 'javascripts/shared/components';
 import SplitForm from './SplitForm';
-// import _get from 'lodash/get';
+import _get from 'lodash/get';
+import { calcHours } from 'javascripts/globals';
 import { connect } from 'react-redux';
 import moment from 'moment-timezone';
 import { selectTimezone } from 'javascripts/app/redux/app';
@@ -47,67 +48,64 @@ class EntrySplitPage extends React.Component {
   _getInitialValuesAndHours(entry) {
     const { timezone } = this.props;
 
-    let initialValues = { entries: [], timezone };
-    let hours         = 0;
-
     if (entry) {
-      const startedAt = moment.tz(entry.startedAt, entry.timezone);
+      const stoppedAt = entry.stoppedAt || moment().valueOf();
 
-      let stoppedAt = null;
-
-      if (entry.stoppedAt) {
-        stoppedAt = moment.tz(entry.stoppedAt, entry.timezone);
-      } else {
-        stoppedAt = moment().tz(entry.timezone);
-      }
-
-      hours = stoppedAt
-        .diff(entry.startedAt, 'hours', true)
-        .toFixed(1);
-
-      initialValues = {
+      return {
         entries: [
           {
-            clientRef: entry.clientRef,
+            clientId: _get(entry, 'clientRef.id'),
             description: entry.description,
-            hours,
+            hours: calcHours(entry.startedAt, entry.stoppedAt, entry.timezone),
             percent: '100.0',
-            projectRef: entry.projectRef,
-            startedAt: startedAt.format('MM/DD/YYYY hh:mm A z'),
-            stoppedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z'),
+            projectId: _get(entry, 'projectRef.id'),
+            startedAt: entry.startedAt,
+            stoppedAt,
             timezone: entry.timezone
           }, {
-            clientRef: null,
+            clientId: null,
             description: '',
             hours: '0.0',
             percent: '0.0',
-            projectRef: null,
-            startedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z'),
-            stoppedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z'),
+            projectId: null,
+            startedAt: stoppedAt,
+            stoppedAt,
             timezone: entry.timezone
           }
         ],
         id: entry.id,
-        startedAt: startedAt.format('MM/DD/YYYY hh:mm A z'),
-        stoppedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z'),
+        startedAt: entry.startedAt,
+        stoppedAt,
         timezone: entry.timezone
       };
     }
 
-    return { hours, initialValues };
+    return { entries: [], timezone };
   }
 
   render() {
     const { entry, fetching, onSplitEntry } = this.props;
 
-    const { initialValues } = this._getInitialValuesAndHours(entry);
+    const initialValues = this._getInitialValuesAndHours(entry);
 
     const validationSchema = Yup.object().shape({
+      entries: Yup.array().of(
+        Yup.object().shape({
+          startedAt: Yup.number()
+            .parsedTime('Started is not a valid date/time')
+            .positive('Started is Required'),
+          stoppedAt: Yup.number()
+            .parsedTime('Started is not a valid date/time')
+            .positive('Stopped is Required'),
+          timezone: Yup.string().required('Timezone is Required')
+        })
+      ),
       startedAt: Yup.number()
         .parsedTime('Started is not a valid date/time')
         .positive('Started is Required'),
       stoppedAt: Yup.number()
-        .parsedTime('Started is not a valid date/time'),
+        .parsedTime('Started is not a valid date/time')
+        .positive('Stopped is Required'),
       timezone: Yup.string().required('Timezone is Required')
     });
 

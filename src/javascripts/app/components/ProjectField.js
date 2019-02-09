@@ -4,7 +4,6 @@ import {
   InputBase,
   Label
 } from 'javascripts/shared/components';
-import { firestore, isBlank } from 'javascripts/globals';
 import {
   fuseOptions,
   selectQueryableProjects
@@ -19,6 +18,7 @@ import _get from 'lodash/get';
 import _groupBy from 'lodash/groupBy';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
+import { isBlank } from 'javascripts/globals';
 import styled from 'styled-components';
 
 const Divider = styled.div`
@@ -96,22 +96,22 @@ class ProjectField extends React.Component {
       clientField, field, form: { setFieldTouched, setFieldValue }, onChange
     } = this.props;
 
-    if (_get(project, 'projectRef.id') !== _get(field, 'value.id')) {
+    if (_get(project, 'projectId') !== _get(field, 'value')) {
       setFieldTouched(field.name, true);
-      setFieldValue(field.name, project.projectRef);
+      setFieldValue(field.name, project.projectId);
 
       if (clientField) {
         setFieldTouched(clientField, true);
-        setFieldValue(clientField, project.clientRef);
+        setFieldValue(clientField, project.clientId);
       }
 
       if (onChange) {
-        setTimeout(() => onChange(project.projectRef), 1);
+        setTimeout(() => onChange(project.projectId), 1);
       }
     }
 
     this.setState({
-      focused: false, value: this._findValue(project.projectRef)
+      focused: false, value: this._findValue(project.projectId)
     });
   }
 
@@ -153,15 +153,15 @@ class ProjectField extends React.Component {
     });
   }
 
-  _findValue(projectRef) {
+  _findValue(projectId) {
     const { projects, ready } = this.props;
 
-    if (!ready || isBlank(projectRef)) {
+    if (!ready || isBlank(projectId)) {
       return '';
     }
 
     const foundProject = _find(projects, (project) => {
-      return project.projectId === projectRef.id;
+      return project.projectId === projectId;
     });
 
     if (foundProject) {
@@ -193,17 +193,7 @@ class ProjectField extends React.Component {
 
       results[clientId] = {
         name: group[0].clientName,
-        projects: group.map((result) => {
-          const projectRef = firestore
-            .doc(`clients/${result.clientId}/projects/${result.projectId}`);
-
-          return {
-            clientRef: firestore.doc(`clients/${result.clientId}`),
-            id: result.projectId,
-            name: result.projectName,
-            projectRef
-          };
-        })
+        projects: group
       };
     }
 
@@ -227,7 +217,7 @@ class ProjectField extends React.Component {
       const projects = result.projects.map((project) => {
         return (
           <React.Fragment
-            key={project.id}
+            key={project.projectId}
           >
             <Divider className="bg-grey-lighter" />
             <ProjectRow

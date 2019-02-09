@@ -8,6 +8,7 @@ import styled from 'styled-components';
 const Select = styled.select`
   &:disabled {
     background-color: #dae1e7;
+    cursor: not-allowed;
   }
 `;
 

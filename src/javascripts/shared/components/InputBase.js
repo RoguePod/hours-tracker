@@ -7,6 +7,7 @@ import styled from 'styled-components';
 const Input = styled.input`
   &:disabled {
     background-color: #dae1e7;
+    cursor: not-allowed;
   }
 `;
 

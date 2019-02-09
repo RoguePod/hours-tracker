@@ -4,7 +4,6 @@ import {
   InputBase,
   Label
 } from 'javascripts/shared/components';
-import { firestore, isBlank } from 'javascripts/globals';
 
 import Fuse from 'fuse.js';
 import PropTypes from 'javascripts/prop-types';
@@ -14,6 +13,7 @@ import _find from 'lodash/find';
 import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { fuseOptions } from 'javascripts/app/redux/users';
+import { isBlank } from 'javascripts/globals';
 import styled from 'styled-components';
 
 const Divider = styled.div`
@@ -87,13 +87,13 @@ class UserField extends React.Component {
       field: { name, value }, form: { setFieldTouched, setFieldValue }
     } = this.props;
 
-    if (!_isEqual(user.userRef, value)) {
+    if (!_isEqual(user.id, value)) {
       setFieldTouched(name, true);
-      setFieldValue(name, user.userRef);
+      setFieldValue(name, user.id);
     }
 
     this.setState({
-      focused: false, value: this._findValue(user.userRef)
+      focused: false, value: this._findValue(user.id)
     });
   }
 
@@ -126,15 +126,15 @@ class UserField extends React.Component {
     });
   }
 
-  _findValue(userRef) {
+  _findValue(userId) {
     const { ready, users } = this.props;
 
-    if (!ready || isBlank(userRef)) {
+    if (!ready || isBlank(userId)) {
       return '';
     }
 
     const foundUser = _find(users, (user) => {
-      return user.id === userRef.id;
+      return user.id === userId;
     });
 
     if (foundUser) {
@@ -152,13 +152,7 @@ class UserField extends React.Component {
       results = new Fuse(users, fuseOptions).search(value);
     }
 
-    return results.map((user) => {
-      return {
-        id: user.id,
-        name: user.name,
-        userRef: firestore.doc(`users/${user.id}`)
-      };
-    });
+    return results;
   }
 
   render() {

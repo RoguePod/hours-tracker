@@ -1,16 +1,19 @@
-import { call, select } from 'redux-saga/effects';
+/* eslint-disable max-lines */
 
-/* eslint-disable sort-imports */
-import baseFirebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 import 'firebase/functions';
-/* eslint-enable sort-imports */
+
+import { call, select } from 'redux-saga/effects';
 
 import _find from 'lodash/find';
+import _includes from 'lodash/includes';
 import _isNil from 'lodash/isNil';
 import _isString from 'lodash/isString';
+import _keys from 'lodash/keys';
 import _sortBy from 'lodash/sortBy';
+import baseFirebase from 'firebase/app';
+import moment from 'moment-timezone';
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -36,6 +39,10 @@ export const firestore = baseFirestore;
 
 export const isBlank = (value) => {
   return _isNil(value) || (_isString(value) && value.length === 0);
+};
+
+export const isDate = (value) => {
+  return !isBlank(value) && moment(value).isValid();
 };
 
 export const toQuery = (params) => {
@@ -264,4 +271,38 @@ export const buildRef = (path) => {
   return (
     `projects/${firebaseConfig.projectId}/databases/(default)/documents/${path}`
   );
+};
+
+export const convertEntryParamIdsToRefs = (params) => {
+  const keys = _keys(params);
+
+  if (_includes(keys, 'clientId') && _includes(keys, 'projectId')) {
+    const { clientId, projectId } = params;
+
+    if (!isBlank(clientId) && !isBlank(params.projectId)) {
+      params.clientRef = firestore.doc(`clients/${clientId}`);
+      params.projectRef =
+        firestore.doc(`clients/${clientId}/projects/${projectId}`);
+    } else {
+      params.clientRef = null;
+      params.projectRef = null;
+    }
+
+    delete params.clientId;
+    delete params.projectId;
+  }
+
+  return params;
+};
+
+export const calcHours = (startedAt, stoppedAt, timezone) => {
+  if (stoppedAt) {
+    return moment.tz(stoppedAt, timezone)
+      .diff(moment.tz(startedAt, timezone), 'hours', true)
+      .toFixed(1);
+  }
+
+  return moment().tz(timezone)
+    .diff(moment.tz(startedAt, timezone), 'hours', true)
+    .toFixed(1);
 };

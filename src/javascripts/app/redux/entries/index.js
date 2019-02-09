@@ -14,6 +14,8 @@ import {
   firebase,
   firestore,
   fromQuery,
+  isBlank,
+  isDate,
   parseEntry
 } from 'javascripts/globals';
 
@@ -36,31 +38,6 @@ const selectEntries = (state) => state.entries.entries;
 const selectChecked = (state) => state.entries.checked;
 
 export const selectQuery = createSelector(
-  [selectRouterSearch],
-  (query) => {
-    const parsedQuery = fromQuery(query);
-    const defaults    = {
-      endDate: '',
-      startDate: ''
-    };
-
-    if (parsedQuery.clientRef) {
-      parsedQuery.clientRef = firestore.doc(parsedQuery.clientRef);
-    }
-
-    if (parsedQuery.projectRef) {
-      parsedQuery.projectRef = firestore.doc(parsedQuery.projectRef);
-    }
-
-    if (parsedQuery.userRef) {
-      parsedQuery.userRef = firestore.doc(parsedQuery.userRef);
-    }
-
-    return { ...defaults, ...parsedQuery };
-  }
-);
-
-export const selectRawQuery = createSelector(
   [selectRouterSearch],
   (query) => {
     const parsedQuery = fromQuery(query);
@@ -265,7 +242,7 @@ function* handleEntriesSubscribe({ snapshot }) {
 /* eslint-disable max-statements */
 const buildQuery = (state, limit, emit) => {
   const { pathname, query, timezone, user } = state;
-  const { clientRef, endDate, projectRef, startDate, userRef } = query;
+  const { clientId, endDate, projectId, startDate, userId } = query;
 
   let data = firestore
     .collection('entries')
@@ -276,22 +253,26 @@ const buildQuery = (state, limit, emit) => {
   }
 
   if (pathname.match(/reports/u) && user.role === 'Admin') {
-    if (userRef) {
-      data = data.where('userRef', '==', userRef);
+    if (!isBlank(userId)) {
+      data = data.where('userRef', '==', firestore.doc(`users/${userId}`));
     }
   } else {
     data = data.where('userRef', '==', user.snapshot.ref);
   }
 
-  if (clientRef) {
-    data = data.where('clientRef', '==', clientRef);
+  if (!isBlank(clientId)) {
+    data = data.where('clientRef', '==', firestore.doc(`clients/${clientId}`));
+
+    if (!isBlank(projectId)) {
+      data = data.where(
+        'projectRef',
+        '==',
+        firestore.doc(`clients/${clientId}/projects/${projectId}`)
+      );
+    }
   }
 
-  if (projectRef) {
-    data = data.where('projectRef', '==', projectRef);
-  }
-
-  if (startDate && startDate.length > 0) {
+  if (isDate(startDate)) {
     data = data.where(
       'startedAt', '>=',
       moment.tz(startDate, timezone)
@@ -299,7 +280,7 @@ const buildQuery = (state, limit, emit) => {
     );
   }
 
-  if (endDate && endDate.length > 0) {
+  if (isDate(endDate)) {
     data = data.where(
       'startedAt', '<=',
       moment.tz(endDate, timezone)
@@ -361,7 +342,7 @@ function* entriesDestroy() {
         allChecked: state.entries.allChecked,
         checked: state.entries.checked,
         pathname: state.router.location.pathname,
-        query: selectRawQuery(state),
+        query: selectQuery(state),
         timezone: selectTimezone(state),
         user: state.app.user
       };
@@ -375,7 +356,7 @@ function* entriesDestroy() {
       params.query = { ...query, timezone };
 
       if (!pathname.match(/reports/u)) {
-        params.query = { ...params.query, userRef: `users/${user.id}` };
+        params.query = { ...params.query, userId: user.id };
       }
     } else {
       method = 'deleteEntriesById';

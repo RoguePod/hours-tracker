@@ -5,7 +5,8 @@ import _nth from 'lodash/nth';
 class SplitFormChart extends React.Component {
   static propTypes = {
     entries: PropTypes.arrayOf(PropTypes.shape({
-      percent: PropTypes.string.isRequired
+      percent:
+        PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired
     })).isRequired
   }
 

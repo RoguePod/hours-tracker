@@ -39,10 +39,10 @@ const EntryForm = ({ isSubmitting, status, values: { timezone } }) => {
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-4">
           <Field
-            clientField="clientRef"
+            clientField="clientId"
             component={ProjectField}
             label="Project"
-            name="projectRef"
+            name="projectId"
           />
         </div>
         <div className="w-full md:w-1/2 px-2 mb-4">

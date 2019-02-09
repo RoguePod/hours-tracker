@@ -9,7 +9,7 @@ import { Field, FieldArray, Form } from 'formik';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SplitFormEntries from './SplitFormEntries';
-import chrono from 'chrono-node';
+import { calcHours } from 'javascripts/globals';
 import moment from 'moment-timezone';
 
 class EntrySplitForm extends React.Component {
@@ -20,6 +20,7 @@ class EntrySplitForm extends React.Component {
     setFieldValue: PropTypes.func.isRequired,
     status: PropTypes.string,
     values: PropTypes.shape({
+      entries: PropTypes.arrayOf(PropTypes.object).isRequired,
       timezone: PropTypes.string.isRequired
     }).isRequired
   }
@@ -31,11 +32,6 @@ class EntrySplitForm extends React.Component {
   constructor(props) {
     super(props);
 
-    // this._handleSubmit = this._handleSubmit.bind(this);
-    this._renderEntries = this._renderEntries.bind(this);
-    this._handleStartedAtChanged = this._handleStartedAtChanged.bind(this);
-    this._handleStoppedAtChanged = this._handleStoppedAtChanged.bind(this);
-    this._parseDate = this._parseDate.bind(this);
     this._handleCalculate = this._handleCalculate.bind(this);
   }
 
@@ -43,69 +39,20 @@ class EntrySplitForm extends React.Component {
     return true;
   }
 
-  _parseDate(value) {
-    const { values: { timezone } } = this.props;
-
-    const parsed = chrono.parseDate(value);
-
-    if (!parsed) {
-      return null;
-    }
-
-    const values = [
-      parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
-      parsed.getHours(), parsed.getMinutes()
-    ];
-
-    return moment.tz(values, timezone);
-  }
-
-  _parseDateValue(value) {
-    return this._parseDate(value)
-      .utc()
-      .valueOf();
-  }
-
-  // _handleSubmit(data) {
-  //   const { onSplitEntry } = this.props;
-
-  //   return new Promise((resolve, reject) => {
-  //     const entries = data.entries.map((entry) => {
-  //       const {
-  //         clientRef, description, projectRef, startedAt, stoppedAt
-  //       } = entry;
-
-  //       return {
-  //         clientRef,
-  //         description,
-  //         projectRef,
-  //         startedAt: this._parseDateValue(startedAt),
-  //         stoppedAt: this._parseDateValue(stoppedAt)
-  //       };
-  //     });
-
-  //     onSplitEntry(entries, resolve, reject);
-  //   });
-  // }
-
-  _handleCalculate(values) {
-    const { isValid, setFieldValue, values: { entries } } = this.props;
+  _handleCalculate() {
+    const {
+      isValid, setFieldValue,
+      values: { entries, startedAt, stoppedAt, timezone }
+    } = this.props;
 
     if (!isValid) {
       return;
     }
 
-    const startedAt = this._parseDate(values.startedAt);
-    const stoppedAt = this._parseDate(values.stoppedAt);
-
-    const totalHours = Number(
-      stoppedAt
-        .diff(startedAt, 'hours', true)
-        .toFixed(1)
-    );
-
+    const totalHours = calcHours(startedAt, stoppedAt, timezone);
     let totalPercent = 0;
 
+    let hours = 0.0;
     entries.forEach((entry, index) => {
       let percent = Number(entry.percent);
       totalPercent += percent;
@@ -114,57 +61,29 @@ class EntrySplitForm extends React.Component {
         percent = 0;
       }
 
-      const hours = totalHours * (percent / 100.0);
+      const staticHours = totalHours * (percent / 100.0);
 
-      setFieldValue(`entries.${index}.hours`, hours.toFixed(1));
+      setFieldValue(`entries.${index}.hours`, staticHours.toFixed(1));
       setFieldValue(`entries.${index}.percent`, percent.toFixed(1));
       setFieldValue(
         `entries.${index}.startedAt`,
-        startedAt.format('MM/DD/YYYY hh:mm A z')
+        moment.tz(startedAt, timezone)
+          .add(hours, 'hours')
+          .valueOf()
       );
-      setFieldValue(
-        `entries.${index}.stoppedAt`,
-        startedAt.add(hours, 'hours').format('MM/DD/YYYY hh:mm A z')
-      );
+
+      if (index === entries.length - 1) {
+        setFieldValue(`entries.${index}.stoppedAt`, stoppedAt);
+      } else {
+        setFieldValue(
+          `entries.${index}.stoppedAt`,
+          moment.tz(startedAt, timezone)
+            .add(hours + staticHours, 'hours')
+            .valueOf()
+        );
+        hours += staticHours;
+      }
     });
-  }
-
-  _handleStartedAtChanged(event, value) {
-    const { values } = this.props;
-
-    let startedAt = this._parseDate(value);
-
-    if (startedAt) {
-      startedAt = startedAt.format('MM/DD/YYYY hh:mm A z');
-
-      const newValues = { ...values, startedAt };
-
-      setTimeout(() => this._handleCalculate(newValues), 1);
-    }
-  }
-
-  _handleStoppedAtChanged(event, value) {
-    const { values } = this.props;
-
-    let stoppedAt = this._parseDate(value);
-
-    if (stoppedAt) {
-      stoppedAt = stoppedAt.format('MM/DD/YYYY hh:mm A z');
-
-      const newValues = { ...values, stoppedAt };
-
-      setTimeout(() => this._handleCalculate(newValues), 1);
-    }
-  }
-
-  _renderEntries(helpers) {
-    return (
-      <SplitFormEntries
-        {...this.props}
-        helpers={helpers}
-        onParseDate={this._parseDate}
-      />
-    );
   }
 
   /* eslint-disable max-lines-per-function */
@@ -183,7 +102,7 @@ class EntrySplitForm extends React.Component {
               component={TimeField}
               label="Started"
               name="startedAt"
-              onChange={this._handleStartedAtChanged}
+              onChange={this._handleCalculate}
               timezone={timezone}
             />
           </div>
@@ -192,7 +111,7 @@ class EntrySplitForm extends React.Component {
               component={TimeField}
               label="Stopped"
               name="stoppedAt"
-              onChange={this._handleStoppedAtChanged}
+              onChange={this._handleCalculate}
               timezone={timezone}
             />
           </div>
@@ -206,8 +125,8 @@ class EntrySplitForm extends React.Component {
         </div>
         <div className="mb-4">
           <FieldArray
+            component={SplitFormEntries}
             name="entries"
-            render={this._renderEntries}
           />
         </div>
         <Button

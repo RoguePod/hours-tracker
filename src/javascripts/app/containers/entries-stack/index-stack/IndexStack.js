@@ -2,8 +2,7 @@ import { Button, Spinner } from 'javascripts/shared/components';
 import { Link, Route, Switch } from 'react-router-dom';
 import {
   reset,
-  selectQuery,
-  selectRawQuery
+  selectQuery
 } from 'javascripts/app/redux/entries';
 import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
@@ -17,7 +16,6 @@ import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import SummaryTable from './summary-table/SummaryTable';
 import _compact from 'lodash/compact';
-import _get from 'lodash/get';
 import { connect } from 'react-redux';
 import cx from 'classnames';
 import { history } from 'javascripts/app/redux/store';
@@ -31,7 +29,6 @@ class EntriesIndexStack extends React.Component {
     match: PropTypes.routerMatch.isRequired,
     onReset: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
-    rawQuery: PropTypes.entriesQuery.isRequired,
     timezone: PropTypes.string.isRequired
   }
 
@@ -61,30 +58,15 @@ class EntriesIndexStack extends React.Component {
     onReset();
   }
 
+  /* eslint-disable max-statements */
   _handleSubmit(data, actions) {
-    const { admin, location, query } = this.props;
-    const { pathname } = location;
-
-    const isReports        = pathname === '/entries/reports';
-    const isReportsSummary = pathname === '/entries/reports/summary';
-    const showAdmin        = admin && (isReports || isReportsSummary);
+    const { location, query } = this.props;
 
     const values = _compact(Object.values(data));
 
     if (values.length > 0) {
-      const search = {
-        clientRef: _get(data, 'clientRef.path', ''),
-        endDate: _get(data, 'endDate', ''),
-        projectRef: _get(data, 'projectRef.path', ''),
-        startDate: _get(data, 'startDate', '')
-      };
-
-      if (showAdmin) {
-        search.userRef = _get(data, 'userRef.path', '');
-      }
-
       const route = {
-        ...location, search: `?${toQuery({ ...query, ...search })}`
+        ...location, search: `?${toQuery({ ...query, ...data })}`
       };
 
       history.replace(route);
@@ -94,6 +76,7 @@ class EntriesIndexStack extends React.Component {
 
     actions.setSubmitting(false);
   }
+  /* eslint-enable max-statements */
 
   _handleClear() {
     /* eslint-disable no-unused-vars */
@@ -278,7 +261,6 @@ const props = (state) => {
     admin: selectAdmin(state),
     fetching: state.entries.fetching,
     query: selectQuery(state),
-    rawQuery: selectRawQuery(state),
     timezone: selectTimezone(state)
   };
 };

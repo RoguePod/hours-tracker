@@ -1,4 +1,9 @@
-import { add, firestore, parseEntry } from 'javascripts/globals';
+import {
+  add,
+  convertEntryParamIdsToRefs,
+  firestore,
+  parseEntry
+} from 'javascripts/globals';
 import {
   call,
   cancelled,
@@ -9,6 +14,7 @@ import {
   takeLatest
 } from 'redux-saga/effects';
 
+import _get from 'lodash/get';
 import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
@@ -131,9 +137,9 @@ function* entryStart({ params }) {
       userRef: user.snapshot.ref
     };
 
-    const finalParams = { ...defaults, ...params };
-
-    const response = yield call(add, 'entries', finalParams);
+    const response = yield call(
+      add, 'entries', { ...defaults, ...convertEntryParamIdsToRefs(params) }
+    );
 
     if (response.error) {
       yield put(addFlash(response.error.message, 'red'));
@@ -185,7 +191,9 @@ function* entryUpdate({ params }) {
     const updatedAt = moment()
       .utc()
       .valueOf();
-    entry.snapshot.ref.update({ ...params, updatedAt });
+    entry.snapshot.ref.update({
+      ...convertEntryParamIdsToRefs(params), updatedAt
+    });
   } finally {
     yield put(setFetching(null));
   }
@@ -262,13 +270,19 @@ export const selectRunningEntry = createSelector(
   [selectEntry],
   (entry) => {
     if (entry) {
-      return entry;
+      return {
+        clientId: _get(entry, 'clientRef.id'),
+        description: entry.description,
+        id: entry.id,
+        projectId: _get(entry, 'projectRef.id'),
+        startedAt: entry.startedAt,
+        stoppedAt: entry.stoppedAt,
+        timezone: entry.timezone
+      };
     }
 
     return {
-      clientRef: null,
-      description: '',
-      projectRef: null
+      description: ''
     };
   }
 );

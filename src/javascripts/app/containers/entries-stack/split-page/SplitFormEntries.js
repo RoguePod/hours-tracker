@@ -7,11 +7,10 @@ import SplitFormEntry from './SplitFormEntry';
 
 class SplitFormEntries extends React.Component {
   static propTypes = {
-    helpers: PropTypes.shape({
-      push: PropTypes.func.isRequired
+    form: PropTypes.shape({
+      values: PropTypes.object.isRequired
     }).isRequired,
-    onParseDate: PropTypes.func.isRequired,
-    values: PropTypes.object.isRequired
+    push: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -25,33 +24,28 @@ class SplitFormEntries extends React.Component {
   }
 
   _handleAdd() {
-    const {
-      helpers, onParseDate, values
-    } = this.props;
+    const { form: { values }, push } = this.props;
 
-    const stoppedAt = onParseDate(values.stoppedAt);
-
-    helpers.push({
-      clientRef: null,
+    push({
+      clientId: null,
       description: '',
       hours: '0.0',
       percent: '0.0',
-      projectRef: null,
-      startedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z'),
-      stoppedAt: stoppedAt.format('MM/DD/YYYY hh:mm A z'),
+      projectId: null,
+      startedAt: values.stoppedAt,
+      stoppedAt: values.stoppedAt,
       timezone: values.timezone
     });
   }
 
   _renderRows() {
-    const { helpers, values: { entries } } = this.props;
+    const { form: { values: { entries } } } = this.props;
 
     return entries.map((entry, index) => {
       return (
         <SplitFormEntry
           {...this.props}
           entry={entry}
-          helpers={helpers}
           index={index}
           key={index}
         />
@@ -60,7 +54,7 @@ class SplitFormEntries extends React.Component {
   }
 
   render() {
-    const { values } = this.props;
+    const { form: { isSubmitting, values: { entries } } } = this.props;
 
     const rows = this._renderRows();
 
@@ -72,6 +66,7 @@ class SplitFormEntries extends React.Component {
           </h2>
           <Button
             color="blue"
+            disabled={isSubmitting}
             onClick={this._handleAdd}
             type="button"
           >
@@ -87,7 +82,7 @@ class SplitFormEntries extends React.Component {
           {'Chart'}
         </h3>
         <SplitFormChart
-          entries={values.entries || []}
+          entries={entries || []}
         />
       </div>
     );

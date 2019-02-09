@@ -5,7 +5,7 @@ class ProjectRow extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     project: PropTypes.shape({
-      name: PropTypes.string.isRequired
+      projectName: PropTypes.string.isRequired
     }).isRequired
   }
 
@@ -36,7 +36,7 @@ class ProjectRow extends React.Component {
         className={projectClasses}
         onMouseDown={this._handleMouseDown}
       >
-        {project.name}
+        {project.projectName}
       </li>
     );
   }

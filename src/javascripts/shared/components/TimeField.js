@@ -15,6 +15,7 @@ class TimeField extends React.Component {
     form: PropTypes.form.isRequired,
     id: PropTypes.string,
     label: PropTypes.string,
+    onChange: PropTypes.func,
     required: PropTypes.bool,
     timezone: PropTypes.string.isRequired
   }
@@ -23,6 +24,7 @@ class TimeField extends React.Component {
     disabled: false,
     id: null,
     label: null,
+    onChange: null,
     required: false
   }
 
@@ -45,7 +47,8 @@ class TimeField extends React.Component {
     const { field: { name, value }, form: { touched }, timezone } = this.props;
 
     const isTouched = touched[name];
-    if (!isTouched && prevProps.field.value !== value) {
+    if (!isTouched &&
+       (prevProps.field.value !== value || timezone !== prevProps.timezone)) {
       this.setState({
         value: this._formatValue(value, timezone)
       });
@@ -85,14 +88,20 @@ class TimeField extends React.Component {
     return '';
   }
 
-  _handleChange({ target: { value } }) {
+  _handleChange(event) {
     const {
-      field: { name }, form: { setFieldTouched, setFieldValue }, timezone
+      field: { name }, form: { setFieldTouched, setFieldValue },
+      onChange, timezone
     } = this.props;
 
+    const fieldValue = this._parseDate(event.target.value, timezone);
     setFieldTouched(name, true);
-    setFieldValue(name, this._parseDate(value, timezone));
-    this.setState({ value });
+    setFieldValue(name, fieldValue);
+    this.setState({ value: event.target.value });
+
+    if (onChange) {
+      setTimeout(() => onChange(event, fieldValue), 1);
+    }
   }
 
   render() {

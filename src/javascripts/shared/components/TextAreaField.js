@@ -12,6 +12,7 @@ import styled from 'styled-components';
 const TextArea = styled.textarea`
   &:disabled {
     background-color: #dae1e7;
+    cursor: not-allowed;
   }
 `;
 

@@ -51,9 +51,9 @@ class ProjectRow extends React.Component {
     }
 
     onStartEntry({
-      clientRef: client.snapshot.ref,
+      clientId: client.snapshot.ref.id,
       description,
-      projectRef: project.snapshot.ref
+      projectId: project.snapshot.ref.id
     });
   }
 
