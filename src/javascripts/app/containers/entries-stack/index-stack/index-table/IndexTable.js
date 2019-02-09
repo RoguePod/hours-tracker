@@ -189,7 +189,7 @@ class EntriesIndexTable extends React.Component {
                       title="Edit Checked"
                       to={{
                         ...location,
-                        pathname: '/entries/all/edit',
+                        pathname: '/entries/edit',
                         state: { modal: true }
                       }}
                     />

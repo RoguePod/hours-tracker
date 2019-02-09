@@ -16,6 +16,10 @@ const EntriesStack = ({ match }) => {
       />
       <Route
         component={EditPage}
+        path={`${match.url}/edit`}
+      />
+      <Route
+        component={EditPage}
         path={`${match.url}/:id/edit`}
       />
       <Route
