@@ -1,8 +1,7 @@
 import {
   Dropdown,
   FieldError,
-  InputBase,
-  Label
+  InputBase
 } from 'javascripts/shared/components';
 
 import Fuse from 'fuse.js';
@@ -25,22 +24,17 @@ class UserField extends React.Component {
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
-    label: PropTypes.string,
     ready: PropTypes.bool.isRequired,
-    required: PropTypes.bool,
     users: PropTypes.arrayOf(PropTypes.user).isRequired
   }
 
   static defaultProps = {
-    disabled: false,
-    label: null,
-    required: false
+    disabled: false
   }
 
   constructor(props) {
     super(props);
 
-    this.input = React.createRef();
     this._handleChange = this._handleChange.bind(this);
     this._handleDropdownChange = this._handleDropdownChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
@@ -159,7 +153,7 @@ class UserField extends React.Component {
     /* eslint-disable no-unused-vars */
     const {
       disabled, field, form: { errors, isSubmitting, touched },
-      label, ready, required, users, ...rest
+      ready, users, ...rest
     } = this.props;
     /* eslint-enable no-unused-vars */
 
@@ -182,21 +176,12 @@ class UserField extends React.Component {
 
     return (
       <div className="relative">
-        {label &&
-          <Label
-            error={hasError}
-            htmlFor={this.input?.current?.id()}
-            required={required}
-          >
-            {label}
-          </Label>}
         <InputBase
           {...rest}
           disabled={!ready || disabled || isSubmitting}
           onBlur={this._handleBlur}
           onChange={this._handleChange}
           onFocus={this._handleFocus}
-          ref={this.input}
           value={value}
         />
         <Dropdown

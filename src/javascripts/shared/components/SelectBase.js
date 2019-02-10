@@ -1,9 +1,11 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Label from './Label';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import _uniqueId from 'lodash/uniqueId';
 import cx from 'classnames';
+import { isBlank } from 'javascripts/globals';
 import styled from 'styled-components';
+import useId from 'javascripts/shared/hooks/useId';
 
 const Select = styled.select`
   &:disabled {
@@ -12,71 +14,36 @@ const Select = styled.select`
   }
 `;
 
-class SelectBase extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    className: PropTypes.string,
-    error: PropTypes.bool,
-    id: PropTypes.string
-  }
+const SelectBase = (props) => {
+  const { children, className, error, label, required, ...rest } = props;
+  const id = useId(rest.id);
 
-  static defaultProps = {
-    children: null,
-    className: null,
-    error: false,
-    id: null
-  }
+  const inputClassName = cx(
+    'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
+    'leading-tight focus:outline-none bg-white cursor-pointer h-full ' +
+    'transition',
+    {
+      'border-grey-light': !error,
+      'border-red': error,
+      'focus:border-blue-light': !error,
+      'focus:border-red': error
+    },
+    className
+  );
 
-  constructor(props) {
-    super(props);
+  const arrowClasses =
+    'pointer-events-none absolute pin-y pin-r flex items-center px-4';
 
-    this.state = {
-      id: props.id || _uniqueId('input_')
-    };
-  }
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  componentDidUpdate(prevProps) {
-    const { id } = this.props;
-
-    if (id !== prevProps.id) {
-      if (id) {
-        this.setState({ id });
-      } else if (!id && prevProps.id) {
-        this.setState({ id: _uniqueId('input_') });
-      }
-    }
-  }
-
-  id() {
-    const { id } = this.state;
-    return id;
-  }
-
-  render() {
-    const { children, className, error, ...rest } = this.props;
-    const { id } = this.state;
-
-    const inputClassName = cx(
-      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none bg-white cursor-pointer h-full ' +
-      'transition',
-      {
-        'border-grey-light': !error,
-        'border-red': error,
-        'focus:border-blue-light': !error,
-        'focus:border-red': error
-      },
-      className
-    );
-
-    const arrowClasses =
-      'pointer-events-none absolute pin-y pin-r flex items-center px-4';
-
-    return (
+  return (
+    <>
+      {!isBlank(label) &&
+        <Label
+          error={error}
+          htmlFor={id}
+          required={required}
+        >
+          {label}
+        </Label>}
       <div className="relative">
         <Select
           {...rest}
@@ -91,8 +58,26 @@ class SelectBase extends React.Component {
           />
         </div>
       </div>
-    );
-  }
-}
+    </>
+  );
+};
+
+SelectBase.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string,
+  error: PropTypes.bool,
+  id: PropTypes.string,
+  label: PropTypes.string,
+  required: PropTypes.bool
+};
+
+SelectBase.defaultProps = {
+  children: null,
+  className: null,
+  error: false,
+  id: null,
+  label: null,
+  required: false
+};
 
 export default SelectBase;

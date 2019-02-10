@@ -1,7 +1,6 @@
 import FieldError from './FieldError';
 import FieldHelper from './FieldHelper';
 import InputBase from './InputBase';
-import Label from './Label';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import chrono from 'chrono-node';
@@ -14,25 +13,20 @@ class TimeField extends React.Component {
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
     id: PropTypes.string,
-    label: PropTypes.string,
     onChange: PropTypes.func,
-    required: PropTypes.bool,
     timezone: PropTypes.string
   }
 
   static defaultProps = {
     disabled: false,
     id: null,
-    label: null,
     onChange: null,
-    required: false,
     timezone: 'UTC'
   }
 
   constructor(props) {
     super(props);
 
-    this.input = React.createRef();
     this._handleChange = this._handleChange.bind(this);
 
     this.state = {
@@ -108,7 +102,7 @@ class TimeField extends React.Component {
   render() {
     const {
       disabled, field, form: { errors, isSubmitting, touched },
-      label, required, timezone, ...rest
+      timezone, ...rest
     } = this.props;
     const { value } = this.state;
 
@@ -117,14 +111,6 @@ class TimeField extends React.Component {
 
     return (
       <>
-        {label && label.length > 0 &&
-          <Label
-            error={hasError}
-            htmlFor={this.input?.current?.id()}
-            required={required}
-          >
-            {label}
-          </Label>}
         <InputBase
           {...rest}
           autoCapitalize="none"
@@ -133,7 +119,6 @@ class TimeField extends React.Component {
           error={hasError}
           name={field.name}
           onChange={this._handleChange}
-          ref={this.input}
           type="text"
           value={value}
         />

@@ -21,6 +21,7 @@ export Pill from './Pill';
 export Portal from './Portal';
 export SelectField from './SelectField';
 export Spinner from './Spinner';
+export SubmitButton from './SubmitButton';
 export TextAreaField from './TextAreaField';
 export TimeField from './TimeField';
 export TimezoneField from './TimezoneField';

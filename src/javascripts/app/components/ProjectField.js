@@ -1,8 +1,7 @@
 import {
   Dropdown,
   FieldError,
-  InputBase,
-  Label
+  InputBase
 } from 'javascripts/shared/components';
 import {
   fuseOptions,
@@ -31,7 +30,6 @@ class ProjectField extends React.Component {
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
-    label: PropTypes.string,
     onChange: PropTypes.func,
     projects: PropTypes.arrayOf(PropTypes.shape({
       clientId: PropTypes.string.isRequired,
@@ -39,22 +37,18 @@ class ProjectField extends React.Component {
       projectId: PropTypes.string.isRequired,
       projectName: PropTypes.string.isRequired
     })).isRequired,
-    ready: PropTypes.bool.isRequired,
-    required: PropTypes.bool
+    ready: PropTypes.bool.isRequired
   }
 
   static defaultProps = {
     clientField: null,
     disabled: false,
-    label: null,
-    onChange: null,
-    required: false
+    onChange: null
   }
 
   constructor(props) {
     super(props);
 
-    this.input = React.createRef();
     this._handleChange = this._handleChange.bind(this);
     this._handleDropdownChange = this._handleDropdownChange.bind(this);
     this._handleBlur = this._handleBlur.bind(this);
@@ -204,7 +198,7 @@ class ProjectField extends React.Component {
     /* eslint-disable no-unused-vars */
     const {
       clientField, disabled, field, form: { errors, isSubmitting, touched },
-      label, ready, required, ...rest
+      ready, ...rest
     } = this.props;
     /* eslint-enable no-unused-vars */
 
@@ -244,21 +238,12 @@ class ProjectField extends React.Component {
 
     return (
       <div className="relative">
-        {label && label.length > 0 &&
-          <Label
-            error={hasError}
-            htmlFor={this.input?.current?.id()}
-            required={required}
-          >
-            {label}
-          </Label>}
         <InputBase
           {...rest}
           disabled={!ready || disabled || isSubmitting}
           onBlur={this._handleBlur}
           onChange={this._handleChange}
           onFocus={this._handleFocus}
-          ref={this.input}
           value={value}
         />
         <Dropdown

@@ -1,9 +1,9 @@
 import {
-  Button,
   CheckboxField,
   FormError,
   InputField,
   SelectField,
+  SubmitButton,
   TimezoneField
 } from 'javascripts/shared/components';
 import { Field, Form } from 'formik';
@@ -126,15 +126,11 @@ class ProfileForm extends React.Component {
             name="autoloadLastDescription"
           />
         </div>
-        <Button
-          className="py-2"
-          color="green"
-          disabled={isSubmitting}
-          loading={isSubmitting}
-          type="submit"
+        <SubmitButton
+          submitting={isSubmitting}
         >
-          {isSubmitting ? 'Submitting...' : 'Submit'}
-        </Button>
+          {'Save'}
+        </SubmitButton>
       </Form>
     );
   }

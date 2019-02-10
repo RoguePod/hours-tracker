@@ -1,5 +1,9 @@
-import { Button, FormError, InputField } from 'javascripts/shared/components';
 import { Field, Form } from 'formik';
+import {
+  FormError,
+  InputField,
+  SubmitButton
+} from 'javascripts/shared/components';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -23,15 +27,11 @@ const PasswordForm = (props) => {
           type="password"
         />
       </div>
-      <Button
-        className="py-2"
-        color="green"
-        disabled={isSubmitting}
-        loading={isSubmitting}
-        type="submit"
+      <SubmitButton
+        submitting={isSubmitting}
       >
-        {isSubmitting ? 'Submitting...' : 'Submit'}
-      </Button>
+        {'Save'}
+      </SubmitButton>
     </Form>
   );
 };

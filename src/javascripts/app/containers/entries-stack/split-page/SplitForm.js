@@ -1,10 +1,10 @@
+import { Field, FieldArray, Form } from 'formik';
 import {
-  Button,
   FormError,
+  SubmitButton,
   TimeField,
   TimezoneField
 } from 'javascripts/shared/components';
-import { Field, FieldArray, Form } from 'formik';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -129,15 +129,11 @@ class EntrySplitForm extends React.Component {
             name="entries"
           />
         </div>
-        <Button
-          className="py-2 w-full text-lg"
-          color="green"
-          disabled={isSubmitting}
-          loading={isSubmitting}
-          type="submit"
+        <SubmitButton
+          submitting={isSubmitting}
         >
-          {isSubmitting ? 'Splitting...' : 'Split'}
-        </Button>
+          {'Save'}
+        </SubmitButton>
       </Form>
     );
   }

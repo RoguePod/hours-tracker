@@ -1,8 +1,8 @@
 import {
-  Button,
   CheckboxField,
   FormError,
-  InputField
+  InputField,
+  SubmitButton
 } from 'javascripts/shared/components';
 import { Field, Form } from 'formik';
 
@@ -33,15 +33,11 @@ const ClientForm = ({ isSubmitting, status }) => {
           name="active"
         />
       </div>
-      <Button
-        className="py-2"
-        color="green"
-        disabled={isSubmitting}
-        loading={isSubmitting}
-        type="submit"
+      <SubmitButton
+        submitting={isSubmitting}
       >
-        {isSubmitting ? 'Submitting...' : 'Submit'}
-      </Button>
+        {'Save'}
+      </SubmitButton>
     </Form>
   );
 };

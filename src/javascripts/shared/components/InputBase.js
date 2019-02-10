@@ -1,8 +1,10 @@
+import Label from './Label';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import _uniqueId from 'lodash/uniqueId';
 import cx from 'classnames';
+import { isBlank } from 'javascripts/globals';
 import styled from 'styled-components';
+import useId from 'javascripts/shared/hooks/useId';
 
 const Input = styled.input`
   &:disabled {
@@ -11,74 +13,56 @@ const Input = styled.input`
   }
 `;
 
-class InputBase extends React.Component {
-  static propTypes = {
-    className: PropTypes.string,
-    error: PropTypes.bool,
-    id: PropTypes.string,
-    type: PropTypes.string
-  }
+const InputBase = ({ className, error, label, required, ...rest }) => {
+  const id = useId(rest.id);
 
-  static defaultProps = {
-    className: null,
-    error: false,
-    id: null,
-    type: 'text'
-  }
+  const inputClassName = cx(
+    'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
+    'leading-tight focus:outline-none transition',
+    {
+      'border-grey-light': !error,
+      'border-red': error,
+      'focus:border-blue-light': !error,
+      'focus:border-red': error
+    },
+    className
+  );
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      id: props.id || _uniqueId('input_')
-    };
-  }
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  componentDidUpdate(prevProps) {
-    const { id } = this.props;
-
-    if (id !== prevProps.id) {
-      if (id) {
-        this.setState({ id });
-      } else if (!id && prevProps.id) {
-        this.setState({ id: _uniqueId('input_') });
-      }
-    }
-  }
-
-  id() {
-    const { id } = this.state;
-    return id;
-  }
-
-  render() {
-    const { className, error, ...rest } = this.props;
-    const { id } = this.state;
-
-    const inputClassName = cx(
-      'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-      'leading-tight focus:outline-none transition',
-      {
-        'border-grey-light': !error,
-        'border-red': error,
-        'focus:border-blue-light': !error,
-        'focus:border-red': error
-      },
-      className
-    );
-
-    return (
+  return (
+    <>
+      {!isBlank(label) &&
+        <Label
+          error={error}
+          htmlFor={id}
+          required={required}
+        >
+          {label}
+        </Label>}
       <Input
         {...rest}
         className={inputClassName}
         id={id}
       />
-    );
-  }
-}
+    </>
+  );
+};
+
+InputBase.propTypes = {
+  className: PropTypes.string,
+  error: PropTypes.bool,
+  id: PropTypes.string,
+  label: PropTypes.string,
+  required: PropTypes.bool,
+  type: PropTypes.string
+};
+
+InputBase.defaultProps = {
+  className: null,
+  error: false,
+  id: null,
+  label: null,
+  required: false,
+  type: 'text'
+};
 
 export default InputBase;

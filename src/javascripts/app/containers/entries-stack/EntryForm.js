@@ -1,11 +1,11 @@
+import { Field, Form } from 'formik';
 import {
-  Button,
   FormError,
+  SubmitButton,
   TextAreaField,
   TimeField,
   TimezoneField
 } from 'javascripts/shared/components';
-import { Field, Form } from 'formik';
 
 import { ProjectField } from 'javascripts/app/components';
 import PropTypes from 'javascripts/prop-types';
@@ -64,15 +64,11 @@ const EntryForm = ({ isSubmitting, status, values: { timezone } }) => {
           rows={1}
         />
       </div>
-      <Button
-        className="py-2"
-        color="green"
-        disabled={isSubmitting}
-        loading={isSubmitting}
-        type="submit"
+      <SubmitButton
+        submitting={isSubmitting}
       >
-        {isSubmitting ? 'Saving...' : 'Save'}
-      </Button>
+        {'Save'}
+      </SubmitButton>
     </Form>
   );
 };

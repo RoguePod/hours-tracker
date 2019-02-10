@@ -1,10 +1,10 @@
+import { Field, Form } from 'formik';
 import {
-  Button,
   FormError,
   InputField,
-  Link
+  Link,
+  SubmitButton
 } from 'javascripts/shared/components';
-import { Field, Form } from 'formik';
 
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -39,15 +39,12 @@ const SignInForm = ({ isSubmitting, status }) => {
         />
       </div>
       <div className="flex flex-row justify-between">
-        <Button
-          className="py-2"
-          color="green"
-          disabled={isSubmitting}
-          loading={isSubmitting}
-          type="submit"
+        <SubmitButton
+          submitting={isSubmitting}
+          submittingText="Signing in..."
         >
-          {isSubmitting ? 'Signing in...' : 'Submit'}
-        </Button>
+          {'Sign In'}
+        </SubmitButton>
         <Link
           className="py-2"
           to="/sign-in/forgot-password"
