@@ -9,7 +9,7 @@
     "connected-react-router": "6.3.0",
     "firebase": "5.8.2",
     "formik": "1.5.0",
-    "fuse.js": "3.4.1",
+    "fuse.js": "3.4.2",
     "immutability-helper": "3.0.0",
     "javascript-detect-element-resize": "0.5.3",
     "lodash": "4.17.11",
