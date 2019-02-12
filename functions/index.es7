@@ -396,82 +396,7 @@ exports.payrollCsv = functions.https.onRequest(async(req, res) => {
   res.status(200).send(csv);
 });
 
-const recursiveDeleteEntriesByQuery = (firestore, query, resolve, reject) => {
-  query.get()
-    .then((snapshot) => {
-      // When there are no documents left, we are done
-      if (snapshot.size === 0) {
-        return 0;
-      }
-
-      // Delete documents in a batch
-      const batch = firestore.batch();
-      snapshot.docs.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
-
-      return batch.commit().then(() => {
-        return snapshot.size;
-      });
-    })
-    .then((numDeleted) => {
-      if (numDeleted === 0) {
-        resolve('SUCCESS');
-        return;
-      }
-
-      // Recurse on the next process tick, to avoid
-      // exploding the stack.
-      setTimeout(() => {
-        recursiveDeleteEntriesByQuery(firestore, query, resolve, reject);
-      }, 1);
-    })
-    .catch((error) => {
-      reject(error);
-    });
-};
-
-exports.deleteEntriesByQuery = functions
-  .runWith({
-    memory: '2GB',
-    timeoutSeconds: 540
-  })
-  .https.onCall(async(params) => {
-    const { query } = params;
-    const { timezone } = query;
-
-    let { endDate, startDate } = query;
-
-    if (startDate && startDate.length > 0) {
-      startDate = moment.tz(startDate, timezone)
-        .startOf('isoWeek')
-        .format('YYYY-MM-DD');
-    }
-
-    if (endDate && endDate.length > 0) {
-      endDate = moment.tz(endDate, timezone)
-        .endOf('isoWeek')
-        .format('YYYY-MM-DD');
-    }
-
-    const newQuery = { ...query, endDate, startDate };
-
-    const firestore = admin.firestore();
-    const querySnapshot = await buildQuery(newQuery).limit(20);
-
-    try {
-      const message = await new Promise((resolve, reject) => {
-        recursiveDeleteEntriesByQuery(
-          firestore, querySnapshot, resolve, reject
-        );
-      });
-      return { message };
-    } catch (error) {
-      return { error };
-    }
-  });
-
-const recursiveDeleteEntriesById = (firestore, allIds, resolve, reject) => {
+const recursiveDeleteEntries = (firestore, allIds, resolve, reject) => {
   // When there are no ids left, we are done
   if (allIds.length === 0) {
     resolve('SUCCESS');
@@ -493,7 +418,7 @@ const recursiveDeleteEntriesById = (firestore, allIds, resolve, reject) => {
   batch.commit()
     .then(() => {
       setTimeout(() => {
-        recursiveDeleteEntriesById(firestore, allIds, resolve, reject);
+        recursiveDeleteEntries(firestore, allIds, resolve, reject);
       }, 1);
     })
     .catch((error) => {
@@ -501,7 +426,7 @@ const recursiveDeleteEntriesById = (firestore, allIds, resolve, reject) => {
     });
 };
 
-exports.deleteEntriesById = functions
+exports.deleteEntries = functions
   .runWith({
     memory: '2GB',
     timeoutSeconds: 540
@@ -514,7 +439,7 @@ exports.deleteEntriesById = functions
 
     try {
       const message = await new Promise((resolve, reject) => {
-        recursiveDeleteEntriesById(firestore, chunks, resolve, reject);
+        recursiveDeleteEntries(firestore, chunks, resolve, reject);
       });
       return { message };
     } catch (error) {

@@ -350,21 +350,10 @@ function* entriesDestroy() {
   try {
     yield put(setFetching('Deleting Entries...'));
 
-    const { checked: ids } = yield select((state) => {
-      return {
-        checked: state.entries.checked,
-        pathname: state.router.location.pathname,
-        query: selectQuery(state),
-        timezone: selectTimezone(state),
-        user: state.app.user
-      };
-    });
-
-    const params = { ids };
-    const method = 'deleteEntriesById';
+    const ids = yield select((state) => state.entries.checked);
 
     const { data: { error } } = yield call(
-      firebase.functions().httpsCallable(method), params
+      firebase.functions().httpsCallable('deleteEntries'), { ids }
     );
 
     if (error) {
