@@ -1,5 +1,5 @@
 # Cloud Functions for Hours Tracker
 
 ```
-yarn run prepare && firebase deploy --only functions
+yarn start && firebase deploy --only functions
 ```
