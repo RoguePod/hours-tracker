@@ -1,3 +1,5 @@
+/* globals document,Element */
+
 import { CSSTransition } from 'react-transition-group';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
@@ -41,12 +43,16 @@ class Dropdown extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     error: PropTypes.bool,
-    open: PropTypes.bool
+    onClose: PropTypes.func,
+    open: PropTypes.bool,
+    target: PropTypes.shape({ current: PropTypes.instanceOf(Element) })
   }
 
   static defaultProps = {
     error: false,
-    open: false
+    onClose: null,
+    open: false,
+    target: null
   }
 
   constructor(props) {
@@ -56,6 +62,8 @@ class Dropdown extends React.Component {
       children: props.children,
       open: props.open
     };
+
+    this._handleClose = this._handleClose.bind(this);
   }
 
   static getDerivedStateFromProps(nextProps) {
@@ -68,6 +76,28 @@ class Dropdown extends React.Component {
 
   shouldComponentUpdate() {
     return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { open, onClose, target } = this.props;
+
+    if (target && onClose && prevProps.open !== open) {
+      if (open) {
+        document.addEventListener('mousedown', this._handleClose, false);
+      } else {
+        document.removeEventListener('mousedown', this._handleClose, false);
+      }
+    }
+  }
+
+  _handleClose(event) {
+    const { onClose, target } = this.props;
+
+    if (target && target.current.contains(event.target)) {
+      return;
+    }
+
+    onClose();
   }
 
   render() {
@@ -97,7 +127,9 @@ class Dropdown extends React.Component {
         timeout={DURATION}
         unmountOnExit
       >
-        <FadeIn className={dropdownClasses}>
+        <FadeIn
+          className={dropdownClasses}
+        >
           <Container className={containerClasses}>
             {children.length === 0 &&
               <div className={noResultsClasses}>

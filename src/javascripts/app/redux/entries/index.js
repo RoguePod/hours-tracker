@@ -135,12 +135,13 @@ let channel = null;
 
 const path = 'hours-tracker/app/entries';
 
-const ALL_CHECKED_SET   = `${path}/ALL_CHECKED_SET`;
-const ENTRY_CHECK       = `${path}/ENTRY_CHECK`;
-const ENTRIES_SUBSCRIBE = `${path}/ENTRIES_SUBSCRIBE`;
+const CHECKED_SET       = `${path}/CHECKED_SET`;
+const CHECKED_TOGGLE    = `${path}/CHECKED_TOGGLE`;
 const ENTRIES_DESTROY   = `${path}/ENTRIES_DESTROY`;
 const ENTRIES_SET       = `${path}/ENTRIES_SET`;
+const ENTRIES_SUBSCRIBE = `${path}/ENTRIES_SUBSCRIBE`;
 const ENTRIES_UPDATE    = `${path}/ENTRIES_UPDATE`;
+const ENTRY_CHECK       = `${path}/ENTRY_CHECK`;
 const FETCHING_SET      = `${path}/FETCHING_SET`;
 const READY             = `${path}/READY`;
 const RESET             = `${path}/RESET`;
@@ -178,7 +179,10 @@ export default (state = initialState, action) => {
   case FETCHING_SET:
     return update(state, { fetching: { $set: action.fetching } });
 
-  case ALL_CHECKED_SET:
+  case CHECKED_SET:
+    return update(state, { checked: { $set: action.checked } });
+
+  case CHECKED_TOGGLE:
     if (state.checked.length === _flatten(_values(state.entries)).length) {
       return update(state, { checked: { $set: [] } });
     }
@@ -215,8 +219,12 @@ export const checkEntry = (id) => {
   return { id, type: ENTRY_CHECK };
 };
 
-export const setAllChecked = () => {
-  return { type: ALL_CHECKED_SET };
+export const toggleChecked = () => {
+  return { type: CHECKED_TOGGLE };
+};
+
+const setChecked = (checked) => {
+  return { checked, type: CHECKED_SET };
 };
 
 export const updateEntries = (params, actions) => {
@@ -316,6 +324,8 @@ function* entriesSubscribe({ limit }) {
   if (channel) {
     channel.close();
   }
+
+  yield put(setChecked([]));
 
   const currentState = yield select((state) => {
     return {

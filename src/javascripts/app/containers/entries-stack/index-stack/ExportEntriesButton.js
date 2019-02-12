@@ -3,7 +3,6 @@
 import { cloudFunctionsUrl, isBlank, toQuery } from 'javascripts/globals';
 
 import { ConfirmAction } from 'javascripts/shared/components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
@@ -58,18 +57,17 @@ class ExportEntriesButton extends React.Component {
 
     const titleClassName = cx(
       'cursor-pointer whitespace-no-wrap w-100 overflow-hidden ' +
-      'text-overflow-ellipsis ml-2'
+      'text-overflow-ellipsis text-center'
     );
 
     const children = (
-      <>
-        <FontAwesomeIcon
-          icon="download"
-        />
-        <div className={titleClassName}>
-          {title}
-        </div>
-      </>
+      <div className={titleClassName}>
+        {title}
+      </div>
+    );
+
+    const containerClassName = cx(
+      className, 'p-2 hover:bg-blue-lighter text-blue'
     );
 
     if (warning) {
@@ -82,7 +80,7 @@ class ExportEntriesButton extends React.Component {
           onClick={this._handleOpen}
         >
           <div
-            className={className}
+            className={containerClassName}
           >
             {children}
           </div>
@@ -94,7 +92,7 @@ class ExportEntriesButton extends React.Component {
 
     return (
       <a
-        className={className}
+        className={containerClassName}
         href={url}
         rel="noopener noreferrer"
         target="_blank"

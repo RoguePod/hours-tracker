@@ -1,3 +1,4 @@
+import { Clock } from 'javascripts/shared/components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
@@ -27,7 +28,7 @@ class SignedInHeader extends React.Component {
     return (
       location.pathname !== nextProps.location.pathname ||
       location.hash !== nextProps.location.hash ||
-      running !== nextProps.running ||
+      Boolean(running) !== Boolean(nextProps.running) ||
       user.name !== nextProps.user.name ||
       width !== nextProps.width
     );
@@ -44,25 +45,28 @@ class SignedInHeader extends React.Component {
     const menuHash = hash.match(/sidebar/u) ? '' : 'sidebar';
     const logoHash = hash.match(/stopwatch/u) ? '' : 'stopwatch';
 
+    const barClasses =
+      'flex justify-center rounded py-1 px-2 hover:bg-blue-light';
+
     return (
       <Header className={headerClasses}>
         <div className="flex items-center h-full">
           <div className="flex-1 flex items-center">
-            <div className="pl-4 pr-2 hidden lg:block">
-              <FontAwesomeIcon
-                icon="clock"
-                size="2x"
+            <div className="pr-2 hidden lg:flex">
+              <Clock
+                animate={false}
+                size="40px"
               />
             </div>
-            <div className="pl-4 pr-2 md:hidden">
-              <Link to={{ ...location, hash: logoHash, replace: true }}>
-                <FontAwesomeIcon
-                  icon="clock"
-                  pulse={Boolean(running)}
-                  size="2x"
-                />
-              </Link>
-            </div>
+            <Link
+              className="mr-2 md:hidden flex hover:bg-blue-light rounded"
+              to={{ ...location, hash: logoHash, replace: true }}
+            >
+              <Clock
+                animate={Boolean(running)}
+                size="40px"
+              />
+            </Link>
             <Link
               className="text-xl"
               to="/"
@@ -118,7 +122,7 @@ class SignedInHeader extends React.Component {
           <ul className="list-reset flex items-center md:hidden">
             <li>
               <Link
-                className="block rounded py-1 px-3 hover:bg-blue-light"
+                className={barClasses}
                 to={{ ...location, hash: menuHash, replace: true }}
               >
                 <FontAwesomeIcon

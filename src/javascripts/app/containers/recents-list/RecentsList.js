@@ -3,7 +3,7 @@ import {
   subscribeRecents
 } from 'javascripts/app/redux/recents';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Clock } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import RecentRow from './RecentRow';
@@ -57,10 +57,8 @@ class RecentsList extends React.Component {
         </div>
         {!ready &&
           <div className={listClasses}>
-            <FontAwesomeIcon
-              icon="clock"
-              pulse
-              size="3x"
+            <Clock
+              size="60px"
             />
             <div className="pt-2">
               {'Loading Recents...'}

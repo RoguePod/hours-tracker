@@ -3,7 +3,6 @@ import {
   selectRunningEntry,
   startEntry,
   stopEntry,
-  subscribeEntry,
   updateEntry
 } from 'javascripts/app/redux/running';
 
@@ -25,7 +24,6 @@ class StopWatch extends React.Component {
     location: PropTypes.routerLocation.isRequired,
     onStartEntry: PropTypes.func.isRequired,
     onStopEntry: PropTypes.func.isRequired,
-    onSubscribeEntry: PropTypes.func.isRequired,
     onUpdateEntry: PropTypes.func.isRequired,
     ready: PropTypes.bool.isRequired
   }
@@ -44,12 +42,6 @@ class StopWatch extends React.Component {
     this._handleStop = this._handleStop.bind(this);
     this._handleSubmit = this._handleSubmit.bind(this);
     this._renderForm = this._renderForm.bind(this);
-  }
-
-  componentDidMount() {
-    const { onSubscribeEntry } = this.props;
-
-    onSubscribeEntry();
   }
 
   shouldComponentUpdate(nextProps) {
@@ -206,7 +198,6 @@ const props = (state) => {
 const actions = {
   onStartEntry: startEntry,
   onStopEntry: stopEntry,
-  onSubscribeEntry: subscribeEntry,
   onUpdateEntry: updateEntry
 };
 

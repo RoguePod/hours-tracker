@@ -8,8 +8,8 @@ import {
   destroyEntries,
   selectGroupedEntries,
   selectQuery,
-  setAllChecked,
-  subscribeEntries
+  subscribeEntries,
+  toggleChecked
 } from 'javascripts/app/redux/entries';
 
 import EntryRow from './EntryRow';
@@ -34,8 +34,8 @@ class EntriesIndexTable extends React.Component {
     onCheckEntry: PropTypes.func.isRequired,
     onDestroyEntries: PropTypes.func.isRequired,
     onDestroyEntry: PropTypes.func.isRequired,
-    onSetAllChecked: PropTypes.func.isRequired,
     onSubscribeEntries: PropTypes.func.isRequired,
+    onToggleChecked: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
     showAdmin: PropTypes.bool,
     timezone: PropTypes.string.isRequired
@@ -50,7 +50,7 @@ class EntriesIndexTable extends React.Component {
 
     this._handleMore = this._handleMore.bind(this);
     this._handleDestroy = this._handleDestroy.bind(this);
-    this._handleAllChecked = this._handleAllChecked.bind(this);
+    this._handleToggleChecked = this._handleToggleChecked.bind(this);
   }
 
   componentDidMount() {
@@ -94,10 +94,10 @@ class EntriesIndexTable extends React.Component {
     onDestroyEntries();
   }
 
-  _handleAllChecked() {
-    const { onSetAllChecked } = this.props;
+  _handleToggleChecked() {
+    const { onToggleChecked } = this.props;
 
-    onSetAllChecked();
+    onToggleChecked();
   }
 
   _renderTbodies(entries, showAdmin) {
@@ -163,7 +163,7 @@ class EntriesIndexTable extends React.Component {
                     <div
 
                       className="cursor-pointer"
-                      onClick={this._handleAllChecked}
+                      onClick={this._handleToggleChecked}
                     >
                       <FontAwesomeIcon
                         icon={['far', allChecked ? 'check-square' : 'square']}
@@ -252,8 +252,8 @@ const actions = {
   onCheckEntry: checkEntry,
   onDestroyEntries: destroyEntries,
   onDestroyEntry: destroyEntry,
-  onSetAllChecked: setAllChecked,
-  onSubscribeEntries: subscribeEntries
+  onSubscribeEntries: subscribeEntries,
+  onToggleChecked: toggleChecked
 };
 
 export default connect(props, actions)(EntriesIndexTable);

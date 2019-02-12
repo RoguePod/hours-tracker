@@ -1,4 +1,5 @@
-import { ActionIcon } from 'javascripts/shared/components';
+import { ActionIcon, Clock } from 'javascripts/shared/components';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
@@ -189,10 +190,11 @@ class EntryRow extends React.Component {
         >
           {entry.stoppedAt && stoppedAt.format('h:mma')}
           {!entry.stoppedAt &&
-            <FontAwesomeIcon
-              icon="clock"
-              pulse
-            />}
+            <div className="flex justify-center">
+              <Clock
+                size="25px"
+              />
+            </div>}
           {(entry.stoppedAt && (showAdmin || entry.timezone !== timezone)) &&
             <sup>
               {startedAt.format(' z')}

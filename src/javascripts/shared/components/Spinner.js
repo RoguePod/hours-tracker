@@ -1,6 +1,6 @@
+import { Clock, Portal } from 'javascripts/shared/components';
+
 import { CSSTransition } from 'react-transition-group';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Portal } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import cx from 'classnames';
@@ -47,10 +47,8 @@ const Spinner = ({ page, spinning, text }) => {
   const children = (
     <>
       <div className="flex flex-row items-center">
-        <FontAwesomeIcon
-          icon="clock"
-          pulse
-          size="3x"
+        <Clock
+          size="50px"
         />
       </div>
       {text && text.length > 0 &&

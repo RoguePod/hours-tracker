@@ -1,6 +1,7 @@
 export ActionIcon from './ActionIcon';
 export Button from './Button';
 export CheckboxField from './CheckboxField';
+export Clock from './Clock';
 export Collapse from './Collapse';
 export ConfirmAction from './ConfirmAction';
 export DateField from './DateField';

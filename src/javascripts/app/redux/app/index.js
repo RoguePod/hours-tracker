@@ -17,6 +17,10 @@ import {
   subscribeClients
 } from 'javascripts/app/redux/clients';
 import {
+  reset as resetRunning,
+  subscribeEntry
+} from 'javascripts/app/redux/running';
+import {
   reset as resetUsers,
   subscribeUsers
 } from 'javascripts/app/redux/users';
@@ -26,7 +30,6 @@ import { createSelector } from 'reselect';
 import { eventChannel } from 'redux-saga';
 import { history } from 'javascripts/app/redux/store';
 import { reset as resetRecents } from 'javascripts/app/redux/recents';
-import { reset as resetRunning } from 'javascripts/app/redux/running';
 import update from 'immutability-helper';
 
 // Constants
@@ -146,8 +149,8 @@ function* handleUserSubscribe({ snapshot }) {
     if (user.role === 'Admin') {
       yield put(subscribeUsers());
     }
-
     yield put(setUser(user));
+    yield put(subscribeEntry());
   }
 
   if (!current.ready) {

@@ -1,4 +1,4 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Clock } from 'javascripts/shared/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
 import { Redirect } from 'react-router-dom';
@@ -20,9 +20,9 @@ const SignedOutStack = (props) => {
         <header
           className="text-blue flex flex-row items-center justify-center"
         >
-          <FontAwesomeIcon
-            icon="clock"
-            size="3x"
+          <Clock
+            animate={false}
+            size="50px"
           />
           <h1 className="pl-3">
             {'Hours Tracker'}
