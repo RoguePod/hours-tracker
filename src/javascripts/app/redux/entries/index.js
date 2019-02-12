@@ -11,20 +11,24 @@ import {
   takeLatest
 } from 'redux-saga/effects';
 import {
+  batchCommit,
   convertEntryParamIdsToRefs,
   firebase,
   firestore,
   fromQuery,
   isBlank,
   isDate,
-  parseEntry,
-  updateRef
+  parseEntry
 } from 'javascripts/globals';
 
 import _filter from 'lodash/filter';
+import _flatten from 'lodash/flatten';
 import _groupBy from 'lodash/groupBy';
 import _includes from 'lodash/includes';
+import _map from 'lodash/map';
+import _omit from 'lodash/omit';
 import _sortBy from 'lodash/sortBy';
+import _values from 'lodash/values';
 import _without from 'lodash/without';
 import { addFlash } from 'javascripts/shared/redux/flashes';
 import { createSelector } from 'reselect';
@@ -144,7 +148,6 @@ const RESET             = `${path}/RESET`;
 // Reducer
 
 const initialState = {
-  allChecked: false,
   checked: [],
   entries: [],
   fetching: null,
@@ -176,7 +179,11 @@ export default (state = initialState, action) => {
     return update(state, { fetching: { $set: action.fetching } });
 
   case ALL_CHECKED_SET:
-    return update(state, { allChecked: { $set: action.allChecked } });
+    if (state.checked.length === _flatten(_values(state.entries)).length) {
+      return update(state, { checked: { $set: [] } });
+    }
+
+    return update(state, { checked: { $set: _map(state.entries, 'id') } });
 
   case READY:
     return update(state, { ready: { $set: true } });
@@ -208,8 +215,8 @@ export const checkEntry = (id) => {
   return { id, type: ENTRY_CHECK };
 };
 
-export const setAllChecked = (allChecked) => {
-  return { allChecked, type: ALL_CHECKED_SET };
+export const setAllChecked = () => {
+  return { type: ALL_CHECKED_SET };
 };
 
 export const updateEntries = (params, actions) => {
@@ -343,11 +350,8 @@ function* entriesDestroy() {
   try {
     yield put(setFetching('Deleting Entries...'));
 
-    const {
-      allChecked, checked, pathname, query, timezone, user
-    } = yield select((state) => {
+    const { checked: ids } = yield select((state) => {
       return {
-        allChecked: state.entries.allChecked,
         checked: state.entries.checked,
         pathname: state.router.location.pathname,
         query: selectQuery(state),
@@ -356,20 +360,8 @@ function* entriesDestroy() {
       };
     });
 
-    const params = {};
-    let method   = null;
-
-    if (allChecked) {
-      method = 'deleteEntriesByQuery';
-      params.query = { ...query, timezone };
-
-      if (!pathname.match(/reports/u)) {
-        params.query = { ...params.query, userId: user.id };
-      }
-    } else {
-      method = 'deleteEntriesById';
-      params.ids = checked;
-    }
+    const params = { ids };
+    const method = 'deleteEntriesById';
 
     const { data: { error } } = yield call(
       firebase.functions().httpsCallable(method), params
@@ -393,16 +385,27 @@ function* entriesUpdate({ actions, params }) {
   try {
     yield put(setFetching('Updating Entries...'));
 
-    const entry     = yield select((state) => state.entry.entry);
-    const updatedAt = moment()
+    const { entries } = yield select((state) => {
+      return {
+        entries: _filter(
+          _flatten(_values(selectGroupedEntries(state))), 'checked'
+        )
+      };
+    });
+
+    const now = moment()
       .utc()
       .valueOf();
+    const batch = firestore.batch();
 
-    const { error } = yield call(
-      updateRef,
-      entry.snapshot.ref,
-      { ...convertEntryParamIdsToRefs(params), updatedAt }
-    );
+    entries.forEach((entry) => {
+      entry.snapshot.ref.update({
+        ...convertEntryParamIdsToRefs(_omit(params, 'update')),
+        updatedAt: now
+      });
+    });
+
+    const { error } = yield call(batchCommit, batch);
 
     if (error) {
       actions.setStatus(error.message);

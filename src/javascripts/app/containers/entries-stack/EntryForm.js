@@ -55,8 +55,6 @@ const EntryForm = ({ isSubmitting, status, values: { timezone } }) => {
       </div>
       <div className="mb-4">
         <Field
-          autoCapitalize="sentences"
-          autoCorrect="on"
           autoHeight
           component={TextAreaField}
           label="Description"

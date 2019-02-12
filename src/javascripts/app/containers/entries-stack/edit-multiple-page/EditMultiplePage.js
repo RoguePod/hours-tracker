@@ -3,7 +3,10 @@ import { Redirect } from 'react-router-dom';
 
 const EntryEditMultiplePage = () => {
   return (
-    <Redirect to="/entries" />
+    <Redirect
+      replace
+      to="/entries"
+    />
   );
 };
 

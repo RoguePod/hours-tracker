@@ -102,6 +102,8 @@ const TextAreaField = (props) => {
           {label}
         </Label>}
       <TextArea
+        autoCapitalize="sentences"
+        autoCorrect="on"
         {...field}
         {...rest}
         className={textAreaClassName}

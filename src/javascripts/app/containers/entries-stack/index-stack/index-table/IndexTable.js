@@ -17,14 +17,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
+import _flatten from 'lodash/flatten';
 import _isEqual from 'lodash/isEqual';
+import _values from 'lodash/values';
 import { connect } from 'react-redux';
 import { destroyEntry } from 'javascripts/app/redux/entry';
 import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntriesIndexTable extends React.Component {
   static propTypes = {
-    allChecked: PropTypes.bool.isRequired,
     checked: PropTypes.arrayOf(PropTypes.string).isRequired,
     /* eslint-disable react/forbid-prop-types */
     entries: PropTypes.object.isRequired,
@@ -94,9 +95,9 @@ class EntriesIndexTable extends React.Component {
   }
 
   _handleAllChecked() {
-    const { allChecked, onSetAllChecked } = this.props;
+    const { onSetAllChecked } = this.props;
 
-    onSetAllChecked(!allChecked);
+    onSetAllChecked();
   }
 
   _renderTbodies(entries, showAdmin) {
@@ -137,17 +138,15 @@ class EntriesIndexTable extends React.Component {
 
   /* eslint-disable max-lines-per-function */
   render() {
-    const { allChecked, checked, entries, location, showAdmin } = this.props;
+    const { checked, entries, location, showAdmin } = this.props;
 
-    let message =
+    const message =
       'This will remove all checked entries, and cannot be undone. ' +
       'Are you sure?';
 
-    if (allChecked) {
-      message =
-        'This will remove all checked entries, matching the filters, and may ' +
-        'include entries you do not see. This cannot be undone. Are you sure?';
-    }
+    const allEntries = _flatten(_values(entries));
+
+    const allChecked = checked.length === allEntries.length;
 
     return (
       <>
@@ -166,14 +165,9 @@ class EntriesIndexTable extends React.Component {
                       className="cursor-pointer"
                       onClick={this._handleAllChecked}
                     >
-                      {!allChecked &&
-                        <FontAwesomeIcon
-                          icon={['far', 'square']}
-                        />}
-                      {allChecked &&
-                        <FontAwesomeIcon
-                          icon={['far', 'check-square']}
-                        />}
+                      <FontAwesomeIcon
+                        icon={['far', allChecked ? 'check-square' : 'square']}
+                      />
                     </div>
                   </Tooltip>
                 </th>
@@ -183,7 +177,7 @@ class EntriesIndexTable extends React.Component {
                       as={Link}
                       className="mr-1"
                       color="orange"
-                      disabled={!allChecked && checked.length === 0}
+                      disabled={checked.length === 0}
                       icon="pencil-alt"
                       size={8}
                       title="Edit Checked"
@@ -196,7 +190,7 @@ class EntriesIndexTable extends React.Component {
                     <ActionIcon
                       color="red"
                       confirm={message}
-                      disabled={!allChecked && checked.length === 0}
+                      disabled={checked.length === 0}
                       icon="times"
                       onClick={this._handleDestroy}
                       size={8}
@@ -247,7 +241,6 @@ class EntriesIndexTable extends React.Component {
 
 const props = (state) => {
   return {
-    allChecked: state.entries.allChecked,
     checked: state.entries.checked,
     entries: selectGroupedEntries(state),
     query: selectQuery(state),

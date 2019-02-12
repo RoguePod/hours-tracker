@@ -20,7 +20,7 @@ const ActionIcon = (props) => {
       {...rest}
       className={actionClasses}
       disabled={disabled}
-      onClick={disabled || confirm ? null : onClick}
+      onClick={!disabled && !confirm ? onClick : null}
     />
   );
 

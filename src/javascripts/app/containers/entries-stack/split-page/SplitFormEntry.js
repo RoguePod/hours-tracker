@@ -229,8 +229,6 @@ class SplitFormEntry extends React.Component {
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/3 px-2 mb-4">
             <Field
-              autoCapitalize="sentences"
-              autoCorrect="on"
               autoHeight
               component={TextAreaField}
               label="Description"
@@ -245,7 +243,6 @@ class SplitFormEntry extends React.Component {
               label="Started"
               name={`entries.${index}.startedAt`}
               timezone={timezone}
-              // validate={[isRequired, isParsedTime]}
             />
           </div>
           <div className="w-full md:w-1/3 px-2 mb-4">
@@ -255,7 +252,6 @@ class SplitFormEntry extends React.Component {
               label="Stopped"
               name={`entries.${index}.stoppedAt`}
               timezone={timezone}
-              // validate={[isRequired, isParsedTime, isStoppedAt]}
             />
           </div>
         </div>

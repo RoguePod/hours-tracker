@@ -71,8 +71,6 @@ class StopWatchForm extends React.Component {
           />
         </div>
         <Field
-          autoCapitalize="sentences"
-          autoCorrect="on"
           autoHeight
           component={TextAreaField}
           label="Description"

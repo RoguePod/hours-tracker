@@ -41,15 +41,16 @@ class EntryNewForm extends React.Component {
     const validationRules = {
       startedAt: Yup.number()
         .parsedTime('Started is not a valid date/time')
-        .positive('Started is Required'),
+        .required('Started is Required'),
       stoppedAt: Yup.number()
-        .parsedTime('Started is not a valid date/time'),
+        .parsedTime('Stopped is not a valid date/time')
+        .moreThan(Yup.ref('startedAt'), 'Must occur after Started'),
       timezone: Yup.string().required('Timezone is Required')
     };
 
     if (running) {
       validationRules.stoppedAt = validationRules.stoppedAt
-        .positive('Stopped is Required');
+        .required('Stopped is Required');
     }
 
     const validationSchema = Yup.object().shape(validationRules);

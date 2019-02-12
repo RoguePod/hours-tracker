@@ -93,19 +93,21 @@ class EntrySplitPage extends React.Component {
         Yup.object().shape({
           startedAt: Yup.number()
             .parsedTime('Started is not a valid date/time')
-            .positive('Started is Required'),
+            .required('Started is Required'),
           stoppedAt: Yup.number()
-            .parsedTime('Started is not a valid date/time')
-            .positive('Stopped is Required'),
+            .parsedTime('Stopped is not a valid date/time')
+            .required('Stopped is Required')
+            .moreThan(Yup.ref('startedAt'), 'Must occur after Started'),
           timezone: Yup.string().required('Timezone is Required')
         })
       ),
       startedAt: Yup.number()
         .parsedTime('Started is not a valid date/time')
-        .positive('Started is Required'),
+        .required('Started is Required'),
       stoppedAt: Yup.number()
-        .parsedTime('Started is not a valid date/time')
-        .positive('Stopped is Required'),
+        .parsedTime('Stopped is not a valid date/time')
+        .required('Stopped is Required')
+        .moreThan(Yup.ref('startedAt'), 'Must occur after Started'),
       timezone: Yup.string().required('Timezone is Required')
     });
 

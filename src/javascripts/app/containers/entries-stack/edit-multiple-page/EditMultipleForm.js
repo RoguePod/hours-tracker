@@ -1,60 +1,154 @@
-import * as Yup from 'yup';
+import {
+  CheckboxField,
+  FormError,
+  SubmitButton,
+  TextAreaField,
+  TimeField,
+  TimezoneField
+} from 'javascripts/shared/components';
+import { Field, Form } from 'formik';
 
-import EntryForm from '../EntryForm';
-import { Formik } from 'formik';
+import { ProjectField } from 'javascripts/app/components';
 import PropTypes from 'javascripts/prop-types';
 import React from 'react';
-import { Spinner } from 'javascripts/shared/components';
-import { connect } from 'react-redux';
-import { updateEntries } from 'javascripts/app/redux/entries';
+import _get from 'lodash/get';
+import _isEqual from 'lodash/isEqual';
+import { isBlank } from 'javascripts/globals';
 
-const EntryEditMultipleForm = ({ fetching, onUpdateEntries, page }) => {
-  const validationSchema = Yup.object().shape({
-    startedAt: Yup.number()
-      .parsedTime('Started is not a valid date/time')
-      .positive('Started is Required'),
-    stoppedAt: Yup.number()
-      .parsedTime('Started is not a valid date/time')
-      .positive('Stopped is Required'),
-    timezone: Yup.string().required('Timezone is Required')
+/* eslint-disable max-lines-per-function */
+const EntryEditMultipleForm = (props) => {
+  const { isSubmitting, setFieldTouched, status, values, timezone } = props;
+
+  const [update, setUpdate] = React.useState(values.update || {});
+
+  React.useEffect(() => {
+    if (!_isEqual(update, values.update)) {
+      setUpdate(values.update);
+      const fields = [
+        'startedAt',
+        'stoppedAt',
+        'timezone',
+        'description',
+        'projectId'
+      ];
+
+      fields.forEach((field) => {
+        setFieldTouched(field, Boolean(_get(values, `update.${field}`, false)));
+      });
+    }
   });
 
   return (
-    <>
-      <Formik
-        component={EntryForm}
-        enableReinitialize
-        onSubmit={onUpdateEntries}
-        validationSchema={validationSchema}
-      />
-      <Spinner
-        page={page}
-        spinning={Boolean(fetching)}
-        text={fetching}
-      />
-    </>
+    <Form
+      noValidate
+    >
+      <FormError error={status} />
+      <div className="flex flex-wrap -mx-2">
+        <div className="w-full md:w-1/2 px-2 mb-4">
+          <Field
+            autoFocus
+            component={TimeField}
+            disabled={!_get(values, 'update.startedAt')}
+            label="Started"
+            name="startedAt"
+            timezone={isBlank(values.timezone) ? timezone : values.timezone}
+          />
+          <div className="pt-1">
+            <Field
+              component={CheckboxField}
+              label="Update Started"
+              name="update.startedAt"
+            />
+          </div>
+        </div>
+        <div className="w-full md:w-1/2 px-2 mb-4">
+          <Field
+            component={TimeField}
+            disabled={!_get(values, 'update.stoppedAt')}
+            label="Stopped"
+            name="stoppedAt"
+            timezone={timezone}
+          />
+          <div className="pt-1">
+            <Field
+              component={CheckboxField}
+              label="Update Stopped"
+              name="update.stoppedAt"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-wrap -mx-2">
+        <div className="w-full md:w-1/2 px-2 mb-4">
+          <Field
+            clientField="clientId"
+            component={ProjectField}
+            disabled={!_get(values, 'update.projectId')}
+            label="Project"
+            name="projectId"
+          />
+          <div className="pt-1">
+            <Field
+              component={CheckboxField}
+              label="Update Project"
+              name="update.projectId"
+            />
+          </div>
+        </div>
+        <div className="w-full md:w-1/2 px-2 mb-4">
+          <Field
+            component={TimezoneField}
+            disabled={!_get(values, 'update.timezone')}
+            label="Timezone"
+            name="timezone"
+          />
+          <div className="pt-1">
+            <Field
+              component={CheckboxField}
+              label="Update Timezone"
+              name="update.timezone"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="mb-4">
+        <Field
+          autoHeight
+          component={TextAreaField}
+          disabled={!_get(values, 'update.description')}
+          label="Description"
+          name="description"
+          rows={1}
+        />
+        <div className="pt-1">
+          <Field
+            component={CheckboxField}
+            label="Update Description"
+            name="update.description"
+          />
+        </div>
+      </div>
+      <SubmitButton
+        submitting={isSubmitting}
+      >
+        {'Save Multiple'}
+      </SubmitButton>
+    </Form>
   );
 };
 
 EntryEditMultipleForm.propTypes = {
-  fetching: PropTypes.string,
-  onUpdateEntries: PropTypes.func.isRequired,
-  page: PropTypes.bool
+  isSubmitting: PropTypes.bool.isRequired,
+  setFieldTouched: PropTypes.func.isRequired,
+  status: PropTypes.string,
+  timezone: PropTypes.string.isRequired,
+  values: PropTypes.shape({
+    timezone: PropTypes.string
+  }).isRequired
 };
 
 EntryEditMultipleForm.defaultProps = {
-  fetching: null,
-  page: false
+  status: null
 };
 
-const props = (state) => {
-  return {
-    fetching: state.entries.fetching
-  };
-};
-
-const actions = {
-  onUpdateEntries: updateEntries
-};
-
-export default connect(props, actions)(EntryEditMultipleForm);
+export default EntryEditMultipleForm;
