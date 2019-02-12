@@ -14,7 +14,7 @@
     "javascript-detect-element-resize": "0.5.3",
     "lodash": "4.17.11",
     "moment-timezone": "0.5.23",
-    "prop-types": "15.6.2",
+    "prop-types": "15.7.1",
     "react": "16.8.1",
     "react-datepicker": "2.1.0",
     "react-dom": "16.8.1",
