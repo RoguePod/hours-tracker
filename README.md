@@ -38,6 +38,12 @@ firebase use firebase-project-id && yarn run deploy:staging
 firebase use firebase-project-id && yarn run deploy:production
 ```
 
+### Run Prettier
+
+```
+yarn run prettier
+```
+
 ### Add Package
 
 ```

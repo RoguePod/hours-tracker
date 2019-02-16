@@ -10,6 +10,10 @@ import useId from "javascripts/shared/hooks/useId";
 const Select = styled.select`
   transition: border 300ms ease;
 
+  &::selection {
+    background: yellow;
+  }
+
   &:disabled {
     background-color: #dae1e7;
     cursor: not-allowed;

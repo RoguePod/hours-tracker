@@ -9,7 +9,7 @@ import styled from "styled-components";
 const DURATION = 300;
 
 const Container = styled.div`
-  max-height: 18rem;
+  max-height: ${props => props.maxHeight || "none"};
 `;
 
 const FadeIn = styled.div`
@@ -43,6 +43,7 @@ class Dropdown extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     error: PropTypes.bool,
+    maxHeight: PropTypes.string,
     onClose: PropTypes.func,
     open: PropTypes.bool,
     target: PropTypes.shape({ current: PropTypes.instanceOf(Element) })
@@ -50,6 +51,7 @@ class Dropdown extends React.Component {
 
   static defaultProps = {
     error: false,
+    maxHeight: "none",
     onClose: null,
     open: false,
     target: null
@@ -101,7 +103,7 @@ class Dropdown extends React.Component {
   }
 
   render() {
-    const { error } = this.props;
+    const { error, maxHeight } = this.props;
     const { children, open } = this.state;
 
     const dropdownClasses = cx(
@@ -115,8 +117,6 @@ class Dropdown extends React.Component {
 
     const containerClasses = cx("overflow-x-hidden overflow-y-auto list-reset");
 
-    const noResultsClasses = "px-3 py-2 text-center font-bold text-sm";
-
     return (
       <CSSTransition
         classNames="fade"
@@ -126,11 +126,8 @@ class Dropdown extends React.Component {
         unmountOnExit
       >
         <FadeIn className={dropdownClasses}>
-          <Container className={containerClasses}>
-            {children.length === 0 && (
-              <div className={noResultsClasses}>{"No Results Found"}</div>
-            )}
-            {children.length > 0 && children}
+          <Container className={containerClasses} maxHeight={maxHeight}>
+            {children}
           </Container>
         </FadeIn>
       </CSSTransition>

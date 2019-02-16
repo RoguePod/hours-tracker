@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
-import { Transition } from "javascripts/shared/components";
 import _times from "lodash/times";
 import cx from "classnames";
 import { history } from "javascripts/app/redux/store";
@@ -189,15 +188,14 @@ class WeekDropdown extends React.Component {
           <FontAwesomeIcon icon="caret-left" />
         </button>
         <div className="relative">
-          <Transition
+          <select
             className={selectClasses}
             onChange={this._handleChange}
-            tag="select"
             value={date}
           >
             <option value={currentDate}>{"Current Week"}</option>
             {this._renderOptions(isCurrent)}
-          </Transition>
+          </select>
           <div className={arrowClasses}>
             <FontAwesomeIcon icon="caret-down" />
           </div>

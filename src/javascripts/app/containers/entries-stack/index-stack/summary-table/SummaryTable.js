@@ -101,7 +101,7 @@ class EntriesSummaryTable extends React.Component {
         />
         <div className="py-4 text-xl">{text}</div>
         <Button
-          className="py-4 text-lg"
+          className="py-2 px-4 text-lg"
           color="red"
           onClick={this._handleSubscribe}
           type="submit"

@@ -18,7 +18,7 @@ const Button = props => {
   const buttonClassName = cx(
     `bg-${color}`,
     `text-${textColor}`,
-    "font-bold rounded py-2 px-4 hover:shadow appearance-none",
+    "font-bold rounded hover:shadow appearance-none",
     {
       "cursor-not-allowed": disabled,
       [hoverKey]: !disabled,
@@ -51,7 +51,7 @@ Button.propTypes = {
 
 Button.defaultProps = {
   as: "button",
-  className: null,
+  className: "py-2 px-4",
   color: "blue",
   disabled: false,
   textColor: "white",

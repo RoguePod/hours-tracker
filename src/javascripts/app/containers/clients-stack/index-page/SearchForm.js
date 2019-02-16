@@ -22,7 +22,7 @@ const ClientsSearchForm = ({ isSubmitting, onClear, status }) => {
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 md:mb-0 mb-4">
           <Button
-            className="py-2 w-full"
+            className="py-2 px-4 w-full"
             color="green"
             disabled={isSubmitting}
             type="submit"
@@ -32,7 +32,7 @@ const ClientsSearchForm = ({ isSubmitting, onClear, status }) => {
         </div>
         <div className="w-full md:w-1/2 px-2">
           <Button
-            className="py-2 w-full"
+            className="py-2 px-4 w-full"
             disabled={isSubmitting}
             onClick={onClear}
             type="button"

@@ -25,7 +25,7 @@ SubmitButton.propTypes = {
 };
 
 SubmitButton.defaultProps = {
-  className: "py-2",
+  className: "py-2 px-4",
   color: "green",
   submitting: false,
   submittingText: "Saving..."

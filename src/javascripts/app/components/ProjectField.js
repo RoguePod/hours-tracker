@@ -245,6 +245,8 @@ class ProjectField extends React.Component {
       );
     });
 
+    const noResultsClasses = "px-3 py-2 text-center font-bold text-sm";
+
     return (
       <div className="relative">
         <InputBase
@@ -255,8 +257,11 @@ class ProjectField extends React.Component {
           onFocus={this._handleFocus}
           value={value}
         />
-        <Dropdown error={hasError} open={focused}>
-          {rows}
+        <Dropdown error={hasError} maxHeight="18rem" open={focused}>
+          {rows.length === 0 && (
+            <div className={noResultsClasses}>{"No Results Found"}</div>
+          )}
+          {rows.length > 0 && rows}
         </Dropdown>
         <FieldError
           error={errors[field.name]}

@@ -14,15 +14,15 @@ const EntriesFilterForm = ({ onClear, showAdmin, status }) => {
     <Form noValidate>
       <FormError error={status} />
       <div className="flex flex-wrap -mx-2">
-        <div className="w-full md:w-1/2 px-2 mb-4">
+        <div className="w-full lg:w-1/2 px-2 mb-4">
           <Field component={DateField} label="Start Date" name="startDate" />
         </div>
-        <div className="w-full md:w-1/2 px-2 mb-4">
+        <div className="w-full lg:w-1/2 px-2 mb-4">
           <Field component={DateField} label="End Date" name="endDate" />
         </div>
       </div>
       <div className="flex flex-wrap -mx-2">
-        <div className="w-full md:w-1/2 px-2 mb-4">
+        <div className="w-full lg:w-1/2 px-2 mb-4">
           <Field
             component={ClientField}
             label="Client"
@@ -30,7 +30,7 @@ const EntriesFilterForm = ({ onClear, showAdmin, status }) => {
             projectField="projectId"
           />
         </div>
-        <div className="w-full md:w-1/2 px-2 mb-4">
+        <div className="w-full lg:w-1/2 px-2 mb-4">
           <Field
             clientField="clientId"
             component={ProjectField}
@@ -46,12 +46,12 @@ const EntriesFilterForm = ({ onClear, showAdmin, status }) => {
       )}
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 md:mb-0 mb-4">
-          <Button className="py-2 w-full" color="green" type="submit">
+          <Button className="py-2 px-4 w-full" color="green" type="submit">
             {"Filter"}
           </Button>
         </div>
         <div className="w-full md:w-1/2 px-2">
-          <Button className="py-2 w-full" onClick={onClear} type="button">
+          <Button className="py-2 px-4 w-full" onClick={onClear} type="button">
             {"Clear"}
           </Button>
         </div>

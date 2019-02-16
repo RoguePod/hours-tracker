@@ -27,6 +27,7 @@
     "camelcase": ["error", { "properties": "always" }],
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/no-onchange": "off",
     "max-lines": "error",
     "prettier/prettier": "error",
     "react/forbid-prop-types": "error",
