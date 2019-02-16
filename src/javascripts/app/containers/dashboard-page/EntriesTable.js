@@ -1,12 +1,13 @@
-import EntryRow from './EntryRow';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import { Spinner } from 'javascripts/shared/components';
-import _isEqual from 'lodash/isEqual';
-import { connect } from 'react-redux';
-import { destroyEntry } from 'javascripts/app/redux/entry';
-import { selectTimezone } from 'javascripts/app/redux/app';
-import { subscribeEntries } from 'javascripts/app/redux/entries';
+import { Spinner, Table } from "javascripts/shared/components";
+
+import EntryRow from "./EntryRow";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _isEqual from "lodash/isEqual";
+import { connect } from "react-redux";
+import { destroyEntry } from "javascripts/app/redux/entry";
+import { selectTimezone } from "javascripts/app/redux/app";
+import { subscribeEntries } from "javascripts/app/redux/entries";
 
 class EntriesTable extends React.Component {
   static propTypes = {
@@ -15,11 +16,11 @@ class EntriesTable extends React.Component {
     onDestroyEntry: PropTypes.func.isRequired,
     onSubscribeEntries: PropTypes.func.isRequired,
     timezone: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     fetching: null
-  }
+  };
 
   componentDidMount() {
     const { onSubscribeEntries } = this.props;
@@ -31,22 +32,15 @@ class EntriesTable extends React.Component {
     const { entries, fetching } = this.props;
 
     return (
-      fetching !== nextProps.fetching ||
-      !_isEqual(entries, nextProps.entries)
+      fetching !== nextProps.fetching || !_isEqual(entries, nextProps.entries)
     );
   }
 
-  limit = 10
+  limit = 10;
 
   _renderRows(entries) {
-    return entries.map((entry) => {
-      return (
-        <EntryRow
-          {...this.props}
-          entry={entry}
-          key={entry.id}
-        />
-      );
+    return entries.map(entry => {
+      return <EntryRow {...this.props} entry={entry} key={entry.id} />;
     });
   }
 
@@ -55,56 +49,35 @@ class EntriesTable extends React.Component {
 
     return (
       <div className="relative min-h-200">
-        <div className="table-responsive">
-          <table>
+        <Table.Responsive>
+          <Table.Table>
             <thead>
               <tr>
-                <th />
-                <th>
-                  {'Client'}
-                </th>
-                <th>
-                  {'Project'}
-                </th>
-                <th>
-                  {'Date'}
-                </th>
-                <th>
-                  {'Started'}
-                </th>
-                <th>
-                  {'Stopped'}
-                </th>
-                <th>
-                  {'Hours'}
-                </th>
-                <th>
-                  {'Description'}
-                </th>
+                <Table.Th />
+                <Table.Th>{"Client"}</Table.Th>
+                <Table.Th>{"Project"}</Table.Th>
+                <Table.Th>{"Date"}</Table.Th>
+                <Table.Th>{"Started"}</Table.Th>
+                <Table.Th>{"Stopped"}</Table.Th>
+                <Table.Th>{"Hours"}</Table.Th>
+                <Table.Th>{"Description"}</Table.Th>
               </tr>
             </thead>
-            <tbody>
-              {this._renderRows(entries)}
-            </tbody>
-          </table>
-        </div>
-        <Spinner
-          spinning={Boolean(fetching)}
-          text={fetching}
-        />
+            <tbody>{this._renderRows(entries)}</tbody>
+          </Table.Table>
+        </Table.Responsive>
+        <Spinner spinning={Boolean(fetching)} text={fetching} />
       </div>
     );
   }
 }
 
-const props = (state) => {
+const props = state => {
   let fetching = null;
 
-  /* eslint-disable prefer-destructuring */
   if (!state.dashboard.fetching) {
     fetching = state.entries.fetching;
   }
-  /* eslint-enable prefer-destructuring */
 
   return {
     entries: state.entries.entries,
@@ -118,4 +91,7 @@ const actions = {
   onSubscribeEntries: subscribeEntries
 };
 
-export default connect(props, actions)(EntriesTable);
+export default connect(
+  props,
+  actions
+)(EntriesTable);

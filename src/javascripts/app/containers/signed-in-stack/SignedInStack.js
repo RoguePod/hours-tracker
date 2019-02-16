@@ -10,27 +10,30 @@ import {
   ProfilePage,
   ProjectEditModal,
   ProjectNewModal
-} from 'javascripts/app/containers';
-import { Redirect, Route, Switch } from 'react-router-dom';
+} from "javascripts/app/containers";
+import { Modal, Transition } from "javascripts/shared/components";
+import { Redirect, Route, Switch } from "react-router-dom";
 
-import Header from './Header';
-import LeftSidebar from './LeftSidebar';
-import { Modal } from 'javascripts/shared/components';
-import { NoMatchPage } from 'javascripts/shared/containers';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import RightSidebar from './RightSidebar';
-import _get from 'lodash/get';
-import { connect } from 'react-redux';
-import { history } from 'javascripts/app/redux/store';
-import styled from 'styled-components';
+import { HEADER_HEIGHT } from "javascripts/globals";
+import Header from "./Header";
+import LeftSidebar from "./LeftSidebar";
+import { NoMatchPage } from "javascripts/shared/containers";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import RightSidebar from "./RightSidebar";
+import _get from "lodash/get";
+import { connect } from "react-redux";
+import { history } from "javascripts/app/redux/store";
+import styled from "styled-components";
 
-const Container = styled.div`
-  margin-top: 62px;
+const LG_SIZE = "1120px";
+
+const Container = styled(Transition)`
+  margin-top: ${HEADER_HEIGHT};
 `;
 
 const Content = styled.div`
-  max-width: 1120px;
+  max-width: ${LG_SIZE};
 `;
 
 class SignedInStack extends React.Component {
@@ -38,10 +41,25 @@ class SignedInStack extends React.Component {
     auth: PropTypes.auth,
     history: PropTypes.routerHistory.isRequired,
     location: PropTypes.routerLocation.isRequired
-  }
+  };
 
   static defaultProps = {
     auth: null
+  };
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const {
+      history: { action }
+    } = nextProps;
+    const modal = _get(nextProps, "location.state.modal", false);
+
+    if (action !== "POP" && modal) {
+      return { modalLocation: nextProps.location, open: true };
+    } else if (action === "POP" && prevState.open) {
+      return { location: nextProps.location, open: false };
+    }
+
+    return { location: nextProps.location };
   }
 
   constructor(props) {
@@ -55,19 +73,6 @@ class SignedInStack extends React.Component {
     };
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { history: { action } } = nextProps;
-    const modal = _get(nextProps, 'location.state.modal', false);
-
-    if (action !== 'POP' && modal) {
-      return { modalLocation: nextProps.location, open: true };
-    } else if (action === 'POP' && prevState.open) {
-      return { location: nextProps.location, open: false };
-    }
-
-    return { location: nextProps.location };
-  }
-
   shouldComponentUpdate() {
     return true;
   }
@@ -78,7 +83,7 @@ class SignedInStack extends React.Component {
     }
   }
 
-  timeout = null
+  timeout = null;
 
   render() {
     const { auth, location } = this.props;
@@ -90,43 +95,18 @@ class SignedInStack extends React.Component {
 
     return (
       <>
-        <Container className="md:ml-64 transition relative overflow-auto">
+        <Container className="md:ml-64 relative overflow-auto">
           <Content className="mx-auto">
-            <Switch
-              location={open ? previousLocation : location}
-            >
-              <Route
-                component={ClientsStack}
-                path="/clients"
-              />
-              <Route
-                component={EntriesStack}
-                path="/entries"
-              />
-              <Route
-                component={ProfilePage}
-                path="/profile"
-              />
-              <Route
-                component={DashboardPage}
-                exact
-                path="/"
-              />
-              <Route
-                component={NoMatchPage}
-              />
+            <Switch location={open ? previousLocation : location}>
+              <Route component={ClientsStack} path="/clients" />
+              <Route component={EntriesStack} path="/entries" />
+              <Route component={ProfilePage} path="/profile" />
+              <Route component={DashboardPage} exact path="/" />
+              <Route component={NoMatchPage} />
             </Switch>
-            <Modal
-              onClose={history.goBack}
-              open={open}
-            >
-              <Switch
-                location={modalLocation}
-              >
-                <Route
-                  component={ClientNewModal}
-                  path="/clients/new"
-                />
+            <Modal onClose={history.goBack} open={open}>
+              <Switch location={modalLocation}>
+                <Route component={ClientNewModal} path="/clients/new" />
                 <Route
                   component={ProjectNewModal}
                   path="/clients/:clientId/projects/new"
@@ -135,22 +115,13 @@ class SignedInStack extends React.Component {
                   component={ProjectEditModal}
                   path="/clients/:clientId/projects/:id"
                 />
-                <Route
-                  component={ClientEditModal}
-                  path="/clients/:id"
-                />
-                <Route
-                  component={EntryNewModal}
-                  path="/entries/new"
-                />
+                <Route component={ClientEditModal} path="/clients/:id" />
+                <Route component={EntryNewModal} path="/entries/new" />
                 <Route
                   component={EntryEditMultipleModal}
                   path="/entries/edit"
                 />
-                <Route
-                  component={EntryEditModal}
-                  path="/entries/:id/edit"
-                />
+                <Route component={EntryEditModal} path="/entries/:id/edit" />
               </Switch>
             </Modal>
           </Content>
@@ -164,7 +135,7 @@ class SignedInStack extends React.Component {
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     auth: state.app.auth,
     running: state.running.entry,
@@ -175,4 +146,7 @@ const props = (state) => {
 
 const actions = {};
 
-export default connect(props, actions)(SignedInStack);
+export default connect(
+  props,
+  actions
+)(SignedInStack);

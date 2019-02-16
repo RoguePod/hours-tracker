@@ -1,31 +1,33 @@
+import { Button, Table } from "javascripts/shared/components";
 import {
   selectClientsByEntries,
   selectQuery,
   selectUsersByEntries,
   subscribeEntries
-} from 'javascripts/app/redux/entries';
+} from "javascripts/app/redux/entries";
 
-import { Button } from 'javascripts/shared/components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ProjectsTable from './ProjectsTable';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import UsersTable from './UsersTable';
-import _isEqual from 'lodash/isEqual';
-import { connect } from 'react-redux';
-import { isBlank } from 'javascripts/globals';
-import { selectTimezone } from 'javascripts/app/redux/app';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ProjectsTable from "./ProjectsTable";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import UsersTable from "./UsersTable";
+import _isEqual from "lodash/isEqual";
+import { connect } from "react-redux";
+import { isBlank } from "javascripts/globals";
+import { selectTimezone } from "javascripts/app/redux/app";
 
 class EntriesSummaryTable extends React.Component {
   static propTypes = {
-    clients: PropTypes.arrayOf(PropTypes.shape({
-      name: PropTypes.string.isRequired
-    })).isRequired,
+    clients: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired
+      })
+    ).isRequired,
     location: PropTypes.routerLocation.isRequired,
     onSubscribeEntries: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
     timezone: PropTypes.string.isRequired
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -36,7 +38,7 @@ class EntriesSummaryTable extends React.Component {
 
   state = {
     warning: false
-  }
+  };
 
   componentDidMount() {
     this._checkWarning();
@@ -47,10 +49,15 @@ class EntriesSummaryTable extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { pathname }, query } = this.props;
+    const {
+      location: { pathname },
+      query
+    } = this.props;
 
-    if (pathname !== prevProps.location.pathname ||
-        !_isEqual(query, prevProps.query)) {
+    if (
+      pathname !== prevProps.location.pathname ||
+      !_isEqual(query, prevProps.query)
+    ) {
       this._checkWarning();
     }
   }
@@ -81,8 +88,9 @@ class EntriesSummaryTable extends React.Component {
   }
 
   _renderWarning() {
-    const text = "You've requested to get all entries, without filters, " +
-      'which can be slow.';
+    const text =
+      "You've requested to get all entries, without filters, " +
+      "which can be slow.";
 
     return (
       <div className="text-center">
@@ -91,16 +99,14 @@ class EntriesSummaryTable extends React.Component {
           icon="exclamation-circle"
           size="5x"
         />
-        <div className="py-4 text-xl">
-          {text}
-        </div>
+        <div className="py-4 text-xl">{text}</div>
         <Button
           className="py-4 text-lg"
           color="red"
           onClick={this._handleSubscribe}
           type="submit"
         >
-          {'Do it Anyway'}
+          {"Do it Anyway"}
         </Button>
       </div>
     );
@@ -114,31 +120,27 @@ class EntriesSummaryTable extends React.Component {
     }
 
     return (
-      <div className="table-responsive">
-        <table>
+      <Table.Responsive>
+        <Table.Table>
           <thead>
             <tr>
-              <th colSpan={5}>
-                {'Summary by Users'}
-              </th>
+              <Table.Th colSpan={5}>{"Summary by Users"}</Table.Th>
             </tr>
           </thead>
           <UsersTable {...this.props} />
           <thead>
             <tr>
-              <th colSpan={5}>
-                {'Summary by Clients/Projects'}
-              </th>
+              <Table.Th colSpan={5}>{"Summary by Clients/Projects"}</Table.Th>
             </tr>
           </thead>
           <ProjectsTable {...this.props} />
-        </table>
-      </div>
+        </Table.Table>
+      </Table.Responsive>
     );
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     clients: selectClientsByEntries(state),
     query: selectQuery(state),
@@ -151,4 +153,7 @@ const actions = {
   onSubscribeEntries: subscribeEntries
 };
 
-export default connect(props, actions)(EntriesSummaryTable);
+export default connect(
+  props,
+  actions
+)(EntriesSummaryTable);

@@ -1,8 +1,9 @@
 import {
   ActionIcon,
   Button,
+  Table,
   Tooltip
-} from 'javascripts/shared/components';
+} from "javascripts/shared/components";
 import {
   checkEntry,
   destroyEntries,
@@ -10,19 +11,19 @@ import {
   selectQuery,
   subscribeEntries,
   toggleChecked
-} from 'javascripts/app/redux/entries';
+} from "javascripts/app/redux/entries";
 
-import EntryRow from './EntryRow';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _flatten from 'lodash/flatten';
-import _isEqual from 'lodash/isEqual';
-import _values from 'lodash/values';
-import { connect } from 'react-redux';
-import { destroyEntry } from 'javascripts/app/redux/entry';
-import { selectTimezone } from 'javascripts/app/redux/app';
+import EntryRow from "./EntryRow";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _flatten from "lodash/flatten";
+import _isEqual from "lodash/isEqual";
+import _values from "lodash/values";
+import { connect } from "react-redux";
+import { destroyEntry } from "javascripts/app/redux/entry";
+import { selectTimezone } from "javascripts/app/redux/app";
 
 class EntriesIndexTable extends React.Component {
   static propTypes = {
@@ -39,11 +40,11 @@ class EntriesIndexTable extends React.Component {
     query: PropTypes.entriesQuery.isRequired,
     showAdmin: PropTypes.bool,
     timezone: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     showAdmin: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -62,15 +63,20 @@ class EntriesIndexTable extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { location: { pathname }, query } = this.props;
+    const {
+      location: { pathname },
+      query
+    } = this.props;
 
-    if (!_isEqual(query, prevProps.query) ||
-        pathname !== prevProps.location.pathname) {
+    if (
+      !_isEqual(query, prevProps.query) ||
+      pathname !== prevProps.location.pathname
+    ) {
       this._handleRefresh();
     }
   }
 
-  limit = 30
+  limit = 30;
 
   _handleMore() {
     const { onSubscribeEntries } = this.props;
@@ -104,7 +110,7 @@ class EntriesIndexTable extends React.Component {
     const tbodies = [];
 
     for (const key of Object.keys(entries)) {
-      const rows = entries[key].map((entry) => {
+      const rows = entries[key].map(entry => {
         return (
           <EntryRow
             {...this.props}
@@ -116,17 +122,9 @@ class EntriesIndexTable extends React.Component {
       });
 
       tbodies.push(
-        <tbody
-          key={key}
-        >
-          <tr
-            className="bg-blue-lighter text-center text-blue"
-          >
-            <td
-              colSpan={showAdmin ? 9 : 8}
-            >
-              {key}
-            </td>
+        <tbody key={key}>
+          <tr className="bg-blue-lighter text-center text-blue">
+            <Table.Td colSpan={showAdmin ? 9 : 8}>{key}</Table.Td>
           </tr>
           {rows}
         </tbody>
@@ -136,13 +134,12 @@ class EntriesIndexTable extends React.Component {
     return tbodies;
   }
 
-  /* eslint-disable max-lines-per-function */
   render() {
     const { checked, entries, location, showAdmin } = this.props;
 
     const message =
-      'This will remove all checked entries, and cannot be undone. ' +
-      'Are you sure?';
+      "This will remove all checked entries, and cannot be undone. " +
+      "Are you sure?";
 
     const allEntries = _flatten(_values(entries));
 
@@ -150,28 +147,26 @@ class EntriesIndexTable extends React.Component {
 
     return (
       <>
-        <div className="table-responsive">
-          <table>
+        <Table.Responsive>
+          <Table.Table>
             <thead>
               <tr>
-                <th
-                  className="w-px cursor-pointer"
-                >
-                  <Tooltip
-                    title="Check ALL Entries"
-                  >
+                <Table.Th className="w-px cursor-pointer">
+                  <Tooltip title="Check ALL Entries">
                     <div
-
+                      aria-checked={allChecked}
                       className="cursor-pointer"
                       onClick={this._handleToggleChecked}
+                      role="checkbox"
+                      tabIndex="-1"
                     >
                       <FontAwesomeIcon
-                        icon={['far', allChecked ? 'check-square' : 'square']}
+                        icon={["far", allChecked ? "check-square" : "square"]}
                       />
                     </div>
                   </Tooltip>
-                </th>
-                <th className="w-px whitespace-no-wrap">
+                </Table.Th>
+                <Table.Th className="w-px whitespace-no-wrap">
                   <div className="flex flex-row">
                     <ActionIcon
                       as={Link}
@@ -183,7 +178,7 @@ class EntriesIndexTable extends React.Component {
                       title="Edit Checked"
                       to={{
                         ...location,
-                        pathname: '/entries/edit',
+                        pathname: "/entries/edit",
                         state: { modal: true }
                       }}
                     />
@@ -198,48 +193,28 @@ class EntriesIndexTable extends React.Component {
                       type="button"
                     />
                   </div>
-                </th>
-                {showAdmin &&
-                  <th className="w-px">
-                    {'User'}
-                  </th>}
-                <th className="w-px">
-                  {'Client'}
-                </th>
-                <th className="w-px">
-                  {'Project'}
-                </th>
-                <th className="w-px">
-                  {'Started'}
-                </th>
-                <th className="w-px">
-                  {'Stopped'}
-                </th>
-                <th className="w-px">
-                  {'Hours'}
-                </th>
-                <th>
-                  {'Description'}
-                </th>
+                </Table.Th>
+                {showAdmin && <Table.Th className="w-px">{"User"}</Table.Th>}
+                <Table.Th className="w-px">{"Client"}</Table.Th>
+                <Table.Th className="w-px">{"Project"}</Table.Th>
+                <Table.Th className="w-px">{"Started"}</Table.Th>
+                <Table.Th className="w-px">{"Stopped"}</Table.Th>
+                <Table.Th className="w-px">{"Hours"}</Table.Th>
+                <Table.Th>{"Description"}</Table.Th>
               </tr>
             </thead>
             {this._renderTbodies(entries, showAdmin)}
-          </table>
-        </div>
+          </Table.Table>
+        </Table.Responsive>
         <div className="pt-4 text-center">
-          <Button
-            onClick={this._handleMore}
-          >
-            {'More'}
-          </Button>
+          <Button onClick={this._handleMore}>{"More"}</Button>
         </div>
       </>
     );
   }
-  /* eslint-enable max-lines-per-function */
 }
 
-const props = (state) => {
+const props = state => {
   return {
     checked: state.entries.checked,
     entries: selectGroupedEntries(state),
@@ -256,4 +231,7 @@ const actions = {
   onToggleChecked: toggleChecked
 };
 
-export default connect(props, actions)(EntriesIndexTable);
+export default connect(
+  props,
+  actions
+)(EntriesIndexTable);

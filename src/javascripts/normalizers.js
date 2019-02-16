@@ -1,9 +1,9 @@
-export const formatPhoneNumber = (value) => {
+export const formatPhoneNumber = value => {
   if (!value) {
     return value;
   }
 
-  const onlyNums = value.replace(/[^\d]/gu, '');
+  const onlyNums = value.replace(/[^\d]/gu, "");
 
   if (onlyNums.length <= 3) {
     return onlyNums;
@@ -13,19 +13,21 @@ export const formatPhoneNumber = (value) => {
     return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3)}`;
   }
 
-  return (
-    `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 6)}-${onlyNums.slice(6, 10)}`
-  );
+  return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 6)}-${onlyNums.slice(
+    6,
+    10
+  )}`;
 };
 
-export const formatCardNumber = (value) => {
+export const formatCardNumber = value => {
   if (!value) {
     return value;
   }
 
-  return value.replace(/[^\d]/gu, '')
+  return value
+    .replace(/[^\d]/gu, "")
     .match(/.{1,4}/gu)
-    .join(' ');
+    .join(" ");
 };
 
 export const formatDate = (value, previousValue) => {
@@ -33,8 +35,8 @@ export const formatDate = (value, previousValue) => {
     return value;
   }
 
-  const onlyNums     = value.replace(/[^\d]/gu, '');
-  const previousNums = (previousValue || '').replace(/[^\d]/gu, '');
+  const onlyNums = value.replace(/[^\d]/gu, "");
+  const previousNums = (previousValue || "").replace(/[^\d]/gu, "");
 
   if (onlyNums.length <= 1) {
     return onlyNums;
@@ -56,15 +58,16 @@ export const formatDate = (value, previousValue) => {
     return `${onlyNums.slice(0, 2)}/${onlyNums.slice(2, 4)}`;
   }
 
-  return (
-    `${onlyNums.slice(0, 2)}/${onlyNums.slice(2, 4)}/${onlyNums.slice(4, 8)}`
-  );
+  return `${onlyNums.slice(0, 2)}/${onlyNums.slice(2, 4)}/${onlyNums.slice(
+    4,
+    8
+  )}`;
 };
 
-export const formatFloatPositive = (value) => {
+export const formatFloatPositive = value => {
   if (!value) {
     return value;
   }
 
-  return String(value).replace(/[^0-9.]/gu, '');
+  return String(value).replace(/[^0-9.]/gu, "");
 };

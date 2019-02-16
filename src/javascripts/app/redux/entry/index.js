@@ -8,7 +8,7 @@ import {
   firestore,
   parseEntry,
   updateRef
-} from 'javascripts/globals';
+} from "javascripts/globals";
 import {
   call,
   cancelled,
@@ -16,21 +16,21 @@ import {
   put,
   select,
   takeLatest
-} from 'redux-saga/effects';
+} from "redux-saga/effects";
 
-import _get from 'lodash/get';
-import _pick from 'lodash/pick';
-import { addFlash } from 'javascripts/shared/redux/flashes';
-import { createSelector } from 'reselect';
-import { eventChannel } from 'redux-saga';
-import { history } from 'javascripts/app/redux/store';
-import moment from 'moment-timezone';
-import { selectTimezone } from 'javascripts/app/redux/app';
-import update from 'immutability-helper';
+import _get from "lodash/get";
+import _pick from "lodash/pick";
+import { addFlash } from "javascripts/shared/redux/flashes";
+import { createSelector } from "reselect";
+import { eventChannel } from "redux-saga";
+import { history } from "javascripts/app/redux/store";
+import moment from "moment-timezone";
+import { selectTimezone } from "javascripts/app/redux/app";
+import update from "immutability-helper";
 
 // Selectors
 
-const selectEntry = (state) => state.entry.entry;
+const selectEntry = state => state.entry.entry;
 
 export const selectEntryForForm = createSelector(
   [selectEntry, selectTimezone],
@@ -38,7 +38,7 @@ export const selectEntryForForm = createSelector(
     if (!entry) {
       return {
         clientId: null,
-        description: '',
+        description: "",
         projectId: null,
         startedAt: null,
         stoppedAt: null,
@@ -47,9 +47,9 @@ export const selectEntryForForm = createSelector(
     }
 
     return {
-      clientId: _get(entry, 'clientRef.id'),
+      clientId: _get(entry, "clientRef.id"),
       description: entry.description,
-      projectId: _get(entry, 'projectRef.id'),
+      projectId: _get(entry, "projectRef.id"),
       startedAt: entry.startedAt,
       stoppedAt: entry.stoppedAt,
       timezone: entry.timezone || timezone
@@ -61,16 +61,16 @@ export const selectEntryForForm = createSelector(
 
 let channel = null;
 
-const path = 'hours-tracker/app/entry';
+const path = "hours-tracker/app/entry";
 
-const ENTRY_SET     = `${path}/ENTRY_SET`;
-const ENTRY_GET     = `${path}/ENTRY_GET`;
-const ENTRY_UPDATE  = `${path}/ENTRY_UPDATE`;
-const ENTRY_SPLIT   = `${path}/ENTRY_SPLIT`;
-const ENTRY_CREATE  = `${path}/ENTRY_CREATE`;
+const ENTRY_SET = `${path}/ENTRY_SET`;
+const ENTRY_GET = `${path}/ENTRY_GET`;
+const ENTRY_UPDATE = `${path}/ENTRY_UPDATE`;
+const ENTRY_SPLIT = `${path}/ENTRY_SPLIT`;
+const ENTRY_CREATE = `${path}/ENTRY_CREATE`;
 const ENTRY_DESTROY = `${path}/ENTRY_DESTROY`;
-const FETCHING_SET  = `${path}/FETCHING_SET`;
-const RESET         = `${path}/RESET`;
+const FETCHING_SET = `${path}/FETCHING_SET`;
+const RESET = `${path}/RESET`;
 
 // Reducer
 
@@ -81,23 +81,23 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-  case ENTRY_SET:
-    return update(state, { entry: { $set: action.entry } });
+    case ENTRY_SET:
+      return update(state, { entry: { $set: action.entry } });
 
-  case FETCHING_SET:
-    return update(state, { fetching: { $set: action.fetching } });
+    case FETCHING_SET:
+      return update(state, { fetching: { $set: action.fetching } });
 
-  case RESET:
-    return initialState;
+    case RESET:
+      return initialState;
 
-  default:
-    return state;
+    default:
+      return state;
   }
 };
 
 // Actions
 
-export const getEntry = (id) => {
+export const getEntry = id => {
   return { id, type: ENTRY_GET };
 };
 
@@ -113,7 +113,7 @@ export const splitEntry = (params, actions) => {
   return { actions, params, type: ENTRY_SPLIT };
 };
 
-export const destroyEntry = (id) => {
+export const destroyEntry = id => {
   return { id, type: ENTRY_DESTROY };
 };
 
@@ -126,11 +126,11 @@ export const reset = () => {
   return { type: RESET };
 };
 
-const setEntry = (entry) => {
+const setEntry = entry => {
   return { entry, type: ENTRY_SET };
 };
 
-const setFetching = (fetching) => {
+const setFetching = fetching => {
   return { fetching, type: FETCHING_SET };
 };
 
@@ -149,18 +149,16 @@ function* handleEntrySubscribe({ snapshot }) {
 
 function* entryGet({ id }) {
   yield put(setEntry(null));
-  yield put(setFetching('Getting Entry...'));
+  yield put(setFetching("Getting Entry..."));
 
   if (channel) {
     channel.close();
   }
 
-  channel = eventChannel((emit) => {
-    const unsubscribe = firestore
-      .doc(`entries/${id}`)
-      .onSnapshot((snapshot) => {
-        emit({ snapshot });
-      });
+  channel = eventChannel(emit => {
+    const unsubscribe = firestore.doc(`entries/${id}`).onSnapshot(snapshot => {
+      emit({ snapshot });
+    });
 
     return () => unsubscribe();
   });
@@ -181,9 +179,9 @@ function* watchEntryGet() {
 
 function* entryCreate({ actions, params }) {
   try {
-    yield put(setFetching('Creating Entry...'));
+    yield put(setFetching("Creating Entry..."));
 
-    const { timezone, user } = yield select((state) => {
+    const { timezone, user } = yield select(state => {
       return {
         timezone: selectTimezone(state),
         user: state.app.user
@@ -197,7 +195,7 @@ function* entryCreate({ actions, params }) {
     const defaults = {
       clientRef: null,
       createdAt: now,
-      description: '',
+      description: "",
       projectRef: null,
       startedAt: now,
       stoppedAt: null,
@@ -206,18 +204,19 @@ function* entryCreate({ actions, params }) {
       userRef: user.snapshot.ref
     };
 
-    const { error } = yield call(
-      add, 'entries', { ...defaults, ...convertEntryParamIdsToRefs(params) }
-    );
+    const { error } = yield call(add, "entries", {
+      ...defaults,
+      ...convertEntryParamIdsToRefs(params)
+    });
 
     if (error) {
       actions.setStatus(error.message);
       actions.setSubmitting(false);
     } else {
-      yield put(addFlash('Entry has been created.'));
+      yield put(addFlash("Entry has been created."));
 
-      if (history.action === 'POP') {
-        yield call(history.push, '/entries');
+      if (history.action === "POP") {
+        yield call(history.push, "/entries");
       } else {
         yield call(history.goBack);
       }
@@ -233,27 +232,26 @@ function* watchEntryCreate() {
 
 function* entryUpdate({ actions, params }) {
   try {
-    yield put(setFetching('Updating Entry...'));
+    yield put(setFetching("Updating Entry..."));
 
-    const entry     = yield select((state) => state.entry.entry);
+    const entry = yield select(state => state.entry.entry);
     const updatedAt = moment()
       .utc()
       .valueOf();
 
-    const { error } = yield call(
-      updateRef,
-      entry.snapshot.ref,
-      { ...convertEntryParamIdsToRefs(params), updatedAt }
-    );
+    const { error } = yield call(updateRef, entry.snapshot.ref, {
+      ...convertEntryParamIdsToRefs(params),
+      updatedAt
+    });
 
     if (error) {
       actions.setStatus(error.message);
       actions.setSubmitting(false);
     } else {
-      yield put(addFlash('Entry has been updated.'));
+      yield put(addFlash("Entry has been updated."));
 
-      if (history.action === 'POP') {
-        yield call(history.push, '/entries');
+      if (history.action === "POP") {
+        yield call(history.push, "/entries");
       } else {
         yield call(history.goBack);
       }
@@ -269,9 +267,9 @@ function* watchEntryUpdate() {
 
 function* entrySplit({ actions, params }) {
   try {
-    yield put(setFetching('Splitting Entry...'));
+    yield put(setFetching("Splitting Entry..."));
 
-    const { entry: currentEntry, timezone, user } = yield select((state) => {
+    const { entry: currentEntry, timezone, user } = yield select(state => {
       return {
         entry: state.entry.entry,
         timezone: selectTimezone(state),
@@ -286,7 +284,7 @@ function* entrySplit({ actions, params }) {
     const defaults = {
       clientRef: null,
       createdAt: now,
-      description: '',
+      description: "",
       projectRef: null,
       startedAt: now,
       stoppedAt: null,
@@ -295,15 +293,16 @@ function* entrySplit({ actions, params }) {
       userRef: user.snapshot.ref
     };
 
-    const entries = params.entries.map((entry) => {
+    const entries = params.entries.map(entry => {
       return convertEntryParamIdsToRefs(
-        _pick(
-          entry,
-          [
-            'clientId', 'description', 'projectId', 'startedAt', 'stoppedAt',
-            'timezone'
-          ]
-        )
+        _pick(entry, [
+          "clientId",
+          "description",
+          "projectId",
+          "startedAt",
+          "stoppedAt",
+          "timezone"
+        ])
       );
     });
 
@@ -311,9 +310,9 @@ function* entrySplit({ actions, params }) {
 
     currentEntry.snapshot.ref.update({ ...defaults, ...entries[0] });
 
-    entries.slice(1).forEach((newEntry) => {
+    entries.slice(1).forEach(newEntry => {
       const data = { ...defaults, ...newEntry };
-      firestore.collection('entries').add(data);
+      firestore.collection("entries").add(data);
     });
 
     const { error } = yield call(batchCommit, batch);
@@ -322,8 +321,8 @@ function* entrySplit({ actions, params }) {
       actions.setStatus(error.message);
       actions.setSubmitting(false);
     } else {
-      yield put(addFlash('Entry has been split'));
-      history.push('/entries');
+      yield put(addFlash("Entry has been split"));
+      history.push("/entries");
     }
   } finally {
     yield put(setFetching(null));
@@ -336,14 +335,14 @@ function* watchEntrySplit() {
 
 function* entryDestroy({ id }) {
   try {
-    yield put(setFetching('Deleting Entry...'));
+    yield put(setFetching("Deleting Entry..."));
 
     const { error } = yield call(deleteDoc, `entries/${id}`);
 
     if (error) {
-      yield put(addFlash(error.message, 'red'));
+      yield put(addFlash(error.message, "red"));
     } else {
-      yield put(addFlash('Entry has been removed'));
+      yield put(addFlash("Entry has been removed"));
     }
   } finally {
     yield put(setFetching(null));

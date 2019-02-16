@@ -1,6 +1,6 @@
-import FieldHelper from './FieldHelper';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import FieldHelper from "./FieldHelper";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 const FieldError = ({ touched, error }) => {
   return (

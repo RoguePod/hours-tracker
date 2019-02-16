@@ -1,22 +1,18 @@
-import {
-  Dropdown,
-  FieldError,
-  InputBase
-} from 'javascripts/shared/components';
+import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
+import { ONE_PX, isBlank } from "javascripts/globals";
 
-import ClientRow from './ClientRow';
-import Fuse from 'fuse.js';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _find from 'lodash/find';
-import _isEqual from 'lodash/isEqual';
-import { connect } from 'react-redux';
-import { fuseOptions } from 'javascripts/app/redux/clients';
-import { isBlank } from 'javascripts/globals';
-import styled from 'styled-components';
+import ClientRow from "./ClientRow";
+import Fuse from "fuse.js";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _find from "lodash/find";
+import _isEqual from "lodash/isEqual";
+import { connect } from "react-redux";
+import { fuseOptions } from "javascripts/app/redux/clients";
+import styled from "styled-components";
 
 const Divider = styled.div`
-  height: 1px;
+  height: ${ONE_PX};
 `;
 
 class ClientField extends React.Component {
@@ -27,12 +23,12 @@ class ClientField extends React.Component {
     form: PropTypes.form.isRequired,
     projectField: PropTypes.string,
     ready: PropTypes.bool.isRequired
-  }
+  };
 
   static defaultProps = {
     disabled: false,
     projectField: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -54,11 +50,17 @@ class ClientField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { clients, field: { value }, ready } = this.props;
+    const {
+      clients,
+      field: { value },
+      ready
+    } = this.props;
 
-    if (!_isEqual(prevProps.field.value, value) ||
-        !_isEqual(clients, prevProps.clients) ||
-        ready !== prevProps.ready) {
+    if (
+      !_isEqual(prevProps.field.value, value) ||
+      !_isEqual(clients, prevProps.clients) ||
+      ready !== prevProps.ready
+    ) {
       this.setState({ value: this._findValue(value) });
     }
   }
@@ -70,7 +72,7 @@ class ClientField extends React.Component {
     }
   }
 
-  changing = false
+  changing = false;
 
   _handleChange({ target: { value } }) {
     this.setState({ value });
@@ -80,7 +82,8 @@ class ClientField extends React.Component {
     this.changing = true;
 
     const {
-      field: { name, value }, form: { setFieldTouched, setFieldValue },
+      field: { name, value },
+      form: { setFieldTouched, setFieldValue },
       projectField
     } = this.props;
 
@@ -95,13 +98,16 @@ class ClientField extends React.Component {
     }
 
     this.setState({
-      focused: false, value: this._findValue(client.id)
+      focused: false,
+      value: this._findValue(client.id)
     });
   }
 
   _handleBlur() {
     const {
-      field, form: { setFieldTouched, setFieldValue }, projectField
+      field,
+      form: { setFieldTouched, setFieldValue },
+      projectField
     } = this.props;
     const { value } = this.state;
 
@@ -126,7 +132,9 @@ class ClientField extends React.Component {
 
   _handleFocus({ target }) {
     this.changing = false;
-    const { field: { value } } = this.props;
+    const {
+      field: { value }
+    } = this.props;
 
     this.setState({ focused: true, value: this._findValue(value) }, () => {
       setTimeout(() => {
@@ -139,10 +147,10 @@ class ClientField extends React.Component {
     const { clients, ready } = this.props;
 
     if (!ready || isBlank(clientId)) {
-      return '';
+      return "";
     }
 
-    const foundClient = _find(clients, (client) => {
+    const foundClient = _find(clients, client => {
       return client.id === clientId;
     });
 
@@ -150,7 +158,7 @@ class ClientField extends React.Component {
       return foundClient.name;
     }
 
-    return '';
+    return "";
   }
 
   _findResults(value) {
@@ -165,26 +173,23 @@ class ClientField extends React.Component {
   }
 
   render() {
-    /* eslint-disable no-unused-vars */
     const {
-      clients, disabled, field, form: { errors, isSubmitting, touched },
-      ready, ...rest
+      clients,
+      disabled,
+      field,
+      form: { errors, isSubmitting, touched },
+      ready,
+      ...rest
     } = this.props;
-    /* eslint-enable no-unused-vars */
 
     const { focused, value } = this.state;
     const hasError = errors[field.name] && touched[field.name];
 
-    const rows = (focused ? this._findResults(value) : []).map((client) => {
+    const rows = (focused ? this._findResults(value) : []).map(client => {
       return (
-        <React.Fragment
-          key={client.id}
-        >
+        <React.Fragment key={client.id}>
           <Divider className="bg-grey-lighter" />
-          <ClientRow
-            client={client}
-            onChange={this._handleDropdownChange}
-          />
+          <ClientRow client={client} onChange={this._handleDropdownChange} />
         </React.Fragment>
       );
     });
@@ -199,10 +204,7 @@ class ClientField extends React.Component {
           onFocus={this._handleFocus}
           value={value}
         />
-        <Dropdown
-          error={hasError}
-          open={focused}
-        >
+        <Dropdown error={hasError} open={focused}>
           {rows}
         </Dropdown>
         <FieldError
@@ -214,7 +216,7 @@ class ClientField extends React.Component {
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     clients: state.clients.clients,
     ready: state.clients.ready
@@ -223,4 +225,7 @@ const props = (state) => {
 
 const actions = {};
 
-export default connect(props, actions)(ClientField);
+export default connect(
+  props,
+  actions
+)(ClientField);

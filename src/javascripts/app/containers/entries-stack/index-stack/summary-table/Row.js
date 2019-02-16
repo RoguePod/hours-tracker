@@ -1,11 +1,12 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Table } from "javascripts/shared/components";
 
 class Row extends React.Component {
   static propTypes = {
     entries: PropTypes.arrayOf(PropTypes.entry).isRequired,
     name: PropTypes.string.isRequired
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
@@ -66,21 +67,17 @@ class Row extends React.Component {
 
     return (
       <tr>
-        <td>
-          {name}
-        </td>
-        <td className="text-green">
+        <Table.Td>{name}</Table.Td>
+        <Table.Td className="text-green">
           {this._calcBillable().toFixed(1)}
-        </td>
-        <td>
-          {this._calcNonBillable().toFixed(1)}
-        </td>
-        <td className="w-px whitespace-no-wrap">
+        </Table.Td>
+        <Table.Td>{this._calcNonBillable().toFixed(1)}</Table.Td>
+        <Table.Td className="w-px whitespace-no-wrap">
           {this._calcTotal().toFixed(1)}
-        </td>
-        <td>
-          {`${(this._calcPercentBillable() * 100).toFixed(2)}%`}
-        </td>
+        </Table.Td>
+        <Table.Td>{`${(this._calcPercentBillable() * 100).toFixed(
+          2
+        )}%`}</Table.Td>
       </tr>
     );
   }

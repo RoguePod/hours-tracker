@@ -1,9 +1,10 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _get from 'lodash/get';
-import _times from 'lodash/times';
-import cx from 'classnames';
-import moment from 'moment-timezone';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Table } from "javascripts/shared/components";
+import _get from "lodash/get";
+import _times from "lodash/times";
+import cx from "classnames";
+import moment from "moment-timezone";
 
 class ProjectRow extends React.Component {
   static propTypes = {
@@ -17,16 +18,16 @@ class ProjectRow extends React.Component {
     startMonth: PropTypes.instanceOf(moment).isRequired,
     timezone: PropTypes.string.isRequired,
     user: PropTypes.user
-  }
+  };
 
   static defaultProps = {
     user: null
-  }
+  };
 
   static defaultProps = {
     client: null,
     project: null
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
@@ -42,11 +43,11 @@ class ProjectRow extends React.Component {
         continue;
       }
 
-      if (_get(entry, 'project.id', null) !== _get(project, 'id', null)) {
+      if (_get(entry, "project.id", null) !== _get(project, "id", null)) {
         continue;
       }
 
-      const startedAt  = moment.tz(entry.startedAt, entry.timezone);
+      const startedAt = moment.tz(entry.startedAt, entry.timezone);
       const entryValue = startedAt.format(format);
 
       if (value !== entryValue) {
@@ -61,7 +62,7 @@ class ProjectRow extends React.Component {
         stoppedAt = moment().tz(entry.timezone);
       }
 
-      const hours = stoppedAt.diff(startedAt, 'hours', true);
+      const hours = stoppedAt.diff(startedAt, "hours", true);
 
       sum += hours;
     }
@@ -73,22 +74,20 @@ class ProjectRow extends React.Component {
     const cells = [];
     let weekTotal = 0;
 
-    _times(7, (index) => {
-      const day = moment.tz(query.date, timezone)
-        .add(index, 'd')
-        .format('YYYY-MM-DD');
+    _times(7, index => {
+      const day = moment
+        .tz(query.date, timezone)
+        .add(index, "d")
+        .format("YYYY-MM-DD");
 
-      const total = this._calcTotal('YYYY-MM-DD', day);
+      const total = this._calcTotal("YYYY-MM-DD", day);
 
       weekTotal += total;
 
       cells.push(
-        <td
-          className="w-px"
-          key={day}
-        >
+        <Table.Td className="w-px" key={day}>
           {total.toFixed(1)}
-        </td>
+        </Table.Td>
       );
     });
 
@@ -96,12 +95,12 @@ class ProjectRow extends React.Component {
   }
 
   _getMonthAndOtherTotals(startMonth, endMonth) {
-    const diffMonth  = startMonth.format('MMM') !== endMonth.format('MMM');
-    const monthTotal = this._calcTotal('YYYY-MM', startMonth.format('YYYY-MM'));
-    let otherTotal   = null;
+    const diffMonth = startMonth.format("MMM") !== endMonth.format("MMM");
+    const monthTotal = this._calcTotal("YYYY-MM", startMonth.format("YYYY-MM"));
+    let otherTotal = null;
 
     if (diffMonth) {
-      otherTotal = this._calcTotal('YYYY-MM', endMonth.format('YYYY-MM'));
+      otherTotal = this._calcTotal("YYYY-MM", endMonth.format("YYYY-MM"));
     }
 
     return { diffMonth, monthTotal, otherTotal };
@@ -109,38 +108,43 @@ class ProjectRow extends React.Component {
 
   render() {
     const {
-      client, endMonth, project, query, startMonth, timezone
+      client,
+      endMonth,
+      project,
+      query,
+      startMonth,
+      timezone
     } = this.props;
 
     const { cells, weekTotal } = this._getCellsAndWeekTotal(query, timezone);
-    const {
-      diffMonth, monthTotal, otherTotal
-    } = this._getMonthAndOtherTotals(startMonth, endMonth);
+    const { diffMonth, monthTotal, otherTotal } = this._getMonthAndOtherTotals(
+      startMonth,
+      endMonth
+    );
 
     const cellClass = cx({
-      'text-green': project && project.billable,
-      'text-red': !project
+      "text-green": project && project.billable,
+      "text-red": !project
     });
 
     return (
       <tr>
-        <td className={cellClass}>
-          {_get(client, 'name', 'No Client')}
-        </td>
-        <td className={cellClass}>
-          {_get(project, 'name', 'No Project')}
-        </td>
+        <Table.Td className={cellClass}>
+          {_get(client, "name", "No Client")}
+        </Table.Td>
+        <Table.Td className={cellClass}>
+          {_get(project, "name", "No Project")}
+        </Table.Td>
         {cells}
-        <td className="w-px">
-          {weekTotal.toFixed(1)}
-        </td>
-        <td className="w-px bg-blue-lighter">
+        <Table.Td className="w-px">{weekTotal.toFixed(1)}</Table.Td>
+        <Table.Td className="w-px bg-blue-lighter">
           {monthTotal.toFixed(1)}
-        </td>
-        {diffMonth &&
-          <td className="w-px bg-blue-lighter">
+        </Table.Td>
+        {diffMonth && (
+          <Table.Td className="w-px bg-blue-lighter">
             {otherTotal.toFixed(1)}
-          </td>}
+          </Table.Td>
+        )}
       </tr>
     );
   }

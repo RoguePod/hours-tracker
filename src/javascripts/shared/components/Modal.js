@@ -1,9 +1,9 @@
-import { CSSTransition } from 'react-transition-group';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Portal from './Portal';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import styled from 'styled-components';
+import { CSSTransition } from "react-transition-group";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Portal from "./Portal";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import styled from "styled-components";
 
 const DURATION = 300;
 
@@ -29,7 +29,7 @@ const FadeIn = styled.div`
 
 const SlideIn = styled.div`
   &.slide-enter {
-    transform: translateY(-100px);
+    transform: translateY(-6.25rem);
   }
 
   &.slide-enter-active {
@@ -42,14 +42,14 @@ const SlideIn = styled.div`
   }
 
   &.slide-exit-active {
-    transform: translateY(-100px);
+    transform: translateY(-6.25rem);
     transition: transform ${DURATION}ms ease;
   }
 `;
 
 const Close = styled.div`
-  top: -0.75rem;
   right: -0.75rem;
+  top: -0.75rem;
 `;
 
 class Modal extends React.Component {
@@ -57,12 +57,12 @@ class Modal extends React.Component {
     children: PropTypes.node.isRequired,
     onClose: PropTypes.func,
     open: PropTypes.bool
-  }
+  };
 
   static defaultProps = {
     onClose: null,
     open: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -92,12 +92,12 @@ class Modal extends React.Component {
     const { slide } = this.state;
 
     const overlayClassName =
-      'fixed pin z-40 flex items-center justify-center pt-8 px-4 pb-4 ' +
-      'overflow-auto bg-smoke';
+      "fixed pin z-40 flex items-center justify-center pt-8 px-4 pb-4 " +
+      "overflow-auto bg-smoke";
 
     const closeClasses =
-      'absolute bg-blue text-white w-8 h-8 flex items-center cursor-pointer ' +
-      'justify-center rounded-full text-center border-4 border-white z-20';
+      "absolute bg-blue text-white w-8 h-8 flex items-center cursor-pointer " +
+      "justify-center rounded-full text-center border-4 border-white z-20";
 
     return (
       <Portal>
@@ -110,36 +110,26 @@ class Modal extends React.Component {
           timeout={DURATION}
           unmountOnExit
         >
-          <FadeIn
-            className={overlayClassName}
-          >
+          <FadeIn className={overlayClassName}>
             <div
               className="absolute pin"
               onClick={onClose}
+              role="button"
+              tabIndex="-1"
             />
-            <CSSTransition
-              classNames="slide"
-              in={slide}
-              timeout={DURATION}
-            >
+            <CSSTransition classNames="slide" in={slide} timeout={DURATION}>
               <SlideIn
                 className="bg-white rounded shadow-lg relative"
                 initialPose="exit"
               >
-                <Close
-                  className={closeClasses}
-                  onClick={onClose}
-                >
-                  <FontAwesomeIcon
-                    icon="times"
-                  />
+                <Close className={closeClasses} onClick={onClose}>
+                  <FontAwesomeIcon icon="times" />
                 </Close>
                 {children}
               </SlideIn>
             </CSSTransition>
           </FadeIn>
         </CSSTransition>
-
       </Portal>
     );
   }

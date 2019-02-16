@@ -1,16 +1,16 @@
-import { Field, FieldArray, Form } from 'formik';
+import { Field, FieldArray, Form } from "formik";
 import {
   FormError,
   SubmitButton,
   TimeField,
   TimezoneField
-} from 'javascripts/shared/components';
+} from "javascripts/shared/components";
 
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import SplitFormEntries from './SplitFormEntries';
-import { calcHours } from 'javascripts/globals';
-import moment from 'moment-timezone';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import SplitFormEntries from "./SplitFormEntries";
+import { calcHours } from "javascripts/globals";
+import moment from "moment-timezone";
 
 class EntrySplitForm extends React.Component {
   static propTypes = {
@@ -23,11 +23,11 @@ class EntrySplitForm extends React.Component {
       entries: PropTypes.arrayOf(PropTypes.object).isRequired,
       timezone: PropTypes.string.isRequired
     }).isRequired
-  }
+  };
 
   static defaultProps = {
     status: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -41,7 +41,8 @@ class EntrySplitForm extends React.Component {
 
   _handleCalculate() {
     const {
-      isValid, setFieldValue,
+      isValid,
+      setFieldValue,
       values: { entries, startedAt, stoppedAt, timezone }
     } = this.props;
 
@@ -67,8 +68,9 @@ class EntrySplitForm extends React.Component {
       setFieldValue(`entries.${index}.percent`, percent.toFixed(1));
       setFieldValue(
         `entries.${index}.startedAt`,
-        moment.tz(startedAt, timezone)
-          .add(hours, 'hours')
+        moment
+          .tz(startedAt, timezone)
+          .add(hours, "hours")
           .valueOf()
       );
 
@@ -77,8 +79,9 @@ class EntrySplitForm extends React.Component {
       } else {
         setFieldValue(
           `entries.${index}.stoppedAt`,
-          moment.tz(startedAt, timezone)
-            .add(hours + staticHours, 'hours')
+          moment
+            .tz(startedAt, timezone)
+            .add(hours + staticHours, "hours")
             .valueOf()
         );
         hours += staticHours;
@@ -86,14 +89,15 @@ class EntrySplitForm extends React.Component {
     });
   }
 
-  /* eslint-disable max-lines-per-function */
   render() {
-    const { isSubmitting, status, values: { timezone } } = this.props;
+    const {
+      isSubmitting,
+      status,
+      values: { timezone }
+    } = this.props;
 
     return (
-      <Form
-        noValidate
-      >
+      <Form noValidate>
         <FormError error={status} />
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/2 px-2 mb-4">
@@ -117,27 +121,15 @@ class EntrySplitForm extends React.Component {
           </div>
         </div>
         <div className="mb-4">
-          <Field
-            component={TimezoneField}
-            label="Timezone"
-            name="timezone"
-          />
+          <Field component={TimezoneField} label="Timezone" name="timezone" />
         </div>
         <div className="mb-4">
-          <FieldArray
-            component={SplitFormEntries}
-            name="entries"
-          />
+          <FieldArray component={SplitFormEntries} name="entries" />
         </div>
-        <SubmitButton
-          submitting={isSubmitting}
-        >
-          {'Save'}
-        </SubmitButton>
+        <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
       </Form>
     );
   }
-  /* eslint-enable max-lines-per-function */
 }
 
 export default EntrySplitForm;

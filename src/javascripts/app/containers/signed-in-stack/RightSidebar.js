@@ -1,10 +1,11 @@
-import { CSSTransition } from 'react-transition-group';
-import { Link } from 'react-router-dom';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _isEqual from 'lodash/isEqual';
-import { history } from 'javascripts/app/redux/store';
-import styled from 'styled-components';
+import { CSSTransition } from "react-transition-group";
+import { HEADER_HEIGHT } from "javascripts/globals";
+import { Link } from "react-router-dom";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _isEqual from "lodash/isEqual";
+import { history } from "javascripts/app/redux/store";
+import styled from "styled-components";
 
 const DURATION = 300;
 
@@ -49,17 +50,17 @@ const SlideIn = styled.div`
 `;
 
 const Overlay = styled(FadeIn)`
-  top: 62px;
+  top: ${HEADER_HEIGHT};
 `;
 
 const Slider = styled(SlideIn)`
-  top: 62px;
+  top: ${HEADER_HEIGHT};
 `;
 
 class RightSidebar extends React.Component {
   static propTypes = {
     location: PropTypes.routerLocation.isRequired
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -70,9 +71,7 @@ class RightSidebar extends React.Component {
   shouldComponentUpdate(nextProps) {
     const { location } = this.props;
 
-    return (
-      !_isEqual(location, nextProps.location)
-    );
+    return !_isEqual(location, nextProps.location);
   }
 
   _handleClose() {
@@ -95,7 +94,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/"
           >
-            {'Home'}
+            {"Home"}
           </Link>
         </li>
         <li>
@@ -103,7 +102,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/entries"
           >
-            {'Entries'}
+            {"Entries"}
           </Link>
         </li>
         <li>
@@ -111,7 +110,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/clients"
           >
-            {'Clients/Projects'}
+            {"Clients/Projects"}
           </Link>
         </li>
         <li>
@@ -119,7 +118,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/profile"
           >
-            {'Profile'}
+            {"Profile"}
           </Link>
         </li>
         <li>
@@ -127,7 +126,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/sign-out"
           >
-            {'Sign Out'}
+            {"Sign Out"}
           </Link>
         </li>
       </ul>
@@ -142,8 +141,8 @@ class RightSidebar extends React.Component {
     const open = hash.match(/sidebar/u);
 
     const sliderClasses =
-      'fixed pin-r pin-y w-64 flex bg-blue-lightest shadow-md flex-col ' +
-      'transition z-10 overflow-y-auto overflow-x-hidden';
+      "fixed pin-r pin-y w-64 flex bg-blue-lightest shadow-md flex-col " +
+      "z-10 overflow-y-auto overflow-x-hidden";
 
     return (
       <>
@@ -166,9 +165,7 @@ class RightSidebar extends React.Component {
           timeout={DURATION}
           unmountOnExit
         >
-          <Slider
-            className={sliderClasses}
-          >
+          <Slider className={sliderClasses}>
             {this._renderMenu(pathname)}
           </Slider>
         </CSSTransition>

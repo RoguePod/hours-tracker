@@ -1,9 +1,9 @@
-import { ActionIcon } from 'javascripts/shared/components';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _get from 'lodash/get';
-import _isEqual from 'lodash/isEqual';
-import styled from 'styled-components';
+import { ActionIcon } from "javascripts/shared/components";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _get from "lodash/get";
+import _isEqual from "lodash/isEqual";
+import styled from "styled-components";
 
 const Ellipsis = styled.div`
   overflow: hidden;
@@ -17,7 +17,7 @@ class RecentRow extends React.Component {
     onStartEntry: PropTypes.func.isRequired,
     recent: PropTypes.recent.isRequired,
     user: PropTypes.user.isRequired
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -29,18 +29,17 @@ class RecentRow extends React.Component {
     const { user, recent } = this.props;
 
     return (
-      !_isEqual(recent, nextProps.recent) ||
-      !_isEqual(user, nextProps.user)
+      !_isEqual(recent, nextProps.recent) || !_isEqual(user, nextProps.user)
     );
   }
 
   _handleStart() {
     const { onStartEntry, user, recent } = this.props;
 
-    let description = '';
+    let description = "";
 
     if (user.autoloadLastDescription) {
-      description = _get(recent, 'description', '');
+      description = _get(recent, "description", "");
     }
 
     onStartEntry({
@@ -59,14 +58,10 @@ class RecentRow extends React.Component {
           <div className="flex-1 pr-4">
             <Ellipsis>
               <em>
-                <small>
-                  {recent.client.name}
-                </small>
+                <small>{recent.client.name}</small>
               </em>
             </Ellipsis>
-            <Ellipsis>
-              {recent.project.name}
-            </Ellipsis>
+            <Ellipsis>{recent.project.name}</Ellipsis>
           </div>
           <ActionIcon
             icon="play"

@@ -1,7 +1,8 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _times from 'lodash/times';
-import moment from 'moment-timezone';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Table } from "javascripts/shared/components";
+import _times from "lodash/times";
+import moment from "moment-timezone";
 
 class UsersFooter extends React.Component {
   static propTypes = {
@@ -12,7 +13,7 @@ class UsersFooter extends React.Component {
     }).isRequired,
     startMonth: PropTypes.instanceOf(moment).isRequired,
     timezone: PropTypes.string.isRequired
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
@@ -28,7 +29,7 @@ class UsersFooter extends React.Component {
         continue;
       }
 
-      const startedAt  = moment.tz(entry.startedAt, entry.timezone);
+      const startedAt = moment.tz(entry.startedAt, entry.timezone);
       const entryValue = startedAt.format(format);
 
       if (value && value !== entryValue) {
@@ -43,7 +44,7 @@ class UsersFooter extends React.Component {
         stoppedAt = moment().tz(entry.timezone);
       }
 
-      const hours = stoppedAt.diff(startedAt, 'hours', true);
+      const hours = stoppedAt.diff(startedAt, "hours", true);
 
       sum += hours;
     }
@@ -53,42 +54,33 @@ class UsersFooter extends React.Component {
 
   _getCellsAndWeekTotals(query, timezone) {
     const billableCells = [];
-    const totalCells    = [];
+    const totalCells = [];
 
     let weekBillableTotal = 0;
     let weekTotal = 0;
 
-    _times(7, (index) => {
-      const day = moment.tz(query.date, timezone)
-        .add(index, 'd')
-        .format('YYYY-MM-DD');
+    _times(7, index => {
+      const day = moment
+        .tz(query.date, timezone)
+        .add(index, "d")
+        .format("YYYY-MM-DD");
 
-      const billableTotal = this._calcTotal(true, 'YYYY-MM-DD', day);
-      const total         = this._calcTotal(false, 'YYYY-MM-DD', day);
+      const billableTotal = this._calcTotal(true, "YYYY-MM-DD", day);
+      const total = this._calcTotal(false, "YYYY-MM-DD", day);
 
       weekBillableTotal += billableTotal;
       weekTotal += total;
 
       billableCells.push(
-        <th
-          className="w-px"
-          key={day}
-        >
-          <strong className="text-green">
-            {billableTotal.toFixed(1)}
-          </strong>
-        </th>
+        <Table.Td className="w-px" key={day}>
+          <strong className="text-green">{billableTotal.toFixed(1)}</strong>
+        </Table.Td>
       );
 
       totalCells.push(
-        <th
-          className="w-px"
-          key={day}
-        >
-          <strong className="text-blue">
-            {total.toFixed(1)}
-          </strong>
-        </th>
+        <Table.Td className="w-px" key={day}>
+          <strong className="text-blue">{total.toFixed(1)}</strong>
+        </Table.Td>
       );
     });
 
@@ -96,97 +88,106 @@ class UsersFooter extends React.Component {
   }
 
   _getMonthAndOtherTotals(startMonth, endMonth) {
-    const diffMonth = startMonth.format('MMM') !== endMonth.format('MMM');
+    const diffMonth = startMonth.format("MMM") !== endMonth.format("MMM");
     const monthTotal = this._calcTotal(
-      false, 'YYYY-MM', startMonth.format('YYYY-MM')
+      false,
+      "YYYY-MM",
+      startMonth.format("YYYY-MM")
     );
     let otherTotal = null;
 
     const monthBillableTotal = this._calcTotal(
-      true, 'YYYY-MM', startMonth.format('YYYY-MM')
+      true,
+      "YYYY-MM",
+      startMonth.format("YYYY-MM")
     );
     let otherBillableTotal = null;
 
     if (diffMonth) {
       otherTotal = this._calcTotal(
-        false, 'YYYY-MM', endMonth.format('YYYY-MM')
+        false,
+        "YYYY-MM",
+        endMonth.format("YYYY-MM")
       );
       otherBillableTotal = this._calcTotal(
-        true, 'YYYY-MM', endMonth.format('YYYY-MM')
+        true,
+        "YYYY-MM",
+        endMonth.format("YYYY-MM")
       );
     }
 
     return {
-      diffMonth, monthBillableTotal, monthTotal, otherBillableTotal, otherTotal
+      diffMonth,
+      monthBillableTotal,
+      monthTotal,
+      otherBillableTotal,
+      otherTotal
     };
   }
 
-  /* eslint-disable max-lines-per-function */
   render() {
     const { endMonth, query, startMonth, timezone } = this.props;
 
     const {
-      billableCells, totalCells, weekBillableTotal, weekTotal
+      billableCells,
+      totalCells,
+      weekBillableTotal,
+      weekTotal
     } = this._getCellsAndWeekTotals(query, timezone);
 
     const {
-      diffMonth, monthBillableTotal, monthTotal, otherBillableTotal, otherTotal
+      diffMonth,
+      monthBillableTotal,
+      monthTotal,
+      otherBillableTotal,
+      otherTotal
     } = this._getMonthAndOtherTotals(startMonth, endMonth);
 
     return (
       <tfoot>
         <tr className="bg-blue-lightest">
-          <th className="text-right">
-            <strong className="text-green">
-              {'Billable'}
-            </strong>
-          </th>
+          <Table.Td className="text-right">
+            <strong className="text-green">{"Billable"}</strong>
+          </Table.Td>
           {billableCells}
-          <th className="w-px">
+          <Table.Td className="w-px">
             <strong className="text-green">
               {weekBillableTotal.toFixed(1)}
             </strong>
-          </th>
-          <th className="w-px bg-blue-lighter">
+          </Table.Td>
+          <Table.Td className="w-px bg-blue-lighter">
             <strong className="text-green">
               {monthBillableTotal.toFixed(1)}
             </strong>
-          </th>
-          {diffMonth &&
-            <th className="w-px bg-blue-lighter">
+          </Table.Td>
+          {diffMonth && (
+            <Table.Td className="w-px bg-blue-lighter">
               <strong className="text-green">
                 {otherBillableTotal.toFixed(1)}
               </strong>
-            </th>}
+            </Table.Td>
+          )}
         </tr>
         <tr className="bg-blue-lightest">
-          <th className="text-right">
-            <strong className="text-blue">
-              {'Total'}
-            </strong>
-          </th>
+          <Table.Td className="text-right">
+            <strong className="text-blue">{"Total"}</strong>
+          </Table.Td>
           {totalCells}
-          <th className="w-px">
-            <strong className="text-blue">
-              {weekTotal.toFixed(1)}
-            </strong>
-          </th>
-          <th className="w-px bg-blue-lighter">
-            <strong className="text-blue">
-              {monthTotal.toFixed(1)}
-            </strong>
-          </th>
-          {diffMonth &&
-            <th className="w-px bg-blue-lighter">
-              <strong className="text-blue">
-                {otherTotal.toFixed(1)}
-              </strong>
-            </th>}
+          <Table.Td className="w-px">
+            <strong className="text-blue">{weekTotal.toFixed(1)}</strong>
+          </Table.Td>
+          <Table.Td className="w-px bg-blue-lighter">
+            <strong className="text-blue">{monthTotal.toFixed(1)}</strong>
+          </Table.Td>
+          {diffMonth && (
+            <Table.Td className="w-px bg-blue-lighter">
+              <strong className="text-blue">{otherTotal.toFixed(1)}</strong>
+            </Table.Td>
+          )}
         </tr>
       </tfoot>
     );
   }
-  /* eslint-enable max-lines-per-function */
 }
 
 export default UsersFooter;

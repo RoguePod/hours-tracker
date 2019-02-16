@@ -1,11 +1,14 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import Row from './Row';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import Row from "./Row";
+import { Table } from "javascripts/shared/components";
 
 class UsersTable extends React.Component {
   static propTypes = {
+    /* eslint-disable react/forbid-prop-types */
     users: PropTypes.object.isRequired
-  }
+    /* eslint-enable react/forbid-prop-types */
+  };
 
   shouldComponentUpdate() {
     return true;
@@ -72,14 +75,8 @@ class UsersTable extends React.Component {
 
     const keys = Object.keys(users).sort();
 
-    return keys.map((key) => {
-      return (
-        <Row
-          entries={users[key]}
-          key={key}
-          name={key}
-        />
-      );
+    return keys.map(key => {
+      return <Row entries={users[key]} key={key} name={key} />;
     });
   }
 
@@ -88,37 +85,27 @@ class UsersTable extends React.Component {
       <>
         <thead>
           <tr>
-            <th />
-            <th>
-              {'Billable'}
-            </th>
-            <th>
-              {'Non-Billable'}
-            </th>
-            <th>
-              {'Total'}
-            </th>
-            <th>
-              {'Billable %'}
-            </th>
+            <Table.Td />
+            <Table.Td>{"Billable"}</Table.Td>
+            <Table.Td>{"Non-Billable"}</Table.Td>
+            <Table.Td>{"Total"}</Table.Td>
+            <Table.Td>{"Billable %"}</Table.Td>
           </tr>
         </thead>
         <tbody>
           {this._renderRows()}
           <tr>
-            <td />
-            <td className="text-green">
+            <Table.Td />
+            <Table.Td className="text-green">
               {this._calcBillable().toFixed(1)}
-            </td>
-            <td>
-              {this._calcNonBillable().toFixed(1)}
-            </td>
-            <td className="w-px whitespace-no-wrap">
+            </Table.Td>
+            <Table.Td>{this._calcNonBillable().toFixed(1)}</Table.Td>
+            <Table.Td className="w-px whitespace-no-wrap">
               {this._calcTotal().toFixed(1)}
-            </td>
-            <td>
-              {`${(this._calcPercentBillable() * 100).toFixed(2)}%`}
-            </td>
+            </Table.Td>
+            <Table.Td>{`${(this._calcPercentBillable() * 100).toFixed(
+              2
+            )}%`}</Table.Td>
           </tr>
         </tbody>
       </>

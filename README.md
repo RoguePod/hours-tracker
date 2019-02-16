@@ -37,3 +37,9 @@ firebase use firebase-project-id && yarn run deploy:staging
 ```
 firebase use firebase-project-id && yarn run deploy:production
 ```
+
+### Add Package
+
+```
+yarn add --dev --exact <package-name>
+```

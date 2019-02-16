@@ -1,19 +1,19 @@
 /* globals document,Element */
 
-import { CSSTransition } from 'react-transition-group';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import cx from 'classnames';
-import styled from 'styled-components';
+import { CSSTransition } from "react-transition-group";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import cx from "classnames";
+import styled from "styled-components";
 
 const DURATION = 300;
 
 const Container = styled.div`
-  max-height: 300px;
+  max-height: 18rem;
 `;
 
 const FadeIn = styled.div`
-  top: calc(100% + 5px);
+  top: calc(100% + 0.3rem);
   transform-origin: center top;
 
   &.fade-enter {
@@ -28,8 +28,8 @@ const FadeIn = styled.div`
   }
 
   &.fade-exit {
-    transform: scale(1);
     opacity: 1;
+    transform: scale(1);
   }
 
   &.fade-exit-active {
@@ -46,13 +46,21 @@ class Dropdown extends React.Component {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     target: PropTypes.shape({ current: PropTypes.instanceOf(Element) })
-  }
+  };
 
   static defaultProps = {
     error: false,
     onClose: null,
     open: false,
     target: null
+  };
+
+  static getDerivedStateFromProps(nextProps) {
+    if (nextProps.open) {
+      return { children: nextProps.children, open: nextProps.open };
+    }
+
+    return { open: nextProps.open };
   }
 
   constructor(props) {
@@ -66,14 +74,6 @@ class Dropdown extends React.Component {
     this._handleClose = this._handleClose.bind(this);
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    if (nextProps.open) {
-      return { children: nextProps.children, open: nextProps.open };
-    }
-
-    return { open: nextProps.open };
-  }
-
   shouldComponentUpdate() {
     return true;
   }
@@ -83,9 +83,9 @@ class Dropdown extends React.Component {
 
     if (target && onClose && prevProps.open !== open) {
       if (open) {
-        document.addEventListener('mousedown', this._handleClose, false);
+        document.addEventListener("mousedown", this._handleClose, false);
       } else {
-        document.removeEventListener('mousedown', this._handleClose, false);
+        document.removeEventListener("mousedown", this._handleClose, false);
       }
     }
   }
@@ -105,19 +105,17 @@ class Dropdown extends React.Component {
     const { children, open } = this.state;
 
     const dropdownClasses = cx(
-      'bg-white rounded z-10 overflow-hidden border ' +
-      'shadow-md absolute pin-x',
+      "bg-white rounded z-10 overflow-hidden border " +
+        "shadow-md absolute pin-x",
       {
-        'border-blue-light': !error,
-        'border-red': error
+        "border-blue-light": !error,
+        "border-red": error
       }
     );
 
-    const containerClasses = cx(
-      'overflow-x-hidden overflow-y-auto list-reset'
-    );
+    const containerClasses = cx("overflow-x-hidden overflow-y-auto list-reset");
 
-    const noResultsClasses = 'px-3 py-2 text-center font-bold text-sm';
+    const noResultsClasses = "px-3 py-2 text-center font-bold text-sm";
 
     return (
       <CSSTransition
@@ -127,14 +125,11 @@ class Dropdown extends React.Component {
         timeout={DURATION}
         unmountOnExit
       >
-        <FadeIn
-          className={dropdownClasses}
-        >
+        <FadeIn className={dropdownClasses}>
           <Container className={containerClasses}>
-            {children.length === 0 &&
-              <div className={noResultsClasses}>
-                {'No Results Found'}
-              </div>}
+            {children.length === 0 && (
+              <div className={noResultsClasses}>{"No Results Found"}</div>
+            )}
             {children.length > 0 && children}
           </Container>
         </FadeIn>

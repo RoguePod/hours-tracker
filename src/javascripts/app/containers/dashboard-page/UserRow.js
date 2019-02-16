@@ -1,7 +1,8 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _times from 'lodash/times';
-import moment from 'moment-timezone';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Table } from "javascripts/shared/components";
+import _times from "lodash/times";
+import moment from "moment-timezone";
 
 class UsersRow extends React.Component {
   static propTypes = {
@@ -13,7 +14,7 @@ class UsersRow extends React.Component {
     startMonth: PropTypes.instanceOf(moment).isRequired,
     timezone: PropTypes.string.isRequired,
     user: PropTypes.user.isRequired
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
@@ -29,7 +30,7 @@ class UsersRow extends React.Component {
         continue;
       }
 
-      const startedAt  = moment.tz(entry.startedAt, entry.timezone);
+      const startedAt = moment.tz(entry.startedAt, entry.timezone);
       const entryValue = startedAt.format(format);
 
       if (value !== entryValue) {
@@ -44,7 +45,7 @@ class UsersRow extends React.Component {
         stoppedAt = moment().tz(entry.timezone);
       }
 
-      const hours = stoppedAt.diff(startedAt, 'hours', true);
+      const hours = stoppedAt.diff(startedAt, "hours", true);
 
       sum += hours;
     }
@@ -56,22 +57,20 @@ class UsersRow extends React.Component {
     const cells = [];
     let weekTotal = 0;
 
-    _times(7, (index) => {
-      const day = moment.tz(query.date, timezone)
-        .add(index, 'd')
-        .format('YYYY-MM-DD');
+    _times(7, index => {
+      const day = moment
+        .tz(query.date, timezone)
+        .add(index, "d")
+        .format("YYYY-MM-DD");
 
-      const dayTotal = this._calcTotal('YYYY-MM-DD', day);
+      const dayTotal = this._calcTotal("YYYY-MM-DD", day);
 
       weekTotal += dayTotal;
 
       cells.push(
-        <td
-          className="w-px"
-          key={day}
-        >
+        <Table.Td className="w-px" key={day}>
           {dayTotal.toFixed(1)}
-        </td>
+        </Table.Td>
       );
     });
 
@@ -83,30 +82,27 @@ class UsersRow extends React.Component {
 
     const { cells, weekTotal } = this._getCellsAndWeekTotal(query, timezone);
 
-    const diffMonth  = startMonth.format('MMM') !== endMonth.format('MMM');
-    const monthTotal = this._calcTotal('YYYY-MM', startMonth.format('YYYY-MM'));
-    let otherTotal   = null;
+    const diffMonth = startMonth.format("MMM") !== endMonth.format("MMM");
+    const monthTotal = this._calcTotal("YYYY-MM", startMonth.format("YYYY-MM"));
+    let otherTotal = null;
 
     if (diffMonth) {
-      otherTotal = this._calcTotal('YYYY-MM', endMonth.format('YYYY-MM'));
+      otherTotal = this._calcTotal("YYYY-MM", endMonth.format("YYYY-MM"));
     }
 
     return (
       <tr>
-        <td>
-          {user.name}
-        </td>
+        <Table.Td>{user.name}</Table.Td>
         {cells}
-        <td className="w-px">
-          {weekTotal.toFixed(1)}
-        </td>
-        <td className="w-px bg-blue-lighter">
+        <Table.Td className="w-px">{weekTotal.toFixed(1)}</Table.Td>
+        <Table.Td className="w-px bg-blue-lighter">
           {monthTotal.toFixed(1)}
-        </td>
-        {diffMonth &&
-          <td className="w-px bg-blue-lighter">
+        </Table.Td>
+        {diffMonth && (
+          <Table.Td className="w-px bg-blue-lighter">
             {otherTotal.toFixed(1)}
-          </td>}
+          </Table.Td>
+        )}
       </tr>
     );
   }

@@ -5,18 +5,28 @@ import {
   selectDashboardUsers,
   selectQuery,
   subscribeEntries
-} from 'javascripts/app/redux/dashboard';
-import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
+} from "javascripts/app/redux/dashboard";
+import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
 
-import AdminMenu from './AdminMenu';
-import EntriesTable from './EntriesTable';
-import ProjectsTable from './ProjectsTable';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import { Spinner } from 'javascripts/shared/components';
-import UsersTable from './UsersTable';
-import WeekDropdown from './WeekDropdown';
-import { connect } from 'react-redux';
+import AdminMenu from "./AdminMenu";
+import EntriesTable from "./EntriesTable";
+import ProjectsTable from "./ProjectsTable";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Spinner } from "javascripts/shared/components";
+import UsersTable from "./UsersTable";
+import WeekDropdown from "./WeekDropdown";
+import { connect } from "react-redux";
+import styled from "styled-components";
+
+/* stylelint-disable unit-whitelist */
+const Hr = styled.hr`
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  height: 0;
+`;
+/* stylelint-enable unit-whitelist */
 
 class DashboardPage extends React.Component {
   static propTypes = {
@@ -26,25 +36,29 @@ class DashboardPage extends React.Component {
     location: PropTypes.routerLocation.isRequired,
     onReset: PropTypes.func.isRequired,
     onSubscribeEntries: PropTypes.func.isRequired,
-    projects: PropTypes.arrayOf(PropTypes.shape({
-      client: PropTypes.client,
-      project: PropTypes.project
-    })).isRequired,
-    projectsAdmin: PropTypes.arrayOf(PropTypes.shape({
-      client: PropTypes.client,
-      project: PropTypes.project
-    })).isRequired,
+    projects: PropTypes.arrayOf(
+      PropTypes.shape({
+        client: PropTypes.client,
+        project: PropTypes.project
+      })
+    ).isRequired,
+    projectsAdmin: PropTypes.arrayOf(
+      PropTypes.shape({
+        client: PropTypes.client,
+        project: PropTypes.project
+      })
+    ).isRequired,
     query: PropTypes.shape({
       date: PropTypes.string.isRequired
     }).isRequired,
     running: PropTypes.entry,
     timezone: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     fetching: null,
     running: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -69,7 +83,9 @@ class DashboardPage extends React.Component {
 
   componentDidUpdate(prevProps) {
     const {
-      running, onSubscribeEntries, query: { date }
+      running,
+      onSubscribeEntries,
+      query: { date }
     } = this.props;
 
     if (prevProps.query.date !== date) {
@@ -91,7 +107,7 @@ class DashboardPage extends React.Component {
     this._handleStopInterval();
   }
 
-  interval = null
+  interval = null;
 
   _handleStartInterval() {
     this.interval = setInterval(() => {
@@ -116,38 +132,22 @@ class DashboardPage extends React.Component {
         </div>
 
         {admin && <AdminMenu location={location} />}
-        {(!admin || hash === '') &&
-          <ProjectsTable
-            {...this.props}
-          />}
-        {admin && hash === '#users' &&
-          <UsersTable
-            {...this.props}
-          />}
-        {admin && hash === '#projects' &&
-          <ProjectsTable
-            {...this.props}
-            projects={projectsAdmin}
-            user={null}
-          />}
-        <hr />
+        {(!admin || hash === "") && <ProjectsTable {...this.props} />}
+        {admin && hash === "#users" && <UsersTable {...this.props} />}
+        {admin && hash === "#projects" && (
+          <ProjectsTable {...this.props} projects={projectsAdmin} user={null} />
+        )}
+        <Hr />
 
-        <h2 className="text-blue mb-2">
-          {'Latest Entries'}
-        </h2>
-        <EntriesTable
-          location={location}
-        />
-        <Spinner
-          page
-          spinning={Boolean(fetching)}
-        />
+        <h2 className="text-blue mb-2">{"Latest Entries"}</h2>
+        <EntriesTable location={location} />
+        <Spinner page spinning={Boolean(fetching)} />
       </div>
     );
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     admin: selectAdmin(state),
     entries: state.dashboard.entries,
@@ -167,4 +167,7 @@ const actions = {
   onSubscribeEntries: subscribeEntries
 };
 
-export default connect(props, actions)(DashboardPage);
+export default connect(
+  props,
+  actions
+)(DashboardPage);

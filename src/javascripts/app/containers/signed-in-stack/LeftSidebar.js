@@ -1,11 +1,12 @@
-import { RecentsList, StopWatch } from 'javascripts/app/containers';
+import { RecentsList, StopWatch } from "javascripts/app/containers";
 
-import { CSSTransition } from 'react-transition-group';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _isEqual from 'lodash/isEqual';
-import { history } from 'javascripts/app/redux/store';
-import styled from 'styled-components';
+import { CSSTransition } from "react-transition-group";
+import { HEADER_HEIGHT } from "javascripts/globals";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _isEqual from "lodash/isEqual";
+import { history } from "javascripts/app/redux/store";
+import styled from "styled-components";
 
 const DURATION = 300;
 
@@ -50,18 +51,18 @@ const SlideIn = styled.div`
 `;
 
 const Overlay = styled(FadeIn)`
-  top: 62px;
+  top: ${HEADER_HEIGHT};
 `;
 
 const Slider = styled(SlideIn)`
-  top: 62px;
+  top: ${HEADER_HEIGHT};
 `;
 
 class LeftSidebar extends React.Component {
   static propTypes = {
     location: PropTypes.routerLocation.isRequired,
     width: PropTypes.number.isRequired
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -70,11 +71,13 @@ class LeftSidebar extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { location: { hash }, width } = this.props;
+    const {
+      location: { hash },
+      width
+    } = this.props;
 
     return (
-      !_isEqual(hash, nextProps.location.hash) ||
-      width !== nextProps.width
+      !_isEqual(hash, nextProps.location.hash) || width !== nextProps.width
     );
   }
 
@@ -91,8 +94,8 @@ class LeftSidebar extends React.Component {
     const open = hash.match(/stopwatch/u);
 
     const sliderClasses =
-      'fixed pin-l pin-b w-64 flex bg-blue-lightest md:shadow-md flex-col ' +
-      'z-10';
+      "fixed pin-l pin-b w-64 flex bg-blue-lightest md:shadow-md flex-col " +
+      "z-10";
 
     return (
       <>
@@ -116,9 +119,7 @@ class LeftSidebar extends React.Component {
           timeout={DURATION}
           unmountOnExit
         >
-          <Slider
-            className={sliderClasses}
-          >
+          <Slider className={sliderClasses}>
             <StopWatch location={location} />
             <RecentsList />
           </Slider>

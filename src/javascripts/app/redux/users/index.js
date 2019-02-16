@@ -6,27 +6,27 @@ import {
   select,
   takeEvery,
   takeLatest
-} from 'redux-saga/effects';
+} from "redux-saga/effects";
 
-import _sortBy from 'lodash/sortBy';
-import { eventChannel } from 'redux-saga';
-import { firestore } from 'javascripts/globals';
-import update from 'immutability-helper';
+import _sortBy from "lodash/sortBy";
+import { eventChannel } from "redux-saga";
+import { firestore } from "javascripts/globals";
+import update from "immutability-helper";
 
 // Constants
 
 let channel = null;
 
-const path = 'hours-tracker/app/users';
+const path = "hours-tracker/app/users";
 
-const USERS_SET       = `${path}/USERS_SET`;
+const USERS_SET = `${path}/USERS_SET`;
 const USERS_SUBSCRIBE = `${path}/USERS_SUBSCRIBE`;
-const READY           = `${path}/READY`;
-const RESET           = `${path}/RESET`;
+const READY = `${path}/READY`;
+const RESET = `${path}/RESET`;
 
 export const fuseOptions = {
   distance: 100,
-  keys: ['name'],
+  keys: ["name"],
   location: 0,
   maxPatternLength: 32,
   minMatchCharLength: 2,
@@ -43,17 +43,17 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-  case USERS_SET:
-    return update(state, { users: { $set: action.users } });
+    case USERS_SET:
+      return update(state, { users: { $set: action.users } });
 
-  case READY:
-    return update(state, { ready: { $set: true } });
+    case READY:
+      return update(state, { ready: { $set: true } });
 
-  case RESET:
-    return initialState;
+    case RESET:
+      return initialState;
 
-  default:
-    return state;
+    default:
+      return state;
   }
 };
 
@@ -76,7 +76,7 @@ const ready = () => {
   return { type: READY };
 };
 
-const setUsers = (users) => {
+const setUsers = users => {
   return { type: USERS_SET, users };
 };
 
@@ -91,10 +91,10 @@ function parseUser(snapshot) {
 }
 
 function* handleUsersSubscribe({ snapshot }) {
-  const isReady = yield select((state) => state.users.ready);
+  const isReady = yield select(state => state.users.ready);
   const users = yield all(snapshot.docs.map(parseUser));
 
-  yield put(setUsers(_sortBy(users, 'name')));
+  yield put(setUsers(_sortBy(users, "name")));
 
   if (!isReady) {
     yield put(ready());
@@ -102,12 +102,10 @@ function* handleUsersSubscribe({ snapshot }) {
 }
 
 function* usersSubscribe() {
-  channel = eventChannel((emit) => {
-    const unsubscribe = firestore
-      .collection('users')
-      .onSnapshot((snapshot) => {
-        emit({ snapshot });
-      });
+  channel = eventChannel(emit => {
+    const unsubscribe = firestore.collection("users").onSnapshot(snapshot => {
+      emit({ snapshot });
+    });
 
     return () => unsubscribe();
   });

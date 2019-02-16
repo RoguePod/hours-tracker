@@ -1,19 +1,17 @@
-import { Field, Form } from 'formik';
+import { Field, Form } from "formik";
 import {
   FormError,
   InputField,
   Link,
   SubmitButton
-} from 'javascripts/shared/components';
+} from "javascripts/shared/components";
 
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 const ForgotPasswordForm = ({ isSubmitting, status }) => {
   return (
-    <Form
-      noValidate
-    >
+    <Form noValidate>
       <FormError error={status} />
       <div className="mb-4">
         <Field
@@ -28,17 +26,11 @@ const ForgotPasswordForm = ({ isSubmitting, status }) => {
         />
       </div>
       <div className="flex flex-row justify-between">
-        <SubmitButton
-          submitting={isSubmitting}
-          submittingText="Submitting..."
-        >
-          {'Submit'}
+        <SubmitButton submitting={isSubmitting} submittingText="Submitting...">
+          {"Submit"}
         </SubmitButton>
-        <Link
-          className="py-2"
-          to="/sign-in"
-        >
-          {'Sign In'}
+        <Link className="py-2" to="/sign-in">
+          {"Sign In"}
         </Link>
       </div>
     </Form>

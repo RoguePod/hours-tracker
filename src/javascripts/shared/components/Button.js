@@ -1,35 +1,41 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import cx from 'classnames';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Transition } from "javascripts/shared/components";
+import cx from "classnames";
 
-const Button = (props) => {
+const Button = props => {
   const {
-    as, children, className, color, disabled, textColor, ...rest
+    as,
+    children,
+    className,
+    color,
+    disabled,
+    textColor,
+    ...rest
   } = props;
 
   const hoverKey = `hover:bg-${color}-dark`;
   const buttonClassName = cx(
     `bg-${color}`,
     `text-${textColor}`,
-    'font-bold rounded py-2 px-4 transition hover:shadow appearance-none',
+    "font-bold rounded py-2 px-4 hover:shadow appearance-none",
     {
-      'cursor-not-allowed': disabled,
+      "cursor-not-allowed": disabled,
       [hoverKey]: !disabled,
-      'opacity-50': disabled
+      "opacity-50": disabled
     },
     className
   );
 
-  const Tag = as;
-
   return (
-    <Tag
+    <Transition
       {...rest}
       className={buttonClassName}
       disabled={disabled}
+      tag={as}
     >
       {children}
-    </Tag>
+    </Transition>
   );
 };
 
@@ -44,12 +50,12 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
-  as: 'button',
+  as: "button",
   className: null,
-  color: 'blue',
+  color: "blue",
   disabled: false,
-  textColor: 'white',
-  type: 'button'
+  textColor: "white",
+  type: "button"
 };
 
 export default Button;

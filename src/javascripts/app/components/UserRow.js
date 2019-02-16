@@ -1,5 +1,6 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Transition } from "javascripts/shared/components";
 
 class UserRow extends React.Component {
   static propTypes = {
@@ -7,7 +8,7 @@ class UserRow extends React.Component {
     user: PropTypes.shape({
       name: PropTypes.string.isRequired
     }).isRequired
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -28,15 +29,18 @@ class UserRow extends React.Component {
   render() {
     const { user } = this.props;
     const userClasses =
-      'hover:bg-blue-lighter cursor-pointer px-3 py-2 text-sm transition ' +
-      'text-blue';
+      "hover:bg-blue-lighter cursor-pointer px-3 py-2 text-sm text-blue";
 
     return (
-      <li
-        className={userClasses}
-        onMouseDown={this._handleMouseDown}
-      >
-        {user.name}
+      <li>
+        <Transition
+          className={userClasses}
+          onMouseDown={this._handleMouseDown}
+          role="button"
+          tabIndex="-1"
+        >
+          {user.name}
+        </Transition>
       </li>
     );
   }

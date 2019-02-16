@@ -1,21 +1,21 @@
-import { ActionIcon, Spinner } from 'javascripts/shared/components';
+import { ActionIcon, Spinner } from "javascripts/shared/components";
 import {
   selectRunningEntry,
   startEntry,
   stopEntry,
   updateEntry
-} from 'javascripts/app/redux/running';
+} from "javascripts/app/redux/running";
 
-import { Formik } from 'formik';
-import { Link } from 'react-router-dom';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import StopWatchForm from './StopWatchForm';
-import Timer from './Timer';
-import _get from 'lodash/get';
-import _isEqual from 'lodash/isEqual';
-import _pick from 'lodash/pick';
-import { connect } from 'react-redux';
+import { Formik } from "formik";
+import { Link } from "react-router-dom";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import StopWatchForm from "./StopWatchForm";
+import Timer from "./Timer";
+import _get from "lodash/get";
+import _isEqual from "lodash/isEqual";
+import _pick from "lodash/pick";
+import { connect } from "react-redux";
 
 class StopWatch extends React.Component {
   static propTypes = {
@@ -26,11 +26,11 @@ class StopWatch extends React.Component {
     onStopEntry: PropTypes.func.isRequired,
     onUpdateEntry: PropTypes.func.isRequired,
     ready: PropTypes.bool.isRequired
-  }
+  };
 
   static defaultProps = {
     fetching: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -57,9 +57,9 @@ class StopWatch extends React.Component {
   _handleStart() {
     const { onStartEntry } = this.props;
 
-    const params = _get(this.form, 'current.state.values', {});
+    const params = _get(this.form, "current.state.values", {});
 
-    onStartEntry(_pick(params, ['clientId', 'description', 'projectId']));
+    onStartEntry(_pick(params, ["clientId", "description", "projectId"]));
   }
 
   _handleSwap() {
@@ -78,7 +78,7 @@ class StopWatch extends React.Component {
     const { entry, onUpdateEntry } = this.props;
 
     if (entry.id) {
-      onUpdateEntry(_pick(data, ['clientId', 'description', 'projectId']));
+      onUpdateEntry(_pick(data, ["clientId", "description", "projectId"]));
     }
   }
 
@@ -129,11 +129,7 @@ class StopWatch extends React.Component {
   _renderNotRunningButtons() {
     return (
       <div className="flex flex-row justify-center flex-no-wrap py-4">
-        <ActionIcon
-          icon="play"
-          onClick={this._handleStart}
-          title="Start"
-        />
+        <ActionIcon icon="play" onClick={this._handleStart} title="Start" />
       </div>
     );
   }
@@ -156,17 +152,16 @@ class StopWatch extends React.Component {
 
     const hasEntry = ready && entry.id;
 
-    const initialValues = _pick(
-      entry, ['clientId', 'description', 'projectId']
-    );
+    const initialValues = _pick(entry, [
+      "clientId",
+      "description",
+      "projectId"
+    ]);
 
     return (
       <div className="relative">
         <div className="p-4">
-          <Timer
-            disabled={!hasEntry}
-            entry={entry}
-          />
+          <Timer disabled={!hasEntry} entry={entry} />
           {hasEntry && this._renderRunningButtons()}
           {!hasEntry && this._renderNotRunningButtons()}
           <Formik
@@ -177,17 +172,13 @@ class StopWatch extends React.Component {
             render={this._renderForm}
           />
         </div>
-        {fetching &&
-          <Spinner
-            spinning={Boolean(fetching)}
-            text={fetching}
-          />}
+        {fetching && <Spinner spinning={Boolean(fetching)} text={fetching} />}
       </div>
     );
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     entry: selectRunningEntry(state),
     fetching: state.running.fetching,
@@ -201,4 +192,7 @@ const actions = {
   onUpdateEntry: updateEntry
 };
 
-export default connect(props, actions)(StopWatch);
+export default connect(
+  props,
+  actions
+)(StopWatch);

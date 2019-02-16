@@ -1,8 +1,8 @@
-import Button from './Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Modal from './Modal';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import Button from "./Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Modal from "./Modal";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 class ConfirmAction extends React.Component {
   static propTypes = {
@@ -10,13 +10,13 @@ class ConfirmAction extends React.Component {
     message: PropTypes.string,
     onClick: PropTypes.func,
     title: PropTypes.string
-  }
+  };
 
   static defaultProps = {
     message: null,
     onClick: null,
     title: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -28,7 +28,7 @@ class ConfirmAction extends React.Component {
 
   state = {
     open: false
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
@@ -57,7 +57,7 @@ class ConfirmAction extends React.Component {
     const { children, message, ...rest } = this.props;
     const { open } = this.state;
 
-    const child   = React.Children.only(children);
+    const child = React.Children.only(children);
     const trigger = React.cloneElement(child, {
       ...rest,
       onClick: this._handleOpen
@@ -66,32 +66,20 @@ class ConfirmAction extends React.Component {
     return (
       <>
         {trigger}
-        <Modal
-          onClose={this._handleClose}
-          open={open}
-        >
+        <Modal onClose={this._handleClose} open={open}>
           <div className="flex flex-col items-center p-4">
             <FontAwesomeIcon
               className="text-red"
               icon="exclamation-circle"
               size="4x"
             />
-            <div className="text-2xl py-4 text-center max-w-lg">
-              {message}
-            </div>
+            <div className="text-2xl py-4 text-center max-w-lg">{message}</div>
             <div>
-              <Button
-                color="green"
-                onClick={this._handleConfirm}
-              >
-                {'Confirm'}
-              </Button>
-              {' '}
-              <Button
-                color="red"
-                onClick={this._handleClose}
-              >
-                {'Cancel'}
+              <Button color="green" onClick={this._handleConfirm}>
+                {"Confirm"}
+              </Button>{" "}
+              <Button color="red" onClick={this._handleClose}>
+                {"Cancel"}
               </Button>
             </div>
           </div>

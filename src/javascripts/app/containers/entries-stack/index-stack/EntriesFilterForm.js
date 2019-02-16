@@ -1,38 +1,24 @@
-import {
-  Button,
-  DateField,
-  FormError
-} from 'javascripts/shared/components';
+import { Button, DateField, FormError } from "javascripts/shared/components";
 import {
   ClientField,
   ProjectField,
   UserField
-} from 'javascripts/app/components';
-import { Field, Form } from 'formik';
+} from "javascripts/app/components";
+import { Field, Form } from "formik";
 
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 const EntriesFilterForm = ({ onClear, showAdmin, status }) => {
   return (
-    <Form
-      noValidate
-    >
+    <Form noValidate>
       <FormError error={status} />
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-4">
-          <Field
-            component={DateField}
-            label="Start Date"
-            name="startDate"
-          />
+          <Field component={DateField} label="Start Date" name="startDate" />
         </div>
         <div className="w-full md:w-1/2 px-2 mb-4">
-          <Field
-            component={DateField}
-            label="End Date"
-            name="endDate"
-          />
+          <Field component={DateField} label="End Date" name="endDate" />
         </div>
       </div>
       <div className="flex flex-wrap -mx-2">
@@ -53,31 +39,20 @@ const EntriesFilterForm = ({ onClear, showAdmin, status }) => {
           />
         </div>
       </div>
-      {showAdmin &&
+      {showAdmin && (
         <div className="mb-4">
-          <Field
-            component={UserField}
-            label="User"
-            name="userId"
-          />
-        </div>}
+          <Field component={UserField} label="User" name="userId" />
+        </div>
+      )}
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 md:mb-0 mb-4">
-          <Button
-            className="py-2 w-full"
-            color="green"
-            type="submit"
-          >
-            {'Filter'}
+          <Button className="py-2 w-full" color="green" type="submit">
+            {"Filter"}
           </Button>
         </div>
         <div className="w-full md:w-1/2 px-2">
-          <Button
-            className="py-2 w-full"
-            onClick={onClear}
-            type="button"
-          >
-            {'Clear'}
+          <Button className="py-2 w-full" onClick={onClear} type="button">
+            {"Clear"}
           </Button>
         </div>
       </div>

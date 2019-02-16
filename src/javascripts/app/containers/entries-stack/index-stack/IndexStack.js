@@ -1,25 +1,22 @@
-import { Button, Spinner } from 'javascripts/shared/components';
-import { Link, Route, Switch } from 'react-router-dom';
-import {
-  reset,
-  selectQuery
-} from 'javascripts/app/redux/entries';
-import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
+import { Button, Spinner } from "javascripts/shared/components";
+import { Link, Route, Switch } from "react-router-dom";
+import { reset, selectQuery } from "javascripts/app/redux/entries";
+import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
 
-import EntriesFilterForm from './EntriesFilterForm';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Formik } from 'formik';
-import IndexAdminMenu from './IndexAdminMenu';
-import IndexMenu from './IndexMenu';
-import IndexTable from './index-table/IndexTable';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import SummaryTable from './summary-table/SummaryTable';
-import _compact from 'lodash/compact';
-import { connect } from 'react-redux';
-import cx from 'classnames';
-import { history } from 'javascripts/app/redux/store';
-import { toQuery } from 'javascripts/globals';
+import EntriesFilterForm from "./EntriesFilterForm";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Formik } from "formik";
+import IndexAdminMenu from "./IndexAdminMenu";
+import IndexMenu from "./IndexMenu";
+import IndexTable from "./index-table/IndexTable";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import SummaryTable from "./summary-table/SummaryTable";
+import _compact from "lodash/compact";
+import { connect } from "react-redux";
+import cx from "classnames";
+import { history } from "javascripts/app/redux/store";
+import { toQuery } from "javascripts/globals";
 
 class EntriesIndexStack extends React.Component {
   static propTypes = {
@@ -30,11 +27,11 @@ class EntriesIndexStack extends React.Component {
     onReset: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
     timezone: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     fetching: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -58,7 +55,6 @@ class EntriesIndexStack extends React.Component {
     onReset();
   }
 
-  /* eslint-disable max-statements */
   _handleSubmit(data, actions) {
     const { location, query } = this.props;
 
@@ -66,7 +62,8 @@ class EntriesIndexStack extends React.Component {
 
     if (values.length > 0) {
       const route = {
-        ...location, search: `?${toQuery({ ...query, ...data })}`
+        ...location,
+        search: `?${toQuery({ ...query, ...data })}`
       };
 
       history.replace(route);
@@ -76,12 +73,11 @@ class EntriesIndexStack extends React.Component {
 
     actions.setSubmitting(false);
   }
-  /* eslint-enable max-statements */
 
   _handleClear() {
-    /* eslint-disable no-unused-vars */
-    const { location: { search, ...rest } } = this.props;
-    /* eslint-enable no-unused-vars */
+    const {
+      location: { search, ...rest }
+    } = this.props;
 
     history.replace(rest);
   }
@@ -89,48 +85,33 @@ class EntriesIndexStack extends React.Component {
   _renderIndexPage() {
     const { location } = this.props;
 
-    return (
-      <IndexTable
-        location={location}
-      />
-    );
+    return <IndexTable location={location} />;
   }
 
   _renderReportsPage() {
     const { location } = this.props;
 
-    return (
-      <IndexTable
-        location={location}
-        showAdmin
-      />
-    );
+    return <IndexTable location={location} showAdmin />;
   }
 
   _renderSummaryTable() {
     const { location } = this.props;
 
-    return (
-      <SummaryTable
-        location={location}
-      />
-    );
+    return <SummaryTable location={location} />;
   }
 
   _renderTabs(showAdmin) {
     const { location } = this.props;
 
     const baseTabClasses =
-      'inline-block text-blue py-2 px-4 border-l border-t border-r rounded-t';
+      "inline-block text-blue py-2 px-4 border-l border-t border-r rounded-t";
 
-    const selectedTabClasses = cx(
-      baseTabClasses, 'bg-white'
-    );
+    const selectedTabClasses = cx(baseTabClasses, "bg-white");
 
     const unselectedTabClasses = cx(
       baseTabClasses,
-      'bg-transparent border-transparent hover:text-blue-dark ' +
-      'hover:bg-blue-lighter'
+      "bg-transparent border-transparent hover:text-blue-dark " +
+        "hover:bg-blue-lighter"
     );
 
     return (
@@ -138,17 +119,17 @@ class EntriesIndexStack extends React.Component {
         <li className="ml-3 -mb-px mr-1">
           <Link
             className={showAdmin ? unselectedTabClasses : selectedTabClasses}
-            to={{ ...location, pathname: '/entries' }}
+            to={{ ...location, pathname: "/entries" }}
           >
-            {'My Entries'}
+            {"My Entries"}
           </Link>
         </li>
         <li className="-mb-px">
           <Link
             className={showAdmin ? selectedTabClasses : unselectedTabClasses}
-            to={{ ...location, pathname: '/entries/reports' }}
+            to={{ ...location, pathname: "/entries/reports" }}
           >
-            {'Reports'}
+            {"Reports"}
           </Link>
         </li>
       </ul>
@@ -160,25 +141,23 @@ class EntriesIndexStack extends React.Component {
 
     return (
       <Switch>
-        {admin &&
+        {admin && (
           <Route
             path={`${match.url}/reports/summary`}
             render={this._renderSummaryTable}
-          />}
-        {admin &&
+          />
+        )}
+        {admin && (
           <Route
             path={`${match.url}/reports`}
             render={this._renderReportsPage}
-          />}
+          />
+        )}
         <Route
           path={`${match.url}/summary`}
           render={this._renderSummaryTable}
         />
-        <Route
-          exact
-          path={match.url}
-          render={this._renderIndexPage}
-        />
+        <Route exact path={match.url} render={this._renderIndexPage} />
       </Switch>
     );
   }
@@ -187,9 +166,9 @@ class EntriesIndexStack extends React.Component {
     const { admin, location, query } = this.props;
     const { pathname } = location;
 
-    const isReports        = pathname === '/entries/reports';
-    const isReportsSummary = pathname === '/entries/reports/summary';
-    const showAdmin        = admin && (isReports || isReportsSummary);
+    const isReports = pathname === "/entries/reports";
+    const isReportsSummary = pathname === "/entries/reports/summary";
+    const showAdmin = admin && (isReports || isReportsSummary);
 
     return (
       <EntriesFilterForm
@@ -206,30 +185,24 @@ class EntriesIndexStack extends React.Component {
     const { admin, fetching, location, query } = this.props;
     const { pathname } = location;
 
-    const isReports        = pathname === '/entries/reports';
-    const isReportsSummary = pathname === '/entries/reports/summary';
-    const showAdmin        = admin && (isReports || isReportsSummary);
+    const isReports = pathname === "/entries/reports";
+    const isReportsSummary = pathname === "/entries/reports/summary";
+    const showAdmin = admin && (isReports || isReportsSummary);
 
     return (
       <div className="p-4">
         <div className="flex flex-row items-center justify-between mb-4">
-          <h1 className="text-blue">
-            {'Entries'}
-          </h1>
+          <h1 className="text-blue">{"Entries"}</h1>
           <Button
             as={Link}
             color="blue"
             to={{
               ...location,
-              pathname: '/entries/new',
+              pathname: "/entries/new",
               state: { modal: true }
             }}
           >
-            <FontAwesomeIcon
-              icon="plus"
-            />
-            {' '}
-            {'New Entry'}
+            <FontAwesomeIcon icon="plus" /> {"New Entry"}
           </Button>
         </div>
         {admin && this._renderTabs(showAdmin)}
@@ -246,17 +219,13 @@ class EntriesIndexStack extends React.Component {
           {!showAdmin && <IndexMenu {...this.props} />}
         </div>
         {this._renderRoutes()}
-        <Spinner
-          page
-          spinning={Boolean(fetching)}
-          text={fetching}
-        />
+        <Spinner page spinning={Boolean(fetching)} text={fetching} />
       </div>
     );
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     admin: selectAdmin(state),
     fetching: state.entries.fetching,
@@ -269,4 +238,7 @@ const actions = {
   onReset: reset
 };
 
-export default connect(props, actions)(EntriesIndexStack);
+export default connect(
+  props,
+  actions
+)(EntriesIndexStack);

@@ -1,7 +1,7 @@
-import FieldError from './FieldError';
-import InputBase from './InputBase';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import FieldError from "./FieldError";
+import InputBase from "./InputBase";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 class InputField extends React.Component {
   static propTypes = {
@@ -10,13 +10,13 @@ class InputField extends React.Component {
     form: PropTypes.form.isRequired,
     onChange: PropTypes.func,
     type: PropTypes.string
-  }
+  };
 
   static defaultProps = {
     disabled: false,
     onChange: null,
-    type: 'text'
-  }
+    type: "text"
+  };
 
   constructor(props) {
     super(props);
@@ -40,7 +40,10 @@ class InputField extends React.Component {
 
   render() {
     const {
-      disabled, field, form: { errors, isSubmitting, touched }, ...rest
+      disabled,
+      field,
+      form: { errors, isSubmitting, touched },
+      ...rest
     } = this.props;
 
     const hasError = errors[field.name] && touched[field.name];
@@ -54,10 +57,7 @@ class InputField extends React.Component {
           error={hasError}
           onChange={this._handleChange}
         />
-        <FieldError
-          error={errors[field.name]}
-          touched={touched[field.name]}
-        />
+        <FieldError error={errors[field.name]} touched={touched[field.name]} />
       </>
     );
   }

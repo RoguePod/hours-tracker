@@ -5,33 +5,30 @@ import {
   SelectField,
   SubmitButton,
   TimezoneField
-} from 'javascripts/shared/components';
-import { Field, Form } from 'formik';
+} from "javascripts/shared/components";
+import { Field, Form } from "formik";
 
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 class ProfileForm extends React.Component {
   static propTypes = {
     isSubmitting: PropTypes.bool.isRequired,
     status: PropTypes.string
-  }
+  };
 
   static defaultProps = {
     status: null
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
   }
 
   _convertToOptions(values) {
-    return values.map((value) => {
+    return values.map(value => {
       return (
-        <option
-          key={value.value}
-          value={value.value}
-        >
+        <option key={value.value} value={value.value}>
           {value.text}
         </option>
       );
@@ -40,27 +37,24 @@ class ProfileForm extends React.Component {
 
   _getRecentProjectsSortOptions() {
     return this._convertToOptions([
-      { text: 'Recent', value: 'startedAt' },
-      { text: 'Clients', value: 'client.name' },
-      { text: 'Projects', value: 'project.name' }
+      { text: "Recent", value: "startedAt" },
+      { text: "Clients", value: "client.name" },
+      { text: "Projects", value: "project.name" }
     ]);
   }
 
   _getEntriesTabOptions() {
     return this._convertToOptions([
-      { text: 'Filter', value: '#filter' },
-      { text: 'New Entry', value: '#new' }
+      { text: "Filter", value: "#filter" },
+      { text: "New Entry", value: "#new" }
     ]);
   }
 
-  /* eslint-disable max-lines-per-function */
   render() {
     const { isSubmitting, status } = this.props;
 
     return (
-      <Form
-        noValidate
-      >
+      <Form noValidate>
         <FormError error={status} />
         <div className="mb-4">
           <Field
@@ -91,26 +85,10 @@ class ProfileForm extends React.Component {
             name="recentProjectsSort"
             required
           >
-            <option value="">
-              {'--Select--'}
-            </option>
+            <option value="">{"--Select--"}</option>
             {this._getRecentProjectsSortOptions()}
           </Field>
         </div>
-        {/* <div className="mb-4">
-          <Field
-            component={SelectField}
-            disabled={submitting}
-            label="Default Entries Tab"
-            name="entriesTab"
-            validate={[isRequired]}
-          >
-            <option value="">
-              {'--Select--'}
-            </option>
-            {this._getEntriesTabOptions()}
-          </Field>
-        </div> */}
         <div className="mb-4">
           <Field
             component={TimezoneField}
@@ -126,15 +104,10 @@ class ProfileForm extends React.Component {
             name="autoloadLastDescription"
           />
         </div>
-        <SubmitButton
-          submitting={isSubmitting}
-        >
-          {'Save'}
-        </SubmitButton>
+        <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
       </Form>
     );
   }
-  /* eslint-enable max-lines-per-function */
 }
 
 export default ProfileForm;

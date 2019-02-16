@@ -1,11 +1,9 @@
 @import url('//use.typekit.net/pbd6lbw.css');
 @import '~react-datepicker/dist/react-datepicker.css';
 
-/* stylelint-disable at-rule-no-unknown, at-rule-empty-line-before */
 @tailwind preflight;
 @tailwind components;
 @tailwind utilities;
-/* stylelint-enable at-rule-no-unknown, at-rule-empty-line-before */
 
 body,
 html {
@@ -30,42 +28,4 @@ a {
 
 .react-datepicker__input-container {
   display: block;
-}
-
-.transition {
-  transition: all 0.3s ease;
-}
-
-.table-responsive {
-  @apply w-full overflow-x-auto;
-}
-
-table {
-  @apply w-full border;
-
-  td,
-  th {
-    @apply p-2 border;
-  }
-
-  th {
-    @apply text-left font-normal;
-  }
-
-  thead {
-    th {
-      @apply bg-blue text-white;
-    }
-  }
-}
-
-hr {
-  border: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  height: 0;
-}
-
-.text-overflow-ellipsis {
-  text-overflow: ellipsis;
 }

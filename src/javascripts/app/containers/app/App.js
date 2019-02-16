@@ -1,19 +1,19 @@
 /* global window,document */
 
-import { loadApp, updateWindow } from 'javascripts/app/redux/app';
+import { loadApp, updateWindow } from "javascripts/app/redux/app";
 
-import { Flashes } from 'javascripts/shared/components';
-import { Helmet } from 'react-helmet';
-import Loader from './Loader';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _get from 'lodash/get';
-import _isEqual from 'lodash/isEqual';
-import { connect } from 'react-redux';
-import cx from 'classnames';
-import { history } from 'javascripts/app/redux/store';
-import { signOutUser } from 'javascripts/app/redux/user';
-import { withRouter } from 'react-router-dom';
+import { Flashes } from "javascripts/shared/components";
+import { Helmet } from "react-helmet";
+import Loader from "./Loader";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _get from "lodash/get";
+import _isEqual from "lodash/isEqual";
+import { connect } from "react-redux";
+import cx from "classnames";
+import { history } from "javascripts/app/redux/store";
+import { signOutUser } from "javascripts/app/redux/user";
+import { withRouter } from "react-router-dom";
 
 class App extends React.Component {
   static propTypes = {
@@ -27,13 +27,13 @@ class App extends React.Component {
     onUpdateWindow: PropTypes.func.isRequired,
     ready: PropTypes.bool.isRequired,
     width: PropTypes.number.isRequired
-  }
+  };
 
   static defaultProps = {
     auth: null,
     children: null,
     fetching: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -47,12 +47,18 @@ class App extends React.Component {
 
     onLoadApp();
 
-    window.addEventListener('resize', this._handleUpdateWindow);
+    window.addEventListener("resize", this._handleUpdateWindow);
   }
 
   shouldComponentUpdate(nextProps) {
     const {
-      auth, clientsReady, fetching, flashes, location, ready, width
+      auth,
+      clientsReady,
+      fetching,
+      flashes,
+      location,
+      ready,
+      width
     } = this.props;
 
     return (
@@ -70,17 +76,17 @@ class App extends React.Component {
     const { location } = this.props;
     const { hash, pathname } = location;
 
-    const modal     = _get(location, 'state.modal', false);
-    const prevModal = _get(prevProps, 'location.state.modal', false);
+    const modal = _get(location, "state.modal", false);
+    const prevModal = _get(prevProps, "location.state.modal", false);
 
     if (!modal && !prevModal && pathname !== prevProps.location.pathname) {
       window.scrollTo(0, 0);
     }
 
     if (hash.match(/sidebar/u) || hash.match(/stopwatch/u)) {
-      document.addEventListener('keydown', this._handleKeyPress);
+      document.addEventListener("keydown", this._handleKeyPress);
     } else {
-      document.removeEventListener('keydown', this._handleKeyPress);
+      document.removeEventListener("keydown", this._handleKeyPress);
     }
   }
 
@@ -89,7 +95,7 @@ class App extends React.Component {
       clearTimeout(this.timeout);
     }
 
-    window.removeEventListener('resize', this._handleUpdateWindow);
+    window.removeEventListener("resize", this._handleUpdateWindow);
   }
 
   _handleUpdateWindow() {
@@ -99,8 +105,7 @@ class App extends React.Component {
 
     onUpdateWindow(element.clientWidth, element.clientHeight);
 
-    if (location.hash.match(/sidebar/u) ||
-        location.hash.match(/stopwatch/u)) {
+    if (location.hash.match(/sidebar/u) || location.hash.match(/stopwatch/u)) {
       history.push({ ...location, hash: null, replace: true });
     }
   }
@@ -117,35 +122,31 @@ class App extends React.Component {
   }
 
   render() {
-    const {
-      auth, children, clientsReady, ready
-    } = this.props;
+    const { auth, children, clientsReady, ready } = this.props;
 
     const isReady = !(!ready || (!clientsReady && auth));
 
-    const htmlClasses = cx('antialiased', {
-      'bg-blue-lightest': !auth,
-      'bg-white': auth
+    const htmlClasses = cx("antialiased", {
+      "bg-blue-lightest": !auth,
+      "bg-white": auth
     });
 
     return (
       <>
         <Helmet>
-          <html className={htmlClasses} />
+          <html className={htmlClasses} lang="en" />
         </Helmet>
 
         {isReady && children}
 
-        <Loader
-          loading={!isReady}
-        />
+        <Loader loading={!isReady} />
         <Flashes />
       </>
     );
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     auth: state.app.auth,
     clientsReady: state.clients.ready,
@@ -162,4 +163,9 @@ const actions = {
   onUpdateWindow: updateWindow
 };
 
-export default withRouter(connect(props, actions)(App));
+export default withRouter(
+  connect(
+    props,
+    actions
+  )(App)
+);

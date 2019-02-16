@@ -1,21 +1,25 @@
-import { Field, Form } from 'formik';
-import { FormError, TextAreaField } from 'javascripts/shared/components';
+import { Field, Form } from "formik";
+import { FormError, TextAreaField } from "javascripts/shared/components";
 
-import { ProjectField } from 'javascripts/app/components';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import { ProjectField } from "javascripts/app/components";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 class StopWatchForm extends React.Component {
   static propTypes = {
     onAutoSave: PropTypes.func,
     status: PropTypes.string,
-    values: PropTypes.object.isRequired
-  }
+    values: PropTypes.shape({
+      clientId: PropTypes.string,
+      description: PropTypes.string,
+      projectId: PropTypes.string
+    }).isRequired
+  };
 
   static defaultProps = {
     onAutoSave: null,
     status: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -35,7 +39,7 @@ class StopWatchForm extends React.Component {
     }
   }
 
-  timeout = null
+  timeout = null;
 
   _handleDescriptionChange() {
     if (this.timeout) {
@@ -57,9 +61,7 @@ class StopWatchForm extends React.Component {
     const { status } = this.props;
 
     return (
-      <Form
-        noValidate
-      >
+      <Form noValidate>
         <FormError error={status} />
         <div className="mb-2">
           <Field

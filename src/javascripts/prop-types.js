@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const project = PropTypes.shape({
   name: PropTypes.string.isRequired
@@ -65,7 +65,7 @@ const propTypes = {
   recent: PropTypes.shape({
     description: PropTypes.string
   }),
-  role: PropTypes.oneOf(['User', 'Admin']),
+  role: PropTypes.oneOf(["User", "Admin"]),
   route: PropTypes.shape({
     key: PropTypes.string.isRequired
   }),
@@ -92,10 +92,12 @@ const propTypes = {
     autoloadLastDescription: PropTypes.bool,
     name: PropTypes.string,
     recentProjectsListSize: PropTypes.number,
-    recentProjectsSort: PropTypes.oneOf(
-      ['startedAt', 'client.name', 'project.name']
-    ),
-    role: PropTypes.oneOf(['Admin', 'User']),
+    recentProjectsSort: PropTypes.oneOf([
+      "startedAt",
+      "client.name",
+      "project.name"
+    ]),
+    role: PropTypes.oneOf(["Admin", "User"]),
     timezone: PropTypes.string
   })
 };

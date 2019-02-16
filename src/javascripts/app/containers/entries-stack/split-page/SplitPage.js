@@ -1,17 +1,17 @@
-import * as Yup from 'yup';
+import * as Yup from "yup";
 
-import { getEntry, reset, splitEntry } from 'javascripts/app/redux/entry';
+import { getEntry, reset, splitEntry } from "javascripts/app/redux/entry";
 
-import { Formik } from 'formik';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import { Spinner } from 'javascripts/shared/components';
-import SplitForm from './SplitForm';
-import _get from 'lodash/get';
-import { calcHours } from 'javascripts/globals';
-import { connect } from 'react-redux';
-import moment from 'moment-timezone';
-import { selectTimezone } from 'javascripts/app/redux/app';
+import { Formik } from "formik";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { Spinner } from "javascripts/shared/components";
+import SplitForm from "./SplitForm";
+import _get from "lodash/get";
+import { calcHours } from "javascripts/globals";
+import { connect } from "react-redux";
+import moment from "moment-timezone";
+import { selectTimezone } from "javascripts/app/redux/app";
 
 class EntrySplitPage extends React.Component {
   static propTypes = {
@@ -22,12 +22,12 @@ class EntrySplitPage extends React.Component {
     onReset: PropTypes.func.isRequired,
     onSplitEntry: PropTypes.func.isRequired,
     timezone: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     entry: null,
     fetching: null
-  }
+  };
 
   componentDidMount() {
     const { match, onGetEntry } = this.props;
@@ -54,19 +54,20 @@ class EntrySplitPage extends React.Component {
       return {
         entries: [
           {
-            clientId: _get(entry, 'clientRef.id'),
+            clientId: _get(entry, "clientRef.id"),
             description: entry.description,
             hours: calcHours(entry.startedAt, entry.stoppedAt, entry.timezone),
-            percent: '100.0',
-            projectId: _get(entry, 'projectRef.id'),
+            percent: "100.0",
+            projectId: _get(entry, "projectRef.id"),
             startedAt: entry.startedAt,
             stoppedAt,
             timezone: entry.timezone
-          }, {
+          },
+          {
             clientId: null,
-            description: '',
-            hours: '0.0',
-            percent: '0.0',
+            description: "",
+            hours: "0.0",
+            percent: "0.0",
             projectId: null,
             startedAt: stoppedAt,
             stoppedAt,
@@ -92,30 +93,28 @@ class EntrySplitPage extends React.Component {
       entries: Yup.array().of(
         Yup.object().shape({
           startedAt: Yup.number()
-            .parsedTime('Started is not a valid date/time')
-            .required('Started is Required'),
+            .parsedTime("Started is not a valid date/time")
+            .required("Started is Required"),
           stoppedAt: Yup.number()
-            .parsedTime('Stopped is not a valid date/time')
-            .required('Stopped is Required')
-            .moreThan(Yup.ref('startedAt'), 'Must occur after Started'),
-          timezone: Yup.string().required('Timezone is Required')
+            .parsedTime("Stopped is not a valid date/time")
+            .required("Stopped is Required")
+            .moreThan(Yup.ref("startedAt"), "Must occur after Started"),
+          timezone: Yup.string().required("Timezone is Required")
         })
       ),
       startedAt: Yup.number()
-        .parsedTime('Started is not a valid date/time')
-        .required('Started is Required'),
+        .parsedTime("Started is not a valid date/time")
+        .required("Started is Required"),
       stoppedAt: Yup.number()
-        .parsedTime('Stopped is not a valid date/time')
-        .required('Stopped is Required')
-        .moreThan(Yup.ref('startedAt'), 'Must occur after Started'),
-      timezone: Yup.string().required('Timezone is Required')
+        .parsedTime("Stopped is not a valid date/time")
+        .required("Stopped is Required")
+        .moreThan(Yup.ref("startedAt"), "Must occur after Started"),
+      timezone: Yup.string().required("Timezone is Required")
     });
 
     return (
       <div className="p-4">
-        <h1 className="text-blue">
-          {'Split Entry'}
-        </h1>
+        <h1 className="text-blue">{"Split Entry"}</h1>
         <div className="border rounded mb-4 p-4">
           <Formik
             component={SplitForm}
@@ -124,18 +123,14 @@ class EntrySplitPage extends React.Component {
             onSubmit={onSplitEntry}
             validationSchema={validationSchema}
           />
-          <Spinner
-            page
-            spinning={Boolean(fetching)}
-            text={fetching}
-          />
+          <Spinner page spinning={Boolean(fetching)} text={fetching} />
         </div>
       </div>
     );
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     entry: state.entry.entry,
     fetching: state.entry.fetching,
@@ -149,4 +144,7 @@ const actions = {
   onSplitEntry: splitEntry
 };
 
-export default connect(props, actions)(EntrySplitPage);
+export default connect(
+  props,
+  actions
+)(EntrySplitPage);

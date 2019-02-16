@@ -1,22 +1,22 @@
-import * as Yup from 'yup';
+import * as Yup from "yup";
 
-import { Formik } from 'formik';
-import ProjectForm from '../ProjectForm';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import { connect } from 'react-redux';
-import { selectProject } from 'javascripts/app/redux/clients';
-import { updateProject } from 'javascripts/app/redux/projects';
+import { Formik } from "formik";
+import ProjectForm from "../ProjectForm";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import { connect } from "react-redux";
+import { selectProject } from "javascripts/app/redux/clients";
+import { updateProject } from "javascripts/app/redux/projects";
 
 class ProjectEditForm extends React.PureComponent {
   static propTypes = {
     onUpdateProject: PropTypes.func.isRequired,
     project: PropTypes.project
-  }
+  };
 
   static defaultProps = {
     project: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -34,15 +34,11 @@ class ProjectEditForm extends React.PureComponent {
     const { project } = this.props;
 
     if (!project) {
-      return (
-        <h1 className="text-center text-blue">
-          {'Project Not Found'}
-        </h1>
-      );
+      return <h1 className="text-center text-blue">{"Project Not Found"}</h1>;
     }
 
     const validationSchema = Yup.object().shape({
-      name: Yup.string().required('Name is Required')
+      name: Yup.string().required("Name is Required")
     });
 
     const initialValues = {
@@ -75,4 +71,7 @@ const actions = {
   onUpdateProject: updateProject
 };
 
-export default connect(props, actions)(ProjectEditForm);
+export default connect(
+  props,
+  actions
+)(ProjectEditForm);

@@ -1,11 +1,12 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import Row from './Row';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import Row from "./Row";
+import { Table } from "javascripts/shared/components";
 
 class ProjectsRow extends React.Component {
   static propTypes = {
     client: PropTypes.client.isRequired
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
@@ -68,16 +69,10 @@ class ProjectsRow extends React.Component {
   }
 
   _renderRows(client) {
-    return Object.keys(client.projects).map((key) => {
+    return Object.keys(client.projects).map(key => {
       const entries = client.projects[key];
 
-      return (
-        <Row
-          entries={entries}
-          key={key}
-          name={key}
-        />
-      );
+      return <Row entries={entries} key={key} name={key} />;
     });
   }
 
@@ -86,30 +81,22 @@ class ProjectsRow extends React.Component {
 
     return (
       <tbody>
-        <tr
-          className="bg-blue-lighter text-blue"
-        >
-          <td
-            colSpan={5}
-          >
-            {client.name}
-          </td>
+        <tr className="bg-blue-lighter text-blue">
+          <Table.Td colSpan={5}>{client.name}</Table.Td>
         </tr>
         {this._renderRows(client)}
         <tr>
-          <td />
-          <td className="text-green">
+          <Table.Td />
+          <Table.Td className="text-green">
             {this._calcBillable().toFixed(1)}
-          </td>
-          <td>
-            {this._calcNonBillable().toFixed(1)}
-          </td>
-          <td className="w-px whitespace-no-wrap">
+          </Table.Td>
+          <Table.Td>{this._calcNonBillable().toFixed(1)}</Table.Td>
+          <Table.Td className="w-px whitespace-no-wrap">
             {this._calcTotal().toFixed(1)}
-          </td>
-          <td>
-            {`${(this._calcPercentBillable() * 100).toFixed(2)}%`}
-          </td>
+          </Table.Td>
+          <Table.Td>{`${(this._calcPercentBillable() * 100).toFixed(
+            2
+          )}%`}</Table.Td>
         </tr>
       </tbody>
     );

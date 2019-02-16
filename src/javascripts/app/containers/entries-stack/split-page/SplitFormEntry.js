@@ -3,21 +3,21 @@ import {
   TextAreaField,
   TimeField,
   Tooltip
-} from 'javascripts/shared/components';
+} from "javascripts/shared/components";
 
-import { Field } from 'formik';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ProjectField } from 'javascripts/app/components';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _sumBy from 'lodash/sumBy';
-import { calcHours } from 'javascripts/globals';
-import moment from 'moment-timezone';
-import styled from 'styled-components';
+import { Field } from "formik";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ProjectField } from "javascripts/app/components";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _sumBy from "lodash/sumBy";
+import { calcHours } from "javascripts/globals";
+import moment from "moment-timezone";
+import styled from "styled-components";
 
 const Close = styled.div`
-  top: -0.75rem;
   right: -0.75rem;
+  top: -0.75rem;
 `;
 
 class SplitFormEntry extends React.Component {
@@ -28,7 +28,7 @@ class SplitFormEntry extends React.Component {
     }).isRequired,
     index: PropTypes.number.isRequired,
     remove: PropTypes.func.isRequired
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -44,7 +44,12 @@ class SplitFormEntry extends React.Component {
 
   _handleRemove() {
     const {
-      form: { setFieldValue, values: { entries } }, index, remove
+      form: {
+        setFieldValue,
+        values: { entries }
+      },
+      index,
+      remove
     } = this.props;
 
     const entry = entries[index];
@@ -66,14 +71,15 @@ class SplitFormEntry extends React.Component {
     setTimeout(() => this._handleCalculateOthers(updateIndex), 1);
   }
 
-  /* eslint-disable max-statements */
   _handleCalculateOthers(changedIndex) {
-    const { form: { setFieldValue, values } } = this.props;
+    const {
+      form: { setFieldValue, values }
+    } = this.props;
     const { entries, startedAt, stoppedAt, timezone } = values;
 
-    const totalHours     = calcHours(startedAt, stoppedAt, timezone);
-    const currentHours   = _sumBy(entries, (entry) => Number(entry.hours));
-    const currentPercent = _sumBy(entries, (entry) => Number(entry.percent));
+    const totalHours = calcHours(startedAt, stoppedAt, timezone);
+    const currentHours = _sumBy(entries, entry => Number(entry.hours));
+    const currentPercent = _sumBy(entries, entry => Number(entry.percent));
 
     let diffHours = totalHours - currentHours.toFixed(1);
     let diffPercent = 100.0 - currentPercent.toFixed(1);
@@ -112,8 +118,9 @@ class SplitFormEntry extends React.Component {
 
       setFieldValue(
         `entries.${index}.startedAt`,
-        moment.tz(startedAt, timezone)
-          .add(hours, 'hours')
+        moment
+          .tz(startedAt, timezone)
+          .add(hours, "hours")
           .valueOf()
       );
 
@@ -122,8 +129,9 @@ class SplitFormEntry extends React.Component {
       } else {
         setFieldValue(
           `entries.${index}.stoppedAt`,
-          moment.tz(startedAt, timezone)
-            .add(hours + staticHours, 'hours')
+          moment
+            .tz(startedAt, timezone)
+            .add(hours + staticHours, "hours")
             .valueOf()
         );
 
@@ -131,11 +139,14 @@ class SplitFormEntry extends React.Component {
       }
     });
   }
-  /* eslint-enable max-statements */
 
   _handleHoursChange(event) {
     const {
-      index, form: { setFieldValue, values: { startedAt, stoppedAt, timezone } }
+      index,
+      form: {
+        setFieldValue,
+        values: { startedAt, stoppedAt, timezone }
+      }
     } = this.props;
 
     const hours = calcHours(startedAt, stoppedAt, timezone);
@@ -145,7 +156,7 @@ class SplitFormEntry extends React.Component {
       return;
     }
 
-    const percent = ((value / hours) * 100.0);
+    const percent = (value / hours) * 100.0;
     setFieldValue(`entries.${index}.percent`, percent.toFixed(1));
 
     setTimeout(() => this._handleCalculateOthers(index), 1);
@@ -153,7 +164,11 @@ class SplitFormEntry extends React.Component {
 
   _handlePercentChange(event) {
     const {
-      index, form: { setFieldValue, values: { startedAt, stoppedAt, timezone } }
+      index,
+      form: {
+        setFieldValue,
+        values: { startedAt, stoppedAt, timezone }
+      }
     } = this.props;
 
     const value = Number(event.target.value);
@@ -169,31 +184,28 @@ class SplitFormEntry extends React.Component {
     setTimeout(() => this._handleCalculateOthers(index), 1);
   }
 
-  /* eslint-disable max-lines-per-function */
   render() {
     const {
-      form: { isSubmitting, values: { entries, timezone } }, index
+      form: {
+        isSubmitting,
+        values: { entries, timezone }
+      },
+      index
     } = this.props;
 
     const closeClasses =
-      'absolute bg-red text-white w-8 h-8 flex items-center cursor-pointer ' +
-      'justify-center rounded-full text-center border-4 border-white';
+      "absolute bg-red text-white w-8 h-8 flex items-center cursor-pointer " +
+      "justify-center rounded-full text-center border-4 border-white";
 
     return (
       <div className="border rounded mb-4 px-4 pt-4 relative">
-        {entries.length > 2 && !isSubmitting &&
-          <Tooltip
-            title="Remove Entry"
-          >
-            <Close
-              className={closeClasses}
-              onClick={this._handleRemove}
-            >
-              <FontAwesomeIcon
-                icon="times"
-              />
+        {entries.length > 2 && !isSubmitting && (
+          <Tooltip title="Remove Entry">
+            <Close className={closeClasses} onClick={this._handleRemove}>
+              <FontAwesomeIcon icon="times" />
             </Close>
-          </Tooltip>}
+          </Tooltip>
+        )}
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/3 px-2 mb-4">
             <Field
@@ -258,7 +270,6 @@ class SplitFormEntry extends React.Component {
       </div>
     );
   }
-  /* eslint-enable max-lines-per-function */
 }
 
 export default SplitFormEntry;

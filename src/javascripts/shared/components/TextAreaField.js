@@ -1,30 +1,36 @@
 /* global window */
 
-import { FieldError, Label } from 'javascripts/shared/components';
-import React, { useEffect, useRef } from 'react';
+import { FieldError, Label } from "javascripts/shared/components";
+import React, { useEffect, useRef } from "react";
 
-import PropTypes from 'javascripts/prop-types';
-import _sum from 'lodash/sum';
-import cx from 'classnames';
-import { isBlank } from 'javascripts/globals';
-import styled from 'styled-components';
-import useId from 'javascripts/shared/hooks/useId';
+import PropTypes from "javascripts/prop-types";
+import _sum from "lodash/sum";
+import cx from "classnames";
+import { isBlank } from "javascripts/globals";
+import styled from "styled-components";
+import useId from "javascripts/shared/hooks/useId";
 
 const TextArea = styled.textarea`
+  transition: border 300ms ease;
+
   &:disabled {
     background-color: #dae1e7;
     cursor: not-allowed;
   }
 `;
 
-/* eslint-disable max-statements, max-lines-per-function, react/jsx-no-bind */
-const TextAreaField = (props) => {
-  /* eslint-disable no-unused-vars */
+const TextAreaField = props => {
   const {
-    autoHeight, className, disabled, field,
-    form: { errors, isSubmitting, touched }, label, onChange, required, ...rest
+    autoHeight,
+    className,
+    disabled,
+    field,
+    form: { errors, isSubmitting, touched },
+    label,
+    onChange,
+    required,
+    ...rest
   } = props;
-  /* eslint-enable no-unused-vars */
 
   const textAreaRef = useRef(null);
   const id = useId(rest.id);
@@ -42,25 +48,26 @@ const TextAreaField = (props) => {
     }
 
     const {
-      borderBottomWidth, borderTopWidth, minHeight
+      borderBottomWidth,
+      borderTopWidth,
+      minHeight
     } = window.getComputedStyle(textAreaRef.current);
 
-    /* eslint-disable id-length */
-    const borderHeight =
-      _sum([borderBottomWidth, borderTopWidth].map((x) => parseFloat(x)));
-    /* eslint-enable id-length */
+    const borderHeight = _sum(
+      [borderBottomWidth, borderTopWidth].map(x => parseFloat(x))
+    );
 
     // Measure the scrollHeight and update the height to match.
-    textAreaRef.current.style.height = 'auto';
-    textAreaRef.current.style.overflowY = 'hidden';
+    textAreaRef.current.style.height = "auto";
+    textAreaRef.current.style.overflowY = "hidden";
     textAreaRef.current.style.height = `${Math.max(
       parseFloat(minHeight),
       Math.ceil(textAreaRef.current.scrollHeight + borderHeight)
     )}px`;
-    textAreaRef.current.style.overflowY = '';
+    textAreaRef.current.style.overflowY = "";
   };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     field.onChange(event);
     _updateHeight();
 
@@ -80,27 +87,24 @@ const TextAreaField = (props) => {
   const hasError = errors[field.name] && touched[field.name];
 
   const textAreaClassName = cx(
-    'appearance-none border rounded w-full py-2 px-3 text-grey-darker',
-    'leading-tight focus:outline-none transition',
+    "appearance-none border rounded w-full py-2 px-3 text-grey-darker",
+    "leading-tight focus:outline-none",
     {
-      'border-grey-light': !hasError,
-      'border-red': hasError,
-      'focus:border-blue-light': !hasError,
-      'focus:border-red': hasError
+      "border-grey-light": !hasError,
+      "border-red": hasError,
+      "focus:border-blue-light": !hasError,
+      "focus:border-red": hasError
     },
     className
   );
 
   return (
     <>
-      {!isBlank(label) &&
-        <Label
-          error={hasError}
-          htmlFor={id}
-          required={required}
-        >
+      {!isBlank(label) && (
+        <Label error={hasError} htmlFor={id} required={required}>
           {label}
-        </Label>}
+        </Label>
+      )}
       <TextArea
         autoCapitalize="sentences"
         autoCorrect="on"
@@ -112,10 +116,7 @@ const TextAreaField = (props) => {
         onChange={handleChange}
         ref={textAreaRef}
       />
-      <FieldError
-        error={errors[field.name]}
-        touched={touched[field.name]}
-      />
+      <FieldError error={errors[field.name]} touched={touched[field.name]} />
     </>
   );
 };

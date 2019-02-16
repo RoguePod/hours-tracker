@@ -1,11 +1,16 @@
 /* global window */
 
-import { cloudFunctionsUrl, isBlank, toQuery } from 'javascripts/globals';
+import { cloudFunctionsUrl, isBlank, toQuery } from "javascripts/globals";
 
-import { ConfirmAction } from 'javascripts/shared/components';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import cx from 'classnames';
+import { ConfirmAction } from "javascripts/shared/components";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import cx from "classnames";
+import styled from "styled-components";
+
+const TextOverflow = styled.div`
+  text-overflow: ellipsis;
+`;
 
 class ExportEntriesButton extends React.Component {
   static propTypes = {
@@ -14,11 +19,11 @@ class ExportEntriesButton extends React.Component {
     query: PropTypes.entriesQuery.isRequired,
     timezone: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
-    className: ''
-  }
+    className: ""
+  };
 
   constructor(props) {
     super(props);
@@ -39,7 +44,7 @@ class ExportEntriesButton extends React.Component {
 
     const url = `${cloudFunctionsUrl}/${func}?${toQuery(newQuery)}`;
 
-    window.open(url, '_blank');
+    window.open(url, "_blank");
   }
 
   render() {
@@ -56,34 +61,26 @@ class ExportEntriesButton extends React.Component {
     }
 
     const titleClassName = cx(
-      'cursor-pointer whitespace-no-wrap w-100 overflow-hidden ' +
-      'text-overflow-ellipsis text-center'
+      "cursor-pointer whitespace-no-wrap w-100 overflow-hidden text-center"
     );
 
     const children = (
-      <div className={titleClassName}>
-        {title}
-      </div>
+      <TextOverflow className={titleClassName}>{title}</TextOverflow>
     );
 
     const containerClassName = cx(
-      className, 'p-2 hover:bg-blue-lighter text-blue'
+      className,
+      "p-2 hover:bg-blue-lighter text-blue"
     );
 
     if (warning) {
-      const message = "You've requested to get all entries, without filters, " +
-        'which can take a long time and may not even finish.';
+      const message =
+        "You've requested to get all entries, without filters, " +
+        "which can take a long time and may not even finish.";
 
       return (
-        <ConfirmAction
-          message={message}
-          onClick={this._handleOpen}
-        >
-          <div
-            className={containerClassName}
-          >
-            {children}
-          </div>
+        <ConfirmAction message={message} onClick={this._handleOpen}>
+          <div className={containerClassName}>{children}</div>
         </ConfirmAction>
       );
     }

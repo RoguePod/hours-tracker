@@ -1,11 +1,14 @@
-import FieldError from './FieldError';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import SelectBase from './SelectBase';
+import FieldError from "./FieldError";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import SelectBase from "./SelectBase";
 
-const SelectField = (props) => {
+const SelectField = props => {
   const {
-    children, disabled, field, form: { errors, isSubmitting, touched },
+    children,
+    disabled,
+    field,
+    form: { errors, isSubmitting, touched },
     ...rest
   } = props;
 
@@ -21,10 +24,7 @@ const SelectField = (props) => {
       >
         {children}
       </SelectBase>
-      <FieldError
-        error={errors[field.name]}
-        touched={touched[field.name]}
-      />
+      <FieldError error={errors[field.name]} touched={touched[field.name]} />
     </>
   );
 };

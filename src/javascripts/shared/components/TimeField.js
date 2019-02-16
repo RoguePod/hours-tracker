@@ -1,11 +1,11 @@
-import FieldError from './FieldError';
-import FieldHelper from './FieldHelper';
-import InputBase from './InputBase';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import chrono from 'chrono-node';
-import { isBlank } from 'javascripts/globals';
-import moment from 'moment-timezone';
+import FieldError from "./FieldError";
+import FieldHelper from "./FieldHelper";
+import InputBase from "./InputBase";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import chrono from "chrono-node";
+import { isBlank } from "javascripts/globals";
+import moment from "moment-timezone";
 
 class TimeField extends React.Component {
   static propTypes = {
@@ -15,14 +15,14 @@ class TimeField extends React.Component {
     id: PropTypes.string,
     onChange: PropTypes.func,
     timezone: PropTypes.string
-  }
+  };
 
   static defaultProps = {
     disabled: false,
     id: null,
     onChange: null,
-    timezone: 'UTC'
-  }
+    timezone: "UTC"
+  };
 
   constructor(props) {
     super(props);
@@ -39,11 +39,18 @@ class TimeField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { field: { name, value }, form: { touched }, timezone } = this.props;
+    const {
+      field: { name, value },
+      form: { touched },
+      timezone
+    } = this.props;
 
     const isTouched = touched[name];
-    if (!isTouched &&
-       (prevProps.field.value !== value || timezone !== prevProps.timezone)) {
+
+    if (
+      !isTouched &&
+      (prevProps.field.value !== value || timezone !== prevProps.timezone)
+    ) {
       this.setState({
         value: this._formatValue(value, timezone)
       });
@@ -62,11 +69,15 @@ class TimeField extends React.Component {
     }
 
     const values = [
-      parsed.getFullYear(), parsed.getMonth(), parsed.getDate(),
-      parsed.getHours(), parsed.getMinutes()
+      parsed.getFullYear(),
+      parsed.getMonth(),
+      parsed.getDate(),
+      parsed.getHours(),
+      parsed.getMinutes()
     ];
 
-    return moment.tz(values, timezone)
+    return moment
+      .tz(values, timezone)
       .utc()
       .valueOf();
   }
@@ -76,17 +87,19 @@ class TimeField extends React.Component {
       const date = moment.tz(value, timezone);
 
       if (date && date.isValid()) {
-        return date.format('MM/DD/YYYY [a]t hh:mm A z');
+        return date.format("MM/DD/YYYY [a]t hh:mm A z");
       }
     }
 
-    return '';
+    return "";
   }
 
   _handleChange(event) {
     const {
-      field: { name }, form: { setFieldTouched, setFieldValue },
-      onChange, timezone
+      field: { name },
+      form: { setFieldTouched, setFieldValue },
+      onChange,
+      timezone
     } = this.props;
 
     const fieldValue = this._parseDate(event.target.value, timezone);
@@ -101,8 +114,11 @@ class TimeField extends React.Component {
 
   render() {
     const {
-      disabled, field, form: { errors, isSubmitting, touched },
-      timezone, ...rest
+      disabled,
+      field,
+      form: { errors, isSubmitting, touched },
+      timezone,
+      ...rest
     } = this.props;
     const { value } = this.state;
 
@@ -122,10 +138,7 @@ class TimeField extends React.Component {
           type="text"
           value={value}
         />
-        <FieldError
-          error={errors[field.name]}
-          touched={touched[field.name]}
-        />
+        <FieldError error={errors[field.name]} touched={touched[field.name]} />
         <FieldHelper
           className="text-green"
           color="green"

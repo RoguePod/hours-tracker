@@ -1,9 +1,9 @@
-import { Clock, Portal } from 'javascripts/shared/components';
+import { Clock, Portal } from "javascripts/shared/components";
 
-import { CSSTransition } from 'react-transition-group';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import styled from 'styled-components';
+import { CSSTransition } from "react-transition-group";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import styled from "styled-components";
 
 const DURATION = 300;
 
@@ -29,8 +29,8 @@ const FadeIn = styled.div`
 
 const Loader = ({ loading }) => {
   const shadeClassName =
-    'fixed pin z-10 overflow-auto bg-blue flex items-center justify-center ' +
-    'text-white flex-col';
+    "fixed pin z-10 overflow-auto bg-blue flex items-center justify-center " +
+    "text-white flex-col";
 
   return (
     <Portal>
@@ -41,16 +41,10 @@ const Loader = ({ loading }) => {
         timeout={DURATION}
         unmountOnExit
       >
-        <FadeIn
-          className={shadeClassName}
-        >
+        <FadeIn className={shadeClassName}>
           <div className="flex flex-row items-center">
-            <Clock
-              size="75px"
-            />
-            <div className="pl-2 text-4xl">
-              {'Hours Tracker'}
-            </div>
+            <Clock size="75px" />
+            <div className="pl-2 text-4xl">{"Hours Tracker"}</div>
           </div>
         </FadeIn>
       </CSSTransition>

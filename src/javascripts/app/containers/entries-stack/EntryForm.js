@@ -1,21 +1,19 @@
-import { Field, Form } from 'formik';
+import { Field, Form } from "formik";
 import {
   FormError,
   SubmitButton,
   TextAreaField,
   TimeField,
   TimezoneField
-} from 'javascripts/shared/components';
+} from "javascripts/shared/components";
 
-import { ProjectField } from 'javascripts/app/components';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import { ProjectField } from "javascripts/app/components";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 const EntryForm = ({ isSubmitting, status, values: { timezone } }) => {
   return (
-    <Form
-      noValidate
-    >
+    <Form noValidate>
       <FormError error={status} />
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-4">
@@ -46,11 +44,7 @@ const EntryForm = ({ isSubmitting, status, values: { timezone } }) => {
           />
         </div>
         <div className="w-full md:w-1/2 px-2 mb-4">
-          <Field
-            component={TimezoneField}
-            label="Timezone"
-            name="timezone"
-          />
+          <Field component={TimezoneField} label="Timezone" name="timezone" />
         </div>
       </div>
       <div className="mb-4">
@@ -62,11 +56,7 @@ const EntryForm = ({ isSubmitting, status, values: { timezone } }) => {
           rows={1}
         />
       </div>
-      <SubmitButton
-        submitting={isSubmitting}
-      >
-        {'Save'}
-      </SubmitButton>
+      <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
     </Form>
   );
 };

@@ -1,36 +1,33 @@
-import { ActionIcon } from 'javascripts/shared/components';
-import { Link } from 'react-router-dom';
-import ProjectRow from './ProjectRow';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _isEqual from 'lodash/isEqual';
-import cx from 'classnames';
+import { ActionIcon } from "javascripts/shared/components";
+import { Link } from "react-router-dom";
+import ProjectRow from "./ProjectRow";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _isEqual from "lodash/isEqual";
+import cx from "classnames";
 
 class ClientRow extends React.Component {
   static propTypes = {
     admin: PropTypes.bool.isRequired,
     client: PropTypes.client.isRequired,
     location: PropTypes.routerLocation.isRequired
-  }
+  };
 
   shouldComponentUpdate(nextProps) {
     const { admin, client } = this.props;
 
-    return (
-      admin !== nextProps.admin ||
-      !_isEqual(client, nextProps.client)
-    );
+    return admin !== nextProps.admin || !_isEqual(client, nextProps.client);
   }
 
   render() {
     const { admin, client, location } = this.props;
 
     const clientClasses = cx(
-      'md:w-48 bg-blue-lightest p-4 md:border-t-0 md:border-l-4 border-t-4',
-      'border-r-0',
+      "md:w-48 bg-blue-lightest p-4 md:border-t-0 md:border-l-4 border-t-4",
+      "border-r-0",
       {
-        'border-green': client.active,
-        'border-red': !client.active
+        "border-green": client.active,
+        "border-red": !client.active
       }
     );
 
@@ -47,18 +44,14 @@ class ClientRow extends React.Component {
     });
 
     const containerClasses =
-      'border rounded shadow mb-4 flex overflow-hidden md:flex-row flex-col ' +
-      'flex-1';
+      "border rounded shadow mb-4 flex overflow-hidden md:flex-row flex-col " +
+      "flex-1";
 
     return (
       <div className={containerClasses}>
-        <div
-          className={clientClasses}
-        >
-          <h3 className="mb-2">
-            {client.name}
-          </h3>
-          {admin &&
+        <div className={clientClasses}>
+          <h3 className="mb-2">{client.name}</h3>
+          {admin && (
             <div className="flex items-center">
               <ActionIcon
                 as={Link}
@@ -85,7 +78,8 @@ class ClientRow extends React.Component {
                   state: { modal: true }
                 }}
               />
-            </div>}
+            </div>
+          )}
         </div>
         <div className="flex-1 flex flex-col border-t md:border-t-0">
           {projects}

@@ -1,22 +1,18 @@
-import {
-  Dropdown,
-  FieldError,
-  InputBase
-} from 'javascripts/shared/components';
+import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
+import { ONE_PX, isBlank } from "javascripts/globals";
 
-import Fuse from 'fuse.js';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import UserRow from './UserRow';
-import _find from 'lodash/find';
-import _isEqual from 'lodash/isEqual';
-import { connect } from 'react-redux';
-import { fuseOptions } from 'javascripts/app/redux/users';
-import { isBlank } from 'javascripts/globals';
-import styled from 'styled-components';
+import Fuse from "fuse.js";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import UserRow from "./UserRow";
+import _find from "lodash/find";
+import _isEqual from "lodash/isEqual";
+import { connect } from "react-redux";
+import { fuseOptions } from "javascripts/app/redux/users";
+import styled from "styled-components";
 
 const Divider = styled.div`
-  height: 1px;
+  height: ${ONE_PX};
 `;
 
 class UserField extends React.Component {
@@ -26,11 +22,11 @@ class UserField extends React.Component {
     form: PropTypes.form.isRequired,
     ready: PropTypes.bool.isRequired,
     users: PropTypes.arrayOf(PropTypes.user).isRequired
-  }
+  };
 
   static defaultProps = {
     disabled: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -52,11 +48,17 @@ class UserField extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { field: { value }, ready, users } = this.props;
+    const {
+      field: { value },
+      ready,
+      users
+    } = this.props;
 
-    if (!_isEqual(prevProps.field.value, value) ||
-        !_isEqual(users, prevProps.users) ||
-        ready !== prevProps.ready) {
+    if (
+      !_isEqual(prevProps.field.value, value) ||
+      !_isEqual(users, prevProps.users) ||
+      ready !== prevProps.ready
+    ) {
       this.setState({ value: this._findValue(value) });
     }
   }
@@ -68,7 +70,7 @@ class UserField extends React.Component {
     }
   }
 
-  changing = false
+  changing = false;
 
   _handleChange({ target: { value } }) {
     this.setState({ value });
@@ -78,7 +80,8 @@ class UserField extends React.Component {
     this.changing = true;
 
     const {
-      field: { name, value }, form: { setFieldTouched, setFieldValue }
+      field: { name, value },
+      form: { setFieldTouched, setFieldValue }
     } = this.props;
 
     if (!_isEqual(user.id, value)) {
@@ -87,12 +90,16 @@ class UserField extends React.Component {
     }
 
     this.setState({
-      focused: false, value: this._findValue(user.id)
+      focused: false,
+      value: this._findValue(user.id)
     });
   }
 
   _handleBlur() {
-    const { field, form: { setFieldTouched, setFieldValue } } = this.props;
+    const {
+      field,
+      form: { setFieldTouched, setFieldValue }
+    } = this.props;
     const { value } = this.state;
 
     if (this.changing) {
@@ -111,7 +118,9 @@ class UserField extends React.Component {
 
   _handleFocus({ target }) {
     this.changing = false;
-    const { field: { value } } = this.props;
+    const {
+      field: { value }
+    } = this.props;
 
     this.setState({ focused: true, value: this._findValue(value) }, () => {
       setTimeout(() => {
@@ -124,10 +133,10 @@ class UserField extends React.Component {
     const { ready, users } = this.props;
 
     if (!ready || isBlank(userId)) {
-      return '';
+      return "";
     }
 
-    const foundUser = _find(users, (user) => {
+    const foundUser = _find(users, user => {
       return user.id === userId;
     });
 
@@ -135,7 +144,7 @@ class UserField extends React.Component {
       return foundUser.name;
     }
 
-    return '';
+    return "";
   }
 
   _findResults(value) {
@@ -150,26 +159,23 @@ class UserField extends React.Component {
   }
 
   render() {
-    /* eslint-disable no-unused-vars */
     const {
-      disabled, field, form: { errors, isSubmitting, touched },
-      ready, users, ...rest
+      disabled,
+      field,
+      form: { errors, isSubmitting, touched },
+      ready,
+      users,
+      ...rest
     } = this.props;
-    /* eslint-enable no-unused-vars */
 
     const { focused, value } = this.state;
     const hasError = errors[field.name] && touched[field.name];
 
-    const rows = (focused ? this._findResults(value) : []).map((user) => {
+    const rows = (focused ? this._findResults(value) : []).map(user => {
       return (
-        <React.Fragment
-          key={user.id}
-        >
+        <React.Fragment key={user.id}>
           <Divider className="bg-grey-lighter" />
-          <UserRow
-            onChange={this._handleDropdownChange}
-            user={user}
-          />
+          <UserRow onChange={this._handleDropdownChange} user={user} />
         </React.Fragment>
       );
     });
@@ -184,10 +190,7 @@ class UserField extends React.Component {
           onFocus={this._handleFocus}
           value={value}
         />
-        <Dropdown
-          error={hasError}
-          open={focused}
-        >
+        <Dropdown error={hasError} open={focused}>
           {rows}
         </Dropdown>
         <FieldError
@@ -199,7 +202,7 @@ class UserField extends React.Component {
   }
 }
 
-const props = (state) => {
+const props = state => {
   return {
     ready: state.users.ready,
     users: state.users.users
@@ -208,4 +211,7 @@ const props = (state) => {
 
 const actions = {};
 
-export default connect(props, actions)(UserField);
+export default connect(
+  props,
+  actions
+)(UserField);

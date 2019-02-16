@@ -1,13 +1,13 @@
-import { delay, fork, put, takeEvery } from 'redux-saga/effects';
+import { delay, fork, put, takeEvery } from "redux-saga/effects";
 
-import _findIndex from 'lodash/findIndex';
-import update from 'immutability-helper';
+import _findIndex from "lodash/findIndex";
+import update from "immutability-helper";
 
 // Constants
 
-const path = 'golfbook/shared/flashes';
+const path = "golfbook/shared/flashes";
 
-const FLASH_ADD    = `${path}/FLASH_ADD`;
+const FLASH_ADD = `${path}/FLASH_ADD`;
 const FLASH_REMOVE = `${path}/FLASH_REMOVE`;
 const FLASH_UPDATE = `${path}/FLASH_UPDATE`;
 const FLASH_DELETE = `${path}/FLASH_DELETE`;
@@ -20,7 +20,7 @@ const initialState = {
 
 const updateUpdateFlash = (state, action) => {
   let bottom = 0;
-  const flashes = state.flashes.map((flash) => {
+  const flashes = state.flashes.map(flash => {
     const newFlash = { ...flash };
 
     if (flash.id === action.id) {
@@ -43,7 +43,7 @@ const updateUpdateFlash = (state, action) => {
 
 const updateRemoveFlash = (state, action) => {
   let bottom = 0;
-  const flashes = state.flashes.map((flash) => {
+  const flashes = state.flashes.map(flash => {
     const newFlash = { ...flash };
 
     if (flash.id === action.id || flash.removed) {
@@ -61,7 +61,7 @@ const updateRemoveFlash = (state, action) => {
 };
 
 const updateDeleteFlash = (state, action) => {
-  const index = _findIndex(state.flashes, (flash) => flash.id === action.id);
+  const index = _findIndex(state.flashes, flash => flash.id === action.id);
 
   if (index === -1) {
     return state;
@@ -72,26 +72,26 @@ const updateDeleteFlash = (state, action) => {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-  case FLASH_ADD:
-    return update(state, { flashes: { $push: [action.flash] } });
+    case FLASH_ADD:
+      return update(state, { flashes: { $push: [action.flash] } });
 
-  case FLASH_UPDATE:
-    return updateUpdateFlash(state, action);
+    case FLASH_UPDATE:
+      return updateUpdateFlash(state, action);
 
-  case FLASH_REMOVE:
-    return updateRemoveFlash(state, action);
+    case FLASH_REMOVE:
+      return updateRemoveFlash(state, action);
 
-  case FLASH_DELETE:
-    return updateDeleteFlash(state, action);
+    case FLASH_DELETE:
+      return updateDeleteFlash(state, action);
 
-  default:
-    return state;
+    default:
+      return state;
   }
 };
 
 // Actions
 
-export const removeFlash = (id) => {
+export const removeFlash = id => {
   return { id, type: FLASH_REMOVE };
 };
 
@@ -106,7 +106,7 @@ export const updateFlash = (id, flash) => {
   return { flash, id, type: FLASH_UPDATE };
 };
 
-const deleteFlash = (id) => {
+const deleteFlash = id => {
   return { id, type: FLASH_DELETE };
 };
 

@@ -1,8 +1,9 @@
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _times from 'lodash/times';
-import styled from 'styled-components';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _times from "lodash/times";
+import styled from "styled-components";
 
+/* stylelint-disable unit-whitelist */
 const Circle = styled.circle`
   fill: white;
   stroke: #4e8eb2;
@@ -14,22 +15,23 @@ const Center = styled.circle`
 `;
 
 const HourHand = styled.line`
-  stroke-width: 8px;
   stroke: #4e8eb2;
+  stroke-width: 8px;
 `;
 
 const MinuteHand = styled.line`
-  stroke-width: 12px;
   stroke: #4e8eb2;
+  stroke-width: 12px;
 `;
 
 const Tick = styled.line`
-  stroke-width: 10px;
   stroke: #4e8eb2;
+  stroke-width: 10px;
 `;
+/* stylelint-enable unit-whitelist */
 
 const Clock = ({ animate, size }) => {
-  const ticks = _times(12, (index) => {
+  const ticks = _times(12, index => {
     return (
       <Tick
         key={index}
@@ -43,18 +45,17 @@ const Clock = ({ animate, size }) => {
   });
 
   let minuteFrom = null;
-  let minuteTo   = null;
-  let hourFrom   = null;
-  let hourTo     = null;
+  let minuteTo = null;
+  let hourFrom = null;
+  let hourTo = null;
 
   if (animate) {
-    const date        = new Date();
-    const hoursAngle  = ((360 * date.getHours()) / 12) +
-      (date.getMinutes() / 2);
+    const date = new Date();
+    const hoursAngle = (360 * date.getHours()) / 12 + date.getMinutes() / 2;
     const minuteAngle = (360 * date.getMinutes()) / 60;
 
-    const shifter = (val) => {
-      return [val, 100, 100].join(' ');
+    const shifter = val => {
+      return [val, 100, 100].join(" ");
     };
 
     minuteFrom = shifter(minuteAngle);
@@ -64,17 +65,8 @@ const Clock = ({ animate, size }) => {
   }
 
   return (
-    <svg
-      height={size}
-      viewBox="0 0 200 200"
-      width={size}
-    >
-      <Circle
-        cx="100"
-        cy="100"
-        id="circle"
-        r="80"
-      />
+    <svg height={size} viewBox="0 0 200 200" width={size}>
+      <Circle cx="100" cy="100" id="circle" r="80" />
       <g>
         <HourHand
           from={hourFrom}
@@ -116,11 +108,7 @@ const Clock = ({ animate, size }) => {
           />
         </MinuteHand>
       </g>
-      <Center
-        cx="100"
-        cy="100"
-        r="10"
-      />
+      <Center cx="100" cy="100" r="10" />
       {ticks}
     </svg>
   );
@@ -133,7 +121,7 @@ Clock.propTypes = {
 
 Clock.defaultProps = {
   animate: true,
-  size: '100%'
+  size: "100%"
 };
 
 export default Clock;

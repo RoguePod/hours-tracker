@@ -3,17 +3,15 @@ import {
   FormError,
   InputField,
   SubmitButton
-} from 'javascripts/shared/components';
-import { Field, Form } from 'formik';
+} from "javascripts/shared/components";
+import { Field, Form } from "formik";
 
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
 
 const ProjectForm = ({ isSubmitting, status }) => {
   return (
-    <Form
-      noValidate
-    >
+    <Form noValidate>
       <FormError error={status} />
       <div className="mb-4">
         <Field
@@ -27,24 +25,12 @@ const ProjectForm = ({ isSubmitting, status }) => {
         />
       </div>
       <div className="mb-4">
-        <Field
-          component={CheckboxField}
-          label="Active?"
-          name="active"
-        />
+        <Field component={CheckboxField} label="Active?" name="active" />
       </div>
       <div className="mb-4">
-        <Field
-          component={CheckboxField}
-          label="Billable?"
-          name="billable"
-        />
+        <Field component={CheckboxField} label="Billable?" name="billable" />
       </div>
-      <SubmitButton
-        submitting={isSubmitting}
-      >
-        {'Save'}
-      </SubmitButton>
+      <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
     </Form>
   );
 };

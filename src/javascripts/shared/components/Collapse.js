@@ -1,10 +1,10 @@
 /* global addResizeListener,removeResizeListener */
 
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import _isElement from 'lodash/isElement';
-import styled from 'styled-components';
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import ReactDOM from "react-dom";
+import _isElement from "lodash/isElement";
+import styled from "styled-components";
 
 const Container = styled.div`
   height: 0;
@@ -18,12 +18,12 @@ class Collapse extends React.Component {
     children: PropTypes.node.isRequired,
     duration: PropTypes.number,
     open: PropTypes.bool
-  }
+  };
 
   static defaultProps = {
     duration: 250,
     open: false
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -34,7 +34,7 @@ class Collapse extends React.Component {
 
   state = {
     height: 0
-  }
+  };
 
   componentDidMount() {
     const { open } = this.props;
@@ -67,7 +67,7 @@ class Collapse extends React.Component {
     }
   }
 
-  timeout = null
+  timeout = null;
 
   _handleUpdateHeight() {
     const { open } = this.props;
@@ -106,7 +106,7 @@ class Collapse extends React.Component {
     const child = React.Children.only(children);
     const trigger = React.cloneElement(child, {
       ...rest,
-      ref: (node) => {
+      ref: node => {
         this._element = this._findElement(node);
 
         if (this._element) {
@@ -116,16 +116,14 @@ class Collapse extends React.Component {
         // Call the original ref, if any
         const { ref } = child;
 
-        if (typeof ref === 'function') {
+        if (typeof ref === "function") {
           ref(node);
         }
       }
     });
 
     return (
-      <Container
-        style={{ height, transitionDuration: `${duration}ms` }}
-      >
+      <Container style={{ height, transitionDuration: `${duration}ms` }}>
         {trigger}
       </Container>
     );

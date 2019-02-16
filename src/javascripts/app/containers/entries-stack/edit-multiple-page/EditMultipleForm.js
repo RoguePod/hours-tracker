@@ -5,18 +5,17 @@ import {
   TextAreaField,
   TimeField,
   TimezoneField
-} from 'javascripts/shared/components';
-import { Field, Form } from 'formik';
+} from "javascripts/shared/components";
+import { Field, Form } from "formik";
 
-import { ProjectField } from 'javascripts/app/components';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import _get from 'lodash/get';
-import _isEqual from 'lodash/isEqual';
-import { isBlank } from 'javascripts/globals';
+import { ProjectField } from "javascripts/app/components";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import _get from "lodash/get";
+import _isEqual from "lodash/isEqual";
+import { isBlank } from "javascripts/globals";
 
-/* eslint-disable max-lines-per-function */
-const EntryEditMultipleForm = (props) => {
+const EntryEditMultipleForm = props => {
   const { isSubmitting, setFieldTouched, status, values, timezone } = props;
 
   const [update, setUpdate] = React.useState(values.update || {});
@@ -25,30 +24,28 @@ const EntryEditMultipleForm = (props) => {
     if (!_isEqual(update, values.update)) {
       setUpdate(values.update);
       const fields = [
-        'startedAt',
-        'stoppedAt',
-        'timezone',
-        'description',
-        'projectId'
+        "startedAt",
+        "stoppedAt",
+        "timezone",
+        "description",
+        "projectId"
       ];
 
-      fields.forEach((field) => {
+      fields.forEach(field => {
         setFieldTouched(field, Boolean(_get(values, `update.${field}`, false)));
       });
     }
   });
 
   return (
-    <Form
-      noValidate
-    >
+    <Form noValidate>
       <FormError error={status} />
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-4">
           <Field
             autoFocus
             component={TimeField}
-            disabled={!_get(values, 'update.startedAt')}
+            disabled={!_get(values, "update.startedAt")}
             label="Started"
             name="startedAt"
             timezone={isBlank(values.timezone) ? timezone : values.timezone}
@@ -64,7 +61,7 @@ const EntryEditMultipleForm = (props) => {
         <div className="w-full md:w-1/2 px-2 mb-4">
           <Field
             component={TimeField}
-            disabled={!_get(values, 'update.stoppedAt')}
+            disabled={!_get(values, "update.stoppedAt")}
             label="Stopped"
             name="stoppedAt"
             timezone={timezone}
@@ -83,7 +80,7 @@ const EntryEditMultipleForm = (props) => {
           <Field
             clientField="clientId"
             component={ProjectField}
-            disabled={!_get(values, 'update.projectId')}
+            disabled={!_get(values, "update.projectId")}
             label="Project"
             name="projectId"
           />
@@ -98,7 +95,7 @@ const EntryEditMultipleForm = (props) => {
         <div className="w-full md:w-1/2 px-2 mb-4">
           <Field
             component={TimezoneField}
-            disabled={!_get(values, 'update.timezone')}
+            disabled={!_get(values, "update.timezone")}
             label="Timezone"
             name="timezone"
           />
@@ -115,7 +112,7 @@ const EntryEditMultipleForm = (props) => {
         <Field
           autoHeight
           component={TextAreaField}
-          disabled={!_get(values, 'update.description')}
+          disabled={!_get(values, "update.description")}
           label="Description"
           name="description"
           rows={1}
@@ -128,11 +125,7 @@ const EntryEditMultipleForm = (props) => {
           />
         </div>
       </div>
-      <SubmitButton
-        submitting={isSubmitting}
-      >
-        {'Save Multiple'}
-      </SubmitButton>
+      <SubmitButton submitting={isSubmitting}>{"Save Multiple"}</SubmitButton>
     </Form>
   );
 };

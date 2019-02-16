@@ -1,11 +1,11 @@
-import { CSSTransition } from 'react-transition-group';
-import { Portal } from 'javascripts/shared/components';
-import PropTypes from 'javascripts/prop-types';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import _isElement from 'lodash/isElement';
-import cx from 'classnames';
-import styled from 'styled-components';
+import { CSSTransition } from "react-transition-group";
+import { Portal } from "javascripts/shared/components";
+import PropTypes from "javascripts/prop-types";
+import React from "react";
+import ReactDOM from "react-dom";
+import _isElement from "lodash/isElement";
+import cx from "classnames";
+import styled from "styled-components";
 
 const DURATION = 300;
 
@@ -36,11 +36,11 @@ const Title = styled(FadeIn)`
     border: solid transparent;
     border-color: rgba(136, 183, 213, 0);
     border-top-color: #22292f;
-    border-width: 10px;
-    content: ' ';
+    border-width: 0.75rem;
+    content: " ";
     height: 0;
     left: 50%;
-    margin-left: -10px;
+    margin-left: -0.75rem;
     pointer-events: none;
     position: absolute;
     top: 95%;
@@ -54,12 +54,12 @@ class Tooltip extends React.Component {
     onMouseEnter: PropTypes.func,
     onMouseLeave: PropTypes.func,
     title: PropTypes.string.isRequired
-  }
+  };
 
   static defaultProps = {
     onMouseEnter: null,
     onMouseLeave: null
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -72,13 +72,13 @@ class Tooltip extends React.Component {
   state = {
     hover: false,
     show: false
-  }
+  };
 
   shouldComponentUpdate() {
     return true;
   }
 
-  _element = null
+  _element = null;
 
   _handleMouseEnter(event) {
     const { onMouseEnter } = this.props;
@@ -111,8 +111,8 @@ class Tooltip extends React.Component {
     const { hover, show } = this.state;
 
     const titleClasses = cx(
-      'fixed bg-black text-white p-2 rounded text-sm z-20 shadow-md',
-      'text-center',
+      "fixed bg-black text-white p-2 rounded text-sm z-20 shadow-md",
+      "text-center",
       { hidden: !show }
     );
 
@@ -121,7 +121,7 @@ class Tooltip extends React.Component {
       const rect = this._element.getBoundingClientRect();
 
       tooltipStyles = {
-        left: rect.left + (rect.width / 2),
+        left: rect.left + rect.width / 2,
         top: rect.top - 10
       };
     }
@@ -131,7 +131,7 @@ class Tooltip extends React.Component {
       ...rest,
       onMouseEnter: this._handleMouseEnter,
       onMouseLeave: this._handleMouseLeave,
-      ref: (node) => {
+      ref: node => {
         // Keep your own reference
         if (_isElement(node)) {
           this._element = node;
@@ -144,7 +144,7 @@ class Tooltip extends React.Component {
         // Call the original ref, if any
         const { ref } = child;
 
-        if (typeof ref === 'function') {
+        if (typeof ref === "function") {
           ref(node);
         }
       }
@@ -153,7 +153,7 @@ class Tooltip extends React.Component {
     return (
       <>
         {trigger}
-        {show && this._element &&
+        {show && this._element && (
           <Portal>
             <CSSTransition
               classNames="fade"
@@ -164,14 +164,12 @@ class Tooltip extends React.Component {
               timeout={DURATION}
               unmountOnExit
             >
-              <Title
-                className={titleClasses}
-                style={tooltipStyles}
-              >
+              <Title className={titleClasses} style={tooltipStyles}>
                 {title}
               </Title>
             </CSSTransition>
-          </Portal>}
+          </Portal>
+        )}
       </>
     );
   }
