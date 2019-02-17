@@ -1,5 +1,7 @@
 /* global document */
 
+/* eslint-disable sort-imports, import/first */
+
 import "stylesheets/application.scss?main";
 import "javascript-detect-element-resize";
 import "javascripts/validators";
@@ -12,7 +14,6 @@ if (process.env.ENV !== "development") {
   });
 }
 
-/* eslint-disable sort-imports */
 import { history, store } from "javascripts/app/redux/store"; // must be first
 
 import {
