@@ -1,18 +1,19 @@
 /* eslint-disable max-lines */
 
-const functions = require('firebase-functions');
-const admin     = require('firebase-admin');
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 
-const moment    = require('moment-timezone');
-const json2csv  = require('json2csv');
+const moment = require("moment-timezone");
+const json2csv = require("json2csv");
 /* eslint-disable id-length */
-const _         = require('lodash');
+const _ = require("lodash");
 /* eslint-enable id-length */
 
 admin.initializeApp();
 
-exports.updateUserRecents = functions.firestore.document('entries/{entryId}')
-  .onWrite((change) => {
+exports.updateUserRecents = functions.firestore
+  .document("entries/{entryId}")
+  .onWrite(change => {
     const firestore = admin.firestore();
     const { clientRef, projectRef, userRef } = change.after.data();
 
@@ -24,17 +25,17 @@ exports.updateUserRecents = functions.firestore.document('entries/{entryId}')
 
     return new Promise((resolve, reject) => {
       firestore
-        .collection('entries')
-        .where('userRef', '==', userRef)
-        .where('projectRef', '==', projectRef)
-        .orderBy('startedAt', 'desc')
+        .collection("entries")
+        .where("userRef", "==", userRef)
+        .where("projectRef", "==", projectRef)
+        .orderBy("startedAt", "desc")
         .limit(1)
         .get()
-        .then((snapshot) => {
+        .then(snapshot => {
           if (snapshot.empty) {
             resolve();
           } else {
-            snapshot.forEach((doc) => {
+            snapshot.forEach(doc => {
               const { description, startedAt } = doc.data();
               firestore
                 .doc(`users/${userRef.id}/recents/${projectRef.id}`)
@@ -74,7 +75,7 @@ const setEntryBillable = (data, previous = null) => {
   return new Promise((resolve, reject) => {
     projectRef
       .get()
-      .then((doc) => {
+      .then(doc => {
         if (doc.exists) {
           const { billable } = doc.data();
 
@@ -88,67 +89,74 @@ const setEntryBillable = (data, previous = null) => {
   });
 };
 
-exports.createEntryBillable = functions.firestore.document('entries/{entryId}')
-  .onCreate((snap) => setEntryBillable(snap.data()));
+exports.createEntryBillable = functions.firestore
+  .document("entries/{entryId}")
+  .onCreate(snap => setEntryBillable(snap.data()));
 
-exports.updateEntryBillable = functions.firestore.document('entries/{entryId}')
-  .onUpdate((change) => {
+exports.updateEntryBillable = functions.firestore
+  .document("entries/{entryId}")
+  .onUpdate(change => {
     return setEntryBillable(change.after.data(), change.before.data());
   });
 
-exports.createUserProfile = functions.auth.user()
-  .onCreate((snap) => {
-    const user = snap.data();
+exports.createUserProfile = functions.auth.user().onCreate(snap => {
+  const user = snap.data();
 
-    admin.firestore()
-      .doc(`users/${user.uid}`)
-      .set({
-        autoloadLastDescription: true,
-        entriesTab: '#filter',
-        name: '',
-        recentProjectsListSize: '10',
-        recentProjectsSort: 'startedAt',
-        role: 'User',
-        timezone: 'America/Denver'
-      });
-  });
+  admin
+    .firestore()
+    .doc(`users/${user.uid}`)
+    .set({
+      autoloadLastDescription: true,
+      entriesTab: "#filter",
+      name: "",
+      recentProjectsListSize: "10",
+      recentProjectsSort: "startedAt",
+      role: "User",
+      timezone: "America/Denver"
+    });
+});
 
-const buildQuery = (query) => {
+const buildQuery = query => {
   const {
-    clientRef, endDate, projectRef, startDate, timezone, userRef
+    clientRef,
+    endDate,
+    projectRef,
+    startDate,
+    timezone,
+    userRef
   } = query;
 
   const firestore = admin.firestore();
 
-  let data = firestore.collection('entries').orderBy('startedAt', 'desc');
+  let data = firestore.collection("entries").orderBy("startedAt", "desc");
 
   if (userRef) {
-    data = data.where('userRef', '==', firestore.doc(userRef));
+    data = data.where("userRef", "==", firestore.doc(userRef));
   }
 
   if (clientRef) {
-    data = data.where('clientRef', '==', firestore.doc(clientRef));
+    data = data.where("clientRef", "==", firestore.doc(clientRef));
   }
 
   if (projectRef) {
-    data = data.where('projectRef', '==', firestore.doc(projectRef));
+    data = data.where("projectRef", "==", firestore.doc(projectRef));
   }
 
   if (startDate && startDate.length > 0) {
     data = data.where(
-      'startedAt',
-      '>=',
-      moment.tz(startDate, timezone)
-        .valueOf()
+      "startedAt",
+      ">=",
+      moment.tz(startDate, timezone).valueOf()
     );
   }
 
   if (endDate && endDate.length > 0) {
     data = data.where(
-      'startedAt',
-      '<=',
-      moment.tz(endDate, timezone)
-        .endOf('day')
+      "startedAt",
+      "<=",
+      moment
+        .tz(endDate, timezone)
+        .endOf("day")
         .valueOf()
     );
   }
@@ -156,30 +164,30 @@ const buildQuery = (query) => {
   return data;
 };
 
-const parseEntry = async(entryDoc) => {
+const parseEntry = async entryDoc => {
   const entry = entryDoc.data();
 
   const startedAt = moment.tz(entry.startedAt, entry.timezone);
-  let stoppedAt   = null;
-  let duration    = 0;
-  const user      = await entry.userRef.get();
-  const client    = entry.clientRef ? await entry.clientRef.get() : null;
-  const project   = entry.projectRef ? await entry.projectRef.get() : null;
+  let stoppedAt = null;
+  let duration = 0;
+  const user = await entry.userRef.get();
+  const client = entry.clientRef ? await entry.clientRef.get() : null;
+  const project = entry.projectRef ? await entry.projectRef.get() : null;
 
   if (entry.stoppedAt) {
     stoppedAt = moment.tz(entry.stoppedAt, entry.timezone);
-    duration = stoppedAt.diff(startedAt, 'hours', true);
+    duration = stoppedAt.diff(startedAt, "hours", true);
   }
 
   const projectData = project && project.exists ? project.data() : null;
 
   return {
-    billable: _.get(projectData, 'billable', false),
+    billable: _.get(projectData, "billable", false),
     client: client && client.exists ? client.data().name : null,
     description: entry.description,
     duration: duration.toFixed(1),
     durationRaw: duration,
-    project: _.get(projectData, 'name'),
+    project: _.get(projectData, "name"),
     startedAt: startedAt.format(),
     startedAtMoment: startedAt,
     startedAtValue: entry.startedAt,
@@ -190,24 +198,24 @@ const parseEntry = async(entryDoc) => {
   };
 };
 
-const buildEntriesCsv = async(querySnapshot) => {
+const buildEntriesCsv = async querySnapshot => {
   const fields = [
-    'user',
-    'client',
-    'project',
-    'startedAt',
-    'stoppedAt',
-    'duration',
-    'description'
+    "user",
+    "client",
+    "project",
+    "startedAt",
+    "stoppedAt",
+    "duration",
+    "description"
   ];
   const fieldNames = [
-    'User',
-    'Client',
-    'Project',
-    'Started At',
-    'Stopped At',
-    'Duration',
-    'Description'
+    "User",
+    "Client",
+    "Project",
+    "Started At",
+    "Stopped At",
+    "Duration",
+    "Description"
   ];
 
   const data = await Promise.all(querySnapshot.docs.map(await parseEntry));
@@ -215,49 +223,47 @@ const buildEntriesCsv = async(querySnapshot) => {
   return json2csv({ data, fieldNames, fields });
 };
 
-exports.entriesCsv = functions.https.onRequest(async(req, res) => {
+exports.entriesCsv = functions.https.onRequest(async (req, res) => {
   const querySnapshot = await buildQuery(req.query).get();
-  const csv           = await buildEntriesCsv(querySnapshot);
-  const filename      = moment().format('YYYY-MM-DD.HH.MM.SS');
+  const csv = await buildEntriesCsv(querySnapshot);
+  const filename = moment().format("YYYY-MM-DD.HH.MM.SS");
 
   res.attachment(`ht.entries.${filename}.csv`);
   res.status(200).send(csv);
 });
 
-const buildBillableCsv = async(querySnapshot) => {
+const buildBillableCsv = async querySnapshot => {
   const fields = [
-    'user',
-    'client',
-    'project',
-    'startedAt',
-    'stoppedAt',
-    'duration',
-    'description'
+    "user",
+    "client",
+    "project",
+    "startedAt",
+    "stoppedAt",
+    "duration",
+    "description"
   ];
   const fieldNames = [
-    'User',
-    'Client',
-    'Project',
-    'Started At',
-    'Stopped At',
-    'Duration',
-    'Description'
+    "User",
+    "Client",
+    "Project",
+    "Started At",
+    "Stopped At",
+    "Duration",
+    "Description"
   ];
 
   const data = await Promise.all(querySnapshot.docs.map(await parseEntry));
 
-  const groups = _.groupBy(
-    _.filter(data, (entry) => entry.billable), 'client'
-  );
+  const groups = _.groupBy(_.filter(data, entry => entry.billable), "client");
 
-  let csv = '';
+  let csv = "";
 
   for (const group of _.keys(groups).sort()) {
-    const entries  = groups[group];
-    const duration = _.sumBy(entries, (entry) => Number(entry.durationRaw));
+    const entries = groups[group];
+    const duration = _.sumBy(entries, entry => Number(entry.durationRaw));
 
     csv += json2csv({
-      data: _.sortBy(entries, 'user'),
+      data: _.sortBy(entries, "user"),
       fieldNames,
       fields
     });
@@ -267,10 +273,10 @@ const buildBillableCsv = async(querySnapshot) => {
   return csv;
 };
 
-exports.billableCsv = functions.https.onRequest(async(req, res) => {
+exports.billableCsv = functions.https.onRequest(async (req, res) => {
   const querySnapshot = await buildQuery(req.query).get();
-  const csv           = await buildBillableCsv(querySnapshot);
-  const filename      = moment().format('YYYY-MM-DD.HH.MM.SS');
+  const csv = await buildBillableCsv(querySnapshot);
+  const filename = moment().format("YYYY-MM-DD.HH.MM.SS");
 
   res.attachment(`ht.billable.${filename}.csv`);
   res.status(200).send(csv);
@@ -279,9 +285,9 @@ exports.billableCsv = functions.https.onRequest(async(req, res) => {
 const userTotals = (weeks, entries, overtime) => {
   let weekTotal = 0;
 
-  const cells = weeks.map((week) => {
+  const cells = weeks.map(week => {
     const startValue = week.start.valueOf();
-    const endValue   = week.end.valueOf();
+    const endValue = week.end.valueOf();
 
     let total = 0;
 
@@ -313,84 +319,90 @@ const userTotals = (weeks, entries, overtime) => {
 };
 
 /* eslint-disable max-statements */
-const buildPayrollCsv = async(querySnapshot, timezone) => {
+const buildPayrollCsv = async (querySnapshot, timezone) => {
   const entries = await Promise.all(querySnapshot.docs.map(await parseEntry));
 
-  const startDate = moment.tz(_.last(entries).startedAtValue, timezone)
-    .startOf('isoWeek');
-  const endDate   = moment.tz(_.first(entries).startedAtValue, timezone)
-    .endOf('isoWeek');
+  const startDate = moment
+    .tz(_.last(entries).startedAtValue, timezone)
+    .startOf("isoWeek");
+  const endDate = moment
+    .tz(_.first(entries).startedAtValue, timezone)
+    .endOf("isoWeek");
 
   const csv = [];
 
   const weeks = [];
-  while (startDate.isBefore(endDate.startOf('day'))) {
+  while (startDate.isBefore(endDate.startOf("day"))) {
     weeks.push({
-      end: startDate.clone().add(6, 'd')
-        .endOf('day'),
+      end: startDate
+        .clone()
+        .add(6, "d")
+        .endOf("day"),
       start: startDate.clone()
     });
 
-    startDate.add(1, 'w');
+    startDate.add(1, "w");
   }
 
-  let headerRow = [''];
+  let headerRow = [""];
 
   headerRow = headerRow.concat(
-    weeks.map((week) => {
-      return `${week.start.format('MM/DD')} - ${week.end.format('MM/DD')}`;
+    weeks.map(week => {
+      return `${week.start.format("MM/DD")} - ${week.end.format("MM/DD")}`;
     })
   );
 
-  headerRow.push('Overtime Total');
-  headerRow.push('');
+  headerRow.push("Overtime Total");
+  headerRow.push("");
 
   headerRow = headerRow.concat(
-    weeks.map((week) => {
-      return `${week.start.format('MM/DD')} - ${week.end.format('MM/DD')}`;
+    weeks.map(week => {
+      return `${week.start.format("MM/DD")} - ${week.end.format("MM/DD")}`;
     })
   );
-  headerRow.push('Regular Total');
-  csv.push(headerRow.join(','));
+  headerRow.push("Regular Total");
+  csv.push(headerRow.join(","));
 
-  const users = _.groupBy(entries, (entry) => entry.user);
+  const users = _.groupBy(entries, entry => entry.user);
 
   for (const userName of Object.keys(users).sort()) {
     let row = [userName];
     row = row.concat(userTotals(weeks, users[userName], true));
-    row.push('');
+    row.push("");
     row = row.concat(userTotals(weeks, users[userName], false));
 
-    csv.push(row.join(','));
+    csv.push(row.join(","));
   }
 
-  return csv.join('\n');
+  return csv.join("\n");
 };
 /* eslint-enable max-statements */
 
-exports.payrollCsv = functions.https.onRequest(async(req, res) => {
-  const { query }    = req;
+exports.payrollCsv = functions.https.onRequest(async (req, res) => {
+  const { query } = req;
   const { timezone } = query;
 
   let { endDate, startDate } = query;
 
   if (startDate && startDate.length > 0) {
-    startDate = moment.tz(startDate, timezone)
-      .startOf('isoWeek')
-      .format('YYYY-MM-DD');
+    startDate = moment
+      .tz(startDate, timezone)
+      .startOf("isoWeek")
+      .format("YYYY-MM-DD");
   }
 
   if (endDate && endDate.length > 0) {
-    endDate = moment.tz(endDate, timezone)
-      .endOf('isoWeek')
-      .format('YYYY-MM-DD');
+    endDate = moment
+      .tz(endDate, timezone)
+      .endOf("isoWeek")
+      .format("YYYY-MM-DD");
   }
 
   const newQuery = { ...query, endDate, startDate };
 
   const querySnapshot = await buildQuery(newQuery).get();
-  const csv           = await buildPayrollCsv(querySnapshot, timezone);
-  const filename      = moment().format('YYYY-MM-DD.HH.MM.SS');
+  const csv = await buildPayrollCsv(querySnapshot, timezone);
+  const filename = moment().format("YYYY-MM-DD.HH.MM.SS");
 
   res.attachment(`ht.payroll.${filename}.csv`);
   res.status(200).send(csv);
@@ -399,7 +411,7 @@ exports.payrollCsv = functions.https.onRequest(async(req, res) => {
 const recursiveDeleteEntries = (firestore, allIds, resolve, reject) => {
   // When there are no ids left, we are done
   if (allIds.length === 0) {
-    resolve('SUCCESS');
+    resolve("SUCCESS");
     return;
   }
 
@@ -407,31 +419,32 @@ const recursiveDeleteEntries = (firestore, allIds, resolve, reject) => {
 
   // Delete documents in a batch
   const batch = firestore.batch();
-  ids.forEach((id) => {
-    const doc = firestore.collection('entries').doc(id);
+  ids.forEach(id => {
+    const doc = firestore.collection("entries").doc(id);
 
     // TODO: Add permission check before deleting
 
     batch.delete(doc);
   });
 
-  batch.commit()
+  batch
+    .commit()
     .then(() => {
       setTimeout(() => {
         recursiveDeleteEntries(firestore, allIds, resolve, reject);
       }, 1);
     })
-    .catch((error) => {
+    .catch(error => {
       reject(error);
     });
 };
 
 exports.deleteEntries = functions
   .runWith({
-    memory: '2GB',
+    memory: "2GB",
     timeoutSeconds: 540
   })
-  .https.onCall(async(params) => {
+  .https.onCall(async params => {
     const { ids } = params;
 
     const firestore = admin.firestore();
