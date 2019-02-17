@@ -10,3 +10,4 @@ functions/index.js
 .env*
 .firebaserc
 .firebase/*
+.sentryclirc*
