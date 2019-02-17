@@ -4,6 +4,14 @@ import "stylesheets/application.scss?main";
 import "javascript-detect-element-resize";
 import "javascripts/validators";
 
+import Sentry from "@sentry/browser";
+
+if (process.env.ENV !== "development") {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN
+  });
+}
+
 /* eslint-disable sort-imports */
 import { history, store } from "javascripts/app/redux/store"; // must be first
 

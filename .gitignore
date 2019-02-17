@@ -9,3 +9,4 @@ config/secrets.yml
 functions/index.js
 .env*
 .firebaserc
+.firebase/*
