@@ -44,8 +44,20 @@ class EntriesSummaryTable extends React.Component {
     this._checkWarning();
   }
 
-  shouldComponentUpdate() {
-    return true;
+  shouldComponentUpdate(nextProps, nextState) {
+    const {
+      location: { pathname },
+      clients,
+      query
+    } = this.props;
+    const { warning } = this.state;
+
+    return (
+      warning !== nextState.warning ||
+      !_isEqual(query, nextProps.query) ||
+      pathname !== nextProps.location.pathname ||
+      !_isEqual(clients, nextProps.clients)
+    );
   }
 
   componentDidUpdate(prevProps) {

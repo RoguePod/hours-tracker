@@ -70,7 +70,7 @@ class ExportEntriesButton extends React.Component {
 
     const containerClassName = cx(
       className,
-      "p-2 hover:bg-blue-lighter text-blue"
+      "p-2 hover:bg-blue-lighter text-blue block"
     );
 
     if (warning) {

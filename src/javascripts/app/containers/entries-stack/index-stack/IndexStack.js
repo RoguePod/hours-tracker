@@ -1,6 +1,6 @@
 import { Button, Spinner } from "javascripts/shared/components";
 import { Link, Route, Switch } from "react-router-dom";
-import { reset, selectQuery } from "javascripts/app/redux/entries";
+import { reset, selectQuery, setLocation } from "javascripts/app/redux/entries";
 import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
 
 import EntriesFilterForm from "./EntriesFilterForm";
@@ -13,6 +13,7 @@ import PropTypes from "javascripts/prop-types";
 import React from "react";
 import SummaryTable from "./summary-table/SummaryTable";
 import _compact from "lodash/compact";
+import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
 import cx from "classnames";
 import { history } from "javascripts/app/redux/store";
@@ -25,12 +26,15 @@ class EntriesIndexStack extends React.Component {
     location: PropTypes.routerLocation.isRequired,
     match: PropTypes.routerMatch.isRequired,
     onReset: PropTypes.func.isRequired,
+    onSetLocation: PropTypes.func.isRequired,
     query: PropTypes.entriesQuery.isRequired,
+    savedLocation: PropTypes.routerLocation,
     timezone: PropTypes.string.isRequired
   };
 
   static defaultProps = {
-    fetching: null
+    fetching: null,
+    savedLocation: null
   };
 
   constructor(props) {
@@ -45,8 +49,26 @@ class EntriesIndexStack extends React.Component {
     this._handleClear = this._handleClear.bind(this);
   }
 
+  componentDidMount() {
+    const { location, onSetLocation, savedLocation } = this.props;
+
+    if (savedLocation) {
+      history.replace(savedLocation);
+    } else {
+      onSetLocation(location);
+    }
+  }
+
   shouldComponentUpdate() {
     return true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location, onSetLocation } = this.props;
+
+    if (!_isEqual(prevProps.location, location)) {
+      onSetLocation(location);
+    }
   }
 
   componentWillUnmount() {
@@ -136,32 +158,6 @@ class EntriesIndexStack extends React.Component {
     );
   }
 
-  _renderRoutes() {
-    const { admin, match } = this.props;
-
-    return (
-      <Switch>
-        {admin && (
-          <Route
-            path={`${match.url}/reports/summary`}
-            render={this._renderSummaryTable}
-          />
-        )}
-        {admin && (
-          <Route
-            path={`${match.url}/reports`}
-            render={this._renderReportsPage}
-          />
-        )}
-        <Route
-          path={`${match.url}/summary`}
-          render={this._renderSummaryTable}
-        />
-        <Route exact path={match.url} render={this._renderIndexPage} />
-      </Switch>
-    );
-  }
-
   _renderForm(props) {
     const { admin, location, query } = this.props;
     const { pathname } = location;
@@ -182,7 +178,7 @@ class EntriesIndexStack extends React.Component {
   }
 
   render() {
-    const { admin, fetching, location, query } = this.props;
+    const { admin, fetching, location, match, query } = this.props;
     const { pathname } = location;
 
     const isReports = pathname === "/entries/reports";
@@ -218,7 +214,25 @@ class EntriesIndexStack extends React.Component {
           {showAdmin && <IndexAdminMenu {...this.props} />}
           {!showAdmin && <IndexMenu {...this.props} />}
         </div>
-        {this._renderRoutes()}
+        <Switch>
+          {admin && (
+            <Route
+              path={`${match.url}/reports/summary`}
+              render={this._renderSummaryTable}
+            />
+          )}
+          {admin && (
+            <Route
+              path={`${match.url}/reports`}
+              render={this._renderReportsPage}
+            />
+          )}
+          <Route
+            path={`${match.url}/summary`}
+            render={this._renderSummaryTable}
+          />
+          <Route exact path={match.url} render={this._renderIndexPage} />
+        </Switch>
         <Spinner page spinning={Boolean(fetching)} text={fetching} />
       </div>
     );
@@ -230,11 +244,13 @@ const props = state => {
     admin: selectAdmin(state),
     fetching: state.entries.fetching,
     query: selectQuery(state),
+    savedLocation: state.entries.location,
     timezone: selectTimezone(state)
   };
 };
 
 const actions = {
+  onSetLocation: setLocation,
   onReset: reset
 };
 

@@ -58,8 +58,20 @@ class EntriesIndexTable extends React.Component {
     this._handleRefresh();
   }
 
-  shouldComponentUpdate() {
-    return true;
+  shouldComponentUpdate(nextProps) {
+    const {
+      checked,
+      location: { pathname },
+      entries,
+      query
+    } = this.props;
+
+    return (
+      !_isEqual(query, nextProps.query) ||
+      pathname !== nextProps.location.pathname ||
+      !_isEqual(checked, nextProps.checked) ||
+      !_isEqual(entries, nextProps.entries)
+    );
   }
 
   componentDidUpdate(prevProps) {

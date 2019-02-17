@@ -1,5 +1,4 @@
 @import url('//use.typekit.net/pbd6lbw.css');
-@import '~react-datepicker/dist/react-datepicker.css';
 
 @tailwind preflight;
 @tailwind components;
@@ -16,15 +15,7 @@ a {
   min-height: 100%;
 }
 
-.react-datepicker-wrapper {
-  display: block;
-}
-
-.react-datepicker__input-container {
-  display: block;
-}
-
 ::selection {
   color: white;
-  background: #4e8eb2; /* WebKit/Blink Browsers */
+  background: #4e8eb2;
 }

@@ -146,6 +146,7 @@ const ENTRIES_SUBSCRIBE = `${path}/ENTRIES_SUBSCRIBE`;
 const ENTRIES_UPDATE = `${path}/ENTRIES_UPDATE`;
 const ENTRY_CHECK = `${path}/ENTRY_CHECK`;
 const FETCHING_SET = `${path}/FETCHING_SET`;
+const LOCATION_SET = `${path}/LOCATION_SET`;
 const READY = `${path}/READY`;
 const RESET = `${path}/RESET`;
 
@@ -155,6 +156,7 @@ const initialState = {
   checked: [],
   entries: [],
   fetching: null,
+  location: null,
   ready: false
 };
 
@@ -195,13 +197,23 @@ export default (state = initialState, action) => {
     case READY:
       return update(state, { ready: { $set: true } });
 
+    case LOCATION_SET:
+      return update(state, {
+        location: { $set: _omit(action.location, "key") }
+      });
+
     case RESET:
       if (channel) {
         channel.close();
         channel = null;
       }
 
-      return initialState;
+      return update(state, {
+        checked: { $set: [] },
+        entries: { $set: [] },
+        fetching: { $set: null },
+        ready: { $set: false }
+      });
 
     default:
       return state;
@@ -232,6 +244,10 @@ const setChecked = checked => {
 
 export const updateEntries = (params, actions) => {
   return { actions, params, type: ENTRIES_UPDATE };
+};
+
+export const setLocation = location => {
+  return { location, type: LOCATION_SET };
 };
 
 export const reset = () => {
