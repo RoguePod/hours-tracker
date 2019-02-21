@@ -5,9 +5,7 @@ const admin = require("firebase-admin");
 
 const moment = require("moment-timezone");
 const json2csv = require("json2csv");
-/* eslint-disable id-length */
 const _ = require("lodash");
-/* eslint-enable id-length */
 
 admin.initializeApp();
 
