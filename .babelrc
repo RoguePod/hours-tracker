@@ -32,7 +32,6 @@
     // "@babel/plugin-proposal-do-expressions",
     "babel-plugin-redux-saga",
     "babel-plugin-styled-components"
-    // "babel-plugin-transform-remove-console"
   ]
 }
 

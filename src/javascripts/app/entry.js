@@ -1,26 +1,16 @@
 /* global document */
 
-/* eslint-disable sort-imports, import/first */
-
+import "javascripts/initializers/sentry";
+import "javascripts/initializers/store";
+import "javascripts/initializers/validators";
 import "stylesheets/application.scss?main";
 import "javascript-detect-element-resize";
-import "javascripts/validators";
-
-import Sentry from "@sentry/browser";
-
-if (process.env.ENV !== "development") {
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN
-  });
-}
-
-import { history, store } from "javascripts/app/redux/store"; // must be first
 
 import {
   App,
+  SignOutPage,
   SignedInStack,
-  SignedOutStack,
-  SignOutPage
+  SignedOutStack
 } from "javascripts/app/containers";
 import { Route, Switch } from "react-router-dom";
 import {
@@ -49,15 +39,15 @@ import {
   faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
+import { history, store } from "javascripts/app/redux/store";
 
 import { ConnectedRouter } from "connected-react-router";
 import { Provider } from "react-redux";
 import React from "react";
 import ReactDOM from "react-dom";
-import moment from "moment-timezone";
 import { library } from "@fortawesome/fontawesome-svg-core";
+import moment from "moment-timezone";
 import registerServiceWorker from "./registerServiceWorker";
-/* eslint-enable sort-imports */
 
 library.add(
   faAngleDoubleLeft,

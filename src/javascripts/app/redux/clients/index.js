@@ -226,6 +226,8 @@ const setClients = clients => {
 
 // Sagas
 
+/* eslint-disable */
+
 function* handleClientsSubscribe({ snapshot }) {
   const isReady = yield select(state => state.clients.ready);
   const clients = yield all(snapshot.docs.map(parseClient));
@@ -237,7 +239,7 @@ function* handleClientsSubscribe({ snapshot }) {
   }
 }
 
-function* clientsSubscribe() {
+export function* clientsSubscribe() {
   if (channel) {
     channel.close();
   }

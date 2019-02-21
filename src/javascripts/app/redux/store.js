@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/browser";
+
 import { applyMiddleware, compose, createStore } from "redux";
 
 import { createBrowserHistory } from "history";
@@ -6,7 +8,9 @@ import createSagaMiddleware from "redux-saga";
 import { routerMiddleware } from "connected-react-router";
 import sagas from "./sagas";
 
-const sagaMiddleware = createSagaMiddleware();
+const sagaMiddleware = createSagaMiddleware({
+  onError: error => Sentry.captureException(error)
+});
 
 export const history = createBrowserHistory();
 export const store = createStore(
