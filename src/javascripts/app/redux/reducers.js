@@ -10,7 +10,6 @@ import flashes from "javascripts/shared/redux/flashes";
 import projects from "javascripts/app/redux/projects";
 import recents from "javascripts/app/redux/recents";
 import running from "javascripts/app/redux/running";
-import user from "javascripts/app/redux/user";
 import users from "javascripts/app/redux/users";
 
 export default history =>
@@ -26,6 +25,5 @@ export default history =>
     recents,
     router: connectRouter(history),
     running,
-    user,
     users
   });

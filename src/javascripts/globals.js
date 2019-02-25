@@ -1,5 +1,7 @@
 /* eslint-disable max-lines */
 
+/* global localStorage,FormData */
+
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/functions";
@@ -8,9 +10,12 @@ import { call, select } from "redux-saga/effects";
 
 import _find from "lodash/find";
 import _includes from "lodash/includes";
+import _isArray from "lodash/isArray";
 import _isNil from "lodash/isNil";
+import _isObject from "lodash/isObject";
 import _isString from "lodash/isString";
 import _keys from "lodash/keys";
+import _snakeCase from "lodash/snakeCase";
 import _sortBy from "lodash/sortBy";
 import baseFirebase from "firebase/app";
 import moment from "moment-timezone";
@@ -32,6 +37,7 @@ export const env = process.env.ENV;
 export const firebase = baseFirebase;
 export const HEADER_HEIGHT = "62px";
 export const ONE_PX = "1px";
+export const API_URL = process.env.API_URL;
 
 const baseFirestore = firebase.firestore();
 
@@ -305,4 +311,87 @@ export const calcHours = (startedAt, stoppedAt, timezone) => {
     .tz(timezone)
     .diff(moment.tz(startedAt, timezone), "hours", true)
     .toFixed(1);
+};
+
+export const snakeCaseKeys = obj => {
+  const out = {};
+
+  Object.keys(obj).forEach(key => {
+    let val = obj[key];
+
+    if (_isObject(val)) {
+      if (_isArray(val)) {
+        val = val.map(arrayVal => {
+          return _isObject(arrayVal) ? snakeCaseKeys(arrayVal) : arrayVal;
+        });
+      } else {
+        val = snakeCaseKeys(val);
+      }
+    }
+    let keyOut = _snakeCase(key);
+    if (key === "_destroy") {
+      keyOut = "_destroy";
+    }
+    out[keyOut] = val;
+  });
+
+  return out;
+};
+
+export const request = (url, method, data = {}) => {
+  let token = null;
+  try {
+    token = localStorage.getItem("token");
+  } catch {
+    token = null;
+  }
+
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  };
+
+  if (typeof token === "string") {
+    headers.Authorization = `Token token=${token}`;
+  }
+
+  const options = { headers, method };
+  let path = url;
+
+  if (data instanceof FormData) {
+    delete options.headers["Content-Type"];
+    options.body = data;
+  } else if (data.contentType && data.contentType === "pdf") {
+    options.headers["Content-Type"] = "application/pdf";
+    options.headers.Accept = "application/pdf";
+  } else if (_keys(data).length > 0) {
+    if (method.toUpperCase() === "GET") {
+      path = `${url}?${toQuery(data)}`;
+    } else {
+      options.body = JSON.stringify(snakeCaseKeys(data));
+    }
+  }
+
+  return fetch(`${API_URL}${path}`, options)
+    .then(response => response.json().then(json => ({ json, response })))
+    .then(({ json, response }) => {
+      // auto logout user if token is invalid
+      if (response.status === 401) {
+        try {
+          token = localStorage.removeItem("token");
+        } catch {
+          token = null;
+        }
+        window.location.reload();
+      }
+
+      if (!response.ok) {
+        return Promise.reject(
+          json.errors || json.error || "Sorry, An Error Occurred"
+        );
+      }
+
+      return json;
+    })
+    .then(response => response, error => ({ error }));
 };

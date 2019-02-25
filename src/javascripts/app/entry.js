@@ -5,6 +5,7 @@ import "javascripts/initializers/store";
 import "javascripts/initializers/validators";
 import "stylesheets/application.scss?main";
 import "javascript-detect-element-resize";
+import "whatwg-fetch";
 
 import {
   App,

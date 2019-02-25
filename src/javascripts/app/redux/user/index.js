@@ -1,9 +1,9 @@
 import { call, fork, put, select, takeLatest } from "redux-saga/effects";
-import { firebase, updateRef } from "javascripts/globals";
+import { firebase, request, updateRef } from "javascripts/globals";
 import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
-import update from "immutability-helper";
+import { signInUser as appSignInUser } from "javascripts/app/redux/app";
 
 // Constants
 
@@ -12,23 +12,6 @@ const path = "hours-tracker/app/user";
 const USER_SIGN_IN = `${path}/USER_SIGN_IN`;
 const USER_SIGN_OUT = `${path}/USER_SIGN_OUT`;
 const USER_UPDATE = `${path}/USER_UPDATE`;
-const FETCHING_SET = `${path}/FETCHING_SET`;
-
-// Reducer
-
-const initialState = {
-  fetching: null
-};
-
-export default (state = initialState, action) => {
-  switch (action.type) {
-    case FETCHING_SET:
-      return update(state, { fetching: { $set: action.fetching } });
-
-    default:
-      return state;
-  }
-};
 
 // Actions
 
@@ -44,25 +27,19 @@ export const updateUser = (params, actions) => {
   return { actions, params, type: USER_UPDATE };
 };
 
-const setFetching = fetching => {
-  return { fetching, type: FETCHING_SET };
-};
-
 // Sagas
 
-function* userSignIn({ actions, params: { email, password } }) {
-  try {
-    yield put(setFetching("Signing In..."));
+function* userSignIn({ actions, params }) {
+  const response = yield call(request, "/v1/session", "POST", {
+    session: params
+  });
 
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .catch(error => {
-        actions.setSubmitting(false);
-        actions.setStatus(error.message);
-      });
-  } finally {
-    yield put(setFetching(null));
+  if (response.error) {
+    actions.setStatus("Invalid Credentials");
+    actions.setSubmitting(false);
+  } else {
+    yield put(appSignInUser(response.user, response.token));
+    yield put(addFlash("Sign In Successful!"));
   }
 }
 
@@ -71,13 +48,7 @@ function* watchUserSignIn() {
 }
 
 function* userSignOut() {
-  try {
-    yield put(setFetching("Signing Out..."));
-
-    firebase.auth().signOut();
-  } finally {
-    yield put(setFetching(null));
-  }
+  yield firebase.auth().signOut();
 }
 
 function* watchUserSignOut() {
