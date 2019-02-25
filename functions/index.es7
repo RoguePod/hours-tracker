@@ -31,7 +31,7 @@ exports.updateUserRecents = functions.firestore
         .get()
         .then(snapshot => {
           if (snapshot.empty) {
-            resolve();
+            resolve('No projects found');
           } else {
             snapshot.forEach(doc => {
               const { description, startedAt } = doc.data();
@@ -43,30 +43,30 @@ exports.updateUserRecents = functions.firestore
                   projectRef,
                   startedAt
                 })
-                .then(() => resolve())
-                .catch(() => reject());
+                .then(() => resolve('Recent Projects List Updated'))
+                .catch((error) => reject(error));
             });
           }
         })
-        .catch(() => reject());
+        .catch((error) => reject(error));
     });
   });
 
-const setEntryBillable = (data, previous = null) => {
-  const { clientRef, projectRef } = data;
+const setEntryBillable = (after, before = null) => {
+  const { clientRef, projectRef } = after.data();
 
-  let previousProjectRef = null;
+  let beforeProjectRef = null;
 
-  if (previous) {
-    previousProjectRef = previous.projectRef;
+  if (before) {
+    beforeProjectRef = before.data().projectRef;
   }
 
   if (!clientRef) {
-    data.ref.update({ billable: false });
+    after.ref.update({ billable: false });
     return null;
   }
 
-  if (projectRef === previousProjectRef) {
+  if (projectRef === beforeProjectRef) {
     return null;
   }
 
@@ -77,24 +77,27 @@ const setEntryBillable = (data, previous = null) => {
         if (doc.exists) {
           const { billable } = doc.data();
 
-          data.ref.update({ billable });
-          resolve();
+          after.ref.update({ billable })
+            .then(() => {
+              resolve('Entry successfully updated');
+            })
+            .catch((error) => {
+              reject(error);
+            });
         } else {
-          resolve();
+          resolve('Project not found');
         }
       })
-      .catch(() => reject());
+      .catch((error) => reject(error));
   });
 };
 
-exports.createEntryBillable = functions.firestore
-  .document("entries/{entryId}")
-  .onCreate(snap => setEntryBillable(snap.data()));
+exports.createEntryBillable = functions.firestore.document('entries/{entryId}')
+  .onCreate((snap) => setEntryBillable(snap));
 
-exports.updateEntryBillable = functions.firestore
-  .document("entries/{entryId}")
-  .onUpdate(change => {
-    return setEntryBillable(change.after.data(), change.before.data());
+exports.updateEntryBillable = functions.firestore.document('entries/{entryId}')
+  .onUpdate((change) => {
+    return setEntryBillable(change.after, change.before);
   });
 
 exports.createUserProfile = functions.auth.user().onCreate(snap => {
