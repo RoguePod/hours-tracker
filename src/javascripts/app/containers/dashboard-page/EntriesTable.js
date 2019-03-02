@@ -1,4 +1,9 @@
 import { Spinner, Table } from "javascripts/shared/components";
+import {
+  reset,
+  selectEntries,
+  subscribeEntries
+} from "javascripts/app/redux/entries";
 
 import EntryRow from "./EntryRow";
 import PropTypes from "javascripts/prop-types";
@@ -7,13 +12,13 @@ import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
 import { destroyEntry } from "javascripts/app/redux/entry";
 import { selectTimezone } from "javascripts/app/redux/app";
-import { subscribeEntries } from "javascripts/app/redux/entries";
 
 class EntriesTable extends React.Component {
   static propTypes = {
     entries: PropTypes.arrayOf(PropTypes.entry).isRequired,
     fetching: PropTypes.string,
     onDestroyEntry: PropTypes.func.isRequired,
+    onReset: PropTypes.func.isRequired,
     onSubscribeEntries: PropTypes.func.isRequired,
     timezone: PropTypes.string.isRequired
   };
@@ -34,6 +39,12 @@ class EntriesTable extends React.Component {
     return (
       fetching !== nextProps.fetching || !_isEqual(entries, nextProps.entries)
     );
+  }
+
+  componentWillUnmount() {
+    const { onReset } = this.props;
+
+    onReset();
   }
 
   limit = 10;
@@ -80,7 +91,7 @@ const props = state => {
   }
 
   return {
-    entries: state.entries.entries,
+    entries: selectEntries(state),
     fetching,
     timezone: selectTimezone(state)
   };
@@ -88,6 +99,7 @@ const props = state => {
 
 const actions = {
   onDestroyEntry: destroyEntry,
+  onReset: reset,
   onSubscribeEntries: subscribeEntries
 };
 

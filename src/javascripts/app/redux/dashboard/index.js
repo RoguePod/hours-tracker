@@ -1,13 +1,5 @@
-import {
-  all,
-  cancelled,
-  fork,
-  put,
-  select,
-  takeEvery,
-  takeLatest
-} from "redux-saga/effects";
 import { firestore, fromQuery, isBlank, parseEntry } from "javascripts/globals";
+import { put, select, spawn, takeEvery, takeLatest } from "redux-saga/effects";
 
 import _filter from "lodash/filter";
 import _sortBy from "lodash/sortBy";
@@ -21,8 +13,18 @@ import update from "immutability-helper";
 // Selectors
 
 const selectRouterSearch = state => state.router.location.search;
-const selectEntries = state => state.dashboard.entries;
+const selectBaseEntries = state => state.dashboard.entries;
 const selectUser = state => state.app.user;
+const selectClients = state => state.clients.clients;
+const selectAppUser = state => state.app.user;
+const selectUsers = state => state.users.users;
+
+export const selectEntries = createSelector(
+  [selectBaseEntries, selectClients, selectAppUser, selectUsers],
+  (entries, clients, appUser, users) => {
+    return entries.map(entry => parseEntry(entry, clients, appUser, users));
+  }
+);
 
 export const selectQuery = createSelector(
   [selectTimezone, selectRouterSearch],
@@ -206,9 +208,8 @@ const setFetching = fetching => {
 
 function* handleEntriesSubscribe({ snapshot }) {
   const isReady = yield select(state => state.dashboard.ready);
-  const entries = yield all(snapshot.docs.map(parseEntry));
 
-  yield put(setEntries(entries));
+  yield put(setEntries(snapshot.docs));
 
   if (!isReady) {
     yield put(ready());
@@ -269,18 +270,11 @@ function* entriesSubscribe() {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(channel, handleEntriesSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeEvery(channel, handleEntriesSubscribe);
 }
 
 function* watchEntriesSubscribe() {
   yield takeLatest(ENTRIES_SUBSCRIBE, entriesSubscribe);
 }
 
-export const sagas = [fork(watchEntriesSubscribe)];
+export const sagas = [spawn(watchEntriesSubscribe)];

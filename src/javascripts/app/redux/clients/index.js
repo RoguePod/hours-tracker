@@ -5,16 +5,15 @@ import {
   firestore,
   fromQuery,
   isBlank,
-  parseClient,
   updateRef
 } from "javascripts/globals";
 import {
   all,
   call,
-  cancelled,
-  fork,
   put,
   select,
+  spawn,
+  take,
   takeEvery,
   takeLatest
 } from "redux-saga/effects";
@@ -22,6 +21,7 @@ import {
 import Fuse from "fuse.js";
 import _filter from "lodash/filter";
 import _find from "lodash/find";
+import _findIndex from "lodash/findIndex";
 import _sortBy from "lodash/sortBy";
 import { addFlash } from "javascripts/shared/redux/flashes";
 import { createSelector } from "reselect";
@@ -151,15 +151,18 @@ export const selectQueryableProjects = createSelector(
 // Constants
 
 let channel = null;
+let projectChannels = {};
 
 const path = "hours-tracker/app/clients";
 
 const CLIENTS_SET = `${path}/CLIENTS_SET`;
 const CLIENTS_SUBSCRIBE = `${path}/CLIENTS_SUBSCRIBE`;
-const CLIENT_UPDATE = `${path}/CLIENT_UPDATE`;
 const CLIENT_CREATE = `${path}/CLIENT_CREATE`;
-const READY = `${path}/READY`;
+const CLIENT_UPDATE = `${path}/CLIENT_UPDATE`;
 const FETCHING_SET = `${path}/FETCHING_SET`;
+const PROJECTS_SNAPSHOT = `${path}/PROJECTS_SNAPSHOT`;
+const PROJECTS_SUBSCRIBE = `${path}/PROJECTS_SUBSCRIBE`;
+const READY = `${path}/READY`;
 const RESET = `${path}/RESET`;
 
 // Reducer
@@ -170,6 +173,26 @@ const initialState = {
   ready: false
 };
 
+const updateClientProjects = (state, action) => {
+  const index = _findIndex(state.clients, c => c.id === action.clientId);
+
+  if (index === -1) {
+    return state;
+  }
+
+  const projects = action.snapshot.docs.map(projectSnapshot => {
+    return {
+      ...projectSnapshot.data(),
+      id: projectSnapshot.id,
+      snapshot: projectSnapshot
+    };
+  });
+
+  return update(state, {
+    clients: { [index]: { projects: { $set: projects } } }
+  });
+};
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case FETCHING_SET:
@@ -177,6 +200,9 @@ export default (state = initialState, action) => {
 
     case CLIENTS_SET:
       return update(state, { clients: { $set: action.clients } });
+
+    case PROJECTS_SNAPSHOT:
+      return updateClientProjects(state, action);
 
     case READY:
       return update(state, { ready: { $set: true } });
@@ -197,6 +223,14 @@ export const subscribeClients = () => {
 
 export const createClient = (params, actions) => {
   return { actions, params, type: CLIENT_CREATE };
+};
+
+const subscribeProjects = clientId => {
+  return { clientId, type: PROJECTS_SUBSCRIBE };
+};
+
+const snapshotProjects = (clientId, snapshot) => {
+  return { clientId, snapshot, type: PROJECTS_SNAPSHOT };
 };
 
 export const updateClient = (client, params, actions) => {
@@ -226,18 +260,65 @@ const setClients = clients => {
 
 // Sagas
 
-function* handleClientsSubscribe({ snapshot }) {
+function* projectsSubscribe(clientId, channel) {
+  while (true) {
+    const { snapshot } = yield take(channel);
+    yield put(snapshotProjects(clientId, snapshot));
+  }
+}
+
+const buildProjectsChannel = clientId => {
+  return eventChannel(emit => {
+    const unsubscribe = firestore
+      .collection(`clients/${clientId}/projects`)
+      .onSnapshot(snapshot => {
+        emit({ snapshot });
+      });
+
+    return () => unsubscribe();
+  });
+};
+
+function* watchProjectsSubscribe() {
+  while (true) {
+    const { clientId } = yield take(PROJECTS_SUBSCRIBE);
+
+    if (projectChannels[clientId]) {
+      projectChannels[clientId].close();
+    }
+
+    projectChannels[clientId] = buildProjectsChannel(clientId);
+    yield spawn(projectsSubscribe, clientId, projectChannels[clientId]);
+  }
+}
+
+const parseClient = snapshot => {
+  return {
+    ...snapshot.data(),
+    id: snapshot.id,
+    projects: [],
+    snapshot
+  };
+};
+
+function* handleSubscribeProjects({ id }) {
+  yield put(subscribeProjects(id));
+}
+
+function* handleClientsSnapshot({ snapshot }) {
   const isReady = yield select(state => state.clients.ready);
-  const clients = yield all(snapshot.docs.map(parseClient));
+  const clients = snapshot.docs.map(parseClient);
 
   yield put(setClients(_sortBy(clients, "name")));
+
+  yield all(clients.map(handleSubscribeProjects));
 
   if (!isReady) {
     yield put(ready());
   }
 }
 
-export function* clientsSubscribe() {
+function* clientsSubscribe() {
   if (channel) {
     channel.close();
   }
@@ -250,14 +331,7 @@ export function* clientsSubscribe() {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(channel, handleClientsSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeEvery(channel, handleClientsSnapshot);
 }
 
 function* watchClientsSubscribe() {
@@ -319,7 +393,8 @@ function* watchClientUpdate() {
 }
 
 export const sagas = [
-  fork(watchClientsSubscribe),
-  fork(watchClientCreate),
-  fork(watchClientUpdate)
+  spawn(watchProjectsSubscribe),
+  spawn(watchClientsSubscribe),
+  spawn(watchClientCreate),
+  spawn(watchClientUpdate)
 ];

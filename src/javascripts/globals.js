@@ -1,17 +1,14 @@
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, sort-imports */
 
 import "firebase/auth";
 import "firebase/firestore";
 import "firebase/functions";
-
-import { call, select } from "redux-saga/effects";
 
 import _find from "lodash/find";
 import _includes from "lodash/includes";
 import _isNil from "lodash/isNil";
 import _isString from "lodash/isString";
 import _keys from "lodash/keys";
-import _sortBy from "lodash/sortBy";
 import baseFirebase from "firebase/app";
 import moment from "moment-timezone";
 
@@ -182,44 +179,8 @@ export const batchCommit = batch => {
   }).then(response => response, error => ({ error }));
 };
 
-export function parseProject(snapshot) {
-  return {
-    ...snapshot.data(),
-    id: snapshot.id,
-    snapshot
-  };
-}
-
-export function* parseClient(snapshot) {
-  const projectSnapshots = yield call(
-    getCollection,
-    `clients/${snapshot.id}/projects`
-  );
-
-  const projects = [];
-
-  for (const projectSnapshot of projectSnapshots.docs) {
-    projects.push(parseProject(projectSnapshot));
-  }
-
-  return {
-    ...snapshot.data(),
-    id: snapshot.id,
-    projects: _sortBy(projects, "name"),
-    snapshot
-  };
-}
-
-export function* parseEntry(snapshot) {
+export const parseEntry = (snapshot, clients, appUser, users) => {
   const data = snapshot.data();
-
-  const { appUser, clients, users } = yield select(state => {
-    return {
-      appUser: state.app.user,
-      clients: state.clients.clients,
-      users: state.users.users
-    };
-  });
 
   let client = null;
 
@@ -244,13 +205,7 @@ export function* parseEntry(snapshot) {
     } else if (users.length > 0) {
       user = _find(users, eUser => eUser.id === data.userRef.id);
     } else {
-      const userSnapshot = yield call(getRef, data.userRef);
-
-      user = {
-        ...userSnapshot.data(),
-        id: userSnapshot.id,
-        snapshot: userSnapshot
-      };
+      throw new Error("This should not happen");
     }
   }
 
@@ -262,7 +217,7 @@ export function* parseEntry(snapshot) {
     snapshot,
     user
   };
-}
+};
 
 export const buildRef = path => {
   return `projects/${

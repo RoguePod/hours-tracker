@@ -1,9 +1,8 @@
 import {
   all,
-  cancelled,
-  fork,
   put,
   select,
+  spawn,
   takeEvery,
   takeLatest
 } from "redux-saga/effects";
@@ -110,18 +109,11 @@ function* usersSubscribe() {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(channel, handleUsersSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeEvery(channel, handleUsersSubscribe);
 }
 
 function* watchUsersSubscribe() {
   yield takeLatest(USERS_SUBSCRIBE, usersSubscribe);
 }
 
-export const sagas = [fork(watchUsersSubscribe)];
+export const sagas = [spawn(watchUsersSubscribe)];

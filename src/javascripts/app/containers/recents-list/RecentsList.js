@@ -64,6 +64,7 @@ class RecentsList extends React.Component {
 }
 
 const props = state => {
+  // console.log(selectFilteredRecents(state));
   return {
     ready: state.recents.ready,
     recents: selectFilteredRecents(state),

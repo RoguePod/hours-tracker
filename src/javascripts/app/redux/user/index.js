@@ -1,8 +1,9 @@
-import { call, fork, put, select, takeLatest } from "redux-saga/effects";
+import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 import { firebase, updateRef } from "javascripts/globals";
 import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
+import { userSignOut as appUserSignOut } from "javascripts/app/redux/app";
 import update from "immutability-helper";
 
 // Constants
@@ -74,6 +75,7 @@ function* userSignOut() {
   try {
     yield put(setFetching("Signing Out..."));
 
+    yield appUserSignOut();
     firebase.auth().signOut();
   } finally {
     yield put(setFetching(null));
@@ -108,7 +110,7 @@ function* watchUserUpdate() {
 }
 
 export const sagas = [
-  fork(watchUserSignOut),
-  fork(watchUserSignIn),
-  fork(watchUserUpdate)
+  spawn(watchUserSignOut),
+  spawn(watchUserSignIn),
+  spawn(watchUserUpdate)
 ];

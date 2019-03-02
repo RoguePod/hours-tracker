@@ -3,6 +3,7 @@ import * as Yup from "yup";
 import {
   getEntry,
   reset,
+  selectEntry,
   selectEntryForForm,
   updateEntry
 } from "javascripts/app/redux/entry";
@@ -15,6 +16,7 @@ import { Spinner } from "javascripts/shared/components";
 import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
+import { selectEntry as selectRunningEntry } from "javascripts/app/redux/running";
 
 class EntryEditForm extends React.Component {
   static propTypes = {
@@ -98,8 +100,8 @@ const props = state => {
   return {
     entry: selectEntryForForm(state),
     fetching: state.entry.fetching,
-    id: _get(state, "entry.entry.id"),
-    running: state.running.entry
+    id: _get(selectEntry(state), "entry.entry.id"),
+    running: selectRunningEntry(state)
   };
 };
 

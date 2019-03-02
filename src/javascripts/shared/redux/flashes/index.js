@@ -1,4 +1,4 @@
-import { delay, fork, put, takeEvery } from "redux-saga/effects";
+import { delay, put, spawn, takeEvery } from "redux-saga/effects";
 
 import _findIndex from "lodash/findIndex";
 import update from "immutability-helper";
@@ -122,4 +122,4 @@ function* watchFlashRemove() {
   yield takeEvery(FLASH_REMOVE, flashRemove);
 }
 
-export const sagas = [fork(watchFlashRemove)];
+export const sagas = [spawn(watchFlashRemove)];

@@ -1,6 +1,6 @@
 import { ActionIcon, Spinner } from "javascripts/shared/components";
 import {
-  selectRunningEntry,
+  selectRunningEntryForForm,
   startEntry,
   stopEntry,
   updateEntry
@@ -180,7 +180,7 @@ class StopWatch extends React.Component {
 
 const props = state => {
   return {
-    entry: selectRunningEntry(state),
+    entry: selectRunningEntryForForm(state),
     fetching: state.running.fetching,
     ready: state.running.ready
   };

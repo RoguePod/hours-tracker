@@ -17,6 +17,7 @@ import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
 import { history } from "javascripts/app/redux/store";
 import { selectAdmin } from "javascripts/app/redux/app";
+import { selectRecents } from "javascripts/app/redux/recents";
 import { startEntry } from "javascripts/app/redux/running";
 
 class ClientsIndexPage extends React.Component {
@@ -139,7 +140,7 @@ const props = state => {
     pagination,
     query: selectQuery(state),
     ready: state.recents.ready,
-    recents: state.recents.recents,
+    recents: selectRecents(state),
     user: state.app.user
   };
 };

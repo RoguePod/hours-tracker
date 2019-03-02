@@ -4,10 +4,9 @@
 
 import {
   call,
-  cancelled,
-  fork,
   put,
   select,
+  spawn,
   takeEvery,
   takeLatest
 } from "redux-saga/effects";
@@ -169,13 +168,7 @@ function* userSubscribe({ auth }) {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(userChannel, handleUserSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      userChannel.close();
-    }
-  }
+  yield takeEvery(userChannel, handleUserSubscribe);
 }
 
 function* watchUserSubscribe() {
@@ -202,7 +195,7 @@ function* userSignIn(auth, initial) {
   }
 }
 
-function* userSignOut() {
+export function* userSignOut() {
   yield put(resetRunning());
   yield put(resetRecents());
   yield put(resetUsers());
@@ -248,13 +241,7 @@ function* authSubscribe() {
     return unsubscribe;
   });
 
-  try {
-    yield takeEvery(authChannel, handleAuthSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      userChannel.close();
-    }
-  }
+  yield takeEvery(authChannel, handleAuthSubscribe);
 }
 
 function* watchAuthSubscribe() {
@@ -280,10 +267,10 @@ function* watchUserRedirect() {
 }
 
 export const sagas = [
-  fork(watchAuthSubscribe),
-  fork(watchAppLoad),
-  fork(watchUserRedirect),
-  fork(watchUserSubscribe)
+  spawn(watchAuthSubscribe),
+  spawn(watchAppLoad),
+  spawn(watchUserRedirect),
+  spawn(watchUserSubscribe)
 ];
 
 // Selectors

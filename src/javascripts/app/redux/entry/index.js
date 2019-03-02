@@ -9,14 +9,7 @@ import {
   parseEntry,
   updateRef
 } from "javascripts/globals";
-import {
-  call,
-  cancelled,
-  fork,
-  put,
-  select,
-  takeLatest
-} from "redux-saga/effects";
+import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 
 import _get from "lodash/get";
 import _pick from "lodash/pick";
@@ -30,7 +23,21 @@ import update from "immutability-helper";
 
 // Selectors
 
-const selectEntry = state => state.entry.entry;
+const selectBaseEntry = state => state.entry.entry;
+const selectClients = state => state.clients.clients;
+const selectAppUser = state => state.app.user;
+const selectUsers = state => state.users.users;
+
+export const selectEntry = createSelector(
+  [selectBaseEntry, selectClients, selectAppUser, selectUsers],
+  (entry, clients, appUser, users) => {
+    if (entry) {
+      return parseEntry(entry, clients, appUser, users);
+    }
+
+    return null;
+  }
+);
 
 export const selectEntryForForm = createSelector(
   [selectEntry, selectTimezone],
@@ -137,13 +144,7 @@ const setFetching = fetching => {
 // Sagas
 
 function* handleEntrySubscribe({ snapshot }) {
-  let entry = null;
-
-  if (snapshot) {
-    entry = yield parseEntry(snapshot);
-  }
-
-  yield put(setEntry(entry));
+  yield put(setEntry(snapshot));
   yield put(setFetching(null));
 }
 
@@ -163,14 +164,7 @@ function* entryGet({ id }) {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeLatest(channel, handleEntrySubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeLatest(channel, handleEntrySubscribe);
 }
 
 function* watchEntryGet() {
@@ -239,7 +233,7 @@ function* entryUpdate({ actions, params }) {
       .utc()
       .valueOf();
 
-    const { error } = yield call(updateRef, entry.snapshot.ref, {
+    const { error } = yield call(updateRef, entry.ref, {
       ...convertEntryParamIdsToRefs(params),
       updatedAt
     });
@@ -308,7 +302,7 @@ function* entrySplit({ actions, params }) {
 
     const batch = firestore.batch();
 
-    currentEntry.snapshot.ref.update({ ...defaults, ...entries[0] });
+    currentEntry.ref.update({ ...defaults, ...entries[0] });
 
     entries.slice(1).forEach(newEntry => {
       const data = { ...defaults, ...newEntry };
@@ -354,9 +348,9 @@ function* watchEntryDestroy() {
 }
 
 export const sagas = [
-  fork(watchEntryGet),
-  fork(watchEntryCreate),
-  fork(watchEntryUpdate),
-  fork(watchEntrySplit),
-  fork(watchEntryDestroy)
+  spawn(watchEntryGet),
+  spawn(watchEntryCreate),
+  spawn(watchEntryUpdate),
+  spawn(watchEntrySplit),
+  spawn(watchEntryDestroy)
 ];

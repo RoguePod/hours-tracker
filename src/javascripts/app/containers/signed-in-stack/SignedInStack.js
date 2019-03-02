@@ -138,7 +138,7 @@ class SignedInStack extends React.Component {
 const props = state => {
   return {
     auth: state.app.auth,
-    running: state.running.entry,
+    running: Boolean(state.running.entry),
     user: state.app.user,
     width: state.app.width
   };

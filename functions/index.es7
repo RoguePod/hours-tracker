@@ -19,8 +19,6 @@ exports.updateUserRecents = functions.firestore
       return null;
     }
 
-    _.includes(1, 2);
-
     return new Promise((resolve, reject) => {
       firestore
         .collection("entries")
@@ -31,7 +29,7 @@ exports.updateUserRecents = functions.firestore
         .get()
         .then(snapshot => {
           if (snapshot.empty) {
-            resolve('No projects found');
+            resolve("No projects found");
           } else {
             snapshot.forEach(doc => {
               const { description, startedAt } = doc.data();
@@ -43,12 +41,12 @@ exports.updateUserRecents = functions.firestore
                   projectRef,
                   startedAt
                 })
-                .then(() => resolve('Recent Projects List Updated'))
-                .catch((error) => reject(error));
+                .then(() => resolve("Recent Projects List Updated"))
+                .catch(error => reject(error));
             });
           }
         })
-        .catch((error) => reject(error));
+        .catch(error => reject(error));
     });
   });
 
@@ -77,26 +75,29 @@ const setEntryBillable = (after, before = null) => {
         if (doc.exists) {
           const { billable } = doc.data();
 
-          after.ref.update({ billable })
+          after.ref
+            .update({ billable })
             .then(() => {
-              resolve('Entry successfully updated');
+              resolve("Entry successfully updated");
             })
-            .catch((error) => {
+            .catch(error => {
               reject(error);
             });
         } else {
-          resolve('Project not found');
+          resolve("Project not found");
         }
       })
-      .catch((error) => reject(error));
+      .catch(error => reject(error));
   });
 };
 
-exports.createEntryBillable = functions.firestore.document('entries/{entryId}')
-  .onCreate((snap) => setEntryBillable(snap));
+exports.createEntryBillable = functions.firestore
+  .document("entries/{entryId}")
+  .onCreate(snap => setEntryBillable(snap));
 
-exports.updateEntryBillable = functions.firestore.document('entries/{entryId}')
-  .onUpdate((change) => {
+exports.updateEntryBillable = functions.firestore
+  .document("entries/{entryId}")
+  .onUpdate(change => {
     return setEntryBillable(change.after, change.before);
   });
 

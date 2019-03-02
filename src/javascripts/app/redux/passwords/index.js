@@ -1,4 +1,4 @@
-import { call, fork, put, select, takeLatest } from "redux-saga/effects";
+import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
@@ -99,4 +99,4 @@ function* watchPasswordUpdate() {
   yield takeLatest(PASSWORD_UPDATE, passwordUpdate);
 }
 
-export const sagas = [fork(watchPasswordForgot), fork(watchPasswordUpdate)];
+export const sagas = [spawn(watchPasswordForgot), spawn(watchPasswordUpdate)];
