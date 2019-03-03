@@ -5,8 +5,4 @@ if (process.env.ENV !== "development") {
     dsn: process.env.SENTRY_DSN,
     release: process.env.RELEASE_VERSION
   });
-
-  /* eslint-disable */
-  console.log(process.env.RELEASE_VERSION);
-  /* eslint-enable */
 }
