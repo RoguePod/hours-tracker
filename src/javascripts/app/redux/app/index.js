@@ -238,7 +238,7 @@ function* authSubscribe() {
       .auth()
       .onAuthStateChanged(auth => emit({ auth }), () => emit({ user: null }));
 
-    return unsubscribe;
+    return () => unsubscribe();
   });
 
   yield takeEvery(authChannel, handleAuthSubscribe);

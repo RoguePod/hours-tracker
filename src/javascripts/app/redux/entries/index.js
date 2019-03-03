@@ -12,7 +12,6 @@ import {
 } from "javascripts/globals";
 import {
   call,
-  cancelled,
   put,
   select,
   spawn,
@@ -367,14 +366,7 @@ function* entriesSubscribe({ limit }) {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(channel, handleEntriesSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeEvery(channel, handleEntriesSubscribe);
 }
 
 function* watchEntriesSubscribe() {

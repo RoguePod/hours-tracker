@@ -100,7 +100,7 @@ const props = state => {
   return {
     entry: selectEntryForForm(state),
     fetching: state.entry.fetching,
-    id: _get(selectEntry(state), "entry.entry.id"),
+    id: _get(selectEntry(state), "id"),
     running: selectRunningEntry(state)
   };
 };

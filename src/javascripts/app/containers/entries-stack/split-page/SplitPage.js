@@ -137,7 +137,7 @@ class EntrySplitPage extends React.Component {
 
 const props = state => {
   return {
-    entry: selectEntry(state.entry.entry),
+    entry: selectEntry(state),
     fetching: state.entry.fetching,
     timezone: selectTimezone(state)
   };

@@ -83,7 +83,6 @@ function* passwordUpdate({ actions, params }) {
     const { error } = yield call(handleUpdatePassword, auth, password);
 
     if (error) {
-      actions.setSubmitting(false);
       actions.resetForm();
       actions.setStatus(error.message);
     } else {
@@ -91,6 +90,7 @@ function* passwordUpdate({ actions, params }) {
       actions.resetForm();
     }
   } finally {
+    actions.setSubmitting(false);
     yield put(stopFetching(PASSWORD_UPDATE));
   }
 }

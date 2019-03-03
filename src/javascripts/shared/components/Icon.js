@@ -12,7 +12,8 @@ class Icon extends React.PureComponent {
     color: PropTypes.string,
     disabled: PropTypes.bool,
     icon: PropTypes.string.isRequired,
-    size: PropTypes.number
+    size: PropTypes.number,
+    textColor: PropTypes.string
   };
 
   static defaultProps = {
@@ -20,18 +21,28 @@ class Icon extends React.PureComponent {
     className: null,
     color: "green",
     disabled: false,
-    size: 10
+    size: 10,
+    textColor: "white"
   };
 
   render() {
-    const { as, className, color, disabled, icon, size, ...rest } = this.props;
+    const {
+      as,
+      className,
+      color,
+      disabled,
+      icon,
+      size,
+      textColor,
+      ...rest
+    } = this.props;
 
     const iconClasses = cx(
-      "text-white shadow hover:shadow-md",
-      `w-${size} h-${size} items-center justify-center`,
+      `text-${textColor} w-${size} h-${size} items-center justify-center`,
       "flex rounded-full appearance-none",
       className,
       {
+        "shadow hover:shadow-md": color !== "transparent",
         "bg-grey-dark": disabled,
         [`bg-${color} hover:bg-${color}-dark`]: !disabled
       }

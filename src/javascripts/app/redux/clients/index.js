@@ -22,6 +22,7 @@ import Fuse from "fuse.js";
 import _filter from "lodash/filter";
 import _find from "lodash/find";
 import _findIndex from "lodash/findIndex";
+import _keys from "lodash/keys";
 import _sortBy from "lodash/sortBy";
 import { addFlash } from "javascripts/shared/redux/flashes";
 import { createSelector } from "reselect";
@@ -242,6 +243,11 @@ export const reset = () => {
     channel.close();
     channel = null;
   }
+
+  _keys(projectChannels).forEach(key => {
+    projectChannels[key].close();
+    delete projectChannels[key];
+  });
 
   return { type: RESET };
 };

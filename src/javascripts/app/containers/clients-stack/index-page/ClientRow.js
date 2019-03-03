@@ -1,4 +1,5 @@
-import { ActionIcon } from "javascripts/shared/components";
+import { ActionIcon, Icon, Tooltip } from "javascripts/shared/components";
+
 import { Link } from "react-router-dom";
 import ProjectRow from "./ProjectRow";
 import PropTypes from "javascripts/prop-types";
@@ -53,6 +54,15 @@ class ClientRow extends React.Component {
           <h3 className="mb-2">{client.name}</h3>
           {admin && (
             <div className="flex items-center">
+              <Tooltip title={client.active ? "Active" : "Inactive"}>
+                <Icon
+                  className="mr-1"
+                  color="transparent"
+                  icon="check"
+                  size={8}
+                  textColor={client.active ? "green" : "red"}
+                />
+              </Tooltip>
               <ActionIcon
                 as={Link}
                 className="mr-1"

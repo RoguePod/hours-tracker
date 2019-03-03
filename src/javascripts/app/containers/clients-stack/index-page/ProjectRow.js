@@ -73,29 +73,46 @@ class ProjectRow extends React.Component {
       }
     );
 
+    const active = client.active && project.active;
+
     return (
       <Transition className={containerClasses}>
         <div className={nameClasses}>{project.name}</div>
         <div className="flex items-center">
-          {project.active && (
-            <Tooltip title="Active Project">
-              <Icon className="mr-1" color="blue" icon="check" size={8} />
-            </Tooltip>
-          )}
           {admin && (
-            <ActionIcon
-              as={Link}
-              className="mr-1"
-              color="orange"
-              icon="pencil-alt"
-              size={8}
-              title="Edit Project"
-              to={{
-                ...location,
-                pathname: `/clients/${client.id}/projects/${project.id}/edit`,
-                state: { modal: true }
-              }}
-            />
+            <>
+              <Tooltip title={active ? "Active" : "Inactive"}>
+                <Icon
+                  className="mr-1"
+                  color="transparent"
+                  icon="check"
+                  size={8}
+                  textColor={active ? "green" : "red"}
+                />
+              </Tooltip>
+              <Tooltip title={project.billable ? "Billable" : "Non-Billable"}>
+                <Icon
+                  className="mr-1"
+                  color="transparent"
+                  icon="dollar-sign"
+                  size={8}
+                  textColor={project.billable ? "green" : "red"}
+                />
+              </Tooltip>
+              <ActionIcon
+                as={Link}
+                className="mr-1"
+                color="orange"
+                icon="pencil-alt"
+                size={8}
+                title="Edit Project"
+                to={{
+                  ...location,
+                  pathname: `/clients/${client.id}/projects/${project.id}/edit`,
+                  state: { modal: true }
+                }}
+              />
+            </>
           )}
           <ActionIcon
             as="button"

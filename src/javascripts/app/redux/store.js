@@ -9,7 +9,15 @@ import { routerMiddleware } from "connected-react-router";
 import sagas from "./sagas";
 
 const sagaMiddleware = createSagaMiddleware({
-  onError: error => Sentry.captureException(error)
+  onError: error => {
+    if (process.env.ENV === "development") {
+      /* eslint-disable no-console */
+      console.error(error);
+      /* eslint-enable no-console */
+    } else {
+      Sentry.captureException(error);
+    }
+  }
 });
 
 export const history = createBrowserHistory();
