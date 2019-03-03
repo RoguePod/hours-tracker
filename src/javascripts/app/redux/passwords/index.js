@@ -92,10 +92,6 @@ function* passwordUpdate({ actions, params }) {
   } finally {
     actions.setSubmitting(false);
     yield put(stopFetching(PASSWORD_UPDATE));
-
-    /* eslint-disable */
-    throw new Error("This should not happen");
-    /* eslint-disable */
   }
 }
 
