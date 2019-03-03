@@ -94,7 +94,7 @@
     "build:production": "webpack --config webpack.config.production.js -p",
     "build:staging": "webpack --config webpack.config.staging.js -p",
     "setup": "firebase deploy --except hosting",
-    "deploy:staging": "yarn run build:staging && firebase deploy",
+    "deploy:staging": "./build.staging.sh && yarn run build:staging && firebase deploy",
     "deploy:production": "yarn run build:production && firebase deploy",
     "prettier": "prettier --write \"src/javascripts/**/*.js\""
   }

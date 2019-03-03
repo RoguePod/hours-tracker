@@ -10,7 +10,7 @@ const Webpack = require("webpack");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 
 module.exports = {
-  devtool: "cheap-module-source-map",
+  devtool: "source-map",
   entry: {
     app: ["@babel/polyfill", "./src/javascripts/app/entry.js"]
   },
@@ -139,8 +139,11 @@ module.exports = {
       ]
     }),
     new SentryPlugin({
+      debug: true,
+      configFile: "./.sentryclirc.staging",
+      ignore: ["service-worker.js", "styles-app.css.map"],
       include: "./dist",
-      configFile: "./.sentryclirc.staging"
+      validate: true
     }),
     new SWPrecacheWebpackPlugin({
       // By default, a cache-busting query parameter is appended to requests
