@@ -7,6 +7,6 @@ if (process.env.ENV !== "development") {
   });
 
   /* eslint-disable */
-  console.log(process.env.VERSION);
+  console.log(process.env.RELEASE_VERSION);
   /* eslint-enable */
 }
