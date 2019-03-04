@@ -175,22 +175,23 @@ function* watchUserSubscribe() {
   yield takeLatest(USER_SUBSCRIBE, userSubscribe);
 }
 
+/* eslint-disable */
 function* userSignIn(auth, initial) {
+  console.log(1);
   yield put(setAuth(auth));
+  console.log(2);
 
   yield put(subscribeUser(auth));
+  console.log(3);
   yield put(subscribeClients());
-
-  if (initial) {
-    return;
-  }
+  console.log(4);
 
   const redirect = yield select(state => state.app.redirect);
 
   if (redirect) {
     yield call(history.push, redirect);
     yield put(setRedirect(null));
-  } else {
+  } else if (!initial) {
     yield call(history.push, "/");
   }
 }
