@@ -207,6 +207,7 @@ export function* userSignOut() {
   }
 
   yield put(setAuth(null));
+  yield put(setUser(null));
 
   yield call(history.push, "/sign-in");
 }
