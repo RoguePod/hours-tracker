@@ -223,12 +223,12 @@ function* handleAuthSubscribe({ auth }) {
 
   if (current.ready) {
     if (current.auth && !auth) {
-      yield userSignOut();
+      yield spawn(userSignOut);
     } else if (!current.auth && auth) {
-      yield userSignIn(auth, false);
+      yield spawn(userSignIn, auth, false);
     }
   } else if (auth) {
-    yield userSignIn(auth, true);
+    yield spawn(userSignIn, auth, true);
   } else {
     yield put(ready());
   }
