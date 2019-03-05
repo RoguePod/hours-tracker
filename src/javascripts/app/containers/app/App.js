@@ -67,7 +67,7 @@ class App extends React.Component {
       width !== nextProps.width ||
       clientsReady !== nextProps.clientsReady ||
       !_isEqual(location, nextProps.location) ||
-      !_isEqual(auth, nextProps.auth) ||
+      Boolean(auth) !== Boolean(nextProps.auth) ||
       !_isEqual(flashes, nextProps.flashes)
     );
   }
