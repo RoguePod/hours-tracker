@@ -18,6 +18,7 @@ import { withRouter } from "react-router-dom";
 class App extends React.Component {
   static propTypes = {
     auth: PropTypes.auth,
+    children: PropTypes.node,
     clientsReady: PropTypes.bool.isRequired,
     fetching: PropTypes.bool,
     flashes: PropTypes.arrayOf(PropTypes.flash).isRequired,
@@ -121,7 +122,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { auth, clientsReady, ready } = this.props;
+    const { auth, children, clientsReady, ready } = this.props;
 
     const isReady = !(!ready || (!clientsReady && Boolean(auth)));
 
@@ -136,7 +137,7 @@ class App extends React.Component {
           <html className={htmlClasses} lang="en" />
         </Helmet>
 
-        {/* {isReady && children} */}
+        {isReady && children}
 
         <Loader loading={!isReady} />
         <Flashes />
