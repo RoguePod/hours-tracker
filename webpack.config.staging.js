@@ -14,7 +14,7 @@ module.exports = {
   entry: {
     app: ["@babel/polyfill", "./src/javascripts/app/entry.js"]
   },
-  mode: "production",
+  mode: "development",
   module: {
     rules: [
       {
