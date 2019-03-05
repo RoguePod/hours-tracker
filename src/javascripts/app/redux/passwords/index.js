@@ -93,8 +93,6 @@ function* passwordUpdate({ actions, params }) {
     actions.setSubmitting(false);
     yield put(stopFetching(PASSWORD_UPDATE));
   }
-
-  throw new Error("This should not happen");
 }
 
 function* watchPasswordUpdate() {
