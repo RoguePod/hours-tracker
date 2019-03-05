@@ -3,14 +3,12 @@
 import { loadApp, updateWindow } from "javascripts/app/redux/app";
 
 import { Flashes } from "javascripts/shared/components";
-import { Helmet } from "react-helmet";
 import Loader from "./Loader";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
-import cx from "classnames";
 import { history } from "javascripts/app/redux/store";
 import { signOutUser } from "javascripts/app/redux/user";
 import { withRouter } from "react-router-dom";
@@ -126,17 +124,13 @@ class App extends React.Component {
 
     const isReady = !(!ready || (!clientsReady && Boolean(auth)));
 
-    const htmlClasses = cx("antialiased", {
-      "bg-blue-lightest": !auth,
-      "bg-white": Boolean(auth)
-    });
+    // const htmlClasses = cx("antialiased", {
+    //   "bg-blue-lightest": !auth,
+    //   "bg-white": Boolean(auth)
+    // });
 
     return (
       <>
-        <Helmet>
-          <html className={htmlClasses} lang="en" />
-        </Helmet>
-
         {isReady && children}
 
         <Loader loading={!isReady} />
