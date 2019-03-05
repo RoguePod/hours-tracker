@@ -10,7 +10,7 @@ const Webpack = require("webpack");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 
 module.exports = {
-  devtool: "source-map",
+  devtool: "hidden-source-map",
   entry: {
     app: ["@babel/polyfill", "./src/javascripts/app/entry.js"]
   },
