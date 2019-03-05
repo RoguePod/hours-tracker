@@ -124,11 +124,11 @@ class App extends React.Component {
   render() {
     const { auth, children, clientsReady, ready } = this.props;
 
-    const isReady = !(!ready || (!clientsReady && auth));
+    const isReady = !(!ready || (!clientsReady && Boolean(auth)));
 
     const htmlClasses = cx("antialiased", {
       "bg-blue-lightest": !auth,
-      "bg-white": auth
+      "bg-white": Boolean(auth)
     });
 
     return (
