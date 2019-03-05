@@ -175,16 +175,11 @@ function* watchUserSubscribe() {
   yield takeLatest(USER_SUBSCRIBE, userSubscribe);
 }
 
-/* eslint-disable */
 function* userSignIn(auth, initial) {
-  console.log(1);
   yield put(setAuth(auth));
-  console.log(2);
 
   yield put(subscribeUser(auth));
-  console.log(3);
   yield put(subscribeClients());
-  console.log(4);
 
   const redirect = yield select(state => state.app.redirect);
 
@@ -223,12 +218,12 @@ function* handleAuthSubscribe({ auth }) {
 
   if (current.ready) {
     if (current.auth && !auth) {
-      yield spawn(userSignOut);
+      yield userSignOut();
     } else if (!current.auth && auth) {
-      yield spawn(userSignIn, auth, false);
+      yield userSignIn(auth, false);
     }
   } else if (auth) {
-    yield spawn(userSignIn, auth, true);
+    yield userSignIn(auth, true);
   } else {
     yield put(ready());
   }
