@@ -1,0 +1,20 @@
+<svg height="40px" viewBox="0 0 200 200" width="40px">
+  <circle cx="100" cy="100" id="circle" r="80" stroke="rgb(78, 142, 178)" stroke-width="12px" fill="white" />
+  <g>
+    <line id="hourhand" transform="rotate(90 100 100)" x1="100" x2="100" y1="100" y2="58" stroke="rgb(78, 142, 178)" stroke-width="12px" />
+    <line id="minutehand" x1="100" x2="100" y1="100" y2="48" stroke="rgb(78, 142, 178)" stroke-width="12px" />
+  </g>
+  <circle cx="100" cy="100" r="10" fill="rgb(78, 142, 178)" />
+  <line transform="rotate(0 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(30 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(60 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(90 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(120 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(150 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(180 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(210 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(240 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(270 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(300 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+  <line transform="rotate(330 100 100)" x1="100" x2="100" y1="30" y2="40" stroke="rgb(78, 142, 178)" stroke-width="10px" />
+</svg>
