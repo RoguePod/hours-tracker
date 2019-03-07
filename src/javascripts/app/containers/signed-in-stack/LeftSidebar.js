@@ -94,7 +94,7 @@ class LeftSidebar extends React.Component {
     const open = hash.match(/stopwatch/u);
 
     const sliderClasses =
-      "fixed pin-l pin-b w-64 flex bg-blue-lightest md:shadow-md flex-col " +
+      "fixed pin-l pin-b w-64 flex bg-blue-lightest shadow-md flex-col " +
       "z-10";
 
     return (
