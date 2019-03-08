@@ -1,16 +1,6 @@
 /* eslint-disable max-lines */
 
 import {
-  all,
-  call,
-  cancelled,
-  fork,
-  put,
-  select,
-  takeEvery,
-  takeLatest
-} from "redux-saga/effects";
-import {
   batchCommit,
   convertEntryParamIdsToRefs,
   firebase,
@@ -20,6 +10,14 @@ import {
   isDate,
   parseEntry
 } from "javascripts/globals";
+import {
+  call,
+  put,
+  select,
+  spawn,
+  takeEvery,
+  takeLatest
+} from "redux-saga/effects";
 
 import _filter from "lodash/filter";
 import _flatten from "lodash/flatten";
@@ -41,8 +39,11 @@ import update from "immutability-helper";
 // Selectors
 
 const selectRouterSearch = state => state.router.location.search;
-const selectEntries = state => state.entries.entries;
+const selectBaseEntries = state => state.entries.entries;
 const selectChecked = state => state.entries.checked;
+const selectClients = state => state.clients.clients;
+const selectAppUser = state => state.app.user;
+const selectUsers = state => state.users.users;
 
 export const selectQuery = createSelector(
   [selectRouterSearch],
@@ -54,6 +55,13 @@ export const selectQuery = createSelector(
     };
 
     return { ...defaults, ...parsedQuery };
+  }
+);
+
+export const selectEntries = createSelector(
+  [selectBaseEntries, selectClients, selectAppUser, selectUsers],
+  (entries, clients, appUser, users) => {
+    return entries.map(entry => parseEntry(entry, clients, appUser, users));
   }
 );
 
@@ -203,11 +211,6 @@ export default (state = initialState, action) => {
       });
 
     case RESET:
-      if (channel) {
-        channel.close();
-        channel = null;
-      }
-
       return update(state, {
         checked: { $set: [] },
         entries: { $set: [] },
@@ -251,6 +254,11 @@ export const setLocation = location => {
 };
 
 export const reset = () => {
+  if (channel) {
+    channel.close();
+    channel = null;
+  }
+
   return { type: RESET };
 };
 
@@ -270,9 +278,8 @@ const setFetching = fetching => {
 
 function* handleEntriesSubscribe({ snapshot }) {
   const currentState = yield select(state => state.entries);
-  const entries = yield all(snapshot.docs.map(parseEntry));
 
-  yield put(setEntries(entries));
+  yield put(setEntries(snapshot.docs));
 
   if (!currentState.ready) {
     yield put(ready());
@@ -359,14 +366,7 @@ function* entriesSubscribe({ limit }) {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(channel, handleEntriesSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeEvery(channel, handleEntriesSubscribe);
 }
 
 function* watchEntriesSubscribe() {
@@ -444,7 +444,7 @@ function* watchEntriesUpdate() {
 }
 
 export const sagas = [
-  fork(watchEntriesSubscribe),
-  fork(watchEntriesDestroy),
-  fork(watchEntriesUpdate)
+  spawn(watchEntriesSubscribe),
+  spawn(watchEntriesDestroy),
+  spawn(watchEntriesUpdate)
 ];

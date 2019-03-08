@@ -1,9 +1,12 @@
-import { call, fork, put, select, takeLatest } from "redux-saga/effects";
+import {
+  signInUser as appSignInUser,
+  userSignOut as appUserSignOut
+} from "javascripts/app/redux/app";
+import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 import { firebase, request, updateRef } from "javascripts/globals";
 import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
-import { signInUser as appSignInUser } from "javascripts/app/redux/app";
 
 // Constants
 
@@ -48,7 +51,8 @@ function* watchUserSignIn() {
 }
 
 function* userSignOut() {
-  yield firebase.auth().signOut();
+  yield appUserSignOut();
+  firebase.auth().signOut();
 }
 
 function* watchUserSignOut() {
@@ -65,11 +69,11 @@ export function* userUpdate({ actions, params }) {
 
     if (error) {
       actions.setStatus(error.message);
-      actions.setSubmitting(false);
     } else {
       yield put(addFlash("Profile has been updated"));
     }
   } finally {
+    actions.setSubmitting(false);
     yield put(stopFetching(USER_UPDATE));
   }
 }
@@ -79,7 +83,7 @@ function* watchUserUpdate() {
 }
 
 export const sagas = [
-  fork(watchUserSignOut),
-  fork(watchUserSignIn),
-  fork(watchUserUpdate)
+  spawn(watchUserSignOut),
+  spawn(watchUserSignIn),
+  spawn(watchUserUpdate)
 ];

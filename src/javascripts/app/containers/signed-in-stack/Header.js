@@ -14,13 +14,9 @@ const Header = styled.header`
 class SignedInHeader extends React.Component {
   static propTypes = {
     location: PropTypes.routerLocation.isRequired,
-    running: PropTypes.entry,
+    running: PropTypes.bool.isRequired,
     user: PropTypes.user.isRequired,
     width: PropTypes.number.isRequired
-  };
-
-  static defaultProps = {
-    running: null
   };
 
   shouldComponentUpdate(nextProps) {
@@ -29,7 +25,7 @@ class SignedInHeader extends React.Component {
     return (
       location.pathname !== nextProps.location.pathname ||
       location.hash !== nextProps.location.hash ||
-      Boolean(running) !== Boolean(nextProps.running) ||
+      running !== nextProps.running ||
       user.name !== nextProps.user.name ||
       width !== nextProps.width
     );
@@ -59,7 +55,7 @@ class SignedInHeader extends React.Component {
               className="mr-2 md:hidden flex hover:bg-blue-light rounded"
               to={{ ...location, hash: logoHash, replace: true }}
             >
-              <Clock animate={Boolean(running)} size="40px" />
+              <Clock animate={running} size="40px" />
             </Link>
             <Link className="text-xl" to="/">
               {"Hours Tracker"}

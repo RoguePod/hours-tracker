@@ -8,6 +8,7 @@ config/secrets.yml
 *.sublime*
 functions/index.js
 .env*
+!.env.example
 .firebaserc
 .firebase/*
 .sentryclirc*

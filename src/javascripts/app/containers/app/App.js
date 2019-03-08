@@ -3,7 +3,6 @@
 import { loadApp, updateWindow } from "javascripts/app/redux/app";
 
 import { Flashes } from "javascripts/shared/components";
-import { Helmet } from "react-helmet";
 import Loader from "./Loader";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
@@ -48,6 +47,8 @@ class App extends React.Component {
     onLoadApp();
 
     window.addEventListener("resize", this._handleUpdateWindow);
+
+    this._handleSetBackground();
   }
 
   shouldComponentUpdate(nextProps) {
@@ -67,13 +68,13 @@ class App extends React.Component {
       width !== nextProps.width ||
       clientsReady !== nextProps.clientsReady ||
       !_isEqual(location, nextProps.location) ||
-      !_isEqual(auth, nextProps.auth) ||
+      Boolean(auth) !== Boolean(nextProps.auth) ||
       !_isEqual(flashes, nextProps.flashes)
     );
   }
 
   componentDidUpdate(prevProps) {
-    const { location } = this.props;
+    const { auth, location } = this.props;
     const { hash, pathname } = location;
 
     const modal = _get(location, "state.modal", false);
@@ -88,6 +89,10 @@ class App extends React.Component {
     } else {
       document.removeEventListener("keydown", this._handleKeyPress);
     }
+
+    if (Boolean(auth) !== Boolean(prevProps.auth)) {
+      this._handleSetBackground();
+    }
   }
 
   componentWillUnmount() {
@@ -96,6 +101,17 @@ class App extends React.Component {
     }
 
     window.removeEventListener("resize", this._handleUpdateWindow);
+  }
+
+  _handleSetBackground() {
+    const { auth } = this.props;
+
+    const htmlClasses = cx("antialiased", {
+      "bg-blue-lightest": !auth,
+      "bg-white": Boolean(auth)
+    });
+
+    document.documentElement.className = htmlClasses;
   }
 
   _handleUpdateWindow() {
@@ -124,19 +140,10 @@ class App extends React.Component {
   render() {
     const { auth, children, clientsReady, ready } = this.props;
 
-    const isReady = !(!ready || (!clientsReady && auth));
-
-    const htmlClasses = cx("antialiased", {
-      "bg-blue-lightest": !auth,
-      "bg-white": auth
-    });
+    const isReady = !(!ready || (!clientsReady && Boolean(auth)));
 
     return (
       <>
-        <Helmet>
-          <html className={htmlClasses} lang="en" />
-        </Helmet>
-
         {isReady && children}
 
         <Loader loading={!isReady} />

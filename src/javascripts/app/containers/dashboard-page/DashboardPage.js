@@ -3,6 +3,7 @@ import {
   selectDashboardProjects,
   selectDashboardProjectsForUser,
   selectDashboardUsers,
+  selectEntries,
   selectQuery,
   subscribeEntries
 } from "javascripts/app/redux/dashboard";
@@ -51,13 +52,12 @@ class DashboardPage extends React.Component {
     query: PropTypes.shape({
       date: PropTypes.string.isRequired
     }).isRequired,
-    running: PropTypes.entry,
+    running: PropTypes.bool.isRequired,
     timezone: PropTypes.string.isRequired
   };
 
   static defaultProps = {
-    fetching: null,
-    running: null
+    fetching: null
   };
 
   constructor(props) {
@@ -141,7 +141,11 @@ class DashboardPage extends React.Component {
 
         <h2 className="text-blue mb-2">{"Latest Entries"}</h2>
         <EntriesTable location={location} />
-        <Spinner page spinning={Boolean(fetching)} />
+        <Spinner
+          page
+          spinning={Boolean(fetching)}
+          text="Loading Dashboard..."
+        />
       </div>
     );
   }
@@ -150,12 +154,12 @@ class DashboardPage extends React.Component {
 const props = state => {
   return {
     admin: selectAdmin(state),
-    entries: state.dashboard.entries,
+    entries: selectEntries(state),
     fetching: state.dashboard.fetching,
     projects: selectDashboardProjectsForUser(state),
     projectsAdmin: selectDashboardProjects(state),
     query: selectQuery(state),
-    running: state.running.entry,
+    running: Boolean(state.running.entry),
     timezone: selectTimezone(state),
     user: state.app.user,
     users: selectDashboardUsers(state)

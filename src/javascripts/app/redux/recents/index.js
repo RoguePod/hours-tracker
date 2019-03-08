@@ -1,13 +1,6 @@
-import {
-  all,
-  cancelled,
-  fork,
-  put,
-  select,
-  takeEvery,
-  takeLatest
-} from "redux-saga/effects";
+import { put, select, spawn, takeEvery, takeLatest } from "redux-saga/effects";
 
+import _filter from "lodash/filter";
 import _find from "lodash/find";
 import _sortBy from "lodash/sortBy";
 import { createSelector } from "reselect";
@@ -42,11 +35,6 @@ export default (state = initialState, action) => {
       return update(state, { ready: { $set: true } });
 
     case RESET:
-      if (channel) {
-        channel.close();
-        channel = null;
-      }
-
       return initialState;
 
     default:
@@ -61,6 +49,11 @@ export const subscribeRecents = () => {
 };
 
 export const reset = () => {
+  if (channel) {
+    channel.close();
+    channel = null;
+  }
+
   return { type: RESET };
 };
 
@@ -74,11 +67,8 @@ const setRecents = recents => {
 
 // Sagas
 
-export function* parseRecent(snapshot) {
+const parseRecent = (snapshot, clients) => {
   const data = snapshot.data();
-
-  const clients = yield select(state => state.clients.clients);
-
   let client = null;
 
   if (data.clientRef) {
@@ -101,20 +91,18 @@ export function* parseRecent(snapshot) {
     project,
     snapshot
   };
-}
+};
 
 function* handleRecentsSubscribe({ snapshot }) {
-  const isReady = yield select(state => state.recents.ready);
-  const recents = yield all(snapshot.docs.map(parseRecent));
-
-  yield put(setRecents(recents));
-
-  if (!isReady) {
-    yield put(ready());
-  }
+  yield put(setRecents(snapshot.docs));
+  yield put(ready());
 }
 
 function* recentsSubscribe() {
+  if (channel) {
+    channel.close();
+  }
+
   const auth = yield select(state => state.app.auth);
 
   channel = eventChannel(emit => {
@@ -127,26 +115,30 @@ function* recentsSubscribe() {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(channel, handleRecentsSubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeEvery(channel, handleRecentsSubscribe);
 }
 
 function* watchRecentsSubscribe() {
   yield takeLatest(RECENTS_SUBSCRIBE, recentsSubscribe);
 }
 
-export const sagas = [fork(watchRecentsSubscribe)];
+export const sagas = [spawn(watchRecentsSubscribe)];
 
 // Selectors
 
 const selectUser = state => state.app.user;
-const selectRecents = state => state.recents.recents;
+const selectBaseRecents = state => state.recents.recents;
+const selectClients = state => state.clients.clients;
+
+export const selectRecents = createSelector(
+  [selectBaseRecents, selectClients],
+  (recents, clients) => {
+    return _filter(
+      recents.map(recent => parseRecent(recent, clients)),
+      "project"
+    );
+  }
+);
 
 export const selectFilteredRecents = createSelector(
   [selectRecents, selectUser],

@@ -6,10 +6,9 @@ import {
 } from "javascripts/globals";
 import {
   call,
-  cancelled,
-  fork,
   put,
   select,
+  spawn,
   takeEvery,
   takeLatest
 } from "redux-saga/effects";
@@ -122,7 +121,7 @@ function* entryStart({ params }) {
       .valueOf();
 
     if (entry) {
-      entry.snapshot.ref.update({ stoppedAt: now });
+      entry.ref.update({ stoppedAt: now });
     }
 
     const defaults = {
@@ -168,7 +167,7 @@ function* entryStop() {
       const now = moment()
         .utc()
         .valueOf();
-      entry.snapshot.ref.update({ stoppedAt: now, updatedAt: now });
+      entry.ref.update({ stoppedAt: now, updatedAt: now });
     }
   } finally {
     yield put(setFetching(null));
@@ -192,7 +191,7 @@ function* entryUpdate({ params }) {
     const updatedAt = moment()
       .utc()
       .valueOf();
-    entry.snapshot.ref.update({
+    entry.ref.update({
       ...convertEntryParamIdsToRefs(params),
       updatedAt
     });
@@ -208,13 +207,7 @@ function* watchEntryUpdate() {
 function* handleEntrySubscribe({ snapshot }) {
   const isReady = yield select(state => state.running.ready);
 
-  let entry = null;
-
-  if (snapshot) {
-    entry = yield parseEntry(snapshot);
-  }
-
-  yield put(setEntry(entry));
+  yield put(setEntry(snapshot));
 
   if (!isReady) {
     yield put(ready());
@@ -243,14 +236,7 @@ function* entrySubscribe() {
     return () => unsubscribe();
   });
 
-  try {
-    yield takeEvery(channel, handleEntrySubscribe);
-  } finally {
-    if (yield cancelled()) {
-      channel.close();
-      channel = null;
-    }
-  }
+  yield takeEvery(channel, handleEntrySubscribe);
 }
 
 function* watchEntrySubscribe() {
@@ -258,17 +244,31 @@ function* watchEntrySubscribe() {
 }
 
 export const sagas = [
-  fork(watchEntryStart),
-  fork(watchEntryStop),
-  fork(watchEntryUpdate),
-  fork(watchEntrySubscribe)
+  spawn(watchEntryStart),
+  spawn(watchEntryStop),
+  spawn(watchEntryUpdate),
+  spawn(watchEntrySubscribe)
 ];
 
 // Selectors
 
-const selectEntry = state => state.running.entry;
+const selectBaseEntry = state => state.running.entry;
+const selectClients = state => state.clients.clients;
+const selectAppUser = state => state.app.user;
+const selectUsers = state => state.users.users;
 
-export const selectRunningEntry = createSelector(
+export const selectEntry = createSelector(
+  [selectBaseEntry, selectClients, selectAppUser, selectUsers],
+  (entry, clients, appUser, users) => {
+    if (entry) {
+      return parseEntry(entry, clients, appUser, users);
+    }
+
+    return null;
+  }
+);
+
+export const selectRunningEntryForForm = createSelector(
   [selectEntry],
   entry => {
     if (entry) {

@@ -1,6 +1,11 @@
 import * as Yup from "yup";
 
-import { getEntry, reset, splitEntry } from "javascripts/app/redux/entry";
+import {
+  getEntry,
+  reset,
+  selectEntry,
+  splitEntry
+} from "javascripts/app/redux/entry";
 
 import { Formik } from "formik";
 import PropTypes from "javascripts/prop-types";
@@ -132,7 +137,7 @@ class EntrySplitPage extends React.Component {
 
 const props = state => {
   return {
-    entry: state.entry.entry,
+    entry: selectEntry(state),
     fetching: state.entry.fetching,
     timezone: selectTimezone(state)
   };

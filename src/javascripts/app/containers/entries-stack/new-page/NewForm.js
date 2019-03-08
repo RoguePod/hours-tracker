@@ -15,14 +15,13 @@ class EntryNewForm extends React.Component {
     fetching: PropTypes.string,
     onCreateEntry: PropTypes.func.isRequired,
     page: PropTypes.bool,
-    running: PropTypes.entry,
+    running: PropTypes.bool.isRequired,
     timezone: PropTypes.string.isRequired
   };
 
   static defaultProps = {
     fetching: null,
-    page: false,
-    running: null
+    page: false
   };
 
   shouldComponentUpdate(nextProps) {
@@ -74,7 +73,7 @@ class EntryNewForm extends React.Component {
 const props = state => {
   return {
     fetching: state.entry.fetching,
-    running: state.running.entry,
+    running: Boolean(state.running.entry),
     timezone: selectTimezone(state)
   };
 };

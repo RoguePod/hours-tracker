@@ -2,7 +2,7 @@
 
 /* global document, localStorage */
 
-import { call, fork, put, select, takeLatest } from "redux-saga/effects";
+import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
 import { createSelector } from "reselect";
@@ -103,9 +103,6 @@ export function* userSignIn(user, token) {
 
   localStorage.setItem("token", token);
 
-  // yield put(subscribeUser(auth));
-  // yield put(subscribeClients());
-
   const redirect = yield select(state => state.app.redirect);
 
   if (redirect) {
@@ -120,18 +117,13 @@ function* watchUserSignIn() {
   yield takeLatest(USER_SIGN_IN, userSignIn);
 }
 
-function* userSignOut() {
+export function* userSignOut() {
   yield put(resetRunning());
   yield put(resetRecents());
   yield put(resetUsers());
   yield put(resetClients());
 
-  // if (userChannel) {
-  //   userChannel.close();
-  //   userChannel = null;
-  // }
-
-  // yield put(setAuth(null));
+  yield put(setUser(null));
 
   yield call(history.push, "/sign-in");
 }
@@ -177,10 +169,10 @@ function* watchUserRedirect() {
 }
 
 export const sagas = [
-  fork(watchAppLoad),
-  fork(watchUserRedirect),
-  fork(watchUserSignIn),
-  fork(watchUserSignOut)
+  spawn(watchAppLoad),
+  spawn(watchUserRedirect),
+  spawn(watchUserSignIn),
+  spawn(watchUserSignOut)
 ];
 
 // Selectors

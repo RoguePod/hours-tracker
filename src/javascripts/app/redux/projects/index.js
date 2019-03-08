@@ -1,9 +1,8 @@
 import { add, updateRef } from "javascripts/globals";
-import { call, fork, put, takeLatest } from "redux-saga/effects";
+import { call, put, spawn, takeLatest } from "redux-saga/effects";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
 import { history } from "javascripts/app/redux/store";
-import { subscribeClients } from "javascripts/app/redux/clients";
 import update from "immutability-helper";
 
 // Constants
@@ -64,7 +63,6 @@ function* projectCreate({ actions, client, params }) {
       actions.setStatus(error.message);
     } else {
       yield put(addFlash("Project has been created."));
-      yield put(subscribeClients());
 
       if (history.action === "POP") {
         yield call(history.push, "/clients");
@@ -93,7 +91,6 @@ function* projectUpdate({ actions, params, project }) {
       actions.setSubmitting(false);
     } else {
       yield put(addFlash("Project has been updated."));
-      yield put(subscribeClients());
 
       if (history.action === "POP") {
         yield call(history.push, "/clients");
@@ -110,4 +107,4 @@ function* watchProjectUpdate() {
   yield takeLatest(PROJECT_UPDATE, projectUpdate);
 }
 
-export const sagas = [fork(watchProjectCreate), fork(watchProjectUpdate)];
+export const sagas = [spawn(watchProjectCreate), spawn(watchProjectUpdate)];

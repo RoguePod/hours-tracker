@@ -27,7 +27,6 @@ class ProfilePage extends React.Component {
     const {
       autoloadLastDescription,
       name,
-      entriesTab,
       recentProjectsListSize,
       recentProjectsSort,
       timezone
@@ -35,7 +34,6 @@ class ProfilePage extends React.Component {
 
     return {
       autoloadLastDescription,
-      entriesTab,
       name,
       recentProjectsListSize,
       recentProjectsSort,
