@@ -1,26 +1,18 @@
-import {
-  signInUser as appSignInUser,
-  userSignOut as appUserSignOut
-} from "javascripts/app/redux/app";
 import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
-import { firebase, request, updateRef } from "javascripts/globals";
+import { firebase, updateRef } from "javascripts/globals";
 import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
+import { userSignOut as appUserSignOut } from "javascripts/app/redux/app";
 
 // Constants
 
 const path = "hours-tracker/app/user";
 
-const USER_SIGN_IN = `${path}/USER_SIGN_IN`;
 const USER_SIGN_OUT = `${path}/USER_SIGN_OUT`;
 const USER_UPDATE = `${path}/USER_UPDATE`;
 
 // Actions
-
-export const signInUser = (params, actions) => {
-  return { actions, params, type: USER_SIGN_IN };
-};
 
 export const signOutUser = () => {
   return { type: USER_SIGN_OUT };
@@ -31,24 +23,6 @@ export const updateUser = (params, actions) => {
 };
 
 // Sagas
-
-function* userSignIn({ actions, params }) {
-  const response = yield call(request, "/v1/session", "POST", {
-    session: params
-  });
-
-  if (response.error) {
-    actions.setStatus("Invalid Credentials");
-    actions.setSubmitting(false);
-  } else {
-    yield put(appSignInUser(response.user, response.token));
-    yield put(addFlash("Sign In Successful!"));
-  }
-}
-
-function* watchUserSignIn() {
-  yield takeLatest(USER_SIGN_IN, userSignIn);
-}
 
 function* userSignOut() {
   yield appUserSignOut();
@@ -82,8 +56,4 @@ function* watchUserUpdate() {
   yield takeLatest(USER_UPDATE, userUpdate);
 }
 
-export const sagas = [
-  spawn(watchUserSignOut),
-  spawn(watchUserSignIn),
-  spawn(watchUserUpdate)
-];
+export const sagas = [spawn(watchUserSignOut), spawn(watchUserUpdate)];

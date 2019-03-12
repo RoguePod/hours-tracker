@@ -1,13 +1,49 @@
 import * as Yup from "yup";
 
 import { Formik } from "formik";
+import { Mutation } from "react-apollo";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import SignInForm from "./SignInForm";
+import { addFlash } from "javascripts/shared/redux/flashes";
 import { connect } from "react-redux";
-import { signInUser } from "javascripts/app/redux/user";
+import gql from "graphql-tag";
+import { serverErrors } from "javascripts/globals";
+import { signInUser } from "javascripts/app/redux/app";
 
-const SignInPage = ({ onSignInUser }) => {
+const MUTATION = gql`
+  mutation SignIn($email: String!, $password: String!) {
+    signIn(email: $email, password: $password) {
+      token
+      user {
+        email
+        name
+        role
+        timezone
+      }
+    }
+  }
+`;
+
+const SignInPage = ({ onAddFlash, onSignInUser }) => {
+  const _handleSubmit = (onSubmit, variables, actions) => {
+    onSubmit({ variables })
+      .then(({ data: { signIn: { user, token } } }) => {
+        onSignInUser(user, token);
+        onAddFlash("Sign In Successful!");
+      })
+      .catch(error => {
+        actions.setErrors(serverErrors(error));
+        actions.setSubmitting(false);
+        actions.setStatus("Invalid Credentials");
+      });
+  };
+
+  const initialValues = {
+    email: "",
+    password: ""
+  };
+
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email("Must be a valid Email")
@@ -15,26 +51,28 @@ const SignInPage = ({ onSignInUser }) => {
     password: Yup.string().required("Password is Required")
   });
 
-  const initialValues = {
-    email: "",
-    password: ""
-  };
-
   return (
     <div className="bg-white shadow rounded p-4">
       <h2 className="text-blue pb-4">{"Sign In"}</h2>
 
-      <Formik
-        initialValues={initialValues}
-        onSubmit={onSignInUser}
-        render={SignInForm}
-        validationSchema={validationSchema}
-      />
+      <Mutation mutation={MUTATION}>
+        {onSubmit => (
+          <Formik
+            initialValues={initialValues}
+            onSubmit={(variables, actions) =>
+              _handleSubmit(onSubmit, variables, actions)
+            }
+            render={SignInForm}
+            validationSchema={validationSchema}
+          />
+        )}
+      </Mutation>
     </div>
   );
 };
 
 SignInPage.propTypes = {
+  onAddFlash: PropTypes.func.isRequired,
   onSignInUser: PropTypes.func.isRequired
 };
 
@@ -43,6 +81,7 @@ const props = () => {
 };
 
 const actions = {
+  onAddFlash: addFlash,
   onSignInUser: signInUser
 };
 

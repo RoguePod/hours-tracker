@@ -47,6 +47,15 @@ const propTypes = {
     touched: PropTypes.object.isRequired,
     values: PropTypes.object.isRequired
   }),
+  gqlMutation: PropTypes.shape({
+    called: PropTypes.bool.isRequired,
+    loading: PropTypes.bool.isRequired
+  }),
+  gqlQuery: PropTypes.shape({
+    loading: PropTypes.bool.isRequired,
+    networkStatus: PropTypes.number.isRequired,
+    refetch: PropTypes.func.isRequired
+  }),
   pagination: PropTypes.shape({
     page: PropTypes.number.isRequired,
     perPage: PropTypes.number,

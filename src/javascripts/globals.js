@@ -64,6 +64,15 @@ export const toQuery = params => {
   return query.join("&");
 };
 
+export const serverErrors = error => {
+  const errors = {};
+  error.graphQLErrors.forEach(({ field, message }) => {
+    errors[field] = message;
+  });
+
+  return errors;
+};
+
 export const fromQuery = query => {
   const params = {};
 
@@ -348,5 +357,13 @@ export const request = (url, method, data = {}) => {
 
       return json;
     })
-    .then(response => response, error => ({ error }));
+    .then(
+      response => response,
+      error => {
+        if (_isString(error)) {
+          return { error };
+        }
+        return { error: "Sorry, An Error Occurred" };
+      }
+    );
 };

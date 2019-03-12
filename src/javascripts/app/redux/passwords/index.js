@@ -2,8 +2,8 @@ import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
-import { firebase } from "javascripts/globals";
 import { history } from "javascripts/app/redux/store";
+import { request } from "javascripts/globals";
 
 // Constants
 
@@ -24,28 +24,14 @@ export const updatePassword = (params, actions) => {
 
 // Sagas
 
-const handlePasswordForgot = email => {
-  return new Promise((resolve, reject) => {
-    firebase
-      .auth()
-      .sendPasswordResetEmail(email)
-      .then(() => {
-        resolve({});
-      })
-      .catch(error => {
-        reject(error.message);
-      });
-  }).then(response => response, error => ({ error }));
-};
-
-function* passwordForgot({ actions, params: { email } }) {
+function* passwordForgot({ actions, params }) {
   try {
-    yield put(startFetching(PASSWORD_FORGOT));
+    const response = yield call(request, "/v1/passwords", "POST", {
+      forgotPassword: params
+    });
 
-    const { error } = yield call(handlePasswordForgot, email);
-
-    if (error) {
-      actions.setStatus(error);
+    if (response.error) {
+      actions.setStatus(response.error);
       actions.setSubmitting(false);
     } else {
       yield put(addFlash("Reset Password Instructions sent!"));

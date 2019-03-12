@@ -43,7 +43,11 @@ import {
 import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
 import { history, store } from "javascripts/app/redux/store";
 
+import { ApolloClient } from "apollo-client";
+import { ApolloProvider } from "react-apollo";
 import { ConnectedRouter } from "connected-react-router";
+import { HttpLink } from "apollo-link-http";
+import { InMemoryCache } from "apollo-cache-inmemory";
 import { Provider } from "react-redux";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -82,16 +86,23 @@ library.add(
 
 moment.locale("en");
 
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({ uri: process.env.GRAPHQL_ENDPOINT })
+});
+
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
-      <App>
-        <Switch>
-          <Route component={SignOutPage} path="/sign-out" />
-          <Route component={SignedOutStack} path="/sign-in" />
-          <Route component={SignedInStack} path="/" />
-        </Switch>
-      </App>
+      <ApolloProvider client={client}>
+        <App>
+          <Switch>
+            <Route component={SignOutPage} path="/sign-out" />
+            <Route component={SignedOutStack} path="/sign-in" />
+            <Route component={SignedInStack} path="/" />
+          </Switch>
+        </App>
+      </ApolloProvider>
     </ConnectedRouter>
   </Provider>,
   document.getElementById("app")
