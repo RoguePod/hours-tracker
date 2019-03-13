@@ -2,49 +2,20 @@ import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
 
 import { addFlash } from "javascripts/shared/redux/flashes";
-import { history } from "javascripts/app/redux/store";
-import { request } from "javascripts/globals";
 
 // Constants
 
 const path = "hours-tracker/app/passwords";
 
-const PASSWORD_FORGOT = `${path}/PASSWORD_FORGOT`;
 const PASSWORD_UPDATE = `${path}/PASSWORD_UPDATE`;
 
 // Actions
-
-export const forgotPassword = (params, actions) => {
-  return { actions, params, type: PASSWORD_FORGOT };
-};
 
 export const updatePassword = (params, actions) => {
   return { actions, params, type: PASSWORD_UPDATE };
 };
 
 // Sagas
-
-function* passwordForgot({ actions, params }) {
-  try {
-    const response = yield call(request, "/v1/passwords", "POST", {
-      forgotPassword: params
-    });
-
-    if (response.error) {
-      actions.setStatus(response.error);
-      actions.setSubmitting(false);
-    } else {
-      yield put(addFlash("Reset Password Instructions sent!"));
-      yield call(history.push, "/sign-in");
-    }
-  } finally {
-    yield put(stopFetching(PASSWORD_FORGOT));
-  }
-}
-
-function* watchPasswordForgot() {
-  yield takeLatest(PASSWORD_FORGOT, passwordForgot);
-}
 
 const handleUpdatePassword = (auth, password) => {
   return new Promise((resolve, reject) => {
@@ -85,4 +56,4 @@ function* watchPasswordUpdate() {
   yield takeLatest(PASSWORD_UPDATE, passwordUpdate);
 }
 
-export const sagas = [spawn(watchPasswordForgot), spawn(watchPasswordUpdate)];
+export const sagas = [spawn(watchPasswordUpdate)];

@@ -64,13 +64,22 @@ export const toQuery = params => {
   return query.join("&");
 };
 
-export const serverErrors = error => {
+export const serverErrors = (
+  error,
+  defaultStatus = "Sorry, An Error Occurred"
+) => {
+  let status = defaultStatus;
   const errors = {};
+
   error.graphQLErrors.forEach(({ field, message }) => {
-    errors[field] = message;
+    if (field === "base") {
+      status = message;
+    } else {
+      errors[field] = message;
+    }
   });
 
-  return errors;
+  return { errors, status };
 };
 
 export const fromQuery = query => {

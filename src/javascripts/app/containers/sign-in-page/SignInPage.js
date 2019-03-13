@@ -33,9 +33,10 @@ const SignInPage = ({ onAddFlash, onSignInUser }) => {
         onAddFlash("Sign In Successful!");
       })
       .catch(error => {
-        actions.setErrors(serverErrors(error));
+        const { errors, status } = serverErrors(error);
+        actions.setStatus(status);
+        actions.setErrors(errors);
         actions.setSubmitting(false);
-        actions.setStatus("Invalid Credentials");
       });
   };
 

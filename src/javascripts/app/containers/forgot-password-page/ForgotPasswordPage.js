@@ -2,12 +2,37 @@ import * as Yup from "yup";
 
 import ForgotPasswordForm from "./ForgotPasswordForm";
 import { Formik } from "formik";
+import { Mutation } from "react-apollo";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
+import { addFlash } from "javascripts/shared/redux/flashes";
 import { connect } from "react-redux";
-import { forgotPassword } from "javascripts/app/redux/passwords";
+import gql from "graphql-tag";
+import { history } from "javascripts/app/redux/store";
+import { serverErrors } from "javascripts/globals";
 
-const ForgotPasswordPage = ({ onForgotPassword }) => {
+const MUTATION = gql`
+  mutation ForgotPassword($email: String!) {
+    forgotPassword(email: $email) {
+      email
+    }
+  }
+`;
+
+const ForgotPasswordPage = ({ onAddFlash }) => {
+  const _handleSubmit = (onSubmit, variables, actions) => {
+    onSubmit({ variables })
+      .then(() => {
+        onAddFlash("Reset Password Instructions sent!");
+        history.push("/sign-in");
+      })
+      .catch(error => {
+        const { errors, status } = serverErrors(error);
+        actions.setStatus(status);
+        actions.setErrors(errors);
+        actions.setSubmitting(false);
+      });
+  };
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email("Must be a valid Email")
@@ -22,18 +47,24 @@ const ForgotPasswordPage = ({ onForgotPassword }) => {
     <div className="bg-white shadow rounded p-4">
       <h2 className="text-blue pb-4">{"Forgot Password?"}</h2>
 
-      <Formik
-        initialValues={initialValues}
-        onSubmit={onForgotPassword}
-        render={ForgotPasswordForm}
-        validationSchema={validationSchema}
-      />
+      <Mutation mutation={MUTATION}>
+        {onSubmit => (
+          <Formik
+            initialValues={initialValues}
+            onSubmit={(variables, actions) =>
+              _handleSubmit(onSubmit, variables, actions)
+            }
+            render={ForgotPasswordForm}
+            validationSchema={validationSchema}
+          />
+        )}
+      </Mutation>
     </div>
   );
 };
 
 ForgotPasswordPage.propTypes = {
-  onForgotPassword: PropTypes.func.isRequired
+  onAddFlash: PropTypes.func.isRequired
 };
 
 const props = () => {
@@ -41,7 +72,7 @@ const props = () => {
 };
 
 const actions = {
-  onForgotPassword: forgotPassword
+  onAddFlash: addFlash
 };
 
 export default connect(
