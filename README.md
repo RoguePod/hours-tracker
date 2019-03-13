@@ -49,3 +49,8 @@ yarn run prettier
 ```
 yarn add --dev --exact <package-name>
 ```
+
+### Firestore Backup
+
+gcloud config set project [project-id]
+gcloud beta firestore export gs://[bucket-id]
