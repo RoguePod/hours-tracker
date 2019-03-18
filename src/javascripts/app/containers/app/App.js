@@ -3,7 +3,6 @@
 import { loadApp, updateWindow } from "javascripts/app/redux/app";
 
 import { Flashes } from "javascripts/shared/components";
-import Loader from "./Loader";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import _get from "lodash/get";
@@ -16,22 +15,20 @@ import { withRouter } from "react-router-dom";
 
 class App extends React.Component {
   static propTypes = {
-    auth: PropTypes.auth,
-    children: PropTypes.node,
-    clientsReady: PropTypes.bool.isRequired,
+    children: PropTypes.node.isRequired,
     fetching: PropTypes.bool,
     flashes: PropTypes.arrayOf(PropTypes.flash).isRequired,
     location: PropTypes.routerLocation.isRequired,
     onLoadApp: PropTypes.func.isRequired,
     onUpdateWindow: PropTypes.func.isRequired,
-    ready: PropTypes.bool.isRequired,
+    token: PropTypes.string,
     width: PropTypes.number.isRequired
   };
 
   static defaultProps = {
     auth: null,
-    children: null,
-    fetching: false
+    fetching: false,
+    token: false
   };
 
   constructor(props) {
@@ -52,29 +49,19 @@ class App extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const {
-      auth,
-      clientsReady,
-      fetching,
-      flashes,
-      location,
-      ready,
-      width
-    } = this.props;
+    const { fetching, flashes, location, token, width } = this.props;
 
     return (
-      ready !== nextProps.ready ||
       fetching !== nextProps.fetching ||
       width !== nextProps.width ||
-      clientsReady !== nextProps.clientsReady ||
+      token !== nextProps.token ||
       !_isEqual(location, nextProps.location) ||
-      Boolean(auth) !== Boolean(nextProps.auth) ||
       !_isEqual(flashes, nextProps.flashes)
     );
   }
 
   componentDidUpdate(prevProps) {
-    const { auth, location } = this.props;
+    const { location, token } = this.props;
     const { hash, pathname } = location;
 
     const modal = _get(location, "state.modal", false);
@@ -90,7 +77,7 @@ class App extends React.Component {
       document.removeEventListener("keydown", this._handleKeyPress);
     }
 
-    if (Boolean(auth) !== Boolean(prevProps.auth)) {
+    if (token !== prevProps.token) {
       this._handleSetBackground();
     }
   }
@@ -104,11 +91,11 @@ class App extends React.Component {
   }
 
   _handleSetBackground() {
-    const { auth } = this.props;
+    const { token } = this.props;
 
     const htmlClasses = cx("antialiased", {
-      "bg-blue-lightest": !auth,
-      "bg-white": Boolean(auth)
+      "bg-blue-lightest": !token,
+      "bg-white": Boolean(token)
     });
 
     document.documentElement.className = htmlClasses;
@@ -138,15 +125,12 @@ class App extends React.Component {
   }
 
   render() {
-    const { auth, children, clientsReady, ready } = this.props;
-
-    const isReady = !(!ready || (!clientsReady && Boolean(auth)));
+    const { children } = this.props;
 
     return (
       <>
-        {isReady && children}
+        {children}
 
-        <Loader loading={!isReady} />
         <Flashes />
       </>
     );
@@ -154,12 +138,11 @@ class App extends React.Component {
 }
 
 const props = state => {
+  console.log('state', state);
   return {
-    auth: state.app.auth,
-    clientsReady: state.clients.ready,
     flashes: state.flashes.flashes,
-    ready: state.app.ready,
     sidebar: state.app.sidebar,
+    token: state.app.token,
     width: state.app.width
   };
 };

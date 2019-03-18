@@ -8,6 +8,7 @@ import {
 
 import { Formik } from "formik";
 import { Link } from "react-router-dom";
+import { Mutation } from "react-apollo";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import StopWatchForm from "./StopWatchForm";
@@ -16,6 +17,28 @@ import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 import _pick from "lodash/pick";
 import { connect } from "react-redux";
+import gql from "graphql-tag";
+
+/* eslint-disable prettier/prettier */
+const START_MUTATION = gql`
+  mutation EntryStart(
+    $clientId: String, $description: String, $projectId: String
+  ) {
+    entryStart(
+      clientId: $clientId,
+      description: $description,
+      projectId: $projectId
+    ) {
+      client_id
+      description
+      id
+      project_id
+      started_at
+      timezone
+    }
+  }
+`;
+/* eslint-enable prettier/prettier */
 
 class StopWatch extends React.Component {
   static propTypes = {
@@ -54,12 +77,12 @@ class StopWatch extends React.Component {
     );
   }
 
-  _handleStart() {
-    const { onStartEntry } = this.props;
-
+  _handleStart(onStartEntry) {
     const params = _get(this.form, "current.state.values", {});
 
-    onStartEntry(_pick(params, ["clientId", "description", "projectId"]));
+    onStartEntry({
+      variables: _pick(params, ["clientId", "description", "projectId"])
+    });
   }
 
   _handleSwap() {
@@ -94,7 +117,6 @@ class StopWatch extends React.Component {
           title="Stop"
           type="button"
         />
-
         <ActionIcon
           color="purple"
           icon="sync-alt"
@@ -129,7 +151,15 @@ class StopWatch extends React.Component {
   _renderNotRunningButtons() {
     return (
       <div className="flex flex-row justify-center flex-no-wrap py-4">
-        <ActionIcon icon="play" onClick={this._handleStart} title="Start" />
+        <Mutation mutation={START_MUTATION}>
+          {onStartEntry => (
+            <ActionIcon
+              icon="play"
+              onClick={() => this._handleStart(onStartEntry)}
+              title="Start"
+            />
+          )}
+        </Mutation>
       </div>
     );
   }

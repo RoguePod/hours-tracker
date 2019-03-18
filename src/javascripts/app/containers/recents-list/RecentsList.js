@@ -15,8 +15,7 @@ class RecentsList extends React.Component {
   static propTypes = {
     onSubscribeRecents: PropTypes.func.isRequired,
     ready: PropTypes.bool.isRequired,
-    recents: PropTypes.arrayOf(PropTypes.recent).isRequired,
-    user: PropTypes.user.isRequired
+    recents: PropTypes.arrayOf(PropTypes.recent).isRequired
   };
 
   componentDidMount() {
@@ -64,11 +63,9 @@ class RecentsList extends React.Component {
 }
 
 const props = state => {
-  // console.log(selectFilteredRecents(state));
   return {
     ready: state.recents.ready,
-    recents: selectFilteredRecents(state),
-    user: state.app.user
+    recents: selectFilteredRecents(state)
   };
 };
 

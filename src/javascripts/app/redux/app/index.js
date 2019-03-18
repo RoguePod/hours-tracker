@@ -7,11 +7,6 @@ import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 import { addFlash } from "javascripts/shared/redux/flashes";
 import { createSelector } from "reselect";
 import { history } from "javascripts/app/redux/store";
-import { request } from "javascripts/globals";
-import { reset as resetClients } from "javascripts/app/redux/clients";
-import { reset as resetRecents } from "javascripts/app/redux/recents";
-import { reset as resetRunning } from "javascripts/app/redux/running";
-import { reset as resetUsers } from "javascripts/app/redux/users";
 import update from "immutability-helper";
 
 // Constants
@@ -19,10 +14,9 @@ import update from "immutability-helper";
 const path = "hours-tracker/app";
 
 const APP_LOAD = `${path}/APP_LOAD`;
-const READY = `${path}/READY`;
 const REDIRECT_SET = `${path}/REDIRECT_SET`;
 const USER_REDIRECT = `${path}/USER_REDIRECT`;
-const USER_SET = `${path}/USER_SET`;
+const TOKEN_SET = `${path}/TOKEN_SET`;
 const USER_SIGN_IN = `${path}/USER_SIGN_IN`;
 const USER_SIGN_OUT = `${path}/USER_SIGN_OUT`;
 const WINDOW_UPDATE = `${path}/WINDOW_UPDATE`;
@@ -31,20 +25,15 @@ const WINDOW_UPDATE = `${path}/WINDOW_UPDATE`;
 
 const initialState = {
   height: document.documentElement.clientHeight,
-  ready: false,
   redirect: null,
-  token: null,
-  user: null,
+  token: localStorage.getItem("token"),
   width: document.documentElement.clientWidth
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case USER_SET:
-      return update(state, { user: { $set: action.user } });
-
-    case READY:
-      return update(state, { ready: { $set: true } });
+    case TOKEN_SET:
+      return update(state, { token: { $set: action.token } });
 
     case REDIRECT_SET:
       return update(state, { redirect: { $set: action.redirect } });
@@ -84,23 +73,22 @@ export const updateWindow = (width, height) => {
   return { height, type: WINDOW_UPDATE, width };
 };
 
-export const signInUser = (user, token) => {
-  return { user, token, type: USER_SIGN_IN };
+export const signInUser = token => {
+  return { token, type: USER_SIGN_IN };
 };
 
-const setUser = user => {
-  return { type: USER_SET, user };
+export const signOutUser = () => {
+  return { type: USER_SIGN_OUT };
 };
 
-const ready = () => {
-  return { type: READY };
+const setToken = token => {
+  return { token, type: TOKEN_SET };
 };
 
 // Sagas
 
-export function* userSignIn(user, token) {
-  yield put(setUser(user));
-
+function* userSignIn({ token }) {
+  yield put(setToken(token));
   localStorage.setItem("token", token);
 
   const redirect = yield select(state => state.app.redirect);
@@ -118,44 +106,14 @@ function* watchUserSignIn() {
 }
 
 export function* userSignOut() {
-  yield put(resetRunning());
-  yield put(resetRecents());
-  yield put(resetUsers());
-  yield put(resetClients());
-
-  yield put(setUser(null));
+  yield put(setToken(null));
+  localStorage.removeItem("token");
 
   yield call(history.push, "/sign-in");
 }
 
 function* watchUserSignOut() {
   yield takeLatest(USER_SIGN_OUT, userSignOut);
-}
-
-function* appLoad() {
-  const token = localStorage.getItem("token");
-
-  if (typeof token === "string") {
-    const response = yield call(request, "/user", "GET");
-
-    if (response.error) {
-      localStorage.removeItem("token");
-
-      // yield put(connectCable(null));
-    } else if (response.user) {
-      yield put(setUser(response.user));
-
-      // yield put(connectCable(token));
-    }
-  } else {
-    // yield put(connectCable(null));
-  }
-
-  yield put(ready());
-}
-
-function* watchAppLoad() {
-  yield takeLatest(APP_LOAD, appLoad);
 }
 
 function* userRedirect({ message }) {
@@ -169,7 +127,6 @@ function* watchUserRedirect() {
 }
 
 export const sagas = [
-  spawn(watchAppLoad),
   spawn(watchUserRedirect),
   spawn(watchUserSignIn),
   spawn(watchUserSignOut)

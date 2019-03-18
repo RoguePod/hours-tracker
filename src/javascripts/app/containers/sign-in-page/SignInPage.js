@@ -12,15 +12,9 @@ import { serverErrors } from "javascripts/globals";
 import { signInUser } from "javascripts/app/redux/app";
 
 const MUTATION = gql`
-  mutation SignIn($email: String!, $password: String!) {
-    signIn(email: $email, password: $password) {
+  mutation UserSignIn($email: String!, $password: String!) {
+    userSignIn(email: $email, password: $password) {
       token
-      user {
-        email
-        name
-        role
-        timezone
-      }
     }
   }
 `;
@@ -28,8 +22,8 @@ const MUTATION = gql`
 const SignInPage = ({ onAddFlash, onSignInUser }) => {
   const _handleSubmit = (onSubmit, variables, actions) => {
     onSubmit({ variables })
-      .then(({ data: { signIn: { user, token } } }) => {
-        onSignInUser(user, token);
+      .then(({ data: { signIn: { token } } }) => {
+        onSignInUser(token);
         onAddFlash("Sign In Successful!");
       })
       .catch(error => {

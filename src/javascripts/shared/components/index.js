@@ -17,7 +17,6 @@ export InputField from "./InputField";
 export Label from "./Label";
 export Link from "./Link";
 export Modal from "./Modal";
-export Mutation from "./Mutation";
 export Pagination from "./Pagination";
 export Pill from "./Pill";
 export Portal from "./Portal";

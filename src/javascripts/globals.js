@@ -6,6 +6,7 @@ import "firebase/auth";
 import "firebase/firestore";
 import "firebase/functions";
 
+import React from "react";
 import _find from "lodash/find";
 import _includes from "lodash/includes";
 import _isArray from "lodash/isArray";
@@ -376,3 +377,5 @@ export const request = (url, method, data = {}) => {
       }
     );
 };
+
+export const SignedInContext = React.createContext("signedIn");

@@ -6,9 +6,9 @@ import Routes from "./Routes";
 import { connect } from "react-redux";
 
 const SignedOutStack = props => {
-  const { auth } = props;
+  const { token } = props;
 
-  if (auth) {
+  if (token) {
     return <Redirect to="/" />;
   }
 
@@ -29,16 +29,16 @@ const SignedOutStack = props => {
 };
 
 SignedOutStack.propTypes = {
-  auth: PropTypes.auth
+  token: PropTypes.string
 };
 
 SignedOutStack.defaultProps = {
-  auth: null
+  token: null
 };
 
 const props = state => {
   return {
-    auth: state.app.auth
+    token: state.app.token
   };
 };
 

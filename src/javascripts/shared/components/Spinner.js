@@ -41,7 +41,7 @@ const Page = styled(FadeIn)`
   }
 `;
 
-const Spinner = ({ page, spinning, text }) => {
+const Spinner = ({ page, spinning, size, text }) => {
   const shadeClassName =
     "pin z-10 overflow-hidden bg-smoke flex items-center " +
     "justify-center text-white flex-col";
@@ -49,7 +49,7 @@ const Spinner = ({ page, spinning, text }) => {
   const children = (
     <>
       <div className="flex flex-row items-center">
-        <Clock size="50px" />
+        <Clock size={`${size}px`} />
       </div>
       {text && text.length > 0 && (
         <div className="pt-4 px-4 text-center">{text}</div>
@@ -88,12 +88,14 @@ const Spinner = ({ page, spinning, text }) => {
 
 Spinner.propTypes = {
   page: PropTypes.bool,
+  size: PropTypes.number,
   spinning: PropTypes.bool,
   text: PropTypes.string
 };
 
 Spinner.defaultProps = {
   page: false,
+  size: 50,
   spinning: false,
   text: null
 };

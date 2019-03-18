@@ -12,8 +12,8 @@ import { history } from "javascripts/app/redux/store";
 import { serverErrors } from "javascripts/globals";
 
 const MUTATION = gql`
-  mutation ForgotPassword($email: String!) {
-    forgotPassword(email: $email) {
+  mutation UserForgotPassword($email: String!) {
+    userForgotPassword(email: $email) {
       email
     }
   }
