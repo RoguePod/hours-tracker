@@ -1,23 +1,38 @@
 import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
 import { ONE_PX, isBlank } from "javascripts/globals";
-import {
-  fuseOptions,
-  selectQueryableProjects
-} from "javascripts/app/redux/clients";
 
 import Fuse from "fuse.js";
 import ProjectRow from "./ProjectRow";
 import PropTypes from "javascripts/prop-types";
+import { Query } from "react-apollo";
 import React from "react";
+import _filter from "lodash/filter";
 import _find from "lodash/find";
 import _get from "lodash/get";
 import _groupBy from "lodash/groupBy";
 import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
+import { fuseOptions } from "javascripts/app/redux/clients";
+import gql from "graphql-tag";
 import styled from "styled-components";
 
 const Divider = styled.div`
   height: ${ONE_PX};
+`;
+
+const QUERY = gql`
+  query ClientsIndex {
+    clientsIndex {
+      active
+      id
+      name
+
+      projects {
+        active
+        id
+        name
+      }
+    }
+  }
 `;
 
 class ProjectField extends React.Component {
@@ -26,6 +41,7 @@ class ProjectField extends React.Component {
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
     form: PropTypes.form.isRequired,
+    loading: PropTypes.bool.isRequired,
     onChange: PropTypes.func,
     projects: PropTypes.arrayOf(
       PropTypes.shape({
@@ -34,8 +50,7 @@ class ProjectField extends React.Component {
         projectId: PropTypes.string.isRequired,
         projectName: PropTypes.string.isRequired
       })
-    ).isRequired,
-    ready: PropTypes.bool.isRequired
+    ).isRequired
   };
 
   static defaultProps = {
@@ -66,14 +81,14 @@ class ProjectField extends React.Component {
   componentDidUpdate(prevProps) {
     const {
       field: { value },
-      projects,
-      ready
+      loading,
+      projects
     } = this.props;
 
     if (
       !_isEqual(prevProps.field.value, value) ||
       !_isEqual(projects, prevProps.projects) ||
-      ready !== prevProps.ready
+      loading !== prevProps.loading
     ) {
       this.setState({
         value: this._findValue(value)
@@ -161,9 +176,9 @@ class ProjectField extends React.Component {
   }
 
   _findValue(projectId) {
-    const { projects, ready } = this.props;
+    const { loading, projects } = this.props;
 
-    if (!ready || isBlank(projectId)) {
+    if (loading || isBlank(projectId)) {
       return "";
     }
 
@@ -213,7 +228,7 @@ class ProjectField extends React.Component {
       disabled,
       field,
       form: { errors, isSubmitting, touched },
-      ready,
+      loading,
       ...rest
     } = this.props;
 
@@ -251,7 +266,7 @@ class ProjectField extends React.Component {
       <div className="relative">
         <InputBase
           {...rest}
-          disabled={!ready || disabled || isSubmitting}
+          disabled={loading || disabled || isSubmitting}
           onBlur={this._handleBlur}
           onChange={this._handleChange}
           onFocus={this._handleFocus}
@@ -272,16 +287,42 @@ class ProjectField extends React.Component {
   }
 }
 
-const props = state => {
-  return {
-    projects: selectQueryableProjects(state),
-    ready: state.clients.ready
-  };
+const selectQueryableProjects = clients => {
+  const filtered = _filter(clients, client => {
+    return client.active && _filter(client.projects, "active").length > 0;
+  });
+
+  const projects = [];
+
+  filtered.forEach(client => {
+    _filter(client.projects, "active").forEach(project => {
+      projects.push({
+        clientId: client.id,
+        clientName: client.name,
+        projectId: project.id,
+        projectName: project.name
+      });
+    });
+  });
+
+  return projects;
 };
 
-const actions = {};
+const ProjectFieldQuery = props => {
+  return (
+    <Query query={QUERY}>
+      {query => {
+        const { data, loading } = query;
+        const projects = selectQueryableProjects(
+          _get(data, "clientsIndex", [])
+        );
 
-export default connect(
-  props,
-  actions
-)(ProjectField);
+        return (
+          <ProjectField {...props} loading={loading} projects={projects} />
+        );
+      }}
+    </Query>
+  );
+};
+
+export default ProjectFieldQuery;

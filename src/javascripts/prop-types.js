@@ -19,8 +19,8 @@ const propTypes = {
   }),
   entry: PropTypes.shape({
     description: PropTypes.string,
-    startedAt: PropTypes.number,
-    stoppedAt: PropTypes.number
+    startedAt: PropTypes.string,
+    stoppedAt: PropTypes.string
   }),
   entryForm: PropTypes.shape({
     description: PropTypes.string,
@@ -71,9 +71,6 @@ const propTypes = {
   //   })
   // }),
   project,
-  recent: PropTypes.shape({
-    description: PropTypes.string
-  }),
   role: PropTypes.oneOf(["User", "Admin"]),
   route: PropTypes.shape({
     key: PropTypes.string.isRequired

@@ -10,7 +10,6 @@ class StopWatchForm extends React.Component {
     onAutoSave: PropTypes.func,
     status: PropTypes.string,
     values: PropTypes.shape({
-      clientId: PropTypes.string,
       description: PropTypes.string,
       projectId: PropTypes.string
     }).isRequired
@@ -65,7 +64,6 @@ class StopWatchForm extends React.Component {
         <FormError error={status} />
         <div className="mb-2">
           <Field
-            clientField="clientId"
             component={ProjectField}
             label="Project"
             name="projectId"

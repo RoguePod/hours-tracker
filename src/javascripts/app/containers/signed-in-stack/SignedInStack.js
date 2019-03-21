@@ -11,7 +11,7 @@ import {
   ProjectEditModal,
   ProjectNewModal
 } from "javascripts/app/containers";
-import { HEADER_HEIGHT, SignedInContext } from "javascripts/globals";
+import { HEADER_HEIGHT, isBlank } from "javascripts/globals";
 import { Modal, Spinner, Transition } from "javascripts/shared/components";
 import { Query, Subscription } from "react-apollo";
 import { Redirect, Route, Switch } from "react-router-dom";
@@ -41,12 +41,17 @@ const Content = styled.div`
 const QUERY = gql`
   query SignedIn {
     userSession {
+      autoloadLastDescription
       id
       name
     }
 
     entryRunning {
+      description
       id
+      projectId
+      startedAt
+      timezone
     }
 
     clientsIndex {
@@ -134,51 +139,66 @@ class SignedInStack extends React.Component {
     return (
       <Query query={QUERY}>
         {query => {
-          console.log(1, query)
           const { data, loading } = query;
 
-          return (
-            <SignedInContext.Provider value={data || {}}>
-              <Container className="md:ml-64 relative overflow-auto">
-                <Content className="mx-auto">
-                  <Switch location={open ? previousLocation : location}>
-                    {/* <Route component={ClientsStack} path="/clients" />
-                    <Route component={EntriesStack} path="/entries" />
-                    <Route component={ProfilePage} path="/profile" />
-                    <Route component={DashboardPage} exact path="/" /> */}
-                    <Route component={NoMatchPage} />
-                  </Switch>
-                  <Modal onClose={history.goBack} open={open}>
-                    <Switch location={modalLocation}>
-                      <Route component={ClientNewModal} path="/clients/new" />
-                      <Route
-                        component={ProjectNewModal}
-                        path="/clients/:clientId/projects/new"
-                      />
-                      <Route
-                        component={ProjectEditModal}
-                        path="/clients/:clientId/projects/:id"
-                      />
-                      <Route component={ClientEditModal} path="/clients/:id" />
-                      <Route component={EntryNewModal} path="/entries/new" />
-                      <Route
-                        component={EntryEditMultipleModal}
-                        path="/entries/edit"
-                      />
-                      <Route
-                        component={EntryEditModal}
-                        path="/entries/:id/edit"
-                      />
-                    </Switch>
-                  </Modal>
-                </Content>
-              </Container>
+          const name = _get(data, "userSession.name");
+          const isReady = !loading && !isBlank(name);
 
-              <Header {...this.props} />
-              <LeftSidebar {...this.props} />
-              <RightSidebar {...this.props} />
+          return (
+            <>
+              {isReady && (
+                <>
+                  <Container className="md:ml-64 relative overflow-auto">
+                    <Content className="mx-auto">
+                      <Switch location={open ? previousLocation : location}>
+                        {/* <Route component={ClientsStack} path="/clients" />
+                        <Route component={EntriesStack} path="/entries" />
+                        <Route component={ProfilePage} path="/profile" />
+                        <Route component={DashboardPage} exact path="/" /> */}
+                        <Route component={NoMatchPage} />
+                      </Switch>
+                      <Modal onClose={history.goBack} open={open}>
+                        <Switch location={modalLocation}>
+                          <Route
+                            component={ClientNewModal}
+                            path="/clients/new"
+                          />
+                          <Route
+                            component={ProjectNewModal}
+                            path="/clients/:clientId/projects/new"
+                          />
+                          <Route
+                            component={ProjectEditModal}
+                            path="/clients/:clientId/projects/:id"
+                          />
+                          <Route
+                            component={ClientEditModal}
+                            path="/clients/:id"
+                          />
+                          <Route
+                            component={EntryNewModal}
+                            path="/entries/new"
+                          />
+                          <Route
+                            component={EntryEditMultipleModal}
+                            path="/entries/edit"
+                          />
+                          <Route
+                            component={EntryEditModal}
+                            path="/entries/:id/edit"
+                          />
+                        </Switch>
+                      </Modal>
+                    </Content>
+                  </Container>
+
+                  <Header {...this.props} name={name} />
+                  <LeftSidebar {...this.props} />
+                  <RightSidebar {...this.props} />
+                </>
+              )}
               <Spinner size={75} spinning={loading} text="Hours Tracker" />
-            </SignedInContext.Provider>
+            </>
           );
         }}
       </Query>

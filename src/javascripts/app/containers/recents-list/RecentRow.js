@@ -1,9 +1,21 @@
 import { ActionIcon } from "javascripts/shared/components";
+import { Mutation } from "react-apollo";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
+import gql from "graphql-tag";
 import styled from "styled-components";
+
+const START_MUTATION = gql`
+  mutation EntryStart($description: String, $projectId: String) {
+    entryStart(description: $description, projectId: $projectId) {
+      description
+      id
+      projectId
+    }
+  }
+`;
 
 const Ellipsis = styled.div`
   overflow: hidden;
@@ -14,8 +26,7 @@ const Ellipsis = styled.div`
 
 class RecentRow extends React.Component {
   static propTypes = {
-    onStartEntry: PropTypes.func.isRequired,
-    recent: PropTypes.recent.isRequired,
+    project: PropTypes.project.isRequired,
     user: PropTypes.user.isRequired
   };
 
@@ -26,31 +37,30 @@ class RecentRow extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { user, recent } = this.props;
+    const { project } = this.props;
 
-    return (
-      !_isEqual(recent, nextProps.recent) || !_isEqual(user, nextProps.user)
-    );
+    return !_isEqual(project, nextProps.project);
   }
 
-  _handleStart() {
-    const { onStartEntry, user, recent } = this.props;
+  _handleStart(onStartEntry) {
+    const { project, user } = this.props;
 
     let description = "";
 
     if (user.autoloadLastDescription) {
-      description = _get(recent, "description", "");
+      description = _get(project, "description", "");
     }
 
     onStartEntry({
-      clientId: recent.clientRef.id,
-      description,
-      projectId: recent.projectRef.id
+      variables: {
+        description,
+        projectId: project.id
+      }
     });
   }
 
   render() {
-    const { recent } = this.props;
+    const { project } = this.props;
 
     return (
       <div className="border-b border-grey p-4">
@@ -58,17 +68,21 @@ class RecentRow extends React.Component {
           <div className="flex-1 pr-4">
             <Ellipsis>
               <em>
-                <small>{recent.client.name}</small>
+                <small>{project.client.name}</small>
               </em>
             </Ellipsis>
-            <Ellipsis>{recent.project.name}</Ellipsis>
+            <Ellipsis>{project.name}</Ellipsis>
           </div>
-          <ActionIcon
-            icon="play"
-            onClick={this._handleStart}
-            title="Start"
-            type="button"
-          />
+          <Mutation mutation={START_MUTATION}>
+            {onStartEntry => (
+              <ActionIcon
+                icon="play"
+                onClick={() => this._handleStart(onStartEntry)}
+                title="Start"
+                type="button"
+              />
+            )}
+          </Mutation>
         </div>
       </div>
     );

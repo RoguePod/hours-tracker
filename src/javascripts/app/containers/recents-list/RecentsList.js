@@ -1,42 +1,50 @@
-import {
-  selectFilteredRecents,
-  subscribeRecents
-} from "javascripts/app/redux/recents";
-
 import { Clock } from "javascripts/shared/components";
 import PropTypes from "javascripts/prop-types";
+import { Query } from "react-apollo";
 import React from "react";
 import RecentRow from "./RecentRow";
+import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { startEntry } from "javascripts/app/redux/running";
+import gql from "graphql-tag";
+
+const QUERY = gql`
+  query {
+    userSession {
+      autoloadLastDescription
+      id
+    }
+
+    projectsRecents {
+      id
+      name
+
+      client {
+        id
+        name
+      }
+    }
+  }
+`;
 
 class RecentsList extends React.Component {
   static propTypes = {
-    onSubscribeRecents: PropTypes.func.isRequired,
-    ready: PropTypes.bool.isRequired,
-    recents: PropTypes.arrayOf(PropTypes.recent).isRequired
+    loading: PropTypes.bool.isRequired,
+    projects: PropTypes.arrayOf(PropTypes.project).isRequired
   };
 
-  componentDidMount() {
-    const { onSubscribeRecents } = this.props;
-
-    onSubscribeRecents();
-  }
-
   shouldComponentUpdate(nextProps) {
-    const { ready, recents } = this.props;
+    const { loading, projects } = this.props;
 
-    return ready !== nextProps.ready || !_isEqual(recents, nextProps.recents);
+    return (
+      loading !== nextProps.loading || !_isEqual(projects, nextProps.projects)
+    );
   }
 
   render() {
-    const { ready, recents } = this.props;
+    const { loading, projects } = this.props;
 
-    const rows = recents.map(recent => {
-      return (
-        <RecentRow {...this.props} key={recent.project.id} recent={recent} />
-      );
+    const rows = projects.map(project => {
+      return <RecentRow {...this.props} key={project.id} project={project} />;
     });
 
     const listClasses =
@@ -47,14 +55,14 @@ class RecentsList extends React.Component {
         <div className="bg-blue text-white p-4 font-bold">
           {"Recent Projects"}
         </div>
-        {!ready && (
+        {loading && (
           <div className={listClasses}>
             <Clock size="60px" />
             <div className="pt-2">{"Loading Recents..."}</div>
           </div>
         )}
 
-        {ready && (
+        {!loading && (
           <div className="overflow-y-auto overflow-x-hidden">{rows}</div>
         )}
       </>
@@ -62,19 +70,19 @@ class RecentsList extends React.Component {
   }
 }
 
-const props = state => {
-  return {
-    ready: state.recents.ready,
-    recents: selectFilteredRecents(state)
-  };
+const RecentsListQuery = props => {
+  return (
+    <Query query={QUERY}>
+      {query => {
+        const projects = _get(query, "data.projectsRecents", []);
+        const user = _get(query, "data.userSession");
+
+        return (
+          <RecentsList {...props} {...query} projects={projects} user={user} />
+        );
+      }}
+    </Query>
+  );
 };
 
-const actions = {
-  onStartEntry: startEntry,
-  onSubscribeRecents: subscribeRecents
-};
-
-export default connect(
-  props,
-  actions
-)(RecentsList);
+export default RecentsListQuery;

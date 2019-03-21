@@ -1,39 +1,63 @@
 import { ActionIcon, Spinner } from "javascripts/shared/components";
-import {
-  selectRunningEntryForForm,
-  startEntry,
-  stopEntry,
-  updateEntry
-} from "javascripts/app/redux/running";
+import { Mutation, Query, Subscription } from "react-apollo";
 
 import { Formik } from "formik";
 import { Link } from "react-router-dom";
-import { Mutation } from "react-apollo";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import StopWatchForm from "./StopWatchForm";
 import Timer from "./Timer";
 import _get from "lodash/get";
-import _isEqual from "lodash/isEqual";
 import _pick from "lodash/pick";
-import { connect } from "react-redux";
 import gql from "graphql-tag";
+import { serverErrors } from "javascripts/globals";
 
 /* eslint-disable prettier/prettier */
 const START_MUTATION = gql`
-  mutation EntryStart(
-    $clientId: String, $description: String, $projectId: String
-  ) {
-    entryStart(
-      clientId: $clientId,
-      description: $description,
-      projectId: $projectId
-    ) {
-      client_id
+  mutation EntryStart($description: String, $projectId: String) {
+    entryStart(description: $description, projectId: $projectId) {
+      id
+    }
+  }
+`;
+
+const STOP_MUTATION = gql`
+  mutation EntryStop {
+    entryStop {
+      id
+    }
+  }
+`;
+
+const UPDATE_MUTATION = gql`
+  mutation EntryUpdate($description: String, $projectId: String) {
+    entryUpdate(description: $description, projectId: $projectId) {
       description
       id
-      project_id
-      started_at
+      projectId
+    }
+  }
+`;
+
+const QUERY = gql`
+  query EntryRunning {
+    entryRunning {
+      description
+      id
+      projectId
+      startedAt
+      timezone
+    }
+  }
+`;
+
+const SUBSCRIPTION = gql`
+  subscription EntryRunningSubscription {
+    entryRunningSubscription {
+      description
+      id
+      projectId
+      startedAt
       timezone
     }
   }
@@ -42,17 +66,13 @@ const START_MUTATION = gql`
 
 class StopWatch extends React.Component {
   static propTypes = {
-    entry: PropTypes.entry.isRequired,
-    fetching: PropTypes.string,
-    location: PropTypes.routerLocation.isRequired,
-    onStartEntry: PropTypes.func.isRequired,
-    onStopEntry: PropTypes.func.isRequired,
-    onUpdateEntry: PropTypes.func.isRequired,
-    ready: PropTypes.bool.isRequired
+    entry: PropTypes.entry,
+    loading: PropTypes.bool.isRequired,
+    location: PropTypes.routerLocation.isRequired
   };
 
   static defaultProps = {
-    fetching: null
+    entry: null
   };
 
   constructor(props) {
@@ -67,56 +87,59 @@ class StopWatch extends React.Component {
     this._renderForm = this._renderForm.bind(this);
   }
 
-  shouldComponentUpdate(nextProps) {
-    const { entry, fetching, ready } = this.props;
-
-    return (
-      fetching !== nextProps.fetching ||
-      ready !== nextProps.ready ||
-      !_isEqual(entry, nextProps.entry)
-    );
+  shouldComponentUpdate() {
+    return false;
   }
 
   _handleStart(onStartEntry) {
     const params = _get(this.form, "current.state.values", {});
 
     onStartEntry({
-      variables: _pick(params, ["clientId", "description", "projectId"])
+      variables: _pick(params, ["description", "projectId"])
     });
   }
 
-  _handleSwap() {
-    const { onStartEntry } = this.props;
-
+  _handleSwap(onStartEntry) {
     onStartEntry({});
   }
 
-  _handleStop() {
-    const { onStopEntry } = this.props;
-
+  _handleStop(onStopEntry) {
     onStopEntry();
   }
 
-  _handleSubmit(data) {
-    const { entry, onUpdateEntry } = this.props;
-
-    if (entry.id) {
-      onUpdateEntry(_pick(data, ["clientId", "description", "projectId"]));
+  _handleSubmit(onSubmit, variables, actions) {
+    if (variables.id) {
+      onSubmit({ variables })
+        .then(({ data: { entryRunning: { id } } }) => {
+          console.log(id);
+          // onAddFlash("Sign In Successful!");
+        })
+        .catch(error => {
+          const { errors, status } = serverErrors(error);
+          actions.setStatus(status);
+          actions.setErrors(errors);
+          actions.setSubmitting(false);
+        });
     }
   }
 
-  _renderRunningButtons() {
-    const { entry, location } = this.props;
+  _renderRunningButtons(entry) {
+    const { location } = this.props;
 
     return (
       <div className="flex flex-row justify-between flex-no-wrap py-4">
-        <ActionIcon
-          color="red"
-          icon="stop"
-          onClick={this._handleStop}
-          title="Stop"
-          type="button"
-        />
+        <Mutation mutation={STOP_MUTATION}>
+          {onStopEntry => (
+            <ActionIcon
+              color="red"
+              icon="stop"
+              onClick={() => this._handleStop(onStopEntry)}
+              title="Stop"
+              type="button"
+            />
+          )}
+        </Mutation>
+
         <ActionIcon
           color="purple"
           icon="sync-alt"
@@ -164,65 +187,70 @@ class StopWatch extends React.Component {
     );
   }
 
-  _renderForm(formProps) {
-    const { entry, ready } = this.props;
-
-    const hasEntry = ready && entry.id;
-
+  _renderForm(formProps, onSubmit) {
     return (
       <StopWatchForm
         {...formProps}
-        onAutoSave={hasEntry ? this._handleSubmit : null}
+        onAutoSave={variables => this._handleSubmit(onSubmit, variables)}
       />
     );
   }
 
   render() {
-    const { entry, fetching, ready } = this.props;
+    const { entry, loading } = this.props;
 
-    const hasEntry = ready && entry.id;
-
-    const initialValues = _pick(entry, [
-      "clientId",
-      "description",
-      "projectId"
-    ]);
+    const hasEntry = Boolean(!loading && _get(entry, "id"));
+    const initialValues = _pick(entry, ["id", "description", "projectId"]);
 
     return (
       <div className="relative">
         <div className="p-4">
           <Timer disabled={!hasEntry} entry={entry} />
-          {hasEntry && this._renderRunningButtons()}
+          {hasEntry && this._renderRunningButtons(entry)}
           {!hasEntry && this._renderNotRunningButtons()}
-          <Formik
-            enableReinitialize
-            initialValues={initialValues}
-            onSubmit={this._handleSubmit}
-            ref={this.form}
-            render={this._renderForm}
-          />
+
+          <Mutation mutation={UPDATE_MUTATION}>
+            {onSubmit => (
+              <Formik
+                enableReinitialize
+                initialValues={initialValues}
+                onSubmit={(variables, actions) =>
+                  this._handleSubmit(onSubmit, variables, actions)
+                }
+                ref={this.form}
+                render={props => this._renderForm(props, onSubmit)}
+              />
+            )}
+          </Mutation>
         </div>
-        {fetching && <Spinner spinning={Boolean(fetching)} text={fetching} />}
+        {loading && <Spinner spinning={loading} />}
       </div>
     );
   }
 }
 
-const props = state => {
-  return {
-    entry: selectRunningEntryForForm(state),
-    fetching: state.running.fetching,
-    ready: state.running.ready
-  };
+const StopWatchQuery = props => {
+  return (
+    <Query query={QUERY}>
+      {query => {
+        const entry = _get(query, "data.entryRunning", {});
+
+        return <StopWatch {...props} {...query} entry={entry} />;
+      }}
+    </Query>
+  );
 };
 
-const actions = {
-  onStartEntry: startEntry,
-  onStopEntry: stopEntry,
-  onUpdateEntry: updateEntry
+const StopWatchSubscription = props => {
+  return (
+    <Subscription subscription={SUBSCRIPTION}>
+      {subscription => {
+        console.log(subscription);
+
+        return <StopWatchQuery {...props} subscription={subscription} />;
+      }}
+    </Subscription>
+  );
 };
 
-export default connect(
-  props,
-  actions
-)(StopWatch);
+export default StopWatchSubscription;

@@ -138,7 +138,6 @@ class App extends React.Component {
 }
 
 const props = state => {
-  console.log('state', state);
   return {
     flashes: state.flashes.flashes,
     sidebar: state.app.sidebar,

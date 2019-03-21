@@ -9,11 +9,12 @@ import moment from "moment-timezone";
 class Timer extends React.Component {
   static propTypes = {
     disabled: PropTypes.bool,
-    entry: PropTypes.entry.isRequired
+    entry: PropTypes.entry
   };
 
   static defaultProps = {
-    disabled: false
+    disabled: false,
+    entry: null
   };
 
   constructor(props) {
