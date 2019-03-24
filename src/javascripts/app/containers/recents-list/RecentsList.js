@@ -1,6 +1,7 @@
+import { Query, Subscription } from "react-apollo";
+
 import { Clock } from "javascripts/shared/components";
 import PropTypes from "javascripts/prop-types";
-import { Query } from "react-apollo";
 import React from "react";
 import RecentRow from "./RecentRow";
 import _get from "lodash/get";
@@ -9,12 +10,21 @@ import gql from "graphql-tag";
 
 const QUERY = gql`
   query {
-    userSession {
-      autoloadLastDescription
-      id
-    }
-
     projectsRecents {
+      id
+      name
+
+      client {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const SUBSCRIPTION = gql`
+  subscription ProjectsRecentsSubscription {
+    projectsRecentsSubscription {
       id
       name
 
@@ -28,23 +38,30 @@ const QUERY = gql`
 
 class RecentsList extends React.Component {
   static propTypes = {
-    loading: PropTypes.bool.isRequired,
-    projects: PropTypes.arrayOf(PropTypes.project).isRequired
+    projects: PropTypes.arrayOf(PropTypes.project).isRequired,
+    query: PropTypes.query.isRequired
   };
 
   shouldComponentUpdate(nextProps) {
-    const { loading, projects } = this.props;
+    const {
+      projects,
+      query: { loading }
+    } = this.props;
 
     return (
-      loading !== nextProps.loading || !_isEqual(projects, nextProps.projects)
+      loading !== nextProps.query.loading ||
+      !_isEqual(projects, nextProps.projects)
     );
   }
 
   render() {
-    const { loading, projects } = this.props;
+    const {
+      projects,
+      query: { loading }
+    } = this.props;
 
     const rows = projects.map(project => {
-      return <RecentRow {...this.props} key={project.id} project={project} />;
+      return <RecentRow key={project.id} project={project} />;
     });
 
     const listClasses =
@@ -70,16 +87,27 @@ class RecentsList extends React.Component {
   }
 }
 
+const RecentsListSubscription = props => {
+  return (
+    <Subscription subscription={SUBSCRIPTION}>
+      {subscription => {
+        let projects = _get(props, "query.data.projectsRecents", []);
+
+        if (!subscription.loading) {
+          projects = _get(subscription, "data.projectsRecentsSubscription", []);
+        }
+
+        return <RecentsList {...props} projects={projects} />;
+      }}
+    </Subscription>
+  );
+};
+
 const RecentsListQuery = props => {
   return (
     <Query query={QUERY}>
       {query => {
-        const projects = _get(query, "data.projectsRecents", []);
-        const user = _get(query, "data.userSession");
-
-        return (
-          <RecentsList {...props} {...query} projects={projects} user={user} />
-        );
+        return <RecentsListSubscription {...props} query={query} />;
       }}
     </Query>
   );

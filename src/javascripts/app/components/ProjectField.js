@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+
 import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
 import { ONE_PX, isBlank } from "javascripts/globals";
 
@@ -22,12 +24,10 @@ const Divider = styled.div`
 const QUERY = gql`
   query ClientsIndex {
     clientsIndex {
-      active
       id
       name
 
       projects {
-        active
         id
         name
       }
@@ -288,14 +288,12 @@ class ProjectField extends React.Component {
 }
 
 const selectQueryableProjects = clients => {
-  const filtered = _filter(clients, client => {
-    return client.active && _filter(client.projects, "active").length > 0;
-  });
+  const filtered = _filter(clients, client => client.projects.length > 0);
 
   const projects = [];
 
   filtered.forEach(client => {
-    _filter(client.projects, "active").forEach(project => {
+    client.projects.forEach(project => {
       projects.push({
         clientId: client.id,
         clientName: client.name,

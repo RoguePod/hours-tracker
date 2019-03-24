@@ -4,6 +4,7 @@
 
 import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
 
+import GraphQLClient from "javascripts/app/client";
 import { addFlash } from "javascripts/shared/redux/flashes";
 import { createSelector } from "reselect";
 import { history } from "javascripts/app/redux/store";
@@ -13,20 +14,24 @@ import update from "immutability-helper";
 
 const path = "hours-tracker/app";
 
+const APOLLO_CLIENT_SET = `${path}/APOLLO_CLIENT_SET`;
 const APP_LOAD = `${path}/APP_LOAD`;
 const REDIRECT_SET = `${path}/REDIRECT_SET`;
-const USER_REDIRECT = `${path}/USER_REDIRECT`;
 const TOKEN_SET = `${path}/TOKEN_SET`;
+const USER_REDIRECT = `${path}/USER_REDIRECT`;
 const USER_SIGN_IN = `${path}/USER_SIGN_IN`;
 const USER_SIGN_OUT = `${path}/USER_SIGN_OUT`;
 const WINDOW_UPDATE = `${path}/WINDOW_UPDATE`;
 
 // Reducer
 
+const initialToken = localStorage.getItem("token");
+
 const initialState = {
+  apolloClient: new GraphQLClient(initialToken),
   height: document.documentElement.clientHeight,
   redirect: null,
-  token: localStorage.getItem("token"),
+  token: initialToken,
   width: document.documentElement.clientWidth
 };
 
@@ -34,6 +39,9 @@ export default (state = initialState, action) => {
   switch (action.type) {
     case TOKEN_SET:
       return update(state, { token: { $set: action.token } });
+
+    case APOLLO_CLIENT_SET:
+      return update(state, { apolloClient: { $set: action.apolloClient } });
 
     case REDIRECT_SET:
       return update(state, { redirect: { $set: action.redirect } });
@@ -85,11 +93,21 @@ const setToken = token => {
   return { token, type: TOKEN_SET };
 };
 
+const setApolloClient = apolloClient => {
+  return { apolloClient, type: APOLLO_CLIENT_SET };
+};
+
 // Sagas
 
 function* userSignIn({ token }) {
-  yield put(setToken(token));
   localStorage.setItem("token", token);
+  yield put(setToken(token));
+
+  const apolloClient = yield select(state => state.app.apolloClient);
+
+  apolloClient.close();
+
+  yield put(setApolloClient(new GraphQLClient(token)));
 
   const redirect = yield select(state => state.app.redirect);
 
@@ -109,7 +127,11 @@ export function* userSignOut() {
   yield put(setToken(null));
   localStorage.removeItem("token");
 
-  yield call(history.push, "/sign-in");
+  const apolloClient = yield select(state => state.app.apolloClient);
+
+  apolloClient.close();
+
+  yield put(setApolloClient(new GraphQLClient()));
 }
 
 function* watchUserSignOut() {

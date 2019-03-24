@@ -2,7 +2,6 @@ import { ActionIcon } from "javascripts/shared/components";
 import { Mutation } from "react-apollo";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
-import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 import gql from "graphql-tag";
 import styled from "styled-components";
@@ -26,8 +25,7 @@ const Ellipsis = styled.div`
 
 class RecentRow extends React.Component {
   static propTypes = {
-    project: PropTypes.project.isRequired,
-    user: PropTypes.user.isRequired
+    project: PropTypes.project.isRequired
   };
 
   constructor(props) {
@@ -43,17 +41,10 @@ class RecentRow extends React.Component {
   }
 
   _handleStart(onStartEntry) {
-    const { project, user } = this.props;
-
-    let description = "";
-
-    if (user.autoloadLastDescription) {
-      description = _get(project, "description", "");
-    }
+    const { project } = this.props;
 
     onStartEntry({
       variables: {
-        description,
         projectId: project.id
       }
     });

@@ -44,6 +44,10 @@ const QUERY = gql`
       autoloadLastDescription
       id
       name
+      recentProjectsListSize
+      recentProjectsSort
+      role
+      timezone
     }
 
     entryRunning {
@@ -70,9 +74,13 @@ const QUERY = gql`
 `;
 
 const SUBSCRIPTION = gql`
-  subscription EntryRunning {
-    entryRunning {
+  subscription EntryRunningSubscription {
+    entryRunningSubscription {
+      description
       id
+      projectId
+      startedAt
+      timezone
     }
   }
 `;
@@ -80,8 +88,10 @@ const SUBSCRIPTION = gql`
 class SignedInStack extends React.Component {
   static propTypes = {
     auth: PropTypes.auth,
+    query: PropTypes.query.isRequired,
     history: PropTypes.routerHistory.isRequired,
     location: PropTypes.routerLocation.isRequired,
+    running: PropTypes.bool.isRequired,
     token: PropTypes.string
   };
 
@@ -129,86 +139,75 @@ class SignedInStack extends React.Component {
   timeout = null;
 
   render() {
-    const { location, token } = this.props;
+    const {
+      location,
+      query: { data, error, loading },
+      running,
+      token
+    } = this.props;
     const { open, modalLocation, location: previousLocation } = this.state;
 
     if (!token) {
       return <Redirect to="/sign-in" />;
+    } else if (!loading && error) {
+      return <Redirect to="/sign-out" />;
     }
 
+    const name = _get(data, "userSession.name");
+    const isReady = !loading && !isBlank(name);
+
     return (
-      <Query query={QUERY}>
-        {query => {
-          const { data, loading } = query;
+      <>
+        {isReady && (
+          <>
+            <Container className="md:ml-64 relative overflow-auto">
+              <Content className="mx-auto">
+                <Switch location={open ? previousLocation : location}>
+                  <Route component={ClientsStack} path="/clients" />
+                  <Route component={EntriesStack} path="/entries" />
+                  <Route component={ProfilePage} path="/profile" />
+                  <Route component={DashboardPage} exact path="/" />
+                  <Route component={NoMatchPage} />
+                </Switch>
+                <Modal onClose={history.goBack} open={open}>
+                  <Switch location={modalLocation}>
+                    <Route component={ClientNewModal} path="/clients/new" />
+                    <Route
+                      component={ProjectNewModal}
+                      path="/clients/:clientId/projects/new"
+                    />
+                    <Route
+                      component={ProjectEditModal}
+                      path="/clients/:clientId/projects/:id"
+                    />
+                    <Route component={ClientEditModal} path="/clients/:id" />
+                    <Route component={EntryNewModal} path="/entries/new" />
+                    <Route
+                      component={EntryEditMultipleModal}
+                      path="/entries/edit"
+                    />
+                    <Route
+                      component={EntryEditModal}
+                      path="/entries/:id/edit"
+                    />
+                  </Switch>
+                </Modal>
+              </Content>
+            </Container>
 
-          const name = _get(data, "userSession.name");
-          const isReady = !loading && !isBlank(name);
-
-          return (
-            <>
-              {isReady && (
-                <>
-                  <Container className="md:ml-64 relative overflow-auto">
-                    <Content className="mx-auto">
-                      <Switch location={open ? previousLocation : location}>
-                        {/* <Route component={ClientsStack} path="/clients" />
-                        <Route component={EntriesStack} path="/entries" />
-                        <Route component={ProfilePage} path="/profile" />
-                        <Route component={DashboardPage} exact path="/" /> */}
-                        <Route component={NoMatchPage} />
-                      </Switch>
-                      <Modal onClose={history.goBack} open={open}>
-                        <Switch location={modalLocation}>
-                          <Route
-                            component={ClientNewModal}
-                            path="/clients/new"
-                          />
-                          <Route
-                            component={ProjectNewModal}
-                            path="/clients/:clientId/projects/new"
-                          />
-                          <Route
-                            component={ProjectEditModal}
-                            path="/clients/:clientId/projects/:id"
-                          />
-                          <Route
-                            component={ClientEditModal}
-                            path="/clients/:id"
-                          />
-                          <Route
-                            component={EntryNewModal}
-                            path="/entries/new"
-                          />
-                          <Route
-                            component={EntryEditMultipleModal}
-                            path="/entries/edit"
-                          />
-                          <Route
-                            component={EntryEditModal}
-                            path="/entries/:id/edit"
-                          />
-                        </Switch>
-                      </Modal>
-                    </Content>
-                  </Container>
-
-                  <Header {...this.props} name={name} />
-                  <LeftSidebar {...this.props} />
-                  <RightSidebar {...this.props} />
-                </>
-              )}
-              <Spinner size={75} spinning={loading} text="Hours Tracker" />
-            </>
-          );
-        }}
-      </Query>
+            <Header {...this.props} name={name} running={running} />
+            <LeftSidebar {...this.props} />
+            <RightSidebar {...this.props} />
+          </>
+        )}
+        <Spinner size={75} spinning={loading} text="Hours Tracker" />
+      </>
     );
   }
 }
 
 const props = state => {
   return {
-    running: Boolean(state.running.entry),
     token: state.app.token,
     width: state.app.width
   };
@@ -216,7 +215,41 @@ const props = state => {
 
 const actions = {};
 
-export default connect(
+const SignedInStackComponent = connect(
   props,
   actions
 )(SignedInStack);
+
+const SignedInStackSubscription = props => {
+  return (
+    <Subscription subscription={SUBSCRIPTION}>
+      {subscription => {
+        let entry = _get(props, "query.data.entryRunning");
+
+        if (!subscription.loading) {
+          entry = _get(subscription, "data.entryRunningSubscription");
+        }
+
+        return (
+          <SignedInStackComponent
+            {...props}
+            running={Boolean(entry)}
+            subscription={subscription}
+          />
+        );
+      }}
+    </Subscription>
+  );
+};
+
+const SignedInStackQuery = props => {
+  return (
+    <Query query={QUERY}>
+      {query => {
+        return <SignedInStackSubscription {...props} query={query} />;
+      }}
+    </Query>
+  );
+};
+
+export default SignedInStackQuery;

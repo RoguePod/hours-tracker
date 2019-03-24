@@ -1,5 +1,6 @@
 import PropTypes from "javascripts/prop-types";
 import React from "react";
+import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { signOutUser } from "javascripts/app/redux/app";
 
@@ -19,7 +20,7 @@ class SignOutPage extends React.Component {
   }
 
   render() {
-    return null;
+    return <Redirect to="/sign-in" />;
   }
 }
 

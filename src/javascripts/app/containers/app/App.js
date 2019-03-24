@@ -2,6 +2,7 @@
 
 import { loadApp, updateWindow } from "javascripts/app/redux/app";
 
+import { ApolloProvider } from "react-apollo";
 import { Flashes } from "javascripts/shared/components";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
@@ -10,11 +11,11 @@ import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
 import cx from "classnames";
 import { history } from "javascripts/app/redux/store";
-import { signOutUser } from "javascripts/app/redux/user";
 import { withRouter } from "react-router-dom";
 
 class App extends React.Component {
   static propTypes = {
+    apolloClient: PropTypes.apolloClient.isRequired,
     children: PropTypes.node.isRequired,
     fetching: PropTypes.bool,
     flashes: PropTypes.arrayOf(PropTypes.flash).isRequired,
@@ -49,9 +50,17 @@ class App extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { fetching, flashes, location, token, width } = this.props;
+    const {
+      apolloClient,
+      fetching,
+      flashes,
+      location,
+      token,
+      width
+    } = this.props;
 
     return (
+      apolloClient.id !== nextProps.apolloClient.id ||
       fetching !== nextProps.fetching ||
       width !== nextProps.width ||
       token !== nextProps.token ||
@@ -125,13 +134,15 @@ class App extends React.Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { apolloClient, children } = this.props;
 
     return (
       <>
-        {children}
+        <ApolloProvider client={apolloClient.client}>
+          {children}
 
-        <Flashes />
+          <Flashes />
+        </ApolloProvider>
       </>
     );
   }
@@ -139,6 +150,7 @@ class App extends React.Component {
 
 const props = state => {
   return {
+    apolloClient: state.app.apolloClient,
     flashes: state.flashes.flashes,
     sidebar: state.app.sidebar,
     token: state.app.token,
@@ -148,7 +160,6 @@ const props = state => {
 
 const actions = {
   onLoadApp: loadApp,
-  onSignOutUser: signOutUser,
   onUpdateWindow: updateWindow
 };
 

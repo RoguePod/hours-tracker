@@ -4,7 +4,14 @@ const project = PropTypes.shape({
   name: PropTypes.string.isRequired
 });
 
+const error = PropTypes.shape({
+  message: PropTypes.string.isRequired
+});
+
 const propTypes = {
+  apolloClient: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }),
   auth: PropTypes.shape({
     email: PropTypes.string.isRequired,
     uid: PropTypes.string.isRequired
@@ -29,6 +36,7 @@ const propTypes = {
     stoppedAt: PropTypes.number,
     stoppedAtText: PropTypes.string
   }),
+  error,
   field: PropTypes.shape({
     name: PropTypes.string.isRequired,
     onBlur: PropTypes.func.isRequired,
@@ -71,6 +79,12 @@ const propTypes = {
   //   })
   // }),
   project,
+  query: PropTypes.shape({
+    error,
+    loading: PropTypes.bool.isRequired,
+    networkStatus: PropTypes.number.isRequired,
+    refetch: PropTypes.func.isRequired
+  }),
   role: PropTypes.oneOf(["User", "Admin"]),
   route: PropTypes.shape({
     key: PropTypes.string.isRequired

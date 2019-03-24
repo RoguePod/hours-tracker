@@ -22,7 +22,7 @@ const MUTATION = gql`
 const SignInPage = ({ onAddFlash, onSignInUser }) => {
   const _handleSubmit = (onSubmit, variables, actions) => {
     onSubmit({ variables })
-      .then(({ data: { signIn: { token } } }) => {
+      .then(({ data: { userSignIn: { token } } }) => {
         onSignInUser(token);
         onAddFlash("Sign In Successful!");
       })
