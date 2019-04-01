@@ -5,9 +5,7 @@ import { Transition } from "javascripts/shared/components";
 class ProjectRow extends React.Component {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
-    project: PropTypes.shape({
-      projectName: PropTypes.string.isRequired
-    }).isRequired
+    project: PropTypes.project.isRequired
   };
 
   constructor(props) {
@@ -29,19 +27,19 @@ class ProjectRow extends React.Component {
   render() {
     const { project } = this.props;
     const projectClasses =
-      "hover:bg-blue-lighter cursor-pointer px-3 py-2 text-sm text-blue";
+      "hover:bg-blue-lighter cursor-pointer px-3 py-2 text-blue";
+    const clientClasses = "text-xs font-bold";
 
     return (
-      <li>
-        <Transition
-          className={projectClasses}
-          onMouseDown={this._handleMouseDown}
-          role="button"
-          tabIndex="-1"
-        >
-          {project.projectName}
-        </Transition>
-      </li>
+      <Transition
+        className={projectClasses}
+        onMouseDown={this._handleMouseDown}
+        role="button"
+        tabIndex="-1"
+      >
+        <div className={clientClasses}>{project.client.name}</div>
+        {project.name}
+      </Transition>
     );
   }
 }

@@ -61,7 +61,7 @@ const propTypes = {
   }),
   gqlQuery: PropTypes.shape({
     loading: PropTypes.bool.isRequired,
-    networkStatus: PropTypes.number.isRequired,
+    networkStatus: PropTypes.number,
     refetch: PropTypes.func.isRequired
   }),
   pagination: PropTypes.shape({

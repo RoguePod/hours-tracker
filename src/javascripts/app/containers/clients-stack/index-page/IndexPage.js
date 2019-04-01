@@ -10,11 +10,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Formik } from "formik";
 import { Link } from "react-router-dom";
 import PropTypes from "javascripts/prop-types";
+import { Query } from "react-apollo";
 import React from "react";
 import SearchForm from "./SearchForm";
 import _compact from "lodash/compact";
 import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
+import gql from "graphql-tag";
 import { history } from "javascripts/app/redux/store";
 import { selectAdmin } from "javascripts/app/redux/app";
 import { selectRecents } from "javascripts/app/redux/recents";
@@ -136,7 +138,6 @@ const props = state => {
 
   return {
     admin: selectAdmin(state),
-    clients,
     pagination,
     query: selectQuery(state),
     ready: state.recents.ready,
@@ -149,7 +150,48 @@ const actions = {
   onStartEntry: startEntry
 };
 
-export default connect(
+const ClientsIndexPageComponent = connect(
   props,
   actions
 )(ClientsIndexPage);
+
+const QUERY = gql`
+  query ClientsIndex($page: Int, $per: Int) {
+    clientsIndex(page: $page, per: $per) {
+      active
+      id
+      name
+
+      projects {
+        active
+        billable
+        id
+        name
+      }
+
+      pagination {
+        pageNumber
+        pageSize
+        totalPages
+        totalEntries
+      }
+    }
+
+    userSession {
+      id
+      role
+    }
+  }
+`;
+
+const ClientsIndexQuery = props => {
+  return (
+    <Query query={QUERY}>
+      {query => {
+        return <ClientsIndexPageComponent {...props} query={query} />;
+      }}
+    </Query>
+  );
+};
+
+export default ClientsIndexQuery;

@@ -57,19 +57,6 @@ const QUERY = gql`
       startedAt
       timezone
     }
-
-    clientsIndex {
-      active
-      id
-      name
-
-      projects {
-        active
-        billable
-        id
-        name
-      }
-    }
   }
 `;
 
