@@ -172,51 +172,45 @@ function* watchEntryGet() {
 }
 
 function* entryCreate({ actions, params }) {
-  try {
-    yield put(setFetching("Creating Entry..."));
-
-    const { timezone, user } = yield select(state => {
-      return {
-        timezone: selectTimezone(state),
-        user: state.app.user
-      };
-    });
-
-    const now = moment()
-      .utc()
-      .valueOf();
-
-    const defaults = {
-      clientRef: null,
-      createdAt: now,
-      description: "",
-      projectRef: null,
-      startedAt: now,
-      stoppedAt: null,
-      timezone,
-      updatedAt: now,
-      userRef: user.snapshot.ref
+  const { timezone, user } = yield select(state => {
+    return {
+      timezone: selectTimezone(state),
+      user: state.app.user
     };
+  });
 
-    const { error } = yield call(add, "entries", {
-      ...defaults,
-      ...convertEntryParamIdsToRefs(params)
-    });
+  const now = moment()
+    .utc()
+    .valueOf();
 
-    if (error) {
-      actions.setStatus(error.message);
-      actions.setSubmitting(false);
+  const defaults = {
+    clientRef: null,
+    createdAt: now,
+    description: "",
+    projectRef: null,
+    startedAt: now,
+    stoppedAt: null,
+    timezone,
+    updatedAt: now,
+    userRef: user.snapshot.ref
+  };
+
+  const { error } = yield call(add, "entries", {
+    ...defaults,
+    ...convertEntryParamIdsToRefs(params)
+  });
+
+  if (error) {
+    actions.setStatus(error.message);
+    actions.setSubmitting(false);
+  } else {
+    yield put(addFlash("Entry has been created."));
+
+    if (history.action === "POP") {
+      yield call(history.push, "/entries");
     } else {
-      yield put(addFlash("Entry has been created."));
-
-      if (history.action === "POP") {
-        yield call(history.push, "/entries");
-      } else {
-        yield call(history.goBack);
-      }
+      yield call(history.goBack);
     }
-  } finally {
-    yield put(setFetching(null));
   }
 }
 
@@ -225,33 +219,27 @@ function* watchEntryCreate() {
 }
 
 function* entryUpdate({ actions, params }) {
-  try {
-    yield put(setFetching("Updating Entry..."));
+  const entry = yield select(state => state.entry.entry);
+  const updatedAt = moment()
+    .utc()
+    .valueOf();
 
-    const entry = yield select(state => state.entry.entry);
-    const updatedAt = moment()
-      .utc()
-      .valueOf();
+  const { error } = yield call(updateRef, entry.ref, {
+    ...convertEntryParamIdsToRefs(params),
+    updatedAt
+  });
 
-    const { error } = yield call(updateRef, entry.ref, {
-      ...convertEntryParamIdsToRefs(params),
-      updatedAt
-    });
+  if (error) {
+    actions.setStatus(error.message);
+    actions.setSubmitting(false);
+  } else {
+    yield put(addFlash("Entry has been updated."));
 
-    if (error) {
-      actions.setStatus(error.message);
-      actions.setSubmitting(false);
+    if (history.action === "POP") {
+      yield call(history.push, "/entries");
     } else {
-      yield put(addFlash("Entry has been updated."));
-
-      if (history.action === "POP") {
-        yield call(history.push, "/entries");
-      } else {
-        yield call(history.goBack);
-      }
+      yield call(history.goBack);
     }
-  } finally {
-    yield put(setFetching(null));
   }
 }
 
@@ -260,66 +248,60 @@ function* watchEntryUpdate() {
 }
 
 function* entrySplit({ actions, params }) {
-  try {
-    yield put(setFetching("Splitting Entry..."));
-
-    const { entry: currentEntry, timezone, user } = yield select(state => {
-      return {
-        entry: state.entry.entry,
-        timezone: selectTimezone(state),
-        user: state.app.user
-      };
-    });
-
-    const now = moment()
-      .utc()
-      .valueOf();
-
-    const defaults = {
-      clientRef: null,
-      createdAt: now,
-      description: "",
-      projectRef: null,
-      startedAt: now,
-      stoppedAt: null,
-      timezone,
-      updatedAt: now,
-      userRef: user.snapshot.ref
+  const { entry: currentEntry, timezone, user } = yield select(state => {
+    return {
+      entry: state.entry.entry,
+      timezone: selectTimezone(state),
+      user: state.app.user
     };
+  });
 
-    const entries = params.entries.map(entry => {
-      return convertEntryParamIdsToRefs(
-        _pick(entry, [
-          "clientId",
-          "description",
-          "projectId",
-          "startedAt",
-          "stoppedAt",
-          "timezone"
-        ])
-      );
-    });
+  const now = moment()
+    .utc()
+    .valueOf();
 
-    const batch = firestore.batch();
+  const defaults = {
+    clientRef: null,
+    createdAt: now,
+    description: "",
+    projectRef: null,
+    startedAt: now,
+    stoppedAt: null,
+    timezone,
+    updatedAt: now,
+    userRef: user.snapshot.ref
+  };
 
-    currentEntry.ref.update({ ...defaults, ...entries[0] });
+  const entries = params.entries.map(entry => {
+    return convertEntryParamIdsToRefs(
+      _pick(entry, [
+        "clientId",
+        "description",
+        "projectId",
+        "startedAt",
+        "stoppedAt",
+        "timezone"
+      ])
+    );
+  });
 
-    entries.slice(1).forEach(newEntry => {
-      const data = { ...defaults, ...newEntry };
-      firestore.collection("entries").add(data);
-    });
+  const batch = firestore.batch();
 
-    const { error } = yield call(batchCommit, batch);
+  currentEntry.ref.update({ ...defaults, ...entries[0] });
 
-    if (error) {
-      actions.setStatus(error.message);
-      actions.setSubmitting(false);
-    } else {
-      yield put(addFlash("Entry has been split"));
-      history.push("/entries");
-    }
-  } finally {
-    yield put(setFetching(null));
+  entries.slice(1).forEach(newEntry => {
+    const data = { ...defaults, ...newEntry };
+    firestore.collection("entries").add(data);
+  });
+
+  const { error } = yield call(batchCommit, batch);
+
+  if (error) {
+    actions.setStatus(error.message);
+    actions.setSubmitting(false);
+  } else {
+    yield put(addFlash("Entry has been split"));
+    history.push("/entries");
   }
 }
 
