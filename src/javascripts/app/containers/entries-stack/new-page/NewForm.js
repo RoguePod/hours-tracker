@@ -1,5 +1,7 @@
 import * as Yup from "yup";
 
+import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
+
 import EntryForm from "../EntryForm";
 import { Formik } from "formik";
 import PropTypes from "javascripts/prop-types";
@@ -8,21 +10,28 @@ import { Spinner } from "javascripts/shared/components";
 import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
 import { createEntry } from "javascripts/app/redux/entry";
-import { selectTimezone } from "javascripts/app/redux/app";
 
 class EntryNewForm extends React.Component {
   static propTypes = {
+    admin: PropTypes.bool.isRequired,
     fetching: PropTypes.string,
     onCreateEntry: PropTypes.func.isRequired,
     page: PropTypes.bool,
     running: PropTypes.bool.isRequired,
-    timezone: PropTypes.string.isRequired
+    timezone: PropTypes.string.isRequired,
+    user: PropTypes.user.isRequired
   };
 
   static defaultProps = {
     fetching: null,
     page: false
   };
+
+  constructor(props) {
+    super(props);
+
+    this._renderForm = this._renderForm.bind(this);
+  }
 
   shouldComponentUpdate(nextProps) {
     const { fetching, timezone, running } = this.props;
@@ -34,8 +43,22 @@ class EntryNewForm extends React.Component {
     );
   }
 
+  _renderForm(props) {
+    const { admin } = this.props;
+
+    return <EntryForm {...props} admin={admin} />;
+  }
+
   render() {
-    const { fetching, onCreateEntry, page, running, timezone } = this.props;
+    const {
+      admin,
+      fetching,
+      onCreateEntry,
+      page,
+      running,
+      timezone,
+      user
+    } = this.props;
 
     const validationRules = {
       startedAt: Yup.number()
@@ -55,13 +78,20 @@ class EntryNewForm extends React.Component {
 
     const validationSchema = Yup.object().shape(validationRules);
 
+    const initialValues = {
+      timezone
+    };
+
+    if (admin) {
+      initialValues.userId = user.id;
+    }
+
     return (
       <>
         <Formik
-          component={EntryForm}
-          enableReinitialize
-          initialValues={{ timezone }}
+          initialValues={initialValues}
           onSubmit={onCreateEntry}
+          render={this._renderForm}
           validationSchema={validationSchema}
         />
         <Spinner page={page} spinning={Boolean(fetching)} text={fetching} />
@@ -72,9 +102,11 @@ class EntryNewForm extends React.Component {
 
 const props = state => {
   return {
+    admin: selectAdmin(state),
     fetching: state.entry.fetching,
     running: Boolean(state.running.entry),
-    timezone: selectTimezone(state)
+    timezone: selectTimezone(state),
+    user: state.app.user
   };
 };
 

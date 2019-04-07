@@ -1,11 +1,10 @@
 /* eslint-disable max-lines */
 
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-
-const moment = require("moment-timezone");
-const json2csv = require("json2csv");
 const _ = require("lodash");
+const admin = require("firebase-admin");
+const functions = require("firebase-functions");
+const json2csv = require("json2csv");
+const moment = require("moment-timezone");
 
 admin.initializeApp();
 
@@ -13,7 +12,13 @@ exports.updateUserRecents = functions.firestore
   .document("entries/{entryId}")
   .onWrite(change => {
     const firestore = admin.firestore();
-    const { clientRef, projectRef, userRef } = change.after.data();
+    const data = change.after.data();
+
+    if (!data) {
+      return null;
+    }
+
+    const { clientRef, projectRef, userRef } = data;
 
     if (!projectRef) {
       return null;
@@ -48,57 +53,6 @@ exports.updateUserRecents = functions.firestore
         })
         .catch(error => reject(error));
     });
-  });
-
-const setEntryBillable = (after, before = null) => {
-  const { clientRef, projectRef } = after.data();
-
-  let beforeProjectRef = null;
-
-  if (before) {
-    beforeProjectRef = before.data().projectRef;
-  }
-
-  if (!clientRef) {
-    after.ref.update({ billable: false });
-    return null;
-  }
-
-  if (projectRef === beforeProjectRef) {
-    return null;
-  }
-
-  return new Promise((resolve, reject) => {
-    projectRef
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          const { billable } = doc.data();
-
-          after.ref
-            .update({ billable })
-            .then(() => {
-              resolve("Entry successfully updated");
-            })
-            .catch(error => {
-              reject(error);
-            });
-        } else {
-          resolve("Project not found");
-        }
-      })
-      .catch(error => reject(error));
-  });
-};
-
-exports.createEntryBillable = functions.firestore
-  .document("entries/{entryId}")
-  .onCreate(snap => setEntryBillable(snap));
-
-exports.updateEntryBillable = functions.firestore
-  .document("entries/{entryId}")
-  .onUpdate(change => {
-    return setEntryBillable(change.after, change.before);
   });
 
 exports.createUserProfile = functions.auth.user().onCreate(snap => {
@@ -194,7 +148,7 @@ const parseEntry = async entryDoc => {
     startedAtMoment: startedAt,
     startedAtValue: entry.startedAt,
     stoppedAt: stoppedAt ? stoppedAt.format() : null,
-    stoppedAtMoment: stoppedAt ? stoppedAt : null,
+    stoppedAtMoment: stoppedAt || null,
     stoppedAtValue: entry.stoppedAt,
     user: user.exists ? user.data().name : null
   };

@@ -10,6 +10,7 @@ import {
   updateRef
 } from "javascripts/globals";
 import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
+import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
 
 import _get from "lodash/get";
 import _pick from "lodash/pick";
@@ -18,7 +19,6 @@ import { createSelector } from "reselect";
 import { eventChannel } from "redux-saga";
 import { history } from "javascripts/app/redux/store";
 import moment from "moment-timezone";
-import { selectTimezone } from "javascripts/app/redux/app";
 import update from "immutability-helper";
 
 // Selectors
@@ -40,10 +40,11 @@ export const selectEntry = createSelector(
 );
 
 export const selectEntryForForm = createSelector(
-  [selectEntry, selectTimezone],
-  (entry, timezone) => {
+  [selectEntry, selectTimezone, selectAdmin, selectAppUser],
+  (entry, timezone, admin, user) => {
     if (!entry) {
       return {
+        billable: false,
         clientId: null,
         description: "",
         projectId: null,
@@ -53,7 +54,8 @@ export const selectEntryForForm = createSelector(
       };
     }
 
-    return {
+    const data = {
+      billable: entry.billable || false,
       clientId: _get(entry, "clientRef.id"),
       description: entry.description,
       projectId: _get(entry, "projectRef.id"),
@@ -61,6 +63,15 @@ export const selectEntryForForm = createSelector(
       stoppedAt: entry.stoppedAt,
       timezone: entry.timezone || timezone
     };
+
+    if (admin) {
+      return {
+        ...data,
+        userId: _get(entry, "userRef.id", user.id)
+      };
+    }
+
+    return data;
   }
 );
 
@@ -184,6 +195,7 @@ function* entryCreate({ actions, params }) {
     .valueOf();
 
   const defaults = {
+    billable: false,
     clientRef: null,
     createdAt: now,
     description: "",
@@ -224,10 +236,12 @@ function* entryUpdate({ actions, params }) {
     .utc()
     .valueOf();
 
-  const { error } = yield call(updateRef, entry.ref, {
+  const fields = {
     ...convertEntryParamIdsToRefs(params),
     updatedAt
-  });
+  };
+
+  const { error } = yield call(updateRef, entry.ref, fields);
 
   if (error) {
     actions.setStatus(error.message);
@@ -275,6 +289,7 @@ function* entrySplit({ actions, params }) {
   const entries = params.entries.map(entry => {
     return convertEntryParamIdsToRefs(
       _pick(entry, [
+        "billable",
         "clientId",
         "description",
         "projectId",

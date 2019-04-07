@@ -1,15 +1,18 @@
 import * as Yup from "yup";
 
+import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
+
 import EditMultipleForm from "./EditMultipleForm";
 import { Formik } from "formik";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import { Spinner } from "javascripts/shared/components";
 import { connect } from "react-redux";
-import { selectTimezone } from "javascripts/app/redux/app";
 import { updateEntries } from "javascripts/app/redux/entries";
 
-const EntryEditMultipleModal = ({ fetching, onUpdateEntries, timezone }) => {
+const EntryEditMultipleModal = props => {
+  const { admin, fetching, onUpdateEntries, timezone } = props;
+
   const initialSchema = {
     clientId: null,
     description: "",
@@ -58,7 +61,9 @@ const EntryEditMultipleModal = ({ fetching, onUpdateEntries, timezone }) => {
   });
 
   const renderForm = formProps => {
-    return <EditMultipleForm {...formProps} timezone={timezone} />;
+    return (
+      <EditMultipleForm {...formProps} admin={admin} timezone={timezone} />
+    );
   };
 
   return (
@@ -77,6 +82,7 @@ const EntryEditMultipleModal = ({ fetching, onUpdateEntries, timezone }) => {
 };
 
 EntryEditMultipleModal.propTypes = {
+  admin: PropTypes.bool.isRequired,
   fetching: PropTypes.string,
   onUpdateEntries: PropTypes.func.isRequired,
   timezone: PropTypes.string.isRequired
@@ -88,6 +94,7 @@ EntryEditMultipleModal.defaultProps = {
 
 const props = state => {
   return {
+    admin: selectAdmin(state),
     fetching: state.entry.fetching,
     timezone: selectTimezone(state)
   };

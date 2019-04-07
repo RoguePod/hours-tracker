@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
 import { ONE_PX, isBlank } from "javascripts/globals";
 import {
@@ -22,6 +23,7 @@ const Divider = styled.div`
 
 class ProjectField extends React.Component {
   static propTypes = {
+    billableField: PropTypes.string,
     clientField: PropTypes.string,
     disabled: PropTypes.bool,
     field: PropTypes.field.isRequired,
@@ -39,6 +41,7 @@ class ProjectField extends React.Component {
   };
 
   static defaultProps = {
+    billableField: null,
     clientField: null,
     disabled: false,
     onChange: null
@@ -91,6 +94,7 @@ class ProjectField extends React.Component {
     this.changing = true;
 
     const {
+      billableField,
       clientField,
       field,
       form: { setFieldTouched, setFieldValue },
@@ -106,6 +110,11 @@ class ProjectField extends React.Component {
         setFieldValue(clientField, project.clientId);
       }
 
+      if (billableField) {
+        setFieldTouched(billableField, true);
+        setFieldValue(billableField, project.billable);
+      }
+
       if (onChange) {
         setTimeout(() => onChange(project.projectId), 1);
       }
@@ -119,6 +128,7 @@ class ProjectField extends React.Component {
 
   _handleBlur() {
     const {
+      billableField,
       clientField,
       field,
       form: { setFieldTouched, setFieldValue },
@@ -137,6 +147,11 @@ class ProjectField extends React.Component {
       if (clientField) {
         setFieldTouched(clientField, true);
         setFieldValue(clientField, null);
+      }
+
+      if (billableField) {
+        setFieldTouched(billableField, true);
+        setFieldValue(billableField, false);
       }
 
       if (onChange) {
@@ -209,6 +224,7 @@ class ProjectField extends React.Component {
 
   render() {
     const {
+      billableField,
       clientField,
       disabled,
       field,

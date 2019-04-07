@@ -16,10 +16,12 @@ import { Spinner } from "javascripts/shared/components";
 import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 import { connect } from "react-redux";
+import { selectAdmin } from "javascripts/app/redux/app";
 import { selectEntry as selectRunningEntry } from "javascripts/app/redux/running";
 
 class EntryEditForm extends React.Component {
   static propTypes = {
+    admin: PropTypes.bool.isRequired,
     entry: PropTypes.entryForm.isRequired,
     fetching: PropTypes.string,
     id: PropTypes.string,
@@ -37,6 +39,12 @@ class EntryEditForm extends React.Component {
     page: false,
     running: null
   };
+
+  constructor(props) {
+    super(props);
+
+    this._renderForm = this._renderForm.bind(this);
+  }
 
   componentDidMount() {
     const { match, onGetEntry } = this.props;
@@ -58,6 +66,12 @@ class EntryEditForm extends React.Component {
     const { onReset } = this.props;
 
     onReset();
+  }
+
+  _renderForm(props) {
+    const { admin } = this.props;
+
+    return <EntryForm {...props} admin={admin} />;
   }
 
   render() {
@@ -84,10 +98,10 @@ class EntryEditForm extends React.Component {
     return (
       <>
         <Formik
-          component={EntryForm}
-          enableReinitialize
           initialValues={entry}
+          key={id || "empty"}
           onSubmit={onUpdateEntry}
+          render={this._renderForm}
           validationSchema={validationSchema}
         />
         <Spinner page={page} spinning={Boolean(fetching)} text={fetching} />
@@ -98,6 +112,7 @@ class EntryEditForm extends React.Component {
 
 const props = state => {
   return {
+    admin: selectAdmin(state),
     entry: selectEntryForForm(state),
     fetching: state.entry.fetching,
     id: _get(selectEntry(state), "id"),

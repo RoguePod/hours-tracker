@@ -106,7 +106,7 @@ class App extends React.Component {
   _handleSetBackground() {
     const { auth } = this.props;
 
-    const htmlClasses = cx("antialiased", {
+    const htmlClasses = cx("antialiased h-full", {
       "bg-blue-lightest": !auth,
       "bg-white": Boolean(auth)
     });

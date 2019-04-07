@@ -8,7 +8,6 @@ import styled from "styled-components";
 
 const Container = styled.div`
   height: 0;
-  overflow-y: hidden;
   transition-property: all;
   transition-timing-function: ease;
 `;
@@ -33,6 +32,7 @@ class Collapse extends React.Component {
   }
 
   state = {
+    overflowY: "hidden",
     height: 0
   };
 
@@ -51,7 +51,7 @@ class Collapse extends React.Component {
   componentDidUpdate(prevProps) {
     const { open } = this.props;
 
-    if (!prevProps.open && open) {
+    if (prevProps.open !== open) {
       this._handleUpdateHeight();
     }
   }
@@ -70,17 +70,27 @@ class Collapse extends React.Component {
   timeout = null;
 
   _handleUpdateHeight() {
-    const { open } = this.props;
+    const { duration, open } = this.props;
     const { height: currentHeight } = this.state;
 
     if (!this._element) {
       return;
     }
 
-    const height = currentHeight === 0 || open ? this._element.offsetHeight : 0;
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+    }
+
+    const height = open ? this._element.offsetHeight : 0;
 
     if (currentHeight !== height) {
-      this.setState({ height });
+      this.setState({ height, overflowY: "hidden" });
+
+      if (height > 0) {
+        this.timeout = setTimeout(() => {
+          this.setState({ overflowY: null });
+        }, duration);
+      }
     }
   }
 
@@ -101,7 +111,7 @@ class Collapse extends React.Component {
 
   render() {
     const { children, duration, ...rest } = this.props;
-    const { height } = this.state;
+    const { height, overflowY } = this.state;
 
     const child = React.Children.only(children);
     const trigger = React.cloneElement(child, {
@@ -123,7 +133,9 @@ class Collapse extends React.Component {
     });
 
     return (
-      <Container style={{ height, transitionDuration: `${duration}ms` }}>
+      <Container
+        style={{ height, overflowY, transitionDuration: `${duration}ms` }}
+      >
         {trigger}
       </Container>
     );
