@@ -137,6 +137,7 @@ export const selectQueryableProjects = createSelector(
     filtered.forEach(client => {
       _filter(client.projects, "active").forEach(project => {
         projects.push({
+          billable: project.billable,
           clientId: client.id,
           clientName: client.name,
           projectId: project.id,

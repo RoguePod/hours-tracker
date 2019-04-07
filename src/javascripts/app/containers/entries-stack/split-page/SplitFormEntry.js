@@ -209,6 +209,7 @@ class SplitFormEntry extends React.Component {
         <div className="flex flex-wrap -mx-2">
           <div className="w-full md:w-1/3 px-2 mb-4">
             <Field
+              billableField={`entries.${index}.billable`}
               clientField={`entries.${index}.clientId`}
               component={ProjectField}
               label="Project"

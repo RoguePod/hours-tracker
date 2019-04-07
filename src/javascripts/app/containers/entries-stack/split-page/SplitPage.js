@@ -123,8 +123,8 @@ class EntrySplitPage extends React.Component {
         <div className="border rounded mb-4 p-4">
           <Formik
             component={SplitForm}
-            enableReinitialize
             initialValues={initialValues}
+            key={`SplitForm-${_get(entry, "id")}`}
             onSubmit={onSplitEntry}
             validationSchema={validationSchema}
           />

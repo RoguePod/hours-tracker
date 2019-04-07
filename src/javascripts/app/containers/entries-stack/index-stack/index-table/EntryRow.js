@@ -104,7 +104,7 @@ class EntryRow extends React.Component {
 
     if (!project) {
       highlightClasses = cx("text-red", baseHighlightClasses);
-    } else if (!project.billable) {
+    } else if (!entry.billable) {
       highlightClasses = cx(baseHighlightClasses);
     }
 

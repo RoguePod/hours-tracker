@@ -125,6 +125,7 @@ function* entryStart({ params }) {
     }
 
     const defaults = {
+      billable: false,
       clientRef: null,
       createdAt: now,
       description: "",
@@ -273,6 +274,7 @@ export const selectRunningEntryForForm = createSelector(
   entry => {
     if (entry) {
       return {
+        billable: entry.billable || false,
         clientId: _get(entry, "clientRef.id"),
         description: entry.description,
         id: entry.id,
@@ -284,6 +286,7 @@ export const selectRunningEntryForForm = createSelector(
     }
 
     return {
+      billable: false,
       description: ""
     };
   }

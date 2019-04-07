@@ -1,5 +1,6 @@
 import {
   CheckboxField,
+  Collapse,
   FormError,
   SubmitButton,
   TextAreaField,
@@ -7,28 +8,44 @@ import {
   TimezoneField
 } from "javascripts/shared/components";
 import { Field, Form } from "formik";
+import { ProjectField, UserField } from "javascripts/app/components";
 
-import { ProjectField } from "javascripts/app/components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
 import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 import { isBlank } from "javascripts/globals";
+import styled from "styled-components";
+
+const Link = styled.div`
+  outline: none;
+`;
 
 const EntryEditMultipleForm = props => {
-  const { isSubmitting, setFieldTouched, status, values, timezone } = props;
+  const {
+    admin,
+    isSubmitting,
+    setFieldTouched,
+    status,
+    values,
+    timezone
+  } = props;
 
   const [update, setUpdate] = React.useState(values.update || {});
+  const [open, setOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (!_isEqual(update, values.update)) {
       setUpdate(values.update);
       const fields = [
+        "billable",
+        "description",
+        "projectId",
         "startedAt",
         "stoppedAt",
         "timezone",
-        "description",
-        "projectId"
+        "userId"
       ];
 
       fields.forEach(field => {
@@ -78,6 +95,7 @@ const EntryEditMultipleForm = props => {
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 mb-4">
           <Field
+            billableField="billable"
             clientField="clientId"
             component={ProjectField}
             disabled={!_get(values, "update.projectId")}
@@ -108,6 +126,53 @@ const EntryEditMultipleForm = props => {
           </div>
         </div>
       </div>
+      {admin && (
+        <div>
+          <Link
+            className="hover:text-blue text-blue mb-2"
+            onClick={() => setOpen(!open)}
+            role="button"
+            tabIndex={-1}
+          >
+            {"Admin Fields "}
+            <FontAwesomeIcon icon={open ? "caret-down" : "caret-right"} />
+          </Link>
+          <Collapse open={open}>
+            <div>
+              <div className="mb-4">
+                <Field
+                  component={UserField}
+                  disabled={!_get(values, "update.userId")}
+                  label="User"
+                  name="userId"
+                />
+                <div className="pt-1">
+                  <Field
+                    component={CheckboxField}
+                    label="Update User"
+                    name="update.userId"
+                  />
+                </div>
+              </div>
+              <div className="pb-4">
+                <Field
+                  component={CheckboxField}
+                  disabled={!_get(values, "update.billable")}
+                  label="Billable?"
+                  name="billable"
+                />
+                <div className="pt-1">
+                  <Field
+                    component={CheckboxField}
+                    label="Update Billable"
+                    name="update.billable"
+                  />
+                </div>
+              </div>
+            </div>
+          </Collapse>
+        </div>
+      )}
       <div className="mb-4">
         <Field
           autoHeight
@@ -131,6 +196,7 @@ const EntryEditMultipleForm = props => {
 };
 
 EntryEditMultipleForm.propTypes = {
+  admin: PropTypes.bool.isRequired,
   isSubmitting: PropTypes.bool.isRequired,
   setFieldTouched: PropTypes.func.isRequired,
   status: PropTypes.string,

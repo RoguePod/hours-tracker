@@ -270,6 +270,16 @@ export const convertEntryParamIdsToRefs = params => {
     delete params.projectId;
   }
 
+  if (_includes(keys, "userId")) {
+    const { userId } = params;
+
+    if (!isBlank(userId)) {
+      params.userRef = firestore.doc(`users/${userId}`);
+    }
+
+    delete params.userId;
+  }
+
   return params;
 };
 

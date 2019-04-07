@@ -64,6 +64,7 @@ class StopWatchForm extends React.Component {
         <FormError error={status} />
         <div className="mb-2">
           <Field
+            billableField="billable"
             component={ProjectField}
             label="Project"
             name="projectId"

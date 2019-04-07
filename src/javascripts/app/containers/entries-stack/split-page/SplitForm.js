@@ -14,7 +14,6 @@ import moment from "moment-timezone";
 
 class EntrySplitForm extends React.Component {
   static propTypes = {
-    // hours: PropTypes.number.isRequired,
     isSubmitting: PropTypes.bool.isRequired,
     isValid: PropTypes.bool.isRequired,
     setFieldValue: PropTypes.func.isRequired,
@@ -95,6 +94,8 @@ class EntrySplitForm extends React.Component {
       status,
       values: { timezone }
     } = this.props;
+
+    // console.log(isSubmitting, status);
 
     return (
       <Form noValidate>

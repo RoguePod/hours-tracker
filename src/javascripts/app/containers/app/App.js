@@ -102,7 +102,7 @@ class App extends React.Component {
   _handleSetBackground() {
     const { token } = this.props;
 
-    const htmlClasses = cx("antialiased", {
+    const htmlClasses = cx("antialiased h-full", {
       "bg-blue-lightest": !token,
       "bg-white": Boolean(token)
     });

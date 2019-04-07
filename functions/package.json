@@ -2,18 +2,18 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
-    "@babel/runtime": "7.3.4",
-    "firebase-admin": "7.0.0",
-    "firebase-functions": "2.2.0",
+    "@babel/runtime": "7.4.3",
+    "firebase-admin": "7.2.0",
+    "firebase-functions": "2.2.1",
     "json2csv": "3.11.5",
     "lodash": "4.17.11",
     "moment-timezone": "0.5.23"
   },
   "devDependencies": {
-    "@babel/cli": "7.2.3",
-    "@babel/core": "7.3.4",
-    "@babel/plugin-transform-runtime": "7.3.4",
-    "@babel/preset-env": "7.3.4"
+    "@babel/cli": "7.4.3",
+    "@babel/core": "7.4.3",
+    "@babel/plugin-transform-runtime": "7.4.3",
+    "@babel/preset-env": "7.4.3"
   },
   "private": true,
   "scripts": {

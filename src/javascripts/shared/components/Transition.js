@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 /* stylelint-disable declaration-colon-newline-after */
-const Transition = styled(({ tag, children, ...props }) =>
+const Transition = styled(({ tag, children, transition, ...props }) =>
   React.createElement(tag, props, children)
 )`
   transition: ${({ transition: { duration, property, timingFunction } }) =>
