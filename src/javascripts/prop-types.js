@@ -65,10 +65,10 @@ const propTypes = {
     refetch: PropTypes.func.isRequired
   }),
   pagination: PropTypes.shape({
-    page: PropTypes.number.isRequired,
-    perPage: PropTypes.number,
-    totalCount: PropTypes.number,
-    totalPages: PropTypes.number.isRequired
+    pageNumber: PropTypes.number,
+    pageSize: PropTypes.number,
+    totalEntries: PropTypes.number,
+    totalPages: PropTypes.number
   }),
   // pagination: PropTypes.shape({
   //   next: PropTypes.shape({
@@ -79,12 +79,6 @@ const propTypes = {
   //   })
   // }),
   project,
-  query: PropTypes.shape({
-    error,
-    loading: PropTypes.bool.isRequired,
-    networkStatus: PropTypes.number.isRequired,
-    refetch: PropTypes.func.isRequired
-  }),
   role: PropTypes.oneOf(["User", "Admin"]),
   route: PropTypes.shape({
     key: PropTypes.string.isRequired

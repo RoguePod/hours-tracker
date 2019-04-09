@@ -16,12 +16,12 @@ const Pagination = props => {
   const {
     count,
     location,
-    pagination: { page, totalCount, totalPages },
+    pagination: { pageNumber, totalEntries, totalPages },
     range
   } = props;
 
   const countElement = (
-    <div className="text-sm text-blue">{`${totalCount} Total Records`}</div>
+    <div className="text-sm text-blue">{`${totalEntries} Total Records`}</div>
   );
 
   if (totalPages <= 1) {
@@ -29,7 +29,7 @@ const Pagination = props => {
   }
 
   let prevMore = false;
-  let start = page - range;
+  let start = pageNumber - range;
 
   if (start <= 1) {
     start = 1;
@@ -47,7 +47,7 @@ const Pagination = props => {
   const links = _range(start, end + 1).map(number => {
     return (
       <PaginationLink
-        active={number === page}
+        active={number === pageNumber}
         className="border-l"
         key={number}
         to={toPage(number, location)}
@@ -61,13 +61,13 @@ const Pagination = props => {
     <div className="overflow-x-auto w-full">
       <div className="flex">
         <div className="flex border rounded overflow-hidden">
-          <PaginationLink disabled={page === 1} to={toPage(1, location)}>
+          <PaginationLink disabled={pageNumber === 1} to={toPage(1, location)}>
             <FontAwesomeIcon icon="angle-double-left" />
           </PaginationLink>
           <PaginationLink
             className="border-l"
-            disabled={page === 1}
-            to={toPage(page - 1, location)}
+            disabled={pageNumber === 1}
+            to={toPage(pageNumber - 1, location)}
           >
             <FontAwesomeIcon icon="angle-left" />
           </PaginationLink>
@@ -84,14 +84,14 @@ const Pagination = props => {
           )}
           <PaginationLink
             className="border-l"
-            disabled={page === totalPages}
-            to={toPage(page + 1, location)}
+            disabled={pageNumber === totalPages}
+            to={toPage(pageNumber + 1, location)}
           >
             <FontAwesomeIcon icon="angle-right" />
           </PaginationLink>
           <PaginationLink
             className="border-l"
-            disabled={page === totalPages}
+            disabled={pageNumber === totalPages}
             to={toPage(totalPages, location)}
           >
             <FontAwesomeIcon icon="angle-double-right" />

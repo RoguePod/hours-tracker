@@ -57,6 +57,4 @@ SignInForm.defaultProps = {
   status: null
 };
 
-// export default SignInForm;
-
 export default SignInForm;

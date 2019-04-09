@@ -1,9 +1,5 @@
 import { Button, Pagination, Spinner } from "javascripts/shared/components";
 import { fromQuery, toQuery } from "javascripts/globals";
-import {
-  selectPaginatedClients,
-  selectQuery
-} from "javascripts/app/redux/clients";
 
 import ClientRow from "./ClientRow";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,12 +10,13 @@ import { Query } from "react-apollo";
 import React from "react";
 import SearchForm from "./SearchForm";
 import _compact from "lodash/compact";
+import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
+import _pick from "lodash/pick";
 import { connect } from "react-redux";
 import gql from "graphql-tag";
 import { history } from "javascripts/app/redux/store";
-import { selectAdmin } from "javascripts/app/redux/app";
-import { selectRecents } from "javascripts/app/redux/recents";
+import { selectSearch } from "javascripts/app/redux/clients";
 import { startEntry } from "javascripts/app/redux/running";
 
 class ClientsIndexPage extends React.Component {
@@ -29,11 +26,12 @@ class ClientsIndexPage extends React.Component {
     location: PropTypes.routerLocation.isRequired,
     onStartEntry: PropTypes.func.isRequired,
     pagination: PropTypes.pagination.isRequired,
-    query: PropTypes.shape({
+    query: PropTypes.gqlQuery.isRequired,
+    search: PropTypes.shape({
       page: PropTypes.number.isRequired,
-      search: PropTypes.string
-    }).isRequired,
-    ready: PropTypes.bool.isRequired
+      pageSize: PropTypes.number.isRequired,
+      query: PropTypes.string
+    }).isRequired
   };
 
   constructor(props) {
@@ -45,12 +43,16 @@ class ClientsIndexPage extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const { admin, clients, pagination, query, ready } = this.props;
+    const {
+      admin,
+      clients,
+      query: { loading },
+      pagination
+    } = this.props;
 
     return (
       admin !== nextProps.admin ||
-      ready !== nextProps.ready ||
-      !_isEqual(query, nextProps.query) ||
+      loading !== nextProps.query.loading ||
       !_isEqual(clients, nextProps.clients) ||
       !_isEqual(pagination, nextProps.pagination)
     );
@@ -89,7 +91,14 @@ class ClientsIndexPage extends React.Component {
   }
 
   render() {
-    const { admin, clients, location, pagination, query, ready } = this.props;
+    const {
+      admin,
+      clients,
+      location,
+      pagination,
+      query: { loading },
+      search
+    } = this.props;
 
     const clientRows = clients.map(client => {
       return (
@@ -120,61 +129,39 @@ class ClientsIndexPage extends React.Component {
         <div className="border rounded p-4 mb-4">
           <Formik
             enableReinitialize
-            initialValues={query}
+            initialValues={search}
             onSubmit={this._handleSubmit}
             render={this._renderForm}
           />
         </div>
         <div className="flex -mx-2 flex-wrap">{clientRows}</div>
         <Pagination pagination={pagination} />
-        <Spinner page spinning={!ready} text="Loading..." />
+        <Spinner page spinning={loading} text="Loading..." />
       </div>
     );
   }
 }
 
-const props = state => {
-  const { clients, pagination } = selectPaginatedClients(state);
-
-  return {
-    admin: selectAdmin(state),
-    pagination,
-    query: selectQuery(state),
-    ready: state.recents.ready,
-    recents: selectRecents(state),
-    user: state.app.user
-  };
-};
-
-const actions = {
-  onStartEntry: startEntry
-};
-
-const ClientsIndexPageComponent = connect(
-  props,
-  actions
-)(ClientsIndexPage);
-
 const QUERY = gql`
-  query ClientsIndex($page: Int, $per: Int) {
-    clientsIndex(page: $page, per: $per) {
-      active
-      id
-      name
-
-      projects {
+  query ClientsIndex($page: Int, $pageSize: Int) {
+    clientsIndex(page: $page, pageSize: $pageSize) {
+      entries {
         active
-        billable
         id
         name
+
+        projects {
+          active
+          billable
+          id
+          name
+        }
       }
 
-      pagination {
-        pageNumber
-        pageSize
-        totalPages
-        totalEntries
-      }
+      pageNumber
+      pageSize
+      totalEntries
+      totalPages
     }
 
     userSession {
@@ -185,13 +172,54 @@ const QUERY = gql`
 `;
 
 const ClientsIndexQuery = props => {
+  const { search } = props;
+
   return (
-    <Query query={QUERY}>
+    <Query query={QUERY} variables={search}>
       {query => {
-        return <ClientsIndexPageComponent {...props} query={query} />;
+        const admin = _get(query, "data.userSession.role", "User") === "Admin";
+        const clientsIndex = _get(query, "data.clientsIndex", {});
+        const clients = _get(clientsIndex, "entries", []);
+        const pagination = _pick(clientsIndex, [
+          "pageNumber",
+          "pageSize",
+          "totalEntries",
+          "totalPages"
+        ]);
+
+        return (
+          <ClientsIndexPage
+            {...props}
+            admin={admin}
+            clients={clients}
+            pagination={pagination}
+            query={query}
+          />
+        );
       }}
     </Query>
   );
 };
 
-export default ClientsIndexQuery;
+ClientsIndexQuery.propTypes = {
+  search: PropTypes.shape({
+    page: PropTypes.number.isRequired,
+    pageSize: PropTypes.number.isRequired,
+    query: PropTypes.string
+  }).isRequired
+};
+
+const props = state => {
+  return {
+    search: selectSearch(state)
+  };
+};
+
+const actions = {
+  onStartEntry: startEntry
+};
+
+export default connect(
+  props,
+  actions
+)(ClientsIndexQuery);

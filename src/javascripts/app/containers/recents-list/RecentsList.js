@@ -39,7 +39,7 @@ const SUBSCRIPTION = gql`
 class RecentsList extends React.Component {
   static propTypes = {
     projects: PropTypes.arrayOf(PropTypes.project).isRequired,
-    query: PropTypes.query.isRequired
+    query: PropTypes.gqlQuery.isRequired
   };
 
   shouldComponentUpdate(nextProps) {

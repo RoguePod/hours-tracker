@@ -75,7 +75,7 @@ const SUBSCRIPTION = gql`
 class SignedInStack extends React.Component {
   static propTypes = {
     auth: PropTypes.auth,
-    query: PropTypes.query.isRequired,
+    query: PropTypes.gqlQuery.isRequired,
     history: PropTypes.routerHistory.isRequired,
     location: PropTypes.routerLocation.isRequired,
     running: PropTypes.bool.isRequired,

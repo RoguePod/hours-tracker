@@ -8,8 +8,6 @@ import {
 import { Link } from "react-router-dom";
 import PropTypes from "javascripts/prop-types";
 import React from "react";
-import _find from "lodash/find";
-import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 import cx from "classnames";
 
@@ -20,9 +18,7 @@ class ProjectRow extends React.Component {
     first: PropTypes.bool,
     location: PropTypes.routerLocation.isRequired,
     onStartEntry: PropTypes.func.isRequired,
-    project: PropTypes.project.isRequired,
-    recents: PropTypes.arrayOf(PropTypes.recent).isRequired,
-    user: PropTypes.user.isRequired
+    project: PropTypes.project.isRequired
   };
 
   static defaultProps = {
@@ -42,20 +38,12 @@ class ProjectRow extends React.Component {
   }
 
   _handleStart() {
-    const { client, onStartEntry, project, recents, user } = this.props;
-
-    const found = _find(recents, recent => recent.id === project.id);
-
-    let description = "";
-
-    if (found && user.autoloadLastDescription) {
-      description = _get(found, "description", "");
-    }
+    const { onStartEntry, project } = this.props;
 
     onStartEntry({
-      clientId: client.id,
-      description,
-      projectId: project.id
+      variables: {
+        projectId: project.id
+      }
     });
   }
 

@@ -18,8 +18,6 @@ import {
   takeLatest
 } from "redux-saga/effects";
 
-import Fuse from "fuse.js";
-import _filter from "lodash/filter";
 import _find from "lodash/find";
 import _findIndex from "lodash/findIndex";
 import _keys from "lodash/keys";
@@ -31,8 +29,6 @@ import { history } from "javascripts/app/redux/store";
 import update from "immutability-helper";
 
 // Selectors
-
-const perPage = 10;
 
 export const fuseOptions = {
   distance: 100,
@@ -68,85 +64,23 @@ export const selectProject = createSelector(
   }
 );
 
-export const selectQuery = createSelector(
+export const selectSearch = createSelector(
   [selectRouterSearch],
   query => {
-    const parsedQuery = fromQuery(query);
+    const parsedSearch = fromQuery(query);
 
     const defaults = {
       page: 1,
-      search: ""
+      pageSize: 6,
+      query: ""
     };
 
-    return { ...defaults, ...parsedQuery };
-  }
-);
+    const search = { ...defaults, ...parsedSearch };
 
-export const selectPaginatedClients = createSelector(
-  [selectQuery, selectClients],
-  (query, clients) => {
-    const { search } = query;
-    const page = Number(query.page);
+    search.page = Number(search.page);
+    search.pageSize = Number(search.pageSize);
 
-    const pagination = {
-      page,
-      perPage,
-      totalCount: clients.length,
-      totalPages: Math.ceil(clients.length / perPage)
-    };
-
-    let results = [];
-    if (clients.length > 0 && !isBlank(search)) {
-      results = new Fuse(clients, fuseOptions).search(search);
-
-      pagination.totalCount = results.length;
-      pagination.totalPages = Math.ceil(results.length / perPage);
-    } else {
-      results = clients.slice(0);
-    }
-
-    const start = (page - 1) * perPage;
-    const end = page * perPage;
-
-    return { clients: results.slice(start, end), pagination };
-  }
-);
-
-export const selectQueryableClients = createSelector(
-  [selectClients],
-  clients => {
-    const filtered = _filter(clients, client => {
-      return client.active && _filter(client.projects, "active").length > 0;
-    });
-
-    return filtered.map(client => {
-      return { id: client.id, name: client.name };
-    });
-  }
-);
-
-export const selectQueryableProjects = createSelector(
-  [selectClients],
-  clients => {
-    const filtered = _filter(clients, client => {
-      return client.active && _filter(client.projects, "active").length > 0;
-    });
-
-    const projects = [];
-
-    filtered.forEach(client => {
-      _filter(client.projects, "active").forEach(project => {
-        projects.push({
-          billable: project.billable,
-          clientId: client.id,
-          clientName: client.name,
-          projectId: project.id,
-          projectName: project.name
-        });
-      });
-    });
-
-    return projects;
+    return search;
   }
 );
 

@@ -69,7 +69,7 @@ class StopWatch extends React.Component {
   static propTypes = {
     entry: PropTypes.entry,
     location: PropTypes.routerLocation.isRequired,
-    query: PropTypes.query.isRequired
+    query: PropTypes.gqlQuery.isRequired
   };
 
   static defaultProps = {

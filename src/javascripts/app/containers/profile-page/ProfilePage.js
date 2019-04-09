@@ -15,7 +15,7 @@ import gql from "graphql-tag";
 import { serverErrors } from "javascripts/globals";
 
 const QUERY = gql`
-  query User {
+  query UserSession {
     userSession {
       autoloadLastDescription
       id
@@ -154,7 +154,7 @@ const ProfilePage = ({ onAddFlash, query }) => {
 
 ProfilePage.propTypes = {
   onAddFlash: PropTypes.func.isRequired,
-  query: PropTypes.query.isRequired
+  query: PropTypes.gqlQuery.isRequired
 };
 
 const props = () => {
