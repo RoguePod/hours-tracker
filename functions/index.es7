@@ -62,8 +62,8 @@ exports.createUserProfile = functions.auth.user().onCreate(user => {
     .set({
       autoloadLastDescription: true,
       entriesTab: "#filter",
-      name: "",
-      recentProjectsListSize: "10",
+      name: user.email,
+      recentProjectsListSize: 10,
       recentProjectsSort: "startedAt",
       role: "User",
       timezone: "America/Denver"
