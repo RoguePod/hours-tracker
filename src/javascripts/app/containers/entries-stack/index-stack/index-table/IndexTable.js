@@ -24,6 +24,11 @@ import _values from "lodash/values";
 import { connect } from "react-redux";
 import { destroyEntry } from "javascripts/app/redux/entry";
 import { selectTimezone } from "javascripts/app/redux/app";
+import styled from "styled-components";
+
+const Checkbox = styled.div`
+  outline: none;
+`;
 
 class EntriesIndexTable extends React.Component {
   static propTypes = {
@@ -165,7 +170,7 @@ class EntriesIndexTable extends React.Component {
               <tr>
                 <Table.Th className="w-px cursor-pointer">
                   <Tooltip title="Check ALL Entries">
-                    <div
+                    <Checkbox
                       aria-checked={allChecked}
                       className="cursor-pointer"
                       onClick={this._handleToggleChecked}
@@ -175,7 +180,7 @@ class EntriesIndexTable extends React.Component {
                       <FontAwesomeIcon
                         icon={["far", allChecked ? "check-square" : "square"]}
                       />
-                    </div>
+                    </Checkbox>
                   </Tooltip>
                 </Table.Th>
                 <Table.Th className="w-px whitespace-no-wrap">

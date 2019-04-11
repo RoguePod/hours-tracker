@@ -37,7 +37,8 @@ class SplitFormEntries extends React.Component {
       projectId: null,
       startedAt: values.stoppedAt,
       stoppedAt: values.stoppedAt,
-      timezone: values.timezone
+      timezone: values.timezone,
+      userId: values.userId
     });
   }
 

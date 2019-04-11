@@ -66,7 +66,8 @@ class EntrySplitPage extends React.Component {
             projectId: _get(entry, "projectRef.id"),
             startedAt: entry.startedAt,
             stoppedAt,
-            timezone: entry.timezone
+            timezone: entry.timezone,
+            userId: _get(entry, "userRef.id")
           },
           {
             clientId: null,
@@ -76,13 +77,15 @@ class EntrySplitPage extends React.Component {
             projectId: null,
             startedAt: stoppedAt,
             stoppedAt,
-            timezone: entry.timezone
+            timezone: entry.timezone,
+            userId: _get(entry, "userRef.id")
           }
         ],
         id: entry.id,
         startedAt: entry.startedAt,
         stoppedAt,
-        timezone: entry.timezone
+        timezone: entry.timezone,
+        userId: _get(entry, "userRef.id")
       };
     }
 

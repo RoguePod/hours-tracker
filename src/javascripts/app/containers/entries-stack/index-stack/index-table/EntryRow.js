@@ -9,6 +9,11 @@ import _isEqual from "lodash/isEqual";
 import cx from "classnames";
 import moment from "moment-timezone";
 import nl2br from "react-nl2br";
+import styled from "styled-components";
+
+const Checkbox = styled.div`
+  outline: none;
+`;
 
 class EntryRow extends React.Component {
   static propTypes = {
@@ -111,7 +116,7 @@ class EntryRow extends React.Component {
     return (
       <tr className="hover:bg-blue-lightest">
         <Table.Td className="w-px">
-          <div
+          <Checkbox
             aria-checked={checked}
             className="text-center cursor-pointer text-grey-darker"
             onClick={this._handleChecked}
@@ -121,7 +126,7 @@ class EntryRow extends React.Component {
             <FontAwesomeIcon
               icon={["far", checked ? "check-square" : "square"]}
             />
-          </div>
+          </Checkbox>
         </Table.Td>
         <Table.Td className="w-px whitespace-no-wrap">
           <div className="flex flex-row">

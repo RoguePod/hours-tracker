@@ -295,7 +295,8 @@ function* entrySplit({ actions, params }) {
         "projectId",
         "startedAt",
         "stoppedAt",
-        "timezone"
+        "timezone",
+        "userId"
       ])
     );
   });

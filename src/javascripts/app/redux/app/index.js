@@ -29,6 +29,7 @@ import { createSelector } from "reselect";
 import { eventChannel } from "redux-saga";
 import { history } from "javascripts/app/redux/store";
 import { reset as resetRecents } from "javascripts/app/redux/recents";
+import { setLocation } from "javascripts/app/redux/entries";
 import update from "immutability-helper";
 
 // Constants
@@ -196,6 +197,7 @@ export function* userSignOut() {
   yield put(resetRecents());
   yield put(resetUsers());
   yield put(resetClients());
+  yield put(setLocation(null));
 
   if (userChannel) {
     userChannel.close();
