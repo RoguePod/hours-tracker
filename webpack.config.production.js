@@ -1,15 +1,16 @@
-const Webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const Path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const RobotstxtPlugin = require("robotstxt-webpack-plugin").default;
-const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
+const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const Path = require("path");
+const RobotstxtPlugin = require("robotstxt-webpack-plugin");
 const SWPrecacheWebpackPlugin = require("sw-precache-webpack-plugin");
+const SentryPlugin = require("@sentry/webpack-plugin");
+const Webpack = require("webpack");
 const WebpackPwaManifest = require("webpack-pwa-manifest");
 
 module.exports = {
-  devtool: "cheap-module-source-map",
+  devtool: "hidden-source-map",
   entry: {
     app: ["@babel/polyfill", "./src/javascripts/app/entry.js"]
   },
@@ -137,6 +138,12 @@ module.exports = {
         }
       ]
     }),
+    new SentryPlugin({
+      configFile: "./.sentryclirc.production",
+      ignore: ["service-worker.js", "styles-app.css.map"],
+      include: "./dist",
+      validate: true
+    }),
     new SWPrecacheWebpackPlugin({
       // By default, a cache-busting query parameter is appended to requests
       // used to populate the caches, to ensure the responses are fresh.
@@ -165,6 +172,7 @@ module.exports = {
       // navigateFallback: publicUrl + '/index.html',
       // navigateFallbackWhitelist: [/^(?!\/__).*/],
     }),
+    /* eslint-disable camelcase */
     new WebpackPwaManifest({
       background_color: "#ffffff",
       description: "Track your time",
@@ -182,6 +190,7 @@ module.exports = {
       short_name: "Hours Tracker",
       theme_color: "#4e8eb2"
     })
+    /* eslint-enable camelcase */
   ],
   resolve: {
     modules: [Path.resolve(__dirname, "./src"), "node_modules"]
