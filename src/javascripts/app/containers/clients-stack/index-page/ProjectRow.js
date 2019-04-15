@@ -53,6 +53,7 @@ class ProjectRow extends React.Component {
     }
 
     onStartEntry({
+      billable: project.billable,
       clientId: client.id,
       description,
       projectId: project.id

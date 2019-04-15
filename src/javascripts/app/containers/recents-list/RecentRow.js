@@ -35,6 +35,7 @@ class RecentRow extends React.Component {
     }
 
     onStartEntry({
+      billable: recent.project.billable,
       clientId: recent.clientRef.id,
       description,
       projectId: recent.projectRef.id
