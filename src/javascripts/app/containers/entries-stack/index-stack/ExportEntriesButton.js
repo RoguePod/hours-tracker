@@ -1,6 +1,11 @@
 /* global window */
 
-import { cloudFunctionsUrl, isBlank, toQuery } from "javascripts/globals";
+import {
+  cloudFunctionsUrl,
+  convertEntryParamIdsToRefs,
+  isBlank,
+  toQuery
+} from "javascripts/globals";
 
 import { ConfirmAction } from "javascripts/shared/components";
 import PropTypes from "javascripts/prop-types";
@@ -85,7 +90,8 @@ class ExportEntriesButton extends React.Component {
       );
     }
 
-    const url = `${cloudFunctionsUrl}/${func}?${toQuery(newQuery)}`;
+    const finalQuery = toQuery(convertEntryParamIdsToRefs(newQuery, true));
+    const url = `${cloudFunctionsUrl}/${func}?${finalQuery}`;
 
     return (
       <a

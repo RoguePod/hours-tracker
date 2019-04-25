@@ -225,20 +225,37 @@ export const buildRef = path => {
   }/databases/(default)/documents/${path}`;
 };
 
-export const convertEntryParamIdsToRefs = params => {
+export const convertEntryParamIdsToRefs = (params, path = false) => {
   const keys = _keys(params);
 
-  if (_includes(keys, "clientId") && _includes(keys, "projectId")) {
-    const { clientId, projectId } = params;
+  if (_includes(keys, "clientId")) {
+    const { clientId } = params;
 
-    if (!isBlank(clientId) && !isBlank(params.projectId)) {
+    if (!isBlank(clientId)) {
       params.clientRef = firestore.doc(`clients/${clientId}`);
-      params.projectRef = firestore.doc(
-        `clients/${clientId}/projects/${projectId}`
-      );
+
+      if (path) {
+        params.clientRef = params.clientRef.path;
+      }
+
+      if (_includes(keys, "projectId")) {
+        if (!isBlank(params.projectId)) {
+          const { projectId } = params;
+
+          params.projectRef = firestore.doc(
+            `clients/${clientId}/projects/${projectId}`
+          );
+
+          if (path) {
+            params.projectRef = params.projectRef.path;
+          }
+        } else {
+          params.projectRef = null;
+        }
+      }
     } else {
-      params.clientRef = null;
       params.projectRef = null;
+      params.clientRef = null;
     }
 
     delete params.clientId;
@@ -250,6 +267,10 @@ export const convertEntryParamIdsToRefs = params => {
 
     if (!isBlank(userId)) {
       params.userRef = firestore.doc(`users/${userId}`);
+
+      if (path) {
+        params.userRef = params.userRef.path;
+      }
     }
 
     delete params.userId;
