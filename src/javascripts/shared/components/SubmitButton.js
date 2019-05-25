@@ -1,7 +1,7 @@
-import Button from "./Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import Button from './Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const SubmitButton = ({ children, submitting, submittingText, ...rest }) => {
   return (
@@ -25,10 +25,10 @@ SubmitButton.propTypes = {
 };
 
 SubmitButton.defaultProps = {
-  className: "py-2 px-4",
-  color: "green",
+  className: 'py-2 px-4',
+  color: 'green',
   submitting: false,
-  submittingText: "Saving..."
+  submittingText: 'Saving...'
 };
 
 export default SubmitButton;

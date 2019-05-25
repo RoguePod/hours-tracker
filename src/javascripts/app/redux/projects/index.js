@@ -1,13 +1,13 @@
-import { add, updateRef } from "javascripts/globals";
-import { call, put, spawn, takeLatest } from "redux-saga/effects";
+import { add, updateRef } from 'javascripts/globals';
+import { call, put, spawn, takeLatest } from 'redux-saga/effects';
 
-import { addFlash } from "javascripts/shared/redux/flashes";
-import { history } from "javascripts/app/redux/store";
-import update from "immutability-helper";
+import { addFlash } from 'javascripts/shared/redux/flashes';
+import { history } from 'javascripts/app/redux/store';
+import update from 'immutability-helper';
 
 // Constants
 
-const path = "hours-tracker/app/projects";
+const path = 'hours-tracker/app/projects';
 
 const PROJECT_UPDATE = `${path}/PROJECT_UPDATE`;
 const PROJECT_CREATE = `${path}/PROJECT_CREATE`;
@@ -47,7 +47,7 @@ export const reset = () => {
   return { type: RESET };
 };
 
-const setFetching = fetching => {
+const setFetching = (fetching) => {
   return { fetching, type: FETCHING_SET };
 };
 
@@ -55,17 +55,17 @@ const setFetching = fetching => {
 
 function* projectCreate({ actions, client, params }) {
   try {
-    yield put(setFetching("Creating Project..."));
+    yield put(setFetching('Creating Project...'));
 
     const { error } = yield call(add, `clients/${client.id}/projects`, params);
 
     if (error) {
       actions.setStatus(error.message);
     } else {
-      yield put(addFlash("Project has been created."));
+      yield put(addFlash('Project has been created.'));
 
-      if (history.action === "POP") {
-        yield call(history.push, "/clients");
+      if (history.action === 'POP') {
+        yield call(history.push, '/clients');
       } else {
         yield call(history.goBack);
       }
@@ -82,7 +82,7 @@ function* watchProjectCreate() {
 
 function* projectUpdate({ actions, params, project }) {
   try {
-    yield put(setFetching("Updating Project..."));
+    yield put(setFetching('Updating Project...'));
 
     const { error } = yield call(updateRef, project.snapshot.ref, params);
 
@@ -90,10 +90,10 @@ function* projectUpdate({ actions, params, project }) {
       actions.setStatus(error.message);
       actions.setSubmitting(false);
     } else {
-      yield put(addFlash("Project has been updated."));
+      yield put(addFlash('Project has been updated.'));
 
-      if (history.action === "POP") {
-        yield call(history.push, "/clients");
+      if (history.action === 'POP') {
+        yield call(history.push, '/clients');
       } else {
         yield call(history.goBack);
       }

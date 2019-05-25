@@ -1,12 +1,12 @@
-import ClientRows from "./ClientRows";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Table } from "javascripts/shared/components";
+import ClientRows from './ClientRows';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Table } from 'javascripts/shared/components';
 
-const ProjectsTable = props => {
+const ProjectsTable = (props) => {
   const { clients } = props;
 
-  const tbodies = clients.map(client => {
+  const tbodies = clients.map((client) => {
     return <ClientRows client={client} key={client.name} />;
   });
 
@@ -15,10 +15,10 @@ const ProjectsTable = props => {
       <thead>
         <tr>
           <Table.Td />
-          <Table.Td>{"Billable"}</Table.Td>
-          <Table.Td>{"Non-Billable"}</Table.Td>
-          <Table.Td>{"Total"}</Table.Td>
-          <Table.Td>{"Billable %"}</Table.Td>
+          <Table.Td>{'Billable'}</Table.Td>
+          <Table.Td>{'Non-Billable'}</Table.Td>
+          <Table.Td>{'Total'}</Table.Td>
+          <Table.Td>{'Billable %'}</Table.Td>
         </tr>
       </thead>
       {tbodies}

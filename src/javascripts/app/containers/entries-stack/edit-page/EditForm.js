@@ -1,4 +1,4 @@
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
 import {
   getEntry,
@@ -6,18 +6,18 @@ import {
   selectEntry,
   selectEntryForForm,
   updateEntry
-} from "javascripts/app/redux/entry";
+} from 'javascripts/app/redux/entry';
 
-import EntryForm from "../EntryForm";
-import { Formik } from "formik";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Spinner } from "javascripts/shared/components";
-import _get from "lodash/get";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { selectAdmin } from "javascripts/app/redux/app";
-import { selectEntry as selectRunningEntry } from "javascripts/app/redux/running";
+import EntryForm from '../EntryForm';
+import { Formik } from 'formik';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
+import _get from 'lodash/get';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { selectAdmin } from 'javascripts/app/redux/app';
+import { selectEntry as selectRunningEntry } from 'javascripts/app/redux/running';
 
 class EntryEditForm extends React.Component {
   static propTypes = {
@@ -79,17 +79,17 @@ class EntryEditForm extends React.Component {
 
     const validationRules = {
       startedAt: Yup.number()
-        .parsedTime("Started is not a valid date/time")
-        .required("Started is Required"),
+        .parsedTime('Started is not a valid date/time')
+        .required('Started is Required'),
       stoppedAt: Yup.number()
-        .parsedTime("Stopped is not a valid date/time")
-        .moreThan(Yup.ref("startedAt"), "Must occur after Started"),
-      timezone: Yup.string().required("Timezone is Required")
+        .parsedTime('Stopped is not a valid date/time')
+        .moreThan(Yup.ref('startedAt'), 'Must occur after Started'),
+      timezone: Yup.string().required('Timezone is Required')
     };
 
     if (running && running.id !== id) {
       validationRules.stoppedAt = validationRules.stoppedAt.required(
-        "Stopped is Required"
+        'Stopped is Required'
       );
     }
 
@@ -99,7 +99,7 @@ class EntryEditForm extends React.Component {
       <>
         <Formik
           initialValues={entry}
-          key={id || "empty"}
+          key={id || 'empty'}
           onSubmit={onUpdateEntry}
           render={this._renderForm}
           validationSchema={validationSchema}
@@ -110,12 +110,12 @@ class EntryEditForm extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     admin: selectAdmin(state),
     entry: selectEntryForForm(state),
     fetching: state.entry.fetching,
-    id: _get(selectEntry(state), "id"),
+    id: _get(selectEntry(state), 'id'),
     running: selectRunningEntry(state)
   };
 };

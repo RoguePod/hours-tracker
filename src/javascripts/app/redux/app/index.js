@@ -9,34 +9,34 @@ import {
   spawn,
   takeEvery,
   takeLatest
-} from "redux-saga/effects";
-import { firebase, firestore } from "javascripts/globals";
+} from 'redux-saga/effects';
+import { firebase, firestore } from 'javascripts/globals';
 import {
   reset as resetClients,
   subscribeClients
-} from "javascripts/app/redux/clients";
+} from 'javascripts/app/redux/clients';
 import {
   reset as resetRunning,
   subscribeEntry
-} from "javascripts/app/redux/running";
+} from 'javascripts/app/redux/running';
 import {
   reset as resetUsers,
   subscribeUsers
-} from "javascripts/app/redux/users";
+} from 'javascripts/app/redux/users';
 
-import { addFlash } from "javascripts/shared/redux/flashes";
-import { createSelector } from "reselect";
-import { eventChannel } from "redux-saga";
-import { history } from "javascripts/app/redux/store";
-import { reset as resetRecents } from "javascripts/app/redux/recents";
-import { setLocation } from "javascripts/app/redux/entries";
-import update from "immutability-helper";
+import { addFlash } from 'javascripts/shared/redux/flashes';
+import { createSelector } from 'reselect';
+import { eventChannel } from 'redux-saga';
+import { history } from 'javascripts/app/redux/store';
+import { reset as resetRecents } from 'javascripts/app/redux/recents';
+import { setLocation } from 'javascripts/app/redux/entries';
+import update from 'immutability-helper';
 
 // Constants
 
 let authChannel = null;
 let userChannel = null;
-const path = "hours-tracker/app";
+const path = 'hours-tracker/app';
 
 const APP_LOAD = `${path}/APP_LOAD`;
 const USER_SET = `${path}/USER_SET`;
@@ -76,7 +76,7 @@ export default (state = initialState, action) => {
 
     case USER_REDIRECT:
       return update(state, {
-        open: { $set: "signIn" },
+        open: { $set: 'signIn' },
         redirect: { $set: action.redirect }
       });
 
@@ -101,7 +101,7 @@ export const redirectUser = (redirect, message) => {
   return { message, redirect, type: USER_REDIRECT };
 };
 
-export const setRedirect = redirect => {
+export const setRedirect = (redirect) => {
   return { redirect, type: REDIRECT_SET };
 };
 
@@ -109,11 +109,11 @@ export const updateWindow = (width, height) => {
   return { height, type: WINDOW_UPDATE, width };
 };
 
-const setUser = user => {
+const setUser = (user) => {
   return { type: USER_SET, user };
 };
 
-const setAuth = auth => {
+const setAuth = (auth) => {
   return { auth, type: AUTH_SET };
 };
 
@@ -121,7 +121,7 @@ const subscribeAuth = () => {
   return { type: AUTH_SUBSCRIBE };
 };
 
-const subscribeUser = auth => {
+const subscribeUser = (auth) => {
   return { auth, type: USER_SUBSCRIBE };
 };
 
@@ -132,7 +132,7 @@ const ready = () => {
 // Sagas
 
 function* handleUserSubscribe({ snapshot }) {
-  const current = yield select(state => {
+  const current = yield select((state) => {
     return {
       auth: state.app.auth,
       ready: state.app.ready
@@ -146,7 +146,7 @@ function* handleUserSubscribe({ snapshot }) {
       snapshot
     };
 
-    if (user.role === "Admin") {
+    if (user.role === 'Admin') {
       yield put(subscribeUsers());
     }
     yield put(setUser(user));
@@ -159,10 +159,10 @@ function* handleUserSubscribe({ snapshot }) {
 }
 
 function* userSubscribe({ auth }) {
-  userChannel = eventChannel(emit => {
+  userChannel = eventChannel((emit) => {
     const unsubscribe = firestore
       .doc(`users/${auth.uid}`)
-      .onSnapshot(snapshot => {
+      .onSnapshot((snapshot) => {
         emit({ snapshot });
       });
 
@@ -182,13 +182,13 @@ function* userSignIn(auth, initial) {
   yield put(subscribeUser(auth));
   yield put(subscribeClients());
 
-  const redirect = yield select(state => state.app.redirect);
+  const redirect = yield select((state) => state.app.redirect);
 
   if (redirect) {
     yield call(history.push, redirect);
     yield put(setRedirect(null));
   } else if (!initial) {
-    yield call(history.push, "/");
+    yield call(history.push, '/');
   }
 }
 
@@ -207,11 +207,11 @@ export function* userSignOut() {
   yield put(setAuth(null));
   yield put(setUser(null));
 
-  yield call(history.push, "/sign-in");
+  yield call(history.push, '/sign-in');
 }
 
 function* handleAuthSubscribe({ auth }) {
-  const current = yield select(state => {
+  const current = yield select((state) => {
     return {
       auth: state.app.auth,
       ready: state.app.ready
@@ -232,10 +232,10 @@ function* handleAuthSubscribe({ auth }) {
 }
 
 function* authSubscribe() {
-  authChannel = eventChannel(emit => {
+  authChannel = eventChannel((emit) => {
     const unsubscribe = firebase
       .auth()
-      .onAuthStateChanged(auth => emit({ auth }), () => emit({ user: null }));
+      .onAuthStateChanged((auth) => emit({ auth }), () => emit({ user: null }));
 
     return () => unsubscribe();
   });
@@ -257,7 +257,7 @@ function* watchAppLoad() {
 
 function* userRedirect({ message }) {
   if (message) {
-    yield put(addFlash(message, "red"));
+    yield put(addFlash(message, 'red'));
   }
 }
 
@@ -274,20 +274,20 @@ export const sagas = [
 
 // Selectors
 
-const selectUser = state => state.app.user;
+const selectUser = (state) => state.app.user;
 
 export const selectTimezone = createSelector(
   [selectUser],
-  user => {
+  (user) => {
     if (!user) {
-      return "America/Denver";
+      return 'America/Denver';
     }
 
-    return user.timezone || "America/Denver";
+    return user.timezone || 'America/Denver';
   }
 );
 
 export const selectAdmin = createSelector(
   [selectUser],
-  user => user && user.role === "Admin"
+  (user) => user && user.role === 'Admin'
 );

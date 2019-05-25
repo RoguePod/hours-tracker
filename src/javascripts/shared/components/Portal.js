@@ -1,7 +1,7 @@
 /* global document */
 
-import PropTypes from "javascripts/prop-types";
-import ReactDOM from "react-dom";
+import PropTypes from 'javascripts/prop-types';
+import ReactDOM from 'react-dom';
 
 const Portal = ({ element, children }) => {
   return ReactDOM.createPortal(children, document.getElementById(element));
@@ -14,7 +14,7 @@ Portal.propTypes = {
 
 Portal.defaultProps = {
   children: null,
-  element: "portal"
+  element: 'portal'
 };
 
 export default Portal;

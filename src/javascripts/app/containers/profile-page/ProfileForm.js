@@ -5,11 +5,11 @@ import {
   SelectField,
   SubmitButton,
   TimezoneField
-} from "javascripts/shared/components";
-import { Field, Form } from "formik";
+} from 'javascripts/shared/components';
+import { Field, Form } from 'formik';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 class ProfileForm extends React.Component {
   static propTypes = {
@@ -26,7 +26,7 @@ class ProfileForm extends React.Component {
   }
 
   _convertToOptions(values) {
-    return values.map(value => {
+    return values.map((value) => {
       return (
         <option key={value.value} value={value.value}>
           {value.text}
@@ -37,16 +37,16 @@ class ProfileForm extends React.Component {
 
   _getRecentProjectsSortOptions() {
     return this._convertToOptions([
-      { text: "Recent", value: "startedAt" },
-      { text: "Clients", value: "client.name" },
-      { text: "Projects", value: "project.name" }
+      { text: 'Recent', value: 'startedAt' },
+      { text: 'Clients', value: 'client.name' },
+      { text: 'Projects', value: 'project.name' }
     ]);
   }
 
   _getEntriesTabOptions() {
     return this._convertToOptions([
-      { text: "Filter", value: "#filter" },
-      { text: "New Entry", value: "#new" }
+      { text: 'Filter', value: '#filter' },
+      { text: 'New Entry', value: '#new' }
     ]);
   }
 
@@ -85,7 +85,7 @@ class ProfileForm extends React.Component {
             name="recentProjectsSort"
             required
           >
-            <option value="">{"--Select--"}</option>
+            <option value="">{'--Select--'}</option>
             {this._getRecentProjectsSortOptions()}
           </Field>
         </div>
@@ -104,7 +104,7 @@ class ProfileForm extends React.Component {
             name="autoloadLastDescription"
           />
         </div>
-        <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
+        <SubmitButton submitting={isSubmitting}>{'Save'}</SubmitButton>
       </Form>
     );
   }

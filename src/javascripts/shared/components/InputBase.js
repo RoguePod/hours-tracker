@@ -1,10 +1,10 @@
-import Label from "./Label";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import cx from "classnames";
-import { isBlank } from "javascripts/globals";
-import styled from "styled-components";
-import useId from "javascripts/shared/hooks/useId";
+import Label from './Label';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import cx from 'classnames';
+import { isBlank } from 'javascripts/globals';
+import styled from 'styled-components';
+import useId from 'javascripts/shared/hooks/useId';
 
 const Input = styled.input`
   transition: border 300ms ease;
@@ -19,13 +19,13 @@ const InputBase = ({ className, error, label, required, ...rest }) => {
   const id = useId(rest.id);
 
   const inputClassName = cx(
-    "appearance-none border rounded w-full py-2 px-3 text-grey-darker",
-    "leading-tight focus:outline-none",
+    'appearance-none border rounded w-full py-2 px-3 text-gray-700',
+    'leading-tight focus:outline-none',
     {
-      "border-grey-light": !error,
-      "border-red": error,
-      "focus:border-blue-light": !error,
-      "focus:border-red": error
+      'border-gray-400': !error,
+      'border-red-500': error,
+      'focus:border-blue-400': !error,
+      'focus:border-red-500': error
     },
     className
   );
@@ -57,7 +57,7 @@ InputBase.defaultProps = {
   id: null,
   label: null,
   required: false,
-  type: "text"
+  type: 'text'
 };
 
 export default InputBase;

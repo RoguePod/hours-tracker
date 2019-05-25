@@ -1,18 +1,18 @@
 /* global window,document */
 
-import { loadApp, updateWindow } from "javascripts/app/redux/app";
+import { loadApp, updateWindow } from 'javascripts/app/redux/app';
 
-import { Flashes } from "javascripts/shared/components";
-import Loader from "./Loader";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _get from "lodash/get";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import cx from "classnames";
-import { history } from "javascripts/app/redux/store";
-import { signOutUser } from "javascripts/app/redux/user";
-import { withRouter } from "react-router-dom";
+import { Flashes } from 'javascripts/shared/components';
+import Loader from './Loader';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _get from 'lodash/get';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import cx from 'classnames';
+import { history } from 'javascripts/app/redux/store';
+import { signOutUser } from 'javascripts/app/redux/user';
+import { withRouter } from 'react-router-dom';
 
 class App extends React.Component {
   static propTypes = {
@@ -46,7 +46,7 @@ class App extends React.Component {
 
     onLoadApp();
 
-    window.addEventListener("resize", this._handleUpdateWindow);
+    window.addEventListener('resize', this._handleUpdateWindow);
 
     this._handleSetBackground();
   }
@@ -77,17 +77,17 @@ class App extends React.Component {
     const { auth, location } = this.props;
     const { hash, pathname } = location;
 
-    const modal = _get(location, "state.modal", false);
-    const prevModal = _get(prevProps, "location.state.modal", false);
+    const modal = _get(location, 'state.modal', false);
+    const prevModal = _get(prevProps, 'location.state.modal', false);
 
     if (!modal && !prevModal && pathname !== prevProps.location.pathname) {
       window.scrollTo(0, 0);
     }
 
     if (hash.match(/sidebar/u) || hash.match(/stopwatch/u)) {
-      document.addEventListener("keydown", this._handleKeyPress);
+      document.addEventListener('keydown', this._handleKeyPress);
     } else {
-      document.removeEventListener("keydown", this._handleKeyPress);
+      document.removeEventListener('keydown', this._handleKeyPress);
     }
 
     if (Boolean(auth) !== Boolean(prevProps.auth)) {
@@ -100,15 +100,15 @@ class App extends React.Component {
       clearTimeout(this.timeout);
     }
 
-    window.removeEventListener("resize", this._handleUpdateWindow);
+    window.removeEventListener('resize', this._handleUpdateWindow);
   }
 
   _handleSetBackground() {
     const { auth } = this.props;
 
-    const htmlClasses = cx("antialiased h-full", {
-      "bg-blue-lightest": !auth,
-      "bg-white": Boolean(auth)
+    const htmlClasses = cx('antialiased h-full', {
+      'bg-blue-200': !auth,
+      'bg-white': Boolean(auth)
     });
 
     document.documentElement.className = htmlClasses;
@@ -153,7 +153,7 @@ class App extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     auth: state.app.auth,
     clientsReady: state.clients.ready,

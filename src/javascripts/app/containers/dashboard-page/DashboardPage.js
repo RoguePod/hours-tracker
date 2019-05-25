@@ -6,19 +6,19 @@ import {
   selectEntries,
   selectQuery,
   subscribeEntries
-} from "javascripts/app/redux/dashboard";
-import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
+} from 'javascripts/app/redux/dashboard';
+import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
-import AdminMenu from "./AdminMenu";
-import EntriesTable from "./EntriesTable";
-import ProjectsTable from "./ProjectsTable";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Spinner } from "javascripts/shared/components";
-import UsersTable from "./UsersTable";
-import WeekDropdown from "./WeekDropdown";
-import { connect } from "react-redux";
-import styled from "styled-components";
+import AdminMenu from './AdminMenu';
+import EntriesTable from './EntriesTable';
+import ProjectsTable from './ProjectsTable';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
+import UsersTable from './UsersTable';
+import WeekDropdown from './WeekDropdown';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
 
 /* stylelint-disable unit-whitelist */
 const Hr = styled.hr`
@@ -132,14 +132,14 @@ class DashboardPage extends React.Component {
         </div>
 
         {admin && <AdminMenu location={location} />}
-        {(!admin || hash === "") && <ProjectsTable {...this.props} />}
-        {admin && hash === "#users" && <UsersTable {...this.props} />}
-        {admin && hash === "#projects" && (
+        {(!admin || hash === '') && <ProjectsTable {...this.props} />}
+        {admin && hash === '#users' && <UsersTable {...this.props} />}
+        {admin && hash === '#projects' && (
           <ProjectsTable {...this.props} projects={projectsAdmin} user={null} />
         )}
         <Hr />
 
-        <h2 className="text-blue mb-2">{"Latest Entries"}</h2>
+        <h2 className="text-blue-500 mb-2">{'Latest Entries'}</h2>
         <EntriesTable location={location} />
         <Spinner
           page
@@ -151,7 +151,7 @@ class DashboardPage extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     admin: selectAdmin(state),
     entries: selectEntries(state),

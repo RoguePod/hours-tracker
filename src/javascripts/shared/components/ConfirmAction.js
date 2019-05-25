@@ -1,8 +1,8 @@
-import Button from "./Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Modal from "./Modal";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import Button from './Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Modal from './Modal';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 class ConfirmAction extends React.Component {
   static propTypes = {
@@ -76,10 +76,10 @@ class ConfirmAction extends React.Component {
             <div className="text-2xl py-4 text-center max-w-lg">{message}</div>
             <div>
               <Button color="green" onClick={this._handleConfirm}>
-                {"Confirm"}
-              </Button>{" "}
+                {'Confirm'}
+              </Button>{' '}
               <Button color="red" onClick={this._handleClose}>
-                {"Cancel"}
+                {'Cancel'}
               </Button>
             </div>
           </div>

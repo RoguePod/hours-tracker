@@ -3,17 +3,17 @@ import {
   TextAreaField,
   TimeField,
   Tooltip
-} from "javascripts/shared/components";
+} from 'javascripts/shared/components';
 
-import { Field } from "formik";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ProjectField } from "javascripts/app/components";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _sumBy from "lodash/sumBy";
-import { calcHours } from "javascripts/globals";
-import moment from "moment-timezone";
-import styled from "styled-components";
+import { Field } from 'formik';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ProjectField } from 'javascripts/app/components';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _sumBy from 'lodash/sumBy';
+import { calcHours } from 'javascripts/globals';
+import moment from 'moment-timezone';
+import styled from 'styled-components';
 
 const Close = styled.div`
   right: -0.75rem;
@@ -78,8 +78,8 @@ class SplitFormEntry extends React.Component {
     const { entries, startedAt, stoppedAt, timezone } = values;
 
     const totalHours = calcHours(startedAt, stoppedAt, timezone);
-    const currentHours = _sumBy(entries, entry => Number(entry.hours));
-    const currentPercent = _sumBy(entries, entry => Number(entry.percent));
+    const currentHours = _sumBy(entries, (entry) => Number(entry.hours));
+    const currentPercent = _sumBy(entries, (entry) => Number(entry.percent));
 
     let diffHours = totalHours - currentHours.toFixed(1);
     let diffPercent = 100.0 - currentPercent.toFixed(1);
@@ -120,7 +120,7 @@ class SplitFormEntry extends React.Component {
         `entries.${index}.startedAt`,
         moment
           .tz(startedAt, timezone)
-          .add(hours, "hours")
+          .add(hours, 'hours')
           .valueOf()
       );
 
@@ -131,7 +131,7 @@ class SplitFormEntry extends React.Component {
           `entries.${index}.stoppedAt`,
           moment
             .tz(startedAt, timezone)
-            .add(hours + staticHours, "hours")
+            .add(hours + staticHours, 'hours')
             .valueOf()
         );
 
@@ -194,8 +194,9 @@ class SplitFormEntry extends React.Component {
     } = this.props;
 
     const closeClasses =
-      "absolute bg-red text-white w-8 h-8 flex items-center cursor-pointer " +
-      "justify-center rounded-full text-center border-4 border-white";
+      'absolute bg-red-500 text-white w-8 h-8 flex items-center ' +
+      'cursor-pointer justify-center rounded-full text-center border-4 ' +
+      'border-white';
 
     return (
       <div className="border rounded mb-4 px-4 pt-4 relative">

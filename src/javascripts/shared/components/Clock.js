@@ -1,7 +1,7 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _times from "lodash/times";
-import styled from "styled-components";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _times from 'lodash/times';
+import styled from 'styled-components';
 
 /* stylelint-disable unit-whitelist */
 const Circle = styled.circle`
@@ -31,7 +31,7 @@ const Tick = styled.line`
 /* stylelint-enable unit-whitelist */
 
 const Clock = ({ animate, size }) => {
-  const ticks = _times(12, index => {
+  const ticks = _times(12, (index) => {
     return (
       <Tick
         key={index}
@@ -54,8 +54,8 @@ const Clock = ({ animate, size }) => {
     const hoursAngle = (360 * date.getHours()) / 12 + date.getMinutes() / 2;
     const minuteAngle = (360 * date.getMinutes()) / 60;
 
-    const shifter = val => {
-      return [val, 100, 100].join(" ");
+    const shifter = (val) => {
+      return [val, 100, 100].join(' ');
     };
 
     minuteFrom = shifter(minuteAngle);
@@ -121,7 +121,7 @@ Clock.propTypes = {
 
 Clock.defaultProps = {
   animate: true,
-  size: "100%"
+  size: '100%'
 };
 
 export default Clock;

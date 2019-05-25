@@ -3,7 +3,7 @@ import {
   Button,
   Table,
   Tooltip
-} from "javascripts/shared/components";
+} from 'javascripts/shared/components';
 import {
   checkEntry,
   destroyEntries,
@@ -11,20 +11,20 @@ import {
   selectQuery,
   subscribeEntries,
   toggleChecked
-} from "javascripts/app/redux/entries";
+} from 'javascripts/app/redux/entries';
 
-import EntryRow from "./EntryRow";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _flatten from "lodash/flatten";
-import _isEqual from "lodash/isEqual";
-import _values from "lodash/values";
-import { connect } from "react-redux";
-import { destroyEntry } from "javascripts/app/redux/entry";
-import { selectTimezone } from "javascripts/app/redux/app";
-import styled from "styled-components";
+import EntryRow from './EntryRow';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _flatten from 'lodash/flatten';
+import _isEqual from 'lodash/isEqual';
+import _values from 'lodash/values';
+import { connect } from 'react-redux';
+import { destroyEntry } from 'javascripts/app/redux/entry';
+import { selectTimezone } from 'javascripts/app/redux/app';
+import styled from 'styled-components';
 
 const Checkbox = styled.div`
   outline: none;
@@ -127,7 +127,7 @@ class EntriesIndexTable extends React.Component {
     const tbodies = [];
 
     for (const key of Object.keys(entries)) {
-      const rows = entries[key].map(entry => {
+      const rows = entries[key].map((entry) => {
         return (
           <EntryRow
             {...this.props}
@@ -140,7 +140,7 @@ class EntriesIndexTable extends React.Component {
 
       tbodies.push(
         <tbody key={key}>
-          <tr className="bg-blue-lighter text-center text-blue">
+          <tr className="bg-blue-300 text-center text-blue-500">
             <Table.Td colSpan={showAdmin ? 9 : 8}>{key}</Table.Td>
           </tr>
           {rows}
@@ -155,8 +155,8 @@ class EntriesIndexTable extends React.Component {
     const { checked, entries, location, showAdmin } = this.props;
 
     const message =
-      "This will remove all checked entries, and cannot be undone. " +
-      "Are you sure?";
+      'This will remove all checked entries, and cannot be undone. ' +
+      'Are you sure?';
 
     const allEntries = _flatten(_values(entries));
 
@@ -178,7 +178,7 @@ class EntriesIndexTable extends React.Component {
                       tabIndex="-1"
                     >
                       <FontAwesomeIcon
-                        icon={["far", allChecked ? "check-square" : "square"]}
+                        icon={['far', allChecked ? 'check-square' : 'square']}
                       />
                     </Checkbox>
                   </Tooltip>
@@ -195,7 +195,7 @@ class EntriesIndexTable extends React.Component {
                       title="Edit Checked"
                       to={{
                         ...location,
-                        pathname: "/entries/edit",
+                        pathname: '/entries/edit',
                         state: { modal: true }
                       }}
                     />
@@ -211,27 +211,27 @@ class EntriesIndexTable extends React.Component {
                     />
                   </div>
                 </Table.Th>
-                {showAdmin && <Table.Th className="w-px">{"User"}</Table.Th>}
-                <Table.Th className="w-px">{"Client"}</Table.Th>
-                <Table.Th className="w-px">{"Project"}</Table.Th>
-                <Table.Th className="w-px">{"Started"}</Table.Th>
-                <Table.Th className="w-px">{"Stopped"}</Table.Th>
-                <Table.Th className="w-px">{"Hours"}</Table.Th>
-                <Table.Th>{"Description"}</Table.Th>
+                {showAdmin && <Table.Th className="w-px">{'User'}</Table.Th>}
+                <Table.Th className="w-px">{'Client'}</Table.Th>
+                <Table.Th className="w-px">{'Project'}</Table.Th>
+                <Table.Th className="w-px">{'Started'}</Table.Th>
+                <Table.Th className="w-px">{'Stopped'}</Table.Th>
+                <Table.Th className="w-px">{'Hours'}</Table.Th>
+                <Table.Th>{'Description'}</Table.Th>
               </tr>
             </thead>
             {this._renderTbodies(entries, showAdmin)}
           </Table.Table>
         </Table.Responsive>
         <div className="pt-4 text-center">
-          <Button onClick={this._handleMore}>{"More"}</Button>
+          <Button onClick={this._handleMore}>{'More'}</Button>
         </div>
       </>
     );
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     checked: state.entries.checked,
     entries: selectGroupedEntries(state),

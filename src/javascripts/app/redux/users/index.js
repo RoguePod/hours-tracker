@@ -5,18 +5,18 @@ import {
   spawn,
   takeEvery,
   takeLatest
-} from "redux-saga/effects";
+} from 'redux-saga/effects';
 
-import _sortBy from "lodash/sortBy";
-import { eventChannel } from "redux-saga";
-import { firestore } from "javascripts/globals";
-import update from "immutability-helper";
+import _sortBy from 'lodash/sortBy';
+import { eventChannel } from 'redux-saga';
+import { firestore } from 'javascripts/globals';
+import update from 'immutability-helper';
 
 // Constants
 
 let channel = null;
 
-const path = "hours-tracker/app/users";
+const path = 'hours-tracker/app/users';
 
 const USERS_SET = `${path}/USERS_SET`;
 const USERS_SUBSCRIBE = `${path}/USERS_SUBSCRIBE`;
@@ -25,7 +25,7 @@ const RESET = `${path}/RESET`;
 
 export const fuseOptions = {
   distance: 100,
-  keys: ["name"],
+  keys: ['name'],
   location: 0,
   maxPatternLength: 32,
   minMatchCharLength: 2,
@@ -75,7 +75,7 @@ const ready = () => {
   return { type: READY };
 };
 
-const setUsers = users => {
+const setUsers = (users) => {
   return { type: USERS_SET, users };
 };
 
@@ -90,10 +90,10 @@ function parseUser(snapshot) {
 }
 
 function* handleUsersSubscribe({ snapshot }) {
-  const isReady = yield select(state => state.users.ready);
+  const isReady = yield select((state) => state.users.ready);
   const users = yield all(snapshot.docs.map(parseUser));
 
-  yield put(setUsers(_sortBy(users, "name")));
+  yield put(setUsers(_sortBy(users, 'name')));
 
   if (!isReady) {
     yield put(ready());
@@ -101,8 +101,8 @@ function* handleUsersSubscribe({ snapshot }) {
 }
 
 function* usersSubscribe() {
-  channel = eventChannel(emit => {
-    const unsubscribe = firestore.collection("users").onSnapshot(snapshot => {
+  channel = eventChannel((emit) => {
+    const unsubscribe = firestore.collection('users').onSnapshot((snapshot) => {
       emit({ snapshot });
     });
 

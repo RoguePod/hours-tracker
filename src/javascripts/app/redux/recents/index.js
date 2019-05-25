@@ -1,18 +1,18 @@
-import { put, select, spawn, takeEvery, takeLatest } from "redux-saga/effects";
+import { put, select, spawn, takeEvery, takeLatest } from 'redux-saga/effects';
 
-import _filter from "lodash/filter";
-import _find from "lodash/find";
-import _sortBy from "lodash/sortBy";
-import { createSelector } from "reselect";
-import { eventChannel } from "redux-saga";
-import { firestore } from "javascripts/globals";
-import update from "immutability-helper";
+import _filter from 'lodash/filter';
+import _find from 'lodash/find';
+import _sortBy from 'lodash/sortBy';
+import { createSelector } from 'reselect';
+import { eventChannel } from 'redux-saga';
+import { firestore } from 'javascripts/globals';
+import update from 'immutability-helper';
 
 // Constants
 
 let channel = null;
 
-const path = "hours-tracker/app/recents";
+const path = 'hours-tracker/app/recents';
 
 const RECENTS_SET = `${path}/RECENTS_SET`;
 const RECENTS_SUBSCRIBE = `${path}/RECENTS_SUBSCRIBE`;
@@ -61,7 +61,7 @@ const ready = () => {
   return { type: READY };
 };
 
-const setRecents = recents => {
+const setRecents = (recents) => {
   return { recents, type: RECENTS_SET };
 };
 
@@ -72,7 +72,7 @@ const parseRecent = (snapshot, clients) => {
   let client = null;
 
   if (data.clientRef) {
-    client = _find(clients, eClient => eClient.id === data.clientRef.id);
+    client = _find(clients, (eClient) => eClient.id === data.clientRef.id);
   }
 
   let project = null;
@@ -80,7 +80,7 @@ const parseRecent = (snapshot, clients) => {
   if (client && data.projectRef) {
     project = _find(
       client.projects,
-      eProject => eProject.id === data.projectRef.id
+      (eProject) => eProject.id === data.projectRef.id
     );
   }
 
@@ -103,12 +103,12 @@ function* recentsSubscribe() {
     channel.close();
   }
 
-  const auth = yield select(state => state.app.auth);
+  const auth = yield select((state) => state.app.auth);
 
-  channel = eventChannel(emit => {
+  channel = eventChannel((emit) => {
     const unsubscribe = firestore
       .collection(`users/${auth.uid}/recents`)
-      .onSnapshot(snapshot => {
+      .onSnapshot((snapshot) => {
         emit({ snapshot });
       });
 
@@ -126,16 +126,16 @@ export const sagas = [spawn(watchRecentsSubscribe)];
 
 // Selectors
 
-const selectUser = state => state.app.user;
-const selectBaseRecents = state => state.recents.recents;
-const selectClients = state => state.clients.clients;
+const selectUser = (state) => state.app.user;
+const selectBaseRecents = (state) => state.recents.recents;
+const selectClients = (state) => state.clients.clients;
 
 export const selectRecents = createSelector(
   [selectBaseRecents, selectClients],
   (recents, clients) => {
     return _filter(
-      recents.map(recent => parseRecent(recent, clients)),
-      "project"
+      recents.map((recent) => parseRecent(recent, clients)),
+      'project'
     );
   }
 );
@@ -150,11 +150,11 @@ export const selectFilteredRecents = createSelector(
     const { recentProjectsListSize, recentProjectsSort } = user;
 
     const size = Number(recentProjectsListSize || 10);
-    const sorted = _sortBy(recents, "startedAt")
+    const sorted = _sortBy(recents, 'startedAt')
       .reverse()
       .slice(0, size);
 
-    if (recentProjectsSort === "startedAt") {
+    if (recentProjectsSort === 'startedAt') {
       return sorted;
     }
 

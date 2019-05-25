@@ -6,14 +6,14 @@ import {
   TextAreaField,
   TimeField,
   TimezoneField
-} from "javascripts/shared/components";
-import { Field, Form } from "formik";
-import { ProjectField, UserField } from "javascripts/app/components";
+} from 'javascripts/shared/components';
+import { Field, Form } from 'formik';
+import { ProjectField, UserField } from 'javascripts/app/components';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import styled from "styled-components";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import styled from 'styled-components';
 
 const Link = styled.div`
   outline: none;
@@ -62,13 +62,13 @@ const EntryForm = ({ admin, isSubmitting, status, values }) => {
       {admin && (
         <div>
           <Link
-            className="hover:text-blue text-blue mb-2"
+            className="hover:text-blue-600 hover:underline text-blue-500 mb-2"
             onClick={() => setOpen(!open)}
             role="button"
             tabIndex={-1}
           >
-            {"Admin Fields "}
-            <FontAwesomeIcon icon={open ? "caret-down" : "caret-right"} />
+            {'Admin Fields '}
+            <FontAwesomeIcon icon={open ? 'caret-down' : 'caret-right'} />
           </Link>
           <Collapse open={open}>
             <div>
@@ -95,7 +95,7 @@ const EntryForm = ({ admin, isSubmitting, status, values }) => {
           rows={1}
         />
       </div>
-      <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
+      <SubmitButton submitting={isSubmitting}>{'Save'}</SubmitButton>
     </Form>
   );
 };

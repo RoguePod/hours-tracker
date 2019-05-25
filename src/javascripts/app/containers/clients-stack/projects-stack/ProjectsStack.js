@@ -1,9 +1,9 @@
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch } from 'react-router-dom';
 
-import EditPage from "./edit-page/EditPage";
-import NewPage from "./new-page/NewPage";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import EditPage from './edit-page/EditPage';
+import NewPage from './new-page/NewPage';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const ProjectsStack = ({ match }) => {
   return (

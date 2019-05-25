@@ -1,15 +1,15 @@
-import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
-import { ONE_PX, isBlank } from "javascripts/globals";
+import { Dropdown, FieldError, InputBase } from 'javascripts/shared/components';
+import { ONE_PX, isBlank } from 'javascripts/globals';
 
-import ClientRow from "./ClientRow";
-import Fuse from "fuse.js";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _find from "lodash/find";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { fuseOptions } from "javascripts/app/redux/clients";
-import styled from "styled-components";
+import ClientRow from './ClientRow';
+import Fuse from 'fuse.js';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _find from 'lodash/find';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { fuseOptions } from 'javascripts/app/redux/clients';
+import styled from 'styled-components';
 
 const Divider = styled.div`
   height: ${ONE_PX};
@@ -147,10 +147,10 @@ class ClientField extends React.Component {
     const { clients, ready } = this.props;
 
     if (!ready || isBlank(clientId)) {
-      return "";
+      return '';
     }
 
-    const foundClient = _find(clients, client => {
+    const foundClient = _find(clients, (client) => {
       return client.id === clientId;
     });
 
@@ -158,7 +158,7 @@ class ClientField extends React.Component {
       return foundClient.name;
     }
 
-    return "";
+    return '';
   }
 
   _findResults(value) {
@@ -185,16 +185,16 @@ class ClientField extends React.Component {
     const { focused, value } = this.state;
     const hasError = errors[field.name] && touched[field.name];
 
-    const rows = (focused ? this._findResults(value) : []).map(client => {
+    const rows = (focused ? this._findResults(value) : []).map((client) => {
       return (
         <React.Fragment key={client.id}>
-          <Divider className="bg-grey-lighter" />
+          <Divider className="bg-gray-300" />
           <ClientRow client={client} onChange={this._handleDropdownChange} />
         </React.Fragment>
       );
     });
 
-    const noResultsClasses = "px-3 py-2 text-center font-bold text-sm";
+    const noResultsClasses = 'px-3 py-2 text-center font-bold text-sm';
 
     return (
       <div className="relative">
@@ -208,7 +208,7 @@ class ClientField extends React.Component {
         />
         <Dropdown error={hasError} maxHeight="18rem" open={focused}>
           {rows.length === 0 && (
-            <div className={noResultsClasses}>{"No Results Found"}</div>
+            <div className={noResultsClasses}>{'No Results Found'}</div>
           )}
           {rows.length > 0 && rows}
         </Dropdown>
@@ -221,7 +221,7 @@ class ClientField extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     clients: state.clients.clients,
     ready: state.clients.ready

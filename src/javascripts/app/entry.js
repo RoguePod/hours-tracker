@@ -1,18 +1,18 @@
 /* global document */
 
-import "javascripts/initializers/sentry";
-import "javascripts/initializers/store";
-import "javascripts/initializers/validators";
-import "stylesheets/application.scss?main";
-import "javascript-detect-element-resize";
+import 'javascripts/initializers/sentry';
+import 'javascripts/initializers/store';
+import 'javascripts/initializers/validators';
+import 'stylesheets/application.scss?main';
+import 'javascript-detect-element-resize';
 
 import {
   App,
   SignOutPage,
   SignedInStack,
   SignedOutStack
-} from "javascripts/app/containers";
-import { Route, Switch } from "react-router-dom";
+} from 'javascripts/app/containers';
+import { Route, Switch } from 'react-router-dom';
 import {
   faAngleDoubleLeft,
   faAngleDoubleRight,
@@ -38,17 +38,17 @@ import {
   faStop,
   faSyncAlt,
   faTimes
-} from "@fortawesome/free-solid-svg-icons";
-import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
-import { history, store } from "javascripts/app/redux/store";
+} from '@fortawesome/free-solid-svg-icons';
+import { faCheckSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
+import { history, store } from 'javascripts/app/redux/store';
 
-import { ConnectedRouter } from "connected-react-router";
-import { Provider } from "react-redux";
-import React from "react";
-import ReactDOM from "react-dom";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import moment from "moment-timezone";
-import registerServiceWorker from "./registerServiceWorker";
+import { ConnectedRouter } from 'connected-react-router';
+import { Provider } from 'react-redux';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import moment from 'moment-timezone';
+import registerServiceWorker from './registerServiceWorker';
 
 library.add(
   faAngleDoubleLeft,
@@ -79,7 +79,7 @@ library.add(
   faTimes
 );
 
-moment.locale("en");
+moment.locale('en');
 
 ReactDOM.render(
   <Provider store={store}>
@@ -93,7 +93,7 @@ ReactDOM.render(
       </App>
     </ConnectedRouter>
   </Provider>,
-  document.getElementById("app")
+  document.getElementById('app')
 );
 
 registerServiceWorker();

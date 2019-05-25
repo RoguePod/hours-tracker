@@ -1,17 +1,17 @@
-import { Spinner, Table } from "javascripts/shared/components";
+import { Spinner, Table } from 'javascripts/shared/components';
 import {
   reset,
   selectEntries,
   subscribeEntries
-} from "javascripts/app/redux/entries";
+} from 'javascripts/app/redux/entries';
 
-import EntryRow from "./EntryRow";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { destroyEntry } from "javascripts/app/redux/entry";
-import { selectTimezone } from "javascripts/app/redux/app";
+import EntryRow from './EntryRow';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { destroyEntry } from 'javascripts/app/redux/entry';
+import { selectTimezone } from 'javascripts/app/redux/app';
 
 class EntriesTable extends React.Component {
   static propTypes = {
@@ -50,7 +50,7 @@ class EntriesTable extends React.Component {
   limit = 10;
 
   _renderRows(entries) {
-    return entries.map(entry => {
+    return entries.map((entry) => {
       return <EntryRow {...this.props} entry={entry} key={entry.id} />;
     });
   }
@@ -65,13 +65,13 @@ class EntriesTable extends React.Component {
             <thead>
               <tr>
                 <Table.Th />
-                <Table.Th>{"Client"}</Table.Th>
-                <Table.Th>{"Project"}</Table.Th>
-                <Table.Th>{"Date"}</Table.Th>
-                <Table.Th>{"Started"}</Table.Th>
-                <Table.Th>{"Stopped"}</Table.Th>
-                <Table.Th>{"Hours"}</Table.Th>
-                <Table.Th>{"Description"}</Table.Th>
+                <Table.Th>{'Client'}</Table.Th>
+                <Table.Th>{'Project'}</Table.Th>
+                <Table.Th>{'Date'}</Table.Th>
+                <Table.Th>{'Started'}</Table.Th>
+                <Table.Th>{'Stopped'}</Table.Th>
+                <Table.Th>{'Hours'}</Table.Th>
+                <Table.Th>{'Description'}</Table.Th>
               </tr>
             </thead>
             <tbody>{this._renderRows(entries)}</tbody>
@@ -83,7 +83,7 @@ class EntriesTable extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   let fetching = null;
 
   if (!state.dashboard.fetching) {

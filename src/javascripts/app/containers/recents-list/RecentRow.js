@@ -1,8 +1,8 @@
-import { ActionIcon } from "javascripts/shared/components";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _get from "lodash/get";
-import _isEqual from "lodash/isEqual";
+import { ActionIcon } from 'javascripts/shared/components';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _get from 'lodash/get';
+import _isEqual from 'lodash/isEqual';
 
 class RecentRow extends React.Component {
   static propTypes = {
@@ -28,10 +28,10 @@ class RecentRow extends React.Component {
   _handleStart() {
     const { onStartEntry, user, recent } = this.props;
 
-    let description = "";
+    let description = '';
 
     if (user.autoloadLastDescription) {
-      description = _get(recent, "description", "");
+      description = _get(recent, 'description', '');
     }
 
     onStartEntry({
@@ -46,7 +46,7 @@ class RecentRow extends React.Component {
     const { recent } = this.props;
 
     return (
-      <div className="border-b border-grey p-4">
+      <div className="border-b p-4">
         <div className="flex items-center">
           <div className="flex-1">
             <em>

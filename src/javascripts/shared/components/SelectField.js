@@ -1,9 +1,9 @@
-import FieldError from "./FieldError";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SelectBase from "./SelectBase";
+import FieldError from './FieldError';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SelectBase from './SelectBase';
 
-const SelectField = props => {
+const SelectField = (props) => {
   const {
     children,
     disabled,

@@ -1,15 +1,15 @@
-import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
-import { ONE_PX, isBlank } from "javascripts/globals";
+import { Dropdown, FieldError, InputBase } from 'javascripts/shared/components';
+import { ONE_PX, isBlank } from 'javascripts/globals';
 
-import Fuse from "fuse.js";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import UserRow from "./UserRow";
-import _find from "lodash/find";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { fuseOptions } from "javascripts/app/redux/users";
-import styled from "styled-components";
+import Fuse from 'fuse.js';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import UserRow from './UserRow';
+import _find from 'lodash/find';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { fuseOptions } from 'javascripts/app/redux/users';
+import styled from 'styled-components';
 
 const Divider = styled.div`
   height: ${ONE_PX};
@@ -133,10 +133,10 @@ class UserField extends React.Component {
     const { ready, users } = this.props;
 
     if (!ready || isBlank(userId)) {
-      return "";
+      return '';
     }
 
-    const foundUser = _find(users, user => {
+    const foundUser = _find(users, (user) => {
       return user.id === userId;
     });
 
@@ -144,7 +144,7 @@ class UserField extends React.Component {
       return foundUser.name;
     }
 
-    return "";
+    return '';
   }
 
   _findResults(value) {
@@ -171,16 +171,16 @@ class UserField extends React.Component {
     const { focused, value } = this.state;
     const hasError = errors[field.name] && touched[field.name];
 
-    const rows = (focused ? this._findResults(value) : []).map(user => {
+    const rows = (focused ? this._findResults(value) : []).map((user) => {
       return (
         <React.Fragment key={user.id}>
-          <Divider className="bg-grey-lighter" />
+          <Divider className="bg-gray-300" />
           <UserRow onChange={this._handleDropdownChange} user={user} />
         </React.Fragment>
       );
     });
 
-    const noResultsClasses = "px-3 py-2 text-center font-bold text-sm";
+    const noResultsClasses = 'px-3 py-2 text-center font-bold text-sm';
 
     return (
       <div className="relative">
@@ -194,7 +194,7 @@ class UserField extends React.Component {
         />
         <Dropdown error={hasError} maxHeight="18rem" open={focused}>
           {rows.length === 0 && (
-            <div className={noResultsClasses}>{"No Results Found"}</div>
+            <div className={noResultsClasses}>{'No Results Found'}</div>
           )}
           {rows.length > 0 && rows}
         </Dropdown>
@@ -207,7 +207,7 @@ class UserField extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     ready: state.users.ready,
     users: state.users.users

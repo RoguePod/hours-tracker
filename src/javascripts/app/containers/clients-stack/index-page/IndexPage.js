@@ -1,24 +1,24 @@
-import { Button, Pagination, Spinner } from "javascripts/shared/components";
-import { fromQuery, toQuery } from "javascripts/globals";
+import { Button, Pagination, Spinner } from 'javascripts/shared/components';
+import { fromQuery, toQuery } from 'javascripts/globals';
 import {
   selectPaginatedClients,
   selectQuery
-} from "javascripts/app/redux/clients";
+} from 'javascripts/app/redux/clients';
 
-import ClientRow from "./ClientRow";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Formik } from "formik";
-import { Link } from "react-router-dom";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SearchForm from "./SearchForm";
-import _compact from "lodash/compact";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { history } from "javascripts/app/redux/store";
-import { selectAdmin } from "javascripts/app/redux/app";
-import { selectRecents } from "javascripts/app/redux/recents";
-import { startEntry } from "javascripts/app/redux/running";
+import ClientRow from './ClientRow';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Formik } from 'formik';
+import { Link } from 'react-router-dom';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SearchForm from './SearchForm';
+import _compact from 'lodash/compact';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { history } from 'javascripts/app/redux/store';
+import { selectAdmin } from 'javascripts/app/redux/app';
+import { selectRecents } from 'javascripts/app/redux/recents';
+import { startEntry } from 'javascripts/app/redux/running';
 
 class ClientsIndexPage extends React.Component {
   static propTypes = {
@@ -89,7 +89,7 @@ class ClientsIndexPage extends React.Component {
   render() {
     const { admin, clients, location, pagination, query, ready } = this.props;
 
-    const clientRows = clients.map(client => {
+    const clientRows = clients.map((client) => {
       return (
         <div className="flex w-full xl:w-1/2 px-2" key={client.id}>
           <ClientRow {...this.props} client={client} />
@@ -99,19 +99,19 @@ class ClientsIndexPage extends React.Component {
 
     return (
       <div className="p-4">
-        <div className="text-blue flex items-center pb-4">
-          <h1 className="flex-1 text-blue">{"Clients"}</h1>
+        <div className="text-blue-500 flex items-center pb-4">
+          <h1 className="flex-1 text-blue-500">{'Clients'}</h1>
           {admin && (
             <Button
               as={Link}
               color="blue"
               to={{
                 ...location,
-                pathname: "/clients/new",
+                pathname: '/clients/new',
                 state: { modal: true }
               }}
             >
-              <FontAwesomeIcon icon="plus" /> {"New Client"}
+              <FontAwesomeIcon icon="plus" /> {'New Client'}
             </Button>
           )}
         </div>
@@ -131,7 +131,7 @@ class ClientsIndexPage extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   const { clients, pagination } = selectPaginatedClients(state);
 
   return {

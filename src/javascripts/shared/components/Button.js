@@ -1,28 +1,28 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Transition } from "javascripts/shared/components";
-import cx from "classnames";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Transition } from 'javascripts/shared/components';
+import _includes from 'lodash/includes';
+import cx from 'classnames';
 
-const Button = props => {
-  const {
-    as,
-    children,
-    className,
-    color,
-    disabled,
-    textColor,
-    ...rest
-  } = props;
+const Button = (props) => {
+  let { textColor } = props;
+  const { as, children, className, color, disabled, ...rest } = props;
 
-  const hoverKey = `hover:bg-${color}-dark`;
+  const staticColors = ['smoke', 'black', 'white', 'transparent'];
+  if (!_includes(staticColors, textColor)) {
+    textColor = `${textColor}-500`;
+  }
+
+  delete rest.textColor;
+
   const buttonClassName = cx(
-    `bg-${color}`,
+    `bg-${color}-500`,
     `text-${textColor}`,
-    "font-bold rounded hover:shadow appearance-none",
+    'font-bold rounded hover:shadow appearance-none',
     {
-      "cursor-not-allowed": disabled,
-      [hoverKey]: !disabled,
-      "opacity-50": disabled
+      'cursor-not-allowed': disabled,
+      [`hover:bg-${color}-600`]: !disabled,
+      'opacity-50': disabled
     },
     className
   );
@@ -50,12 +50,12 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
-  as: "button",
-  className: "py-2 px-4",
-  color: "blue",
+  as: 'button',
+  className: 'py-2 px-4',
+  color: 'blue',
   disabled: false,
-  textColor: "white",
-  type: "button"
+  textColor: 'white',
+  type: 'button'
 };
 
 export default Button;

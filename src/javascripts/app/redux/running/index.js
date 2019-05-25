@@ -3,7 +3,7 @@ import {
   convertEntryParamIdsToRefs,
   firestore,
   parseEntry
-} from "javascripts/globals";
+} from 'javascripts/globals';
 import {
   call,
   put,
@@ -11,21 +11,21 @@ import {
   spawn,
   takeEvery,
   takeLatest
-} from "redux-saga/effects";
+} from 'redux-saga/effects';
 
-import _get from "lodash/get";
-import { addFlash } from "javascripts/shared/redux/flashes";
-import { createSelector } from "reselect";
-import { eventChannel } from "redux-saga";
-import moment from "moment-timezone";
-import { selectTimezone } from "javascripts/app/redux/app";
-import update from "immutability-helper";
+import _get from 'lodash/get';
+import { addFlash } from 'javascripts/shared/redux/flashes';
+import { createSelector } from 'reselect';
+import { eventChannel } from 'redux-saga';
+import moment from 'moment-timezone';
+import { selectTimezone } from 'javascripts/app/redux/app';
+import update from 'immutability-helper';
 
 // Constants
 
 let channel = null;
 
-const path = "hours-tracker/app/running";
+const path = 'hours-tracker/app/running';
 
 const ENTRY_START = `${path}/ENTRY_START`;
 const ENTRY_STOP = `${path}/ENTRY_STOP`;
@@ -65,7 +65,7 @@ export default (state = initialState, action) => {
 
 // Actions
 
-export const startEntry = params => {
+export const startEntry = (params) => {
   return { params, type: ENTRY_START };
 };
 
@@ -77,7 +77,7 @@ export const subscribeEntry = () => {
   return { type: ENTRY_SUBSCRIBE };
 };
 
-export const updateEntry = params => {
+export const updateEntry = (params) => {
   return { params, type: ENTRY_UPDATE };
 };
 
@@ -94,11 +94,11 @@ const ready = () => {
   return { type: READY };
 };
 
-const setEntry = entry => {
+const setEntry = (entry) => {
   return { entry, type: ENTRY_SET };
 };
 
-const setFetching = fetching => {
+const setFetching = (fetching) => {
   return { fetching, type: FETCHING_SET };
 };
 
@@ -106,9 +106,9 @@ const setFetching = fetching => {
 
 function* entryStart({ params }) {
   try {
-    yield put(setFetching("Starting..."));
+    yield put(setFetching('Starting...'));
 
-    const { entry, user, timezone } = yield select(state => {
+    const { entry, user, timezone } = yield select((state) => {
       return {
         entry: state.running.entry,
         timezone: selectTimezone(state),
@@ -128,7 +128,7 @@ function* entryStart({ params }) {
       billable: false,
       clientRef: null,
       createdAt: now,
-      description: "",
+      description: '',
       projectRef: null,
       startedAt: now,
       stoppedAt: null,
@@ -137,13 +137,13 @@ function* entryStart({ params }) {
       userRef: user.snapshot.ref
     };
 
-    const response = yield call(add, "entries", {
+    const response = yield call(add, 'entries', {
       ...defaults,
       ...convertEntryParamIdsToRefs(params)
     });
 
     if (response.error) {
-      yield put(addFlash(response.error.message, "red"));
+      yield put(addFlash(response.error.message, 'red'));
     }
   } finally {
     yield put(setFetching(null));
@@ -156,9 +156,9 @@ function* watchEntryStart() {
 
 function* entryStop() {
   try {
-    yield put(setFetching("Stopping..."));
+    yield put(setFetching('Stopping...'));
 
-    const { entry } = yield select(state => {
+    const { entry } = yield select((state) => {
       return {
         entry: state.running.entry
       };
@@ -181,13 +181,13 @@ function* watchEntryStop() {
 
 function* entryUpdate({ params }) {
   try {
-    const entry = yield select(state => state.running.entry);
+    const entry = yield select((state) => state.running.entry);
 
     if (!entry) {
       return;
     }
 
-    yield put(setFetching("Updating..."));
+    yield put(setFetching('Updating...'));
 
     const updatedAt = moment()
       .utc()
@@ -206,7 +206,7 @@ function* watchEntryUpdate() {
 }
 
 function* handleEntrySubscribe({ snapshot }) {
-  const isReady = yield select(state => state.running.ready);
+  const isReady = yield select((state) => state.running.ready);
 
   yield put(setEntry(snapshot));
 
@@ -216,20 +216,20 @@ function* handleEntrySubscribe({ snapshot }) {
 }
 
 function* entrySubscribe() {
-  const user = yield select(state => state.app.user);
+  const user = yield select((state) => state.app.user);
 
-  channel = eventChannel(emit => {
+  channel = eventChannel((emit) => {
     const unsubscribe = firestore
-      .collection("entries")
-      .where("stoppedAt", "==", null)
-      .where("userRef", "==", user.snapshot.ref)
-      .onSnapshot(snapshot => {
+      .collection('entries')
+      .where('stoppedAt', '==', null)
+      .where('userRef', '==', user.snapshot.ref)
+      .onSnapshot((snapshot) => {
         if (snapshot.size === 0) {
           emit({ snapshot: null });
           return;
         }
 
-        snapshot.forEach(entry => {
+        snapshot.forEach((entry) => {
           emit({ snapshot: entry });
         });
       });
@@ -253,10 +253,10 @@ export const sagas = [
 
 // Selectors
 
-const selectBaseEntry = state => state.running.entry;
-const selectClients = state => state.clients.clients;
-const selectAppUser = state => state.app.user;
-const selectUsers = state => state.users.users;
+const selectBaseEntry = (state) => state.running.entry;
+const selectClients = (state) => state.clients.clients;
+const selectAppUser = (state) => state.app.user;
+const selectUsers = (state) => state.users.users;
 
 export const selectEntry = createSelector(
   [selectBaseEntry, selectClients, selectAppUser, selectUsers],
@@ -271,14 +271,14 @@ export const selectEntry = createSelector(
 
 export const selectRunningEntryForForm = createSelector(
   [selectEntry],
-  entry => {
+  (entry) => {
     if (entry) {
       return {
         billable: entry.billable || false,
-        clientId: _get(entry, "clientRef.id"),
+        clientId: _get(entry, 'clientRef.id'),
         description: entry.description,
         id: entry.id,
-        projectId: _get(entry, "projectRef.id"),
+        projectId: _get(entry, 'projectRef.id'),
         startedAt: entry.startedAt,
         stoppedAt: entry.stoppedAt,
         timezone: entry.timezone
@@ -287,7 +287,7 @@ export const selectRunningEntryForForm = createSelector(
 
     return {
       billable: false,
-      description: ""
+      description: ''
     };
   }
 );

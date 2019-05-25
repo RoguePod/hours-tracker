@@ -1,9 +1,9 @@
-import { CSSTransition } from "react-transition-group";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Portal from "./Portal";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import styled from "styled-components";
+import { CSSTransition } from 'react-transition-group';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Portal from './Portal';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import styled from 'styled-components';
 
 const DURATION = 300;
 
@@ -52,87 +52,65 @@ const Close = styled.div`
   top: -0.75rem;
 `;
 
-class Modal extends React.Component {
-  static propTypes = {
-    children: PropTypes.node.isRequired,
-    onClose: PropTypes.func,
-    open: PropTypes.bool
-  };
+const Modal = ({ children, onClose, open }) => {
+  const [slide, setSlide] = React.useState(open);
 
-  static defaultProps = {
-    onClose: null,
-    open: false
-  };
+  const handleEnter = () => setSlide(true);
+  const handleExit = () => setSlide(false);
 
-  constructor(props) {
-    super(props);
+  const overlayClassName =
+    'fixed inset-0 z-40 flex items-center justify-center pt-8 px-4 pb-4 ' +
+    'overflow-auto bg-smoke';
 
-    this.state = {
-      slide: props.open
-    };
+  const closeClasses =
+    'absolute bg-blue-500 text-white w-8 h-8 flex items-center ' +
+    'justify-center rounded-full text-center border-4 border-white z-20 ' +
+    'cursor-pointer';
 
-    this._handleEnter = this._handleEnter.bind(this);
-    this._handleExit = this._handleExit.bind(this);
-  }
+  return (
+    <Portal>
+      <CSSTransition
+        classNames="fade"
+        in={open}
+        mountOnEnter
+        onEnter={handleEnter}
+        onExit={handleExit}
+        timeout={DURATION}
+        unmountOnExit
+      >
+        <FadeIn className={overlayClassName}>
+          <div
+            className="absolute inset-0"
+            onClick={onClose}
+            role="button"
+            tabIndex="-1"
+          />
+          <CSSTransition classNames="slide" in={slide} timeout={DURATION}>
+            <SlideIn
+              className="bg-white rounded shadow-lg relative"
+              initialPose="exit"
+            >
+              <Close className={closeClasses} onClick={onClose}>
+                <FontAwesomeIcon icon="times" />
+              </Close>
+              {children}
+            </SlideIn>
+          </CSSTransition>
+        </FadeIn>
+      </CSSTransition>
+    </Portal>
+  );
+};
 
-  shouldComponentUpdate() {
-    return true;
-  }
+Modal.propTypes = {
+  children: PropTypes.node.isRequired,
+  onClose: PropTypes.func,
+  open: PropTypes.bool
+};
 
-  _handleEnter() {
-    this.setState({ slide: true });
-  }
-
-  _handleExit() {
-    this.setState({ slide: false });
-  }
-
-  render() {
-    const { children, onClose, open } = this.props;
-    const { slide } = this.state;
-
-    const overlayClassName =
-      "fixed pin z-40 flex items-center justify-center pt-8 px-4 pb-4 " +
-      "overflow-auto bg-smoke";
-
-    const closeClasses =
-      "absolute bg-blue text-white w-8 h-8 flex items-center cursor-pointer " +
-      "justify-center rounded-full text-center border-4 border-white z-20";
-
-    return (
-      <Portal>
-        <CSSTransition
-          classNames="fade"
-          in={open}
-          mountOnEnter
-          onEnter={this._handleEnter}
-          onExit={this._handleExit}
-          timeout={DURATION}
-          unmountOnExit
-        >
-          <FadeIn className={overlayClassName}>
-            <div
-              className="absolute pin"
-              onClick={onClose}
-              role="button"
-              tabIndex="-1"
-            />
-            <CSSTransition classNames="slide" in={slide} timeout={DURATION}>
-              <SlideIn
-                className="bg-white rounded shadow-lg relative"
-                initialPose="exit"
-              >
-                <Close className={closeClasses} onClick={onClose}>
-                  <FontAwesomeIcon icon="times" />
-                </Close>
-                {children}
-              </SlideIn>
-            </CSSTransition>
-          </FadeIn>
-        </CSSTransition>
-      </Portal>
-    );
-  }
-}
+Modal.defaultProps = {
+  onClose: null,
+  open: false
+};
 
 export default Modal;

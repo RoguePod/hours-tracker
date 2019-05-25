@@ -1,14 +1,14 @@
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
-import { Formik } from "formik";
-import PasswordForm from "./PasswordForm";
-import ProfileForm from "./ProfileForm";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { updatePassword } from "javascripts/app/redux/passwords";
-import { updateUser } from "javascripts/app/redux/user";
+import { Formik } from 'formik';
+import PasswordForm from './PasswordForm';
+import ProfileForm from './ProfileForm';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { updatePassword } from 'javascripts/app/redux/passwords';
+import { updateUser } from 'javascripts/app/redux/user';
 
 class ProfilePage extends React.Component {
   static propTypes = {
@@ -46,29 +46,29 @@ class ProfilePage extends React.Component {
 
     const profileValidationSchema = Yup.object().shape({
       autoloadLastDescription: Yup.boolean(),
-      name: Yup.string().required("Name is Required"),
+      name: Yup.string().required('Name is Required'),
       recentProjectsListSize: Yup.number().required(
-        "Recent Projects List Size is Required"
+        'Recent Projects List Size is Required'
       ),
       recentProjectsSort: Yup.string().required(
-        "Recent Projects Sort is Required"
+        'Recent Projects Sort is Required'
       ),
-      timezone: Yup.string().required("Timezone is Required")
+      timezone: Yup.string().required('Timezone is Required')
     });
 
     const passwordValidationSchema = Yup.object().shape({
-      password: Yup.string().required("Password is Required")
+      password: Yup.string().required('Password is Required')
     });
 
     const initialValues = {
-      password: ""
+      password: ''
     };
 
     return (
       <div className="p-4">
-        <h1 className="text-blue mb-2">{"Profile"}</h1>
+        <h1 className="text-blue-500 mb-2">{'Profile'}</h1>
         <div className="border rounded mb-4 p-4">
-          <h3 className="text-blue mb-2">{"Settings"}</h3>
+          <h3 className="text-blue-500 mb-2">{'Settings'}</h3>
           <Formik
             component={ProfileForm}
             initialValues={this._getInitialValues(user)}
@@ -77,7 +77,7 @@ class ProfilePage extends React.Component {
           />
         </div>
         <div className="border rounded p-4">
-          <h3 className="text-blue mb-2">{"Password"}</h3>
+          <h3 className="text-blue-500 mb-2">{'Password'}</h3>
           <Formik
             component={PasswordForm}
             initialValues={initialValues}
@@ -90,7 +90,7 @@ class ProfilePage extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     user: state.app.user
   };

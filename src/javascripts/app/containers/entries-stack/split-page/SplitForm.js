@@ -1,16 +1,16 @@
-import { Field, FieldArray, Form } from "formik";
+import { Field, FieldArray, Form } from 'formik';
 import {
   FormError,
   SubmitButton,
   TimeField,
   TimezoneField
-} from "javascripts/shared/components";
+} from 'javascripts/shared/components';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SplitFormEntries from "./SplitFormEntries";
-import { calcHours } from "javascripts/globals";
-import moment from "moment-timezone";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SplitFormEntries from './SplitFormEntries';
+import { calcHours } from 'javascripts/globals';
+import moment from 'moment-timezone';
 
 class EntrySplitForm extends React.Component {
   static propTypes = {
@@ -69,7 +69,7 @@ class EntrySplitForm extends React.Component {
         `entries.${index}.startedAt`,
         moment
           .tz(startedAt, timezone)
-          .add(hours, "hours")
+          .add(hours, 'hours')
           .valueOf()
       );
 
@@ -80,7 +80,7 @@ class EntrySplitForm extends React.Component {
           `entries.${index}.stoppedAt`,
           moment
             .tz(startedAt, timezone)
-            .add(hours + staticHours, "hours")
+            .add(hours + staticHours, 'hours')
             .valueOf()
         );
         hours += staticHours;
@@ -127,7 +127,7 @@ class EntrySplitForm extends React.Component {
         <div className="mb-4">
           <FieldArray component={SplitFormEntries} name="entries" />
         </div>
-        <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
+        <SubmitButton submitting={isSubmitting}>{'Save'}</SubmitButton>
       </Form>
     );
   }

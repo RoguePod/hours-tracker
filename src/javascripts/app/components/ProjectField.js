@@ -1,21 +1,21 @@
 /* eslint-disable max-lines */
-import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
-import { ONE_PX, isBlank } from "javascripts/globals";
+import { Dropdown, FieldError, InputBase } from 'javascripts/shared/components';
+import { ONE_PX, isBlank } from 'javascripts/globals';
 import {
   fuseOptions,
   selectQueryableProjects
-} from "javascripts/app/redux/clients";
+} from 'javascripts/app/redux/clients';
 
-import Fuse from "fuse.js";
-import ProjectRow from "./ProjectRow";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _find from "lodash/find";
-import _get from "lodash/get";
-import _groupBy from "lodash/groupBy";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import styled from "styled-components";
+import Fuse from 'fuse.js';
+import ProjectRow from './ProjectRow';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _find from 'lodash/find';
+import _get from 'lodash/get';
+import _groupBy from 'lodash/groupBy';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import styled from 'styled-components';
 
 const Divider = styled.div`
   height: ${ONE_PX};
@@ -101,7 +101,7 @@ class ProjectField extends React.Component {
       onChange
     } = this.props;
 
-    if (_get(project, "projectId") !== _get(field, "value")) {
+    if (_get(project, 'projectId') !== _get(field, 'value')) {
       setFieldTouched(field.name, true);
       setFieldValue(field.name, project.projectId);
 
@@ -179,10 +179,10 @@ class ProjectField extends React.Component {
     const { projects, ready } = this.props;
 
     if (!ready || isBlank(projectId)) {
-      return "";
+      return '';
     }
 
-    const foundProject = _find(projects, project => {
+    const foundProject = _find(projects, (project) => {
       return project.projectId === projectId;
     });
 
@@ -190,7 +190,7 @@ class ProjectField extends React.Component {
       return `${foundProject.clientName} - ${foundProject.projectName}`;
     }
 
-    return "";
+    return '';
   }
 
   _findResults(value) {
@@ -198,7 +198,7 @@ class ProjectField extends React.Component {
 
     const options = {
       ...fuseOptions,
-      keys: ["clientName", "projectName"]
+      keys: ['clientName', 'projectName']
     };
 
     let searchResults = projects;
@@ -208,7 +208,7 @@ class ProjectField extends React.Component {
     }
 
     const results = {};
-    const groups = _groupBy(searchResults, "clientId");
+    const groups = _groupBy(searchResults, 'clientId');
 
     for (const clientId of Object.keys(groups)) {
       const group = groups[clientId];
@@ -237,12 +237,12 @@ class ProjectField extends React.Component {
     const hasError = errors[field.name] && touched[field.name];
     const clients = focused ? this._findResults(value) : {};
 
-    const rows = Object.keys(clients).map(clientId => {
+    const rows = Object.keys(clients).map((clientId) => {
       const result = clients[clientId];
-      const projects = result.projects.map(project => {
+      const projects = result.projects.map((project) => {
         return (
           <React.Fragment key={project.projectId}>
-            <Divider className="bg-grey-lighter" />
+            <Divider className="bg-gray-300" />
             <ProjectRow
               onChange={this._handleDropdownChange}
               project={project}
@@ -253,15 +253,15 @@ class ProjectField extends React.Component {
 
       return (
         <React.Fragment key={clientId}>
-          <div className="bg-blue-light p-2 font-bold text-white">
+          <div className="bg-blue-400 p-2 font-bold text-white">
             {result.name}
           </div>
-          <ul className="list-reset">{projects}</ul>
+          <ul>{projects}</ul>
         </React.Fragment>
       );
     });
 
-    const noResultsClasses = "px-3 py-2 text-center font-bold text-sm";
+    const noResultsClasses = 'px-3 py-2 text-center font-bold text-sm';
 
     return (
       <div className="relative">
@@ -275,7 +275,7 @@ class ProjectField extends React.Component {
         />
         <Dropdown error={hasError} maxHeight="18rem" open={focused}>
           {rows.length === 0 && (
-            <div className={noResultsClasses}>{"No Results Found"}</div>
+            <div className={noResultsClasses}>{'No Results Found'}</div>
           )}
           {rows.length > 0 && rows}
         </Dropdown>
@@ -288,7 +288,7 @@ class ProjectField extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     projects: selectQueryableProjects(state),
     ready: state.clients.ready

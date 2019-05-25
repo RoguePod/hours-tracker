@@ -1,9 +1,9 @@
-import _findIndex from "lodash/findIndex";
-import update from "immutability-helper";
+import _findIndex from 'lodash/findIndex';
+import update from 'immutability-helper';
 
 // Constants
 
-const path = "golfbook/shared/fetching";
+const path = 'golfbook/shared/fetching';
 
 const FETCHING_START = `${path}/FETCHING_START`;
 const FETCHING_STOP = `${path}/FETCHING_STOP`;
@@ -15,7 +15,7 @@ const initialState = {
 };
 
 const updateFetchingStop = (state, action) => {
-  const index = _findIndex(state.fetching, key => key === action.key);
+  const index = _findIndex(state.fetching, (key) => key === action.key);
 
   if (index === -1) {
     return state;
@@ -39,10 +39,10 @@ export default (state = initialState, action) => {
 
 // Actions
 
-export const startFetching = key => {
+export const startFetching = (key) => {
   return { key, type: FETCHING_START };
 };
 
-export const stopFetching = key => {
+export const stopFetching = (key) => {
   return { key, type: FETCHING_STOP };
 };

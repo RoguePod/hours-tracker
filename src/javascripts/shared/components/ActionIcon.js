@@ -1,16 +1,16 @@
-import ConfirmAction from "./ConfirmAction";
-import Icon from "./Icon";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import Tooltip from "./Tooltip";
-import cx from "classnames";
+import ConfirmAction from './ConfirmAction';
+import Icon from './Icon';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import Tooltip from './Tooltip';
+import cx from 'classnames';
 
-const ActionIcon = props => {
+const ActionIcon = (props) => {
   const { className, confirm, disabled, onClick, title, ...rest } = props;
 
   const actionClasses = cx(className, {
-    "cursor-not-allowed": disabled,
-    "cursor-pointer": !disabled
+    'cursor-not-allowed': disabled,
+    'cursor-pointer': !disabled
   });
 
   let action = (
@@ -31,7 +31,7 @@ const ActionIcon = props => {
   }
 
   if (title) {
-    action = <Tooltip title={title}>{action}</Tooltip>;
+    return <Tooltip title={title}>{action}</Tooltip>;
   }
 
   return action;

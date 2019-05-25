@@ -1,5 +1,5 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 /* stylelint-disable declaration-colon-newline-after */
 const Transition = styled(({ tag, children, transition, ...props }) =>
@@ -13,10 +13,10 @@ const Transition = styled(({ tag, children, transition, ...props }) =>
 Transition.defaultProps = {
   transition: {
     duration: 300,
-    property: "all",
-    timingFunction: "ease"
+    property: 'all',
+    timingFunction: 'ease'
   },
-  tag: "div"
+  tag: 'div'
 };
 
 export default Transition;

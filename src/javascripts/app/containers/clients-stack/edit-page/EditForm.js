@@ -1,12 +1,12 @@
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
-import { selectClient, updateClient } from "javascripts/app/redux/clients";
+import { selectClient, updateClient } from 'javascripts/app/redux/clients';
 
-import ClientForm from "../ClientForm";
-import { Formik } from "formik";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { connect } from "react-redux";
+import ClientForm from '../ClientForm';
+import { Formik } from 'formik';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
 class ClientEditForm extends React.PureComponent {
   static propTypes = {
@@ -34,11 +34,13 @@ class ClientEditForm extends React.PureComponent {
     const { client } = this.props;
 
     if (!client) {
-      return <h1 className="text-center text-blue">{"Client Not Found"}</h1>;
+      return (
+        <h1 className="text-center text-blue-500">{'Client Not Found'}</h1>
+      );
     }
 
     const validationSchema = Yup.object().shape({
-      name: Yup.string().required("Name is Required")
+      name: Yup.string().required('Name is Required')
     });
 
     const initialValues = {

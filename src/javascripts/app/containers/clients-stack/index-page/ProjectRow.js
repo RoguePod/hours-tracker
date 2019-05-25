@@ -3,15 +3,15 @@ import {
   Icon,
   Tooltip,
   Transition
-} from "javascripts/shared/components";
+} from 'javascripts/shared/components';
 
-import { Link } from "react-router-dom";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _find from "lodash/find";
-import _get from "lodash/get";
-import _isEqual from "lodash/isEqual";
-import cx from "classnames";
+import { Link } from 'react-router-dom';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _find from 'lodash/find';
+import _get from 'lodash/get';
+import _isEqual from 'lodash/isEqual';
+import cx from 'classnames';
 
 class ProjectRow extends React.Component {
   static propTypes = {
@@ -44,12 +44,12 @@ class ProjectRow extends React.Component {
   _handleStart() {
     const { client, onStartEntry, project, recents, user } = this.props;
 
-    const found = _find(recents, recent => recent.id === project.id);
+    const found = _find(recents, (recent) => recent.id === project.id);
 
-    let description = "";
+    let description = '';
 
     if (found && user.autoloadLastDescription) {
-      description = _get(found, "description", "");
+      description = _get(found, 'description', '');
     }
 
     onStartEntry({
@@ -63,14 +63,14 @@ class ProjectRow extends React.Component {
   render() {
     const { admin, client, first, location, project } = this.props;
 
-    const nameClasses = cx("flex-1", {
-      "text-green": project.billable
+    const nameClasses = cx('flex-1', {
+      'text-green-500': project.billable
     });
 
     const containerClasses = cx(
-      "flex p-3 items-center flex-1 hover:bg-blue-lightest md:border-l",
+      'flex p-3 items-center flex-1 hover:bg-blue-200 md:border-l',
       {
-        "border-t": !first
+        'border-t': !first
       }
     );
 
@@ -82,22 +82,22 @@ class ProjectRow extends React.Component {
         <div className="flex items-center">
           {admin && (
             <>
-              <Tooltip title={active ? "Active" : "Inactive"}>
+              <Tooltip title={active ? 'Active' : 'Inactive'}>
                 <Icon
                   className="mr-1"
                   color="transparent"
                   icon="check"
                   size={8}
-                  textColor={active ? "green" : "red"}
+                  textColor={active ? 'green' : 'red'}
                 />
               </Tooltip>
-              <Tooltip title={project.billable ? "Billable" : "Non-Billable"}>
+              <Tooltip title={project.billable ? 'Billable' : 'Non-Billable'}>
                 <Icon
                   className="mr-1"
                   color="transparent"
                   icon="dollar-sign"
                   size={8}
-                  textColor={project.billable ? "green" : "red"}
+                  textColor={project.billable ? 'green' : 'red'}
                 />
               </Tooltip>
               <ActionIcon

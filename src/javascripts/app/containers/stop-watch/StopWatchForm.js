@@ -1,89 +1,71 @@
-import { Field, Form } from "formik";
-import { FormError, TextAreaField } from "javascripts/shared/components";
+import { Field, Form } from 'formik';
+import { FormError, TextAreaField } from 'javascripts/shared/components';
 
-import { ProjectField } from "javascripts/app/components";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import { ProjectField } from 'javascripts/app/components';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
-class StopWatchForm extends React.Component {
-  static propTypes = {
-    onAutoSave: PropTypes.func,
-    status: PropTypes.string,
-    values: PropTypes.shape({
-      clientId: PropTypes.string,
-      description: PropTypes.string,
-      projectId: PropTypes.string
-    }).isRequired
-  };
+const StopWatchForm = ({ onAutoSave, status, values }) => {
+  const [timeout, setTimer] = React.useState(null);
 
-  static defaultProps = {
-    onAutoSave: null,
-    status: null
-  };
-
-  constructor(props) {
-    super(props);
-
-    this._handleDescriptionChange = this._handleDescriptionChange.bind(this);
-    this._handleAutoSave = this._handleAutoSave.bind(this);
-  }
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-      this.timeout = null;
-    }
-  }
-
-  timeout = null;
-
-  _handleDescriptionChange() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-
-    this.timeout = setTimeout(this._handleAutoSave, 1000);
-  }
-
-  _handleAutoSave() {
-    const { onAutoSave, values } = this.props;
-
+  React.useEffect(() => {
     if (onAutoSave) {
       onAutoSave(values);
     }
-  }
+  }, [values.projectId, values.clientId]);
 
-  render() {
-    const { status } = this.props;
+  React.useEffect(() => {
+    if (onAutoSave) {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
 
-    return (
-      <Form noValidate>
-        <FormError error={status} />
-        <div className="mb-2">
-          <Field
-            billableField="billable"
-            clientField="clientId"
-            component={ProjectField}
-            label="Project"
-            name="projectId"
-            onChange={this._handleAutoSave}
-          />
-        </div>
+      setTimer(setTimeout(() => onAutoSave(values), 1000));
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [values.description]);
+
+  return (
+    <Form noValidate>
+      <FormError error={status} />
+      <div className="mb-2">
         <Field
-          autoHeight
-          component={TextAreaField}
-          label="Description"
-          name="description"
-          onChange={this._handleDescriptionChange}
-          rows={1}
+          billableField="billable"
+          clientField="clientId"
+          component={ProjectField}
+          label="Project"
+          name="projectId"
         />
-      </Form>
-    );
-  }
-}
+      </div>
+      <Field
+        autoHeight
+        component={TextAreaField}
+        label="Description"
+        name="description"
+        rows={1}
+      />
+    </Form>
+  );
+};
+
+StopWatchForm.propTypes = {
+  onAutoSave: PropTypes.func,
+  status: PropTypes.string,
+  values: PropTypes.shape({
+    clientId: PropTypes.string,
+    description: PropTypes.string,
+    projectId: PropTypes.string
+  }).isRequired
+};
+
+StopWatchForm.defaultProps = {
+  onAutoSave: null,
+  status: null
+};
 
 export default StopWatchForm;

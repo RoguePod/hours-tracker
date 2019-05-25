@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import cx from "classnames";
+import { Link } from 'react-router-dom';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import cx from 'classnames';
 
 const PaginationLink = ({ active, className, children, disabled, ...rest }) => {
-  const containerClasses = cx("block px-4 py-2", className, {
-    "bg-blue": active,
-    "cursor-not-allowed text-grey-light": disabled,
-    "cursor-pointer hover:bg-grey-lighter": !active && !disabled,
-    "text-white": active
+  const containerClasses = cx('block px-4 py-2', className, {
+    'bg-blue-500': active,
+    'cursor-not-allowed text-gray-400': disabled,
+    'cursor-pointer hover:bg-gray-300': !active && !disabled,
+    'text-white': active
   });
 
   if (active || disabled) {

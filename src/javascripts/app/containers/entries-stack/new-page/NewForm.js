@@ -1,15 +1,15 @@
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
-import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
+import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
-import EntryForm from "../EntryForm";
-import { Formik } from "formik";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Spinner } from "javascripts/shared/components";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { createEntry } from "javascripts/app/redux/entry";
+import EntryForm from '../EntryForm';
+import { Formik } from 'formik';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { createEntry } from 'javascripts/app/redux/entry';
 
 class EntryNewForm extends React.Component {
   static propTypes = {
@@ -62,17 +62,17 @@ class EntryNewForm extends React.Component {
 
     const validationRules = {
       startedAt: Yup.number()
-        .parsedTime("Started is not a valid date/time")
-        .required("Started is Required"),
+        .parsedTime('Started is not a valid date/time')
+        .required('Started is Required'),
       stoppedAt: Yup.number()
-        .parsedTime("Stopped is not a valid date/time")
-        .moreThan(Yup.ref("startedAt"), "Must occur after Started"),
-      timezone: Yup.string().required("Timezone is Required")
+        .parsedTime('Stopped is not a valid date/time')
+        .moreThan(Yup.ref('startedAt'), 'Must occur after Started'),
+      timezone: Yup.string().required('Timezone is Required')
     };
 
     if (running) {
       validationRules.stoppedAt = validationRules.stoppedAt.required(
-        "Stopped is Required"
+        'Stopped is Required'
       );
     }
 
@@ -100,7 +100,7 @@ class EntryNewForm extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     admin: selectAdmin(state),
     fetching: state.entry.fetching,

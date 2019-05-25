@@ -1,7 +1,7 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import Row from "./Row";
-import { Table } from "javascripts/shared/components";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import Row from './Row';
+import { Table } from 'javascripts/shared/components';
 
 class UsersTable extends React.Component {
   static propTypes = {
@@ -75,7 +75,7 @@ class UsersTable extends React.Component {
 
     const keys = Object.keys(users).sort();
 
-    return keys.map(key => {
+    return keys.map((key) => {
       return <Row entries={users[key]} key={key} name={key} />;
     });
   }
@@ -86,17 +86,17 @@ class UsersTable extends React.Component {
         <thead>
           <tr>
             <Table.Td />
-            <Table.Td>{"Billable"}</Table.Td>
-            <Table.Td>{"Non-Billable"}</Table.Td>
-            <Table.Td>{"Total"}</Table.Td>
-            <Table.Td>{"Billable %"}</Table.Td>
+            <Table.Td>{'Billable'}</Table.Td>
+            <Table.Td>{'Non-Billable'}</Table.Td>
+            <Table.Td>{'Total'}</Table.Td>
+            <Table.Td>{'Billable %'}</Table.Td>
           </tr>
         </thead>
         <tbody>
           {this._renderRows()}
           <tr>
             <Table.Td />
-            <Table.Td className="text-green">
+            <Table.Td className="text-green-500">
               {this._calcBillable().toFixed(1)}
             </Table.Td>
             <Table.Td>{this._calcNonBillable().toFixed(1)}</Table.Td>

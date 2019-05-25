@@ -1,35 +1,24 @@
-import { removeFlash, updateFlash } from "javascripts/shared/redux/flashes";
+import { removeFlash, updateFlash } from 'javascripts/shared/redux/flashes';
 
-import Flash from "./Flash";
-import { Portal } from "javascripts/shared/components";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
+import Flash from './Flash';
+import Portal from './Portal';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
-class Flashes extends React.Component {
-  static propTypes = {
-    flashes: PropTypes.arrayOf(PropTypes.flash).isRequired
-  };
+const Flashes = ({ flashes, ...rest }) => {
+  const flashChildren = flashes.map((flash) => {
+    return <Flash {...rest} flash={flash} key={flash.id} />;
+  });
 
-  shouldComponentUpdate(nextProps) {
-    const { flashes } = this.props;
+  return <Portal>{flashChildren}</Portal>;
+};
 
-    return !_isEqual(flashes, nextProps.flashes);
-  }
+Flashes.propTypes = {
+  flashes: PropTypes.arrayOf(PropTypes.flash).isRequired
+};
 
-  render() {
-    const { flashes } = this.props;
-
-    const flashChildren = flashes.map(flash => {
-      return <Flash {...this.props} flash={flash} key={flash.id} />;
-    });
-
-    return <Portal>{flashChildren}</Portal>;
-  }
-}
-
-const props = state => {
+const props = (state) => {
   return {
     flashes: state.flashes.flashes
   };

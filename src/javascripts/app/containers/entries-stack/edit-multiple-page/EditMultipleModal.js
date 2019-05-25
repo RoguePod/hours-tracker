@@ -1,25 +1,25 @@
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
-import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
+import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
-import EditMultipleForm from "./EditMultipleForm";
-import { Formik } from "formik";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Spinner } from "javascripts/shared/components";
-import { connect } from "react-redux";
-import { updateEntries } from "javascripts/app/redux/entries";
+import EditMultipleForm from './EditMultipleForm';
+import { Formik } from 'formik';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Spinner } from 'javascripts/shared/components';
+import { connect } from 'react-redux';
+import { updateEntries } from 'javascripts/app/redux/entries';
 
-const EntryEditMultipleModal = props => {
+const EntryEditMultipleModal = (props) => {
   const { admin, fetching, onUpdateEntries, timezone } = props;
 
   const initialSchema = {
     clientId: null,
-    description: "",
+    description: '',
     projectId: null,
     startedAt: null,
     stoppedAt: null,
-    timezone: "",
+    timezone: '',
     update: {
       description: false,
       projectId: false,
@@ -30,37 +30,37 @@ const EntryEditMultipleModal = props => {
   };
 
   const validationSchema = Yup.object().shape({
-    startedAt: Yup.number().when("update.startedAt", {
+    startedAt: Yup.number().when('update.startedAt', {
       is: true,
       otherwise: Yup.number().nullable(),
       then: Yup.number()
-        .parsedTime("Started is not a valid date/time")
-        .required("Started is Required")
+        .parsedTime('Started is not a valid date/time')
+        .required('Started is Required')
     }),
     stoppedAt: Yup.number()
-      .when("update.stoppedAt", {
+      .when('update.stoppedAt', {
         is: true,
         otherwise: Yup.number().nullable(),
         then: Yup.number()
-          .parsedTime("Stopped is not a valid date/time")
-          .required("Stopped is Required")
+          .parsedTime('Stopped is not a valid date/time')
+          .required('Stopped is Required')
       })
-      .when(["update.startedAt", "update.stoppedAt"], {
+      .when(['update.startedAt', 'update.stoppedAt'], {
         is: true,
         otherwise: Yup.number().nullable(),
         then: Yup.number().moreThan(
-          Yup.ref("startedAt"),
-          "Must occur after Started"
+          Yup.ref('startedAt'),
+          'Must occur after Started'
         )
       }),
-    timezone: Yup.string().when("update.timezone", {
+    timezone: Yup.string().when('update.timezone', {
       is: true,
       otherwise: Yup.string().nullable(),
-      then: Yup.string().required("Timezone is Required")
+      then: Yup.string().required('Timezone is Required')
     })
   });
 
-  const renderForm = formProps => {
+  const renderForm = (formProps) => {
     return (
       <EditMultipleForm {...formProps} admin={admin} timezone={timezone} />
     );
@@ -68,7 +68,7 @@ const EntryEditMultipleModal = props => {
 
   return (
     <div className="p-4 min-h-200">
-      <h1 className="text-blue pb-2">{"Edit Multiple Entries"}</h1>
+      <h1 className="text-blue-500 pb-2">{'Edit Multiple Entries'}</h1>
       <Formik
         enableReinitialize
         initialSchema={initialSchema}
@@ -92,7 +92,7 @@ EntryEditMultipleModal.defaultProps = {
   fetching: null
 };
 
-const props = state => {
+const props = (state) => {
   return {
     admin: selectAdmin(state),
     fetching: state.entry.fetching,

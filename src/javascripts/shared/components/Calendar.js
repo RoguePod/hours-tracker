@@ -1,43 +1,43 @@
-import Button from "./Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _times from "lodash/times";
-import cx from "classnames";
-import moment from "moment-timezone";
+import Button from './Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _times from 'lodash/times';
+import cx from 'classnames';
+import moment from 'moment-timezone';
 
 const Calendar = ({ onChange, value }) => {
   const [viewDate, setViewDate] = React.useState(
-    (moment(value).isValid() ? moment(value) : moment()).startOf("month")
+    (moment(value).isValid() ? moment(value) : moment()).startOf('month')
   );
 
   const _handlePreviousMonth = () => {
-    setViewDate(moment(viewDate).subtract(1, "months"));
+    setViewDate(moment(viewDate).subtract(1, 'months'));
   };
 
   const _handleNextMonth = () => {
-    setViewDate(moment(viewDate).add(1, "months"));
+    setViewDate(moment(viewDate).add(1, 'months'));
   };
 
-  const _handleMonthChange = event => {
+  const _handleMonthChange = (event) => {
     setViewDate(moment(viewDate).month(Number(event.target.value) - 1));
   };
 
-  const _handleYearChange = event => {
+  const _handleYearChange = (event) => {
     setViewDate(moment(viewDate).year(Number(event.target.value)));
   };
 
-  const _handleDayChange = day => onChange(day);
+  const _handleDayChange = (day) => onChange(day);
 
   const selectedDate = moment(value).isValid()
-    ? moment(value).startOf("day")
+    ? moment(value).startOf('day')
     : null;
 
   const startDate = moment(viewDate)
-    .startOf("month")
+    .startOf('month')
     .day(0);
   const endDate = moment(viewDate)
-    .endOf("month")
+    .endOf('month')
     .day(6);
 
   const rows = [];
@@ -56,17 +56,17 @@ const Calendar = ({ onChange, value }) => {
     }
 
     const dayClasses = cx(
-      "py-2 flex-1 text-center hover:bg-blue hover:text-white cursor-pointer",
-      "text-sm",
+      'py-2 flex-1 text-center hover:bg-blue-500 hover:text-white ' +
+        'cursor-pointer text-sm',
       {
-        "bg-blue-lighter text-blue":
-          day.format("YYYY-MM-DD") === moment().format("YYYY-MM-DD") &&
-          day.format("YYYY-MM-DD") !== selectedDate?.format("YYYY-MM-DD"),
-        "border-l": dow !== 0,
-        "border-t": week !== 0,
-        "text-grey-dark": day.format("MM") !== viewDate.format("MM"),
-        "bg-blue text-white":
-          day.format("YYYY-MM-DD") === selectedDate?.format("YYYY-MM-DD")
+        'bg-blue-300 text-blue-500':
+          day.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD') &&
+          day.format('YYYY-MM-DD') !== selectedDate?.format('YYYY-MM-DD'),
+        'border-l': dow !== 0,
+        'border-t': week !== 0,
+        'text-gray-600': day.format('MM') !== viewDate.format('MM'),
+        'bg-blue-500 text-white':
+          day.format('YYYY-MM-DD') === selectedDate?.format('YYYY-MM-DD')
       }
     );
 
@@ -78,11 +78,11 @@ const Calendar = ({ onChange, value }) => {
         role="button"
         tabIndex="-1"
       >
-        {day.format("DD")}
+        {day.format('DD')}
       </div>
     );
 
-    startDate.add(1, "days");
+    startDate.add(1, 'days');
   }
 
   const weeks = rows.map((days, week) => {
@@ -93,20 +93,20 @@ const Calendar = ({ onChange, value }) => {
     );
   });
 
-  const dowClasses = "flex-1 py-1 text-xs";
+  const dowClasses = 'flex-1 py-1 text-xs';
 
   const selectClasses =
-    "block bg-blue text-white appearance-none outline-none py-2 pr-8 " +
-    "cursor-pointer";
+    'block bg-blue-500 text-white appearance-none outline-none py-2 pr-8 ' +
+    'cursor-pointer';
 
   const arrowClasses =
-    "pointer-events-none absolute pin-y pin-r flex items-center px-4 " +
-    "text-white";
+    'pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 ' +
+    'text-white';
 
   const currentYear = moment().year() - 20;
   const yearOptions = [];
 
-  _times(40, year => {
+  _times(40, (year) => {
     const value = year + currentYear;
     yearOptions.push(
       <option key={value} value={value}>
@@ -116,24 +116,24 @@ const Calendar = ({ onChange, value }) => {
   });
 
   const headerClasses =
-    "flex-1 py-2 text-center flex justify-center items-center";
+    'flex-1 py-2 text-center flex justify-center items-center';
 
-  const buttonClasses = "text-sm mx-1 mb-2 py-1 px-2";
+  const buttonClasses = 'text-sm mx-1 mb-2 py-1 px-2';
 
   const lastMonday = moment()
     .day(1)
-    .startOf("day");
+    .startOf('day');
 
-  const today = moment().startOf("day");
+  const today = moment().startOf('day');
 
   const nextSunday = moment()
-    .add(1, "weeks")
+    .add(1, 'weeks')
     .day(0)
-    .startOf("day");
+    .startOf('day');
 
   return (
     <>
-      <div className="bg-blue text-white">
+      <div className="bg-blue-500 text-white">
         <div className="flex">
           <div
             className="lg:pl-4 p-2 cursor-pointer"
@@ -148,20 +148,20 @@ const Calendar = ({ onChange, value }) => {
               <select
                 className={selectClasses}
                 onChange={_handleMonthChange}
-                value={viewDate.format("MM")}
+                value={viewDate.format('MM')}
               >
-                <option value="01">{"January"}</option>
-                <option value="02">{"February"}</option>
-                <option value="03">{"March"}</option>
-                <option value="04">{"April"}</option>
-                <option value="05">{"May"}</option>
-                <option value="06">{"June"}</option>
-                <option value="07">{"July"}</option>
-                <option value="08">{"August"}</option>
-                <option value="09">{"September"}</option>
-                <option value="10">{"October"}</option>
-                <option value="11">{"November"}</option>
-                <option value="12">{"December"}</option>
+                <option value="01">{'January'}</option>
+                <option value="02">{'February'}</option>
+                <option value="03">{'March'}</option>
+                <option value="04">{'April'}</option>
+                <option value="05">{'May'}</option>
+                <option value="06">{'June'}</option>
+                <option value="07">{'July'}</option>
+                <option value="08">{'August'}</option>
+                <option value="09">{'September'}</option>
+                <option value="10">{'October'}</option>
+                <option value="11">{'November'}</option>
+                <option value="12">{'December'}</option>
               </select>
               <div className={arrowClasses}>
                 <FontAwesomeIcon icon="caret-down" />
@@ -171,7 +171,7 @@ const Calendar = ({ onChange, value }) => {
               <select
                 className={selectClasses}
                 onChange={_handleYearChange}
-                value={viewDate.format("YYYY")}
+                value={viewDate.format('YYYY')}
               >
                 {yearOptions}
               </select>
@@ -196,19 +196,19 @@ const Calendar = ({ onChange, value }) => {
             onClick={() => onChange(lastMonday)}
             textColor="blue"
           >
-            {"Start of Week"}
+            {'Start of Week'}
             <br />
-            {lastMonday.format("MM/DD")}
+            {lastMonday.format('MM/DD')}
           </Button>
           <Button
             className={buttonClasses}
             color="white"
-            onClick={() => onChange(moment().startOf("day"))}
+            onClick={() => onChange(moment().startOf('day'))}
             textColor="blue"
           >
-            {"Today"}
+            {'Today'}
             <br />
-            {today.format("MM/DD")}
+            {today.format('MM/DD')}
           </Button>
           <Button
             className={buttonClasses}
@@ -216,19 +216,19 @@ const Calendar = ({ onChange, value }) => {
             onClick={() => onChange(nextSunday)}
             textColor="blue"
           >
-            {"End of Week"}
+            {'End of Week'}
             <br />
-            {nextSunday.format("MM/DD")}
+            {nextSunday.format('MM/DD')}
           </Button>
         </div>
         <div className="flex text-center">
-          <div className={dowClasses}>{"Sun"}</div>
-          <div className={dowClasses}>{"Mon"}</div>
-          <div className={dowClasses}>{"Tue"}</div>
-          <div className={dowClasses}>{"Wed"}</div>
-          <div className={dowClasses}>{"Thu"}</div>
-          <div className={dowClasses}>{"Fri"}</div>
-          <div className={dowClasses}>{"Sat"}</div>
+          <div className={dowClasses}>{'Sun'}</div>
+          <div className={dowClasses}>{'Mon'}</div>
+          <div className={dowClasses}>{'Tue'}</div>
+          <div className={dowClasses}>{'Wed'}</div>
+          <div className={dowClasses}>{'Thu'}</div>
+          <div className={dowClasses}>{'Fri'}</div>
+          <div className={dowClasses}>{'Sat'}</div>
         </div>
       </div>
       {weeks}

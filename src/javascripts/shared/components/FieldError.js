@@ -1,11 +1,11 @@
-import FieldHelper from "./FieldHelper";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import FieldHelper from './FieldHelper';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const FieldError = ({ touched, error }) => {
   return (
     <FieldHelper
-      className="text-red"
+      className="text-red-500"
       message={error}
       open={Boolean(touched && error)}
     />

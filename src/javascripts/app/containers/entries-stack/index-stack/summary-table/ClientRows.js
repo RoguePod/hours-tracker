@@ -1,7 +1,7 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import Row from "./Row";
-import { Table } from "javascripts/shared/components";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import Row from './Row';
+import { Table } from 'javascripts/shared/components';
 
 class ProjectsRow extends React.Component {
   static propTypes = {
@@ -69,7 +69,7 @@ class ProjectsRow extends React.Component {
   }
 
   _renderRows(client) {
-    return Object.keys(client.projects).map(key => {
+    return Object.keys(client.projects).map((key) => {
       const entries = client.projects[key];
 
       return <Row entries={entries} key={key} name={key} />;
@@ -81,13 +81,13 @@ class ProjectsRow extends React.Component {
 
     return (
       <tbody>
-        <tr className="bg-blue-lighter text-blue">
+        <tr className="bg-blue-300 text-blue-500">
           <Table.Td colSpan={5}>{client.name}</Table.Td>
         </tr>
         {this._renderRows(client)}
         <tr>
           <Table.Td />
-          <Table.Td className="text-green">
+          <Table.Td className="text-green-500">
             {this._calcBillable().toFixed(1)}
           </Table.Td>
           <Table.Td>{this._calcNonBillable().toFixed(1)}</Table.Td>

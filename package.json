@@ -80,7 +80,7 @@
     "stylelint-scss": "*",
     "stylelint-webpack-plugin": "*",
     "sw-precache-webpack-plugin": "*",
-    "tailwindcss": "0.7.4",
+    "tailwindcss": "*",
     "url-loader": "*",
     "webpack": "*",
     "webpack-cli": "*",
@@ -96,8 +96,5 @@
     "deploy:staging": "./build.staging.sh && yarn run build:staging && firebase deploy",
     "deploy:production": "./build.production.sh && yarn run build:production && firebase deploy",
     "prettier": "prettier --write \"src/javascripts/**/*.js\""
-  },
-  "engines": {
-    "node": "8"
   }
 }

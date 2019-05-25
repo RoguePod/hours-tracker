@@ -1,10 +1,10 @@
-/* global addResizeListener,removeResizeListener */
+/* global addResizeListener,removeResizeListener,document */
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import ReactDOM from "react-dom";
-import _isElement from "lodash/isElement";
-import styled from "styled-components";
+import PropTypes from 'prop-types';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import _isElement from 'lodash/isElement';
+import styled from 'styled-components';
 
 const Container = styled.div`
   height: 0;
@@ -29,10 +29,13 @@ class Collapse extends React.Component {
 
     this._handleUpdateHeight = this._handleUpdateHeight.bind(this);
     this._findElement = this._findElement.bind(this);
+    this._handleFocusChange = this._handleFocusChange.bind(this);
   }
 
   state = {
-    overflowY: "hidden",
+    hidden: document.hidden,
+    open: false,
+    overflowY: 'hidden',
     height: 0
   };
 
@@ -40,19 +43,26 @@ class Collapse extends React.Component {
     const { open } = this.props;
 
     if (open) {
-      this._handleUpdateHeight();
+      this.setState({ open: true }, this._handleUpdateHeight);
     }
+
+    document.addEventListener('visibilitychange', this._handleFocusChange);
   }
 
   shouldComponentUpdate() {
     return true;
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     const { open } = this.props;
+    const { hidden } = this.state;
 
-    if (prevProps.open !== open) {
-      this._handleUpdateHeight();
+    if (prevProps.open !== open || (prevState.hidden !== hidden && !hidden)) {
+      if (open) {
+        this.setState({ open: true }, () => this._handleUpdateHeight());
+      } else {
+        this._handleUpdateHeight();
+      }
     }
   }
 
@@ -65,9 +75,15 @@ class Collapse extends React.Component {
     if (this._element) {
       removeResizeListener(this._element, this._handleUpdateHeight);
     }
+
+    document.removeEventListener('visibilitychange', this._handleFocusChange);
   }
 
   timeout = null;
+
+  _handleFocusChange() {
+    this.setState({ hidden: document.hidden });
+  }
 
   _handleUpdateHeight() {
     const { duration, open } = this.props;
@@ -84,13 +100,13 @@ class Collapse extends React.Component {
     const height = open ? this._element.offsetHeight : 0;
 
     if (currentHeight !== height) {
-      this.setState({ height, overflowY: "hidden" });
+      this.setState({ height, overflowY: 'hidden' });
 
-      if (height > 0) {
-        this.timeout = setTimeout(() => {
-          this.setState({ overflowY: null });
-        }, duration);
-      }
+      this.timeout = setTimeout(() => {
+        this.setState({ open: false, overflowY: null });
+      }, duration);
+    } else {
+      this.setState({ overflowY: null });
     }
   }
 
@@ -111,12 +127,12 @@ class Collapse extends React.Component {
 
   render() {
     const { children, duration, ...rest } = this.props;
-    const { height, overflowY } = this.state;
+    const { height, open: stateOpen, overflowY } = this.state;
 
     const child = React.Children.only(children);
     const trigger = React.cloneElement(child, {
       ...rest,
-      ref: node => {
+      ref: (node) => {
         this._element = this._findElement(node);
 
         if (this._element) {
@@ -126,18 +142,20 @@ class Collapse extends React.Component {
         // Call the original ref, if any
         const { ref } = child;
 
-        if (typeof ref === "function") {
+        if (typeof ref === 'function') {
           ref(node);
         }
       }
     });
 
+    const containerStyles = {
+      height,
+      overflowY,
+      transitionDuration: `${duration}ms`
+    };
+
     return (
-      <Container
-        style={{ height, overflowY, transitionDuration: `${duration}ms` }}
-      >
-        {trigger}
-      </Container>
+      <Container style={containerStyles}>{stateOpen && trigger}</Container>
     );
   }
 }

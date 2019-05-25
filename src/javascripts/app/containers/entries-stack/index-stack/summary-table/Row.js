@@ -1,6 +1,6 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Table } from "javascripts/shared/components";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Table } from 'javascripts/shared/components';
 
 class Row extends React.Component {
   static propTypes = {
@@ -68,7 +68,7 @@ class Row extends React.Component {
     return (
       <tr>
         <Table.Td>{name}</Table.Td>
-        <Table.Td className="text-green">
+        <Table.Td className="text-green-500">
           {this._calcBillable().toFixed(1)}
         </Table.Td>
         <Table.Td>{this._calcNonBillable().toFixed(1)}</Table.Td>

@@ -1,13 +1,13 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import cx from "classnames";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import cx from 'classnames';
 
 const Label = ({ children, className, error, ...rest }) => {
   const labelClassName = cx(
-    "block text-grey-darker text-sm font-bold mb-2",
+    'block text-gray-700 text-sm font-bold mb-2',
     {
-      "text-grey-darker": !error,
-      "text-red": error
+      'text-gray-700': !error,
+      'text-red-500': error
     },
     className
   );

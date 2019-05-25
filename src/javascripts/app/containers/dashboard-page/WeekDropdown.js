@@ -1,11 +1,11 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _times from "lodash/times";
-import cx from "classnames";
-import { history } from "javascripts/app/redux/store";
-import moment from "moment-timezone";
-import { toQuery } from "javascripts/globals";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _times from 'lodash/times';
+import cx from 'classnames';
+import { history } from 'javascripts/app/redux/store';
+import moment from 'moment-timezone';
+import { toQuery } from 'javascripts/globals';
 
 class WeekDropdown extends React.Component {
   static propTypes = {
@@ -38,7 +38,7 @@ class WeekDropdown extends React.Component {
     const currentDate = moment.tz(date, timezone);
 
     const newQuery = {
-      date: currentDate.subtract(7, "d").format("YYYY-MM-DD")
+      date: currentDate.subtract(7, 'd').format('YYYY-MM-DD')
     };
 
     history.replace({ ...location, search: `?${toQuery(newQuery)}` });
@@ -54,7 +54,7 @@ class WeekDropdown extends React.Component {
     const currentDate = moment.tz(date, timezone);
 
     const newQuery = {
-      date: currentDate.add(7, "d").format("YYYY-MM-DD")
+      date: currentDate.add(7, 'd').format('YYYY-MM-DD')
     };
 
     history.replace({ ...location, search: `?${toQuery(newQuery)}` });
@@ -67,8 +67,8 @@ class WeekDropdown extends React.Component {
 
     const currentDate = moment()
       .tz(timezone)
-      .startOf("isoWeek")
-      .format("YYYY-MM-DD");
+      .startOf('isoWeek')
+      .format('YYYY-MM-DD');
 
     if (date === currentDate) {
       history.replace({ ...location, search: null });
@@ -86,16 +86,16 @@ class WeekDropdown extends React.Component {
     const weekStart = moment.tz(date, timezone);
     const weekEnd = moment
       .tz(date, timezone)
-      .add(6, "d")
-      .endOf("day")
-      .format("MM/DD");
+      .add(6, 'd')
+      .endOf('day')
+      .format('MM/DD');
 
     return (
       <option
-        key={weekStart.format("YYYY-MM-DD")}
-        value={weekStart.format("YYYY-MM-DD")}
+        key={weekStart.format('YYYY-MM-DD')}
+        value={weekStart.format('YYYY-MM-DD')}
       >
-        {`${weekStart.format("MM/DD")} - ${weekEnd}`}
+        {`${weekStart.format('MM/DD')} - ${weekEnd}`}
       </option>
     );
   }
@@ -109,31 +109,31 @@ class WeekDropdown extends React.Component {
 
     let found = isCurrent;
 
-    _times(4, index => {
+    _times(4, (index) => {
       const weeks = index + 1;
       const weekStart = moment
         .tz(timezone)
-        .startOf("isoWeek")
-        .subtract(weeks, "w");
+        .startOf('isoWeek')
+        .subtract(weeks, 'w');
 
       const weekEnd = moment
         .tz(timezone)
-        .startOf("isoWeek")
-        .subtract(weeks, "w")
-        .add(6, "d")
-        .endOf("day")
-        .format("MM/DD");
+        .startOf('isoWeek')
+        .subtract(weeks, 'w')
+        .add(6, 'd')
+        .endOf('day')
+        .format('MM/DD');
 
-      if (!found && date === weekStart.format("YYYY-MM-DD")) {
+      if (!found && date === weekStart.format('YYYY-MM-DD')) {
         found = true;
       }
 
       options.push(
         <option
-          key={weekStart.format("YYYY-MM-DD")}
-          value={weekStart.format("YYYY-MM-DD")}
+          key={weekStart.format('YYYY-MM-DD')}
+          value={weekStart.format('YYYY-MM-DD')}
         >
-          {`${weekStart.format("MM/DD")} - ${weekEnd}`}
+          {`${weekStart.format('MM/DD')} - ${weekEnd}`}
         </option>
       );
     });
@@ -153,30 +153,30 @@ class WeekDropdown extends React.Component {
 
     const currentDate = moment()
       .tz(timezone)
-      .startOf("isoWeek")
-      .format("YYYY-MM-DD");
+      .startOf('isoWeek')
+      .format('YYYY-MM-DD');
 
     const isCurrent = date === currentDate;
 
-    const baseButtonClasses = "bg-blue p-3 text-white";
+    const baseButtonClasses = 'bg-blue-500 p-3 text-white';
 
     const leftButtonClasses = cx(
       baseButtonClasses,
-      "rounded-l hover:bg-blue-dark"
+      'rounded-l hover:bg-blue-600'
     );
 
-    const rightButtonClasses = cx(baseButtonClasses, "rounded-r", {
-      "cursor-not-allowed opacity-50": isCurrent,
-      "hover:bg-blue-dark": !isCurrent
+    const rightButtonClasses = cx(baseButtonClasses, 'rounded-r', {
+      'cursor-not-allowed opacity-50': isCurrent,
+      'hover:bg-blue-600': !isCurrent
     });
 
     const selectClasses =
-      "block bg-blue text-white appearance-none outline-none px-4 py-2 pr-10 " +
-      "h-full cursor-pointer";
+      'block bg-blue-500 text-white appearance-none outline-none ' +
+      'px-4 py-2 pr-10 h-full cursor-pointer';
 
     const arrowClasses =
-      "pointer-events-none absolute pin-y pin-r flex items-center px-4 " +
-      "text-white";
+      'pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 ' +
+      'text-white';
 
     return (
       <div className="flex flex-row justify-center">
@@ -193,7 +193,7 @@ class WeekDropdown extends React.Component {
             onChange={this._handleChange}
             value={date}
           >
-            <option value={currentDate}>{"Current Week"}</option>
+            <option value={currentDate}>{'Current Week'}</option>
             {this._renderOptions(isCurrent)}
           </select>
           <div className={arrowClasses}>

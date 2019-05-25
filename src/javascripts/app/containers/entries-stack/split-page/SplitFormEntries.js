@@ -1,9 +1,9 @@
-import { Button } from "javascripts/shared/components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SplitFormChart from "./SplitFormChart";
-import SplitFormEntry from "./SplitFormEntry";
+import { Button } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SplitFormChart from './SplitFormChart';
+import SplitFormEntry from './SplitFormEntry';
 
 class SplitFormEntries extends React.Component {
   static propTypes = {
@@ -31,9 +31,9 @@ class SplitFormEntries extends React.Component {
 
     push({
       clientId: null,
-      description: "",
-      hours: "0.0",
-      percent: "0.0",
+      description: '',
+      hours: '0.0',
+      percent: '0.0',
       projectId: null,
       startedAt: values.stoppedAt,
       stoppedAt: values.stoppedAt,
@@ -74,18 +74,18 @@ class SplitFormEntries extends React.Component {
     return (
       <div>
         <div className="flex items-center mb-4">
-          <h2 className="text-blue flex-1">{"Entries"}</h2>
+          <h2 className="text-blue-500 flex-1">{'Entries'}</h2>
           <Button
             color="blue"
             disabled={isSubmitting}
             onClick={this._handleAdd}
             type="button"
           >
-            <FontAwesomeIcon icon="plus" /> {"Add Entry"}
+            <FontAwesomeIcon icon="plus" /> {'Add Entry'}
           </Button>
         </div>
         {rows}
-        <h3 className="text-blue">{"Chart"}</h3>
+        <h3 className="text-blue-500">{'Chart'}</h3>
         <SplitFormChart entries={entries || []} />
       </div>
     );

@@ -1,13 +1,13 @@
-import { Field, Form } from "formik";
+import { Field, Form } from 'formik';
 import {
   FormError,
   InputField,
   Link,
   SubmitButton
-} from "javascripts/shared/components";
+} from 'javascripts/shared/components';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const SignInForm = ({ isSubmitting, status }) => {
   return (
@@ -38,10 +38,10 @@ const SignInForm = ({ isSubmitting, status }) => {
       </div>
       <div className="flex flex-row justify-between">
         <SubmitButton submitting={isSubmitting} submittingText="Signing in...">
-          {"Sign In"}
+          {'Sign In'}
         </SubmitButton>
         <Link className="py-2" to="/sign-in/forgot-password">
-          {"Forgot Password?"}
+          {'Forgot Password?'}
         </Link>
       </div>
     </Form>

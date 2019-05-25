@@ -1,1 +1,1 @@
-import "javascripts/app/redux/store";
+import 'javascripts/app/redux/store';

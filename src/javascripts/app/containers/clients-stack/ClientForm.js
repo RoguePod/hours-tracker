@@ -3,11 +3,11 @@ import {
   FormError,
   InputField,
   SubmitButton
-} from "javascripts/shared/components";
-import { Field, Form } from "formik";
+} from 'javascripts/shared/components';
+import { Field, Form } from 'formik';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const ClientForm = ({ isSubmitting, status }) => {
   return (
@@ -27,7 +27,7 @@ const ClientForm = ({ isSubmitting, status }) => {
       <div className="mb-4">
         <Field component={CheckboxField} label="Active?" name="active" />
       </div>
-      <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
+      <SubmitButton submitting={isSubmitting}>{'Save'}</SubmitButton>
     </Form>
   );
 };

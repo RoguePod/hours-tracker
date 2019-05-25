@@ -1,11 +1,11 @@
-import { ActionIcon, Icon, Tooltip } from "javascripts/shared/components";
+import { ActionIcon, Icon, Tooltip } from 'javascripts/shared/components';
 
-import { Link } from "react-router-dom";
-import ProjectRow from "./ProjectRow";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _isEqual from "lodash/isEqual";
-import cx from "classnames";
+import { Link } from 'react-router-dom';
+import ProjectRow from './ProjectRow';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _isEqual from 'lodash/isEqual';
+import cx from 'classnames';
 
 class ClientRow extends React.Component {
   static propTypes = {
@@ -24,11 +24,11 @@ class ClientRow extends React.Component {
     const { admin, client, location } = this.props;
 
     const clientClasses = cx(
-      "md:w-48 bg-blue-lightest p-4 md:border-t-0 md:border-l-4 border-t-4",
-      "border-r-0",
+      'md:w-48 bg-blue-200 p-4 md:border-t-0 md:border-l-4 border-t-4',
+      'border-r-0',
       {
-        "border-green": client.active,
-        "border-red": !client.active
+        'border-green-500': client.active,
+        'border-red-500': !client.active
       }
     );
 
@@ -45,8 +45,8 @@ class ClientRow extends React.Component {
     });
 
     const containerClasses =
-      "border rounded shadow mb-4 flex overflow-hidden md:flex-row flex-col " +
-      "flex-1";
+      'border rounded shadow mb-4 flex overflow-hidden md:flex-row flex-col ' +
+      'flex-1';
 
     return (
       <div className={containerClasses}>
@@ -54,13 +54,13 @@ class ClientRow extends React.Component {
           <h3 className="mb-2">{client.name}</h3>
           {admin && (
             <div className="flex items-center">
-              <Tooltip title={client.active ? "Active" : "Inactive"}>
+              <Tooltip title={client.active ? 'Active' : 'Inactive'}>
                 <Icon
                   className="mr-1"
                   color="transparent"
                   icon="check"
                   size={8}
-                  textColor={client.active ? "green" : "red"}
+                  textColor={client.active ? 'green' : 'red'}
                 />
               </Tooltip>
               <ActionIcon

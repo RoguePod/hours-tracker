@@ -1,13 +1,13 @@
-import { Button, DateField, FormError } from "javascripts/shared/components";
+import { Button, DateField, FormError } from 'javascripts/shared/components';
 import {
   ClientField,
   ProjectField,
   UserField
-} from "javascripts/app/components";
-import { Field, Form } from "formik";
+} from 'javascripts/app/components';
+import { Field, Form } from 'formik';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const EntriesFilterForm = ({ onClear, showAdmin, status }) => {
   return (
@@ -47,12 +47,12 @@ const EntriesFilterForm = ({ onClear, showAdmin, status }) => {
       <div className="flex flex-wrap -mx-2">
         <div className="w-full md:w-1/2 px-2 md:mb-0 mb-4">
           <Button className="py-2 px-4 w-full" color="green" type="submit">
-            {"Filter"}
+            {'Filter'}
           </Button>
         </div>
         <div className="w-full md:w-1/2 px-2">
           <Button className="py-2 px-4 w-full" onClick={onClear} type="button">
-            {"Clear"}
+            {'Clear'}
           </Button>
         </div>
       </div>

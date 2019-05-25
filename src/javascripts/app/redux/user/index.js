@@ -1,14 +1,14 @@
-import { call, put, select, spawn, takeLatest } from "redux-saga/effects";
-import { firebase, updateRef } from "javascripts/globals";
-import { startFetching, stopFetching } from "javascripts/shared/redux/fetching";
+import { call, put, select, spawn, takeLatest } from 'redux-saga/effects';
+import { firebase, updateRef } from 'javascripts/globals';
+import { startFetching, stopFetching } from 'javascripts/shared/redux/fetching';
 
-import { addFlash } from "javascripts/shared/redux/flashes";
-import { userSignOut as appUserSignOut } from "javascripts/app/redux/app";
-import update from "immutability-helper";
+import { addFlash } from 'javascripts/shared/redux/flashes';
+import { userSignOut as appUserSignOut } from 'javascripts/app/redux/app';
+import update from 'immutability-helper';
 
 // Constants
 
-const path = "hours-tracker/app/user";
+const path = 'hours-tracker/app/user';
 
 const USER_SIGN_IN = `${path}/USER_SIGN_IN`;
 const USER_SIGN_OUT = `${path}/USER_SIGN_OUT`;
@@ -45,7 +45,7 @@ export const updateUser = (params, actions) => {
   return { actions, params, type: USER_UPDATE };
 };
 
-const setFetching = fetching => {
+const setFetching = (fetching) => {
   return { fetching, type: FETCHING_SET };
 };
 
@@ -53,12 +53,12 @@ const setFetching = fetching => {
 
 function* userSignIn({ actions, params: { email, password } }) {
   try {
-    yield put(setFetching("Signing In..."));
+    yield put(setFetching('Signing In...'));
 
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .catch(error => {
+      .catch((error) => {
         actions.setSubmitting(false);
         actions.setStatus(error.message);
       });
@@ -73,7 +73,7 @@ function* watchUserSignIn() {
 
 function* userSignOut() {
   try {
-    yield put(setFetching("Signing Out..."));
+    yield put(setFetching('Signing Out...'));
 
     yield appUserSignOut();
     firebase.auth().signOut();
@@ -90,14 +90,14 @@ export function* userUpdate({ actions, params }) {
   try {
     yield put(startFetching(USER_UPDATE));
 
-    const user = yield select(state => state.app.user);
+    const user = yield select((state) => state.app.user);
 
     const { error } = yield call(updateRef, user.snapshot.ref, params);
 
     if (error) {
       actions.setStatus(error.message);
     } else {
-      yield put(addFlash("Profile has been updated"));
+      yield put(addFlash('Profile has been updated'));
     }
   } finally {
     actions.setSubmitting(false);

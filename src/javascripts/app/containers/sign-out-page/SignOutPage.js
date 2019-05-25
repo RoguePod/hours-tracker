@@ -1,7 +1,7 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { signOutUser } from "javascripts/app/redux/user";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { signOutUser } from 'javascripts/app/redux/user';
 
 class SignOutPage extends React.Component {
   static propTypes = {

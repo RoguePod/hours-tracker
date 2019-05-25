@@ -1,10 +1,10 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Table } from "javascripts/shared/components";
-import _get from "lodash/get";
-import _times from "lodash/times";
-import cx from "classnames";
-import moment from "moment-timezone";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Table } from 'javascripts/shared/components';
+import _get from 'lodash/get';
+import _times from 'lodash/times';
+import cx from 'classnames';
+import moment from 'moment-timezone';
 
 class ProjectRow extends React.Component {
   static propTypes = {
@@ -43,7 +43,7 @@ class ProjectRow extends React.Component {
         continue;
       }
 
-      if (_get(entry, "project.id", null) !== _get(project, "id", null)) {
+      if (_get(entry, 'project.id', null) !== _get(project, 'id', null)) {
         continue;
       }
 
@@ -62,7 +62,7 @@ class ProjectRow extends React.Component {
         stoppedAt = moment().tz(entry.timezone);
       }
 
-      const hours = stoppedAt.diff(startedAt, "hours", true);
+      const hours = stoppedAt.diff(startedAt, 'hours', true);
 
       sum += hours;
     }
@@ -74,13 +74,13 @@ class ProjectRow extends React.Component {
     const cells = [];
     let weekTotal = 0;
 
-    _times(7, index => {
+    _times(7, (index) => {
       const day = moment
         .tz(query.date, timezone)
-        .add(index, "d")
-        .format("YYYY-MM-DD");
+        .add(index, 'd')
+        .format('YYYY-MM-DD');
 
-      const total = this._calcTotal("YYYY-MM-DD", day);
+      const total = this._calcTotal('YYYY-MM-DD', day);
 
       weekTotal += total;
 
@@ -95,12 +95,12 @@ class ProjectRow extends React.Component {
   }
 
   _getMonthAndOtherTotals(startMonth, endMonth) {
-    const diffMonth = startMonth.format("MMM") !== endMonth.format("MMM");
-    const monthTotal = this._calcTotal("YYYY-MM", startMonth.format("YYYY-MM"));
+    const diffMonth = startMonth.format('MMM') !== endMonth.format('MMM');
+    const monthTotal = this._calcTotal('YYYY-MM', startMonth.format('YYYY-MM'));
     let otherTotal = null;
 
     if (diffMonth) {
-      otherTotal = this._calcTotal("YYYY-MM", endMonth.format("YYYY-MM"));
+      otherTotal = this._calcTotal('YYYY-MM', endMonth.format('YYYY-MM'));
     }
 
     return { diffMonth, monthTotal, otherTotal };
@@ -123,25 +123,25 @@ class ProjectRow extends React.Component {
     );
 
     const cellClass = cx({
-      "text-green": project && project.billable,
-      "text-red": !project
+      'text-green-500': project && project.billable,
+      'text-red-500': !project
     });
 
     return (
       <tr>
         <Table.Td className={cellClass}>
-          {_get(client, "name", "No Client")}
+          {_get(client, 'name', 'No Client')}
         </Table.Td>
         <Table.Td className={cellClass}>
-          {_get(project, "name", "No Project")}
+          {_get(project, 'name', 'No Project')}
         </Table.Td>
         {cells}
         <Table.Td className="w-px">{weekTotal.toFixed(1)}</Table.Td>
-        <Table.Td className="w-px bg-blue-lighter">
+        <Table.Td className="w-px bg-blue-300">
           {monthTotal.toFixed(1)}
         </Table.Td>
         {diffMonth && (
-          <Table.Td className="w-px bg-blue-lighter">
+          <Table.Td className="w-px bg-blue-300">
             {otherTotal.toFixed(1)}
           </Table.Td>
         )}

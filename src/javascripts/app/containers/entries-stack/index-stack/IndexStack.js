@@ -1,23 +1,23 @@
-import { Button, Spinner } from "javascripts/shared/components";
-import { Link, Route, Switch } from "react-router-dom";
-import { reset, selectQuery, setLocation } from "javascripts/app/redux/entries";
-import { selectAdmin, selectTimezone } from "javascripts/app/redux/app";
+import { Button, Spinner } from 'javascripts/shared/components';
+import { Link, Route, Switch } from 'react-router-dom';
+import { reset, selectQuery, setLocation } from 'javascripts/app/redux/entries';
+import { selectAdmin, selectTimezone } from 'javascripts/app/redux/app';
 
-import EntriesFilterForm from "./EntriesFilterForm";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Formik } from "formik";
-import IndexAdminMenu from "./IndexAdminMenu";
-import IndexMenu from "./IndexMenu";
-import IndexTable from "./index-table/IndexTable";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SummaryTable from "./summary-table/SummaryTable";
-import _compact from "lodash/compact";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import cx from "classnames";
-import { history } from "javascripts/app/redux/store";
-import { toQuery } from "javascripts/globals";
+import EntriesFilterForm from './EntriesFilterForm';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Formik } from 'formik';
+import IndexAdminMenu from './IndexAdminMenu';
+import IndexMenu from './IndexMenu';
+import IndexTable from './index-table/IndexTable';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SummaryTable from './summary-table/SummaryTable';
+import _compact from 'lodash/compact';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import cx from 'classnames';
+import { history } from 'javascripts/app/redux/store';
+import { toQuery } from 'javascripts/globals';
 
 class EntriesIndexStack extends React.Component {
   static propTypes = {
@@ -126,32 +126,33 @@ class EntriesIndexStack extends React.Component {
     const { location } = this.props;
 
     const baseTabClasses =
-      "inline-block text-blue py-2 px-4 border-l border-t border-r rounded-t";
+      'inline-block text-blue-500 py-2 px-4 border-l border-t border-r ' +
+      'rounded-t';
 
-    const selectedTabClasses = cx(baseTabClasses, "bg-white");
+    const selectedTabClasses = cx(baseTabClasses, 'bg-white');
 
     const unselectedTabClasses = cx(
       baseTabClasses,
-      "bg-transparent border-transparent hover:text-blue-dark " +
-        "hover:bg-blue-lighter"
+      'bg-transparent border-transparent hover:text-blue-600 ' +
+        'hover:bg-blue-300'
     );
 
     return (
-      <ul className="list-reset flex">
+      <ul className="flex">
         <li className="ml-3 -mb-px mr-1">
           <Link
             className={showAdmin ? unselectedTabClasses : selectedTabClasses}
-            to={{ ...location, pathname: "/entries" }}
+            to={{ ...location, pathname: '/entries' }}
           >
-            {"My Entries"}
+            {'My Entries'}
           </Link>
         </li>
         <li className="-mb-px">
           <Link
             className={showAdmin ? selectedTabClasses : unselectedTabClasses}
-            to={{ ...location, pathname: "/entries/reports" }}
+            to={{ ...location, pathname: '/entries/reports' }}
           >
-            {"Reports"}
+            {'Reports'}
           </Link>
         </li>
       </ul>
@@ -162,8 +163,8 @@ class EntriesIndexStack extends React.Component {
     const { admin, location, query } = this.props;
     const { pathname } = location;
 
-    const isReports = pathname === "/entries/reports";
-    const isReportsSummary = pathname === "/entries/reports/summary";
+    const isReports = pathname === '/entries/reports';
+    const isReportsSummary = pathname === '/entries/reports/summary';
     const showAdmin = admin && (isReports || isReportsSummary);
 
     return (
@@ -181,24 +182,24 @@ class EntriesIndexStack extends React.Component {
     const { admin, fetching, location, match, query } = this.props;
     const { pathname } = location;
 
-    const isReports = pathname === "/entries/reports";
-    const isReportsSummary = pathname === "/entries/reports/summary";
+    const isReports = pathname === '/entries/reports';
+    const isReportsSummary = pathname === '/entries/reports/summary';
     const showAdmin = admin && (isReports || isReportsSummary);
 
     return (
       <div className="p-4">
         <div className="flex flex-row items-center justify-between mb-4">
-          <h1 className="text-blue">{"Entries"}</h1>
+          <h1 className="text-blue-500">{'Entries'}</h1>
           <Button
             as={Link}
             color="blue"
             to={{
               ...location,
-              pathname: "/entries/new",
+              pathname: '/entries/new',
               state: { modal: true }
             }}
           >
-            <FontAwesomeIcon icon="plus" /> {"New Entry"}
+            <FontAwesomeIcon icon="plus" /> {'New Entry'}
           </Button>
         </div>
         {admin && this._renderTabs(showAdmin)}
@@ -239,7 +240,7 @@ class EntriesIndexStack extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
     admin: selectAdmin(state),
     fetching: state.entries.fetching,

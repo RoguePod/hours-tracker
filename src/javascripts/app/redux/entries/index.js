@@ -9,7 +9,7 @@ import {
   isBlank,
   isDate,
   parseEntry
-} from "javascripts/globals";
+} from 'javascripts/globals';
 import {
   call,
   put,
@@ -17,41 +17,41 @@ import {
   spawn,
   takeEvery,
   takeLatest
-} from "redux-saga/effects";
+} from 'redux-saga/effects';
 
-import _filter from "lodash/filter";
-import _flatten from "lodash/flatten";
-import _groupBy from "lodash/groupBy";
-import _includes from "lodash/includes";
-import _map from "lodash/map";
-import _omit from "lodash/omit";
-import _sortBy from "lodash/sortBy";
-import _values from "lodash/values";
-import _without from "lodash/without";
-import { addFlash } from "javascripts/shared/redux/flashes";
-import { createSelector } from "reselect";
-import { eventChannel } from "redux-saga";
-import { history } from "javascripts/app/redux/store";
-import moment from "moment-timezone";
-import { selectTimezone } from "javascripts/app/redux/app";
-import update from "immutability-helper";
+import _filter from 'lodash/filter';
+import _flatten from 'lodash/flatten';
+import _groupBy from 'lodash/groupBy';
+import _includes from 'lodash/includes';
+import _map from 'lodash/map';
+import _omit from 'lodash/omit';
+import _sortBy from 'lodash/sortBy';
+import _values from 'lodash/values';
+import _without from 'lodash/without';
+import { addFlash } from 'javascripts/shared/redux/flashes';
+import { createSelector } from 'reselect';
+import { eventChannel } from 'redux-saga';
+import { history } from 'javascripts/app/redux/store';
+import moment from 'moment-timezone';
+import { selectTimezone } from 'javascripts/app/redux/app';
+import update from 'immutability-helper';
 
 // Selectors
 
-const selectRouterSearch = state => state.router.location.search;
-const selectBaseEntries = state => state.entries.entries;
-const selectChecked = state => state.entries.checked;
-const selectClients = state => state.clients.clients;
-const selectAppUser = state => state.app.user;
-const selectUsers = state => state.users.users;
+const selectRouterSearch = (state) => state.router.location.search;
+const selectBaseEntries = (state) => state.entries.entries;
+const selectChecked = (state) => state.entries.checked;
+const selectClients = (state) => state.clients.clients;
+const selectAppUser = (state) => state.app.user;
+const selectUsers = (state) => state.users.users;
 
 export const selectQuery = createSelector(
   [selectRouterSearch],
-  query => {
+  (query) => {
     const parsedQuery = fromQuery(query);
     const defaults = {
-      endDate: "",
-      startDate: ""
+      endDate: '',
+      startDate: ''
     };
 
     return { ...defaults, ...parsedQuery };
@@ -61,7 +61,7 @@ export const selectQuery = createSelector(
 export const selectEntries = createSelector(
   [selectBaseEntries, selectClients, selectAppUser, selectUsers],
   (entries, clients, appUser, users) => {
-    return entries.map(entry => parseEntry(entry, clients, appUser, users));
+    return entries.map((entry) => parseEntry(entry, clients, appUser, users));
   }
 );
 
@@ -73,7 +73,7 @@ export const selectGroupedEntries = createSelector(
     for (const entry of entries) {
       const key = moment
         .tz(entry.startedAt, entry.timezone)
-        .format("dddd, MMM Do");
+        .format('dddd, MMM Do');
 
       if (!grouped[key]) {
         grouped[key] = [];
@@ -91,8 +91,8 @@ export const selectGroupedEntries = createSelector(
 
 export const selectEntriesWithHours = createSelector(
   [selectEntries],
-  entries => {
-    return entries.map(entry => {
+  (entries) => {
+    return entries.map((entry) => {
       const startedAt = moment.tz(entry.startedAt, entry.timezone);
       let stoppedAt = null;
 
@@ -104,7 +104,7 @@ export const selectEntriesWithHours = createSelector(
 
       return {
         ...entry,
-        hours: stoppedAt.diff(startedAt, "hours", true),
+        hours: stoppedAt.diff(startedAt, 'hours', true),
         startedAtMoment: startedAt,
         stoppedAtMoment: stoppedAt
       };
@@ -114,8 +114,8 @@ export const selectEntriesWithHours = createSelector(
 
 export const selectUsersByEntries = createSelector(
   [selectEntriesWithHours],
-  entries => {
-    const users = _groupBy(entries, entry => entry.user.name);
+  (entries) => {
+    const users = _groupBy(entries, (entry) => entry.user.name);
 
     return users;
   }
@@ -123,20 +123,20 @@ export const selectUsersByEntries = createSelector(
 
 export const selectClientsByEntries = createSelector(
   [selectEntriesWithHours],
-  entries => {
+  (entries) => {
     let clients = _groupBy(
-      _filter(entries, "client"),
-      entry => entry.client.name
+      _filter(entries, 'client'),
+      (entry) => entry.client.name
     );
 
-    clients = Object.keys(clients).map(name => {
+    clients = Object.keys(clients).map((name) => {
       return {
         name,
-        projects: _groupBy(clients[name], entry => entry.project.name)
+        projects: _groupBy(clients[name], (entry) => entry.project.name)
       };
     });
 
-    return _sortBy(clients, "name");
+    return _sortBy(clients, 'name');
   }
 );
 
@@ -144,7 +144,7 @@ export const selectClientsByEntries = createSelector(
 
 let channel = null;
 
-const path = "hours-tracker/app/entries";
+const path = 'hours-tracker/app/entries';
 
 const CHECKED_SET = `${path}/CHECKED_SET`;
 const CHECKED_TOGGLE = `${path}/CHECKED_TOGGLE`;
@@ -200,14 +200,14 @@ export default (state = initialState, action) => {
         return update(state, { checked: { $set: [] } });
       }
 
-      return update(state, { checked: { $set: _map(state.entries, "id") } });
+      return update(state, { checked: { $set: _map(state.entries, 'id') } });
 
     case READY:
       return update(state, { ready: { $set: true } });
 
     case LOCATION_SET:
       return update(state, {
-        location: { $set: _omit(action.location, "key") }
+        location: { $set: _omit(action.location, 'key') }
       });
 
     case RESET:
@@ -225,7 +225,7 @@ export default (state = initialState, action) => {
 
 // Actions
 
-export const subscribeEntries = limit => {
+export const subscribeEntries = (limit) => {
   return { limit, type: ENTRIES_SUBSCRIBE };
 };
 
@@ -233,7 +233,7 @@ export const destroyEntries = () => {
   return { type: ENTRIES_DESTROY };
 };
 
-export const checkEntry = id => {
+export const checkEntry = (id) => {
   return { id, type: ENTRY_CHECK };
 };
 
@@ -241,7 +241,7 @@ export const toggleChecked = () => {
   return { type: CHECKED_TOGGLE };
 };
 
-const setChecked = checked => {
+const setChecked = (checked) => {
   return { checked, type: CHECKED_SET };
 };
 
@@ -249,7 +249,7 @@ export const updateEntries = (params, actions) => {
   return { actions, params, type: ENTRIES_UPDATE };
 };
 
-export const setLocation = location => {
+export const setLocation = (location) => {
   return { location, type: LOCATION_SET };
 };
 
@@ -266,18 +266,18 @@ const ready = () => {
   return { type: READY };
 };
 
-const setEntries = entries => {
+const setEntries = (entries) => {
   return { entries, type: ENTRIES_SET };
 };
 
-const setFetching = fetching => {
+const setFetching = (fetching) => {
   return { fetching, type: FETCHING_SET };
 };
 
 // Sagas
 
 function* handleEntriesSubscribe({ snapshot }) {
-  const currentState = yield select(state => state.entries);
+  const currentState = yield select((state) => state.entries);
 
   yield put(setEntries(snapshot.docs));
 
@@ -292,27 +292,27 @@ const buildQuery = (state, limit, emit) => {
   const { pathname, query, timezone, user } = state;
   const { clientId, endDate, projectId, startDate, userId } = query;
 
-  let data = firestore.collection("entries").orderBy("startedAt", "desc");
+  let data = firestore.collection('entries').orderBy('startedAt', 'desc');
 
   if (limit) {
     data = data.limit(limit);
   }
 
-  if (pathname.match(/reports/u) && user.role === "Admin") {
+  if (pathname.match(/reports/u) && user.role === 'Admin') {
     if (!isBlank(userId)) {
-      data = data.where("userRef", "==", firestore.doc(`users/${userId}`));
+      data = data.where('userRef', '==', firestore.doc(`users/${userId}`));
     }
   } else {
-    data = data.where("userRef", "==", user.snapshot.ref);
+    data = data.where('userRef', '==', user.snapshot.ref);
   }
 
   if (!isBlank(clientId)) {
-    data = data.where("clientRef", "==", firestore.doc(`clients/${clientId}`));
+    data = data.where('clientRef', '==', firestore.doc(`clients/${clientId}`));
 
     if (!isBlank(projectId)) {
       data = data.where(
-        "projectRef",
-        "==",
+        'projectRef',
+        '==',
         firestore.doc(`clients/${clientId}/projects/${projectId}`)
       );
     }
@@ -320,30 +320,30 @@ const buildQuery = (state, limit, emit) => {
 
   if (isDate(startDate)) {
     data = data.where(
-      "startedAt",
-      ">=",
+      'startedAt',
+      '>=',
       moment.tz(startDate, timezone).valueOf()
     );
   }
 
   if (isDate(endDate)) {
     data = data.where(
-      "startedAt",
-      "<=",
+      'startedAt',
+      '<=',
       moment
         .tz(endDate, timezone)
-        .endOf("day")
+        .endOf('day')
         .valueOf()
     );
   }
 
-  data = data.onSnapshot(snapshot => emit({ snapshot }));
+  data = data.onSnapshot((snapshot) => emit({ snapshot }));
 
   return data;
 };
 
 function* entriesSubscribe({ limit }) {
-  yield put(setFetching("Getting Entries..."));
+  yield put(setFetching('Getting Entries...'));
 
   if (channel) {
     channel.close();
@@ -351,7 +351,7 @@ function* entriesSubscribe({ limit }) {
 
   yield put(setChecked([]));
 
-  const currentState = yield select(state => {
+  const currentState = yield select((state) => {
     return {
       pathname: state.router.location.pathname,
       query: selectQuery(state),
@@ -360,7 +360,7 @@ function* entriesSubscribe({ limit }) {
     };
   });
 
-  channel = eventChannel(emit => {
+  channel = eventChannel((emit) => {
     const unsubscribe = buildQuery(currentState, limit, emit);
 
     return () => unsubscribe();
@@ -375,20 +375,20 @@ function* watchEntriesSubscribe() {
 
 function* entriesDestroy() {
   try {
-    yield put(setFetching("Deleting Entries..."));
+    yield put(setFetching('Deleting Entries...'));
 
-    const ids = yield select(state => state.entries.checked);
+    const ids = yield select((state) => state.entries.checked);
 
     const {
       data: { error }
-    } = yield call(firebase.functions().httpsCallable("deleteEntries"), {
+    } = yield call(firebase.functions().httpsCallable('deleteEntries'), {
       ids
     });
 
     if (error) {
-      yield put(addFlash(error, "red"));
+      yield put(addFlash(error, 'red'));
     } else {
-      yield put(addFlash("Entries have been removed"));
+      yield put(addFlash('Entries have been removed'));
     }
   } finally {
     yield put(setFetching(null));
@@ -401,13 +401,13 @@ function* watchEntriesDestroy() {
 
 function* entriesUpdate({ actions, params }) {
   try {
-    yield put(setFetching("Updating Entries..."));
+    yield put(setFetching('Updating Entries...'));
 
-    const { entries } = yield select(state => {
+    const { entries } = yield select((state) => {
       return {
         entries: _filter(
           _flatten(_values(selectGroupedEntries(state))),
-          "checked"
+          'checked'
         )
       };
     });
@@ -417,9 +417,9 @@ function* entriesUpdate({ actions, params }) {
       .valueOf();
     const batch = firestore.batch();
 
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       entry.snapshot.ref.update({
-        ...convertEntryParamIdsToRefs(_omit(params, "update")),
+        ...convertEntryParamIdsToRefs(_omit(params, 'update')),
         updatedAt: now
       });
     });
@@ -430,7 +430,7 @@ function* entriesUpdate({ actions, params }) {
       actions.setStatus(error.message);
       actions.setSubmitting(false);
     } else {
-      yield put(addFlash("Entries have been updated."));
+      yield put(addFlash('Entries have been updated.'));
 
       yield call(history.goBack);
     }

@@ -1,10 +1,10 @@
-import { CSSTransition } from "react-transition-group";
-import Collapse from "./Collapse";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import cx from "classnames";
-import { isBlank } from "javascripts/globals";
-import styled from "styled-components";
+import { CSSTransition } from 'react-transition-group';
+import Collapse from './Collapse';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import cx from 'classnames';
+import { isBlank } from 'javascripts/globals';
+import styled from 'styled-components';
 
 const DURATION = 300;
 
@@ -76,7 +76,7 @@ class FieldHelper extends React.PureComponent {
 
     const isOpen = open && !isBlank(message);
 
-    const messageClasses = cx("text-sm pt-1", className);
+    const messageClasses = cx('text-sm pt-1', className);
 
     return (
       <CSSTransition
