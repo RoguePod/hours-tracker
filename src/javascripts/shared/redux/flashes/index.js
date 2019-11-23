@@ -5,7 +5,7 @@ import update from 'immutability-helper';
 
 // Constants
 
-const path = 'golfbook/shared/flashes';
+const path = 'hours-tracker/shared/flashes';
 
 const FLASH_ADD = `${path}/FLASH_ADD`;
 const FLASH_REMOVE = `${path}/FLASH_REMOVE`;

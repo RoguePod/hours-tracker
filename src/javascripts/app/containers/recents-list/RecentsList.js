@@ -11,60 +11,53 @@ import _isEqual from 'lodash/isEqual';
 import { connect } from 'react-redux';
 import { startEntry } from 'javascripts/app/redux/running';
 
-class RecentsList extends React.Component {
-  static propTypes = {
-    onSubscribeRecents: PropTypes.func.isRequired,
-    ready: PropTypes.bool.isRequired,
-    recents: PropTypes.arrayOf(PropTypes.recent).isRequired,
-    user: PropTypes.user.isRequired
-  };
+const RecentsList = (props) => {
+  const { onStartEntry, onSubscribeRecents, ready, recents, user } = props;
 
-  componentDidMount() {
-    const { onSubscribeRecents } = this.props;
-
+  React.useEffect(() => {
     onSubscribeRecents();
-  }
+  }, []);
 
-  shouldComponentUpdate(nextProps) {
-    const { ready, recents } = this.props;
-
-    return ready !== nextProps.ready || !_isEqual(recents, nextProps.recents);
-  }
-
-  render() {
-    const { ready, recents } = this.props;
-
-    const rows = recents.map((recent) => {
-      return (
-        <RecentRow {...this.props} key={recent.project.id} recent={recent} />
-      );
-    });
-
-    const listClasses =
-      'flex flex-col items-center justify-center flex-1 text-blue-500';
-
+  const rows = recents.map((recent) => {
     return (
-      <>
-        <div className="bg-blue-500 text-white p-4 font-bold">
-          {'Recent Projects'}
-        </div>
-        {!ready && (
-          <div className={listClasses}>
-            <Clock size="60px" />
-            <div className="pt-2">{'Loading Recents...'}</div>
-          </div>
-        )}
-
-        {ready && (
-          <div className="overflow-y-auto overflow-x-hidden">{rows}</div>
-        )}
-      </>
+      <RecentRow
+        key={recent.project.id}
+        onStartEntry={onStartEntry}
+        recent={recent}
+        user={user}
+      />
     );
-  }
-}
+  });
+
+  const listClasses =
+    'flex flex-col items-center justify-center flex-1 text-blue-500';
+
+  return (
+    <>
+      <div className="bg-blue-500 text-white p-4 font-bold">
+        {'Recent Projects'}
+      </div>
+      {!ready && (
+        <div className={listClasses}>
+          <Clock size="60px" />
+          <div className="pt-2">{'Loading Recents...'}</div>
+        </div>
+      )}
+
+      {ready && <div className="overflow-y-auto overflow-x-hidden">{rows}</div>}
+    </>
+  );
+};
+
+RecentsList.propTypes = {
+  onStartEntry: PropTypes.func.isRequired,
+  onSubscribeRecents: PropTypes.func.isRequired,
+  ready: PropTypes.bool.isRequired,
+  recents: PropTypes.arrayOf(PropTypes.recent).isRequired,
+  user: PropTypes.user.isRequired
+};
 
 const props = (state) => {
-  // console.log(selectFilteredRecents(state));
   return {
     ready: state.recents.ready,
     recents: selectFilteredRecents(state),
@@ -77,7 +70,13 @@ const actions = {
   onSubscribeRecents: subscribeRecents
 };
 
+const areEqual = (prevProps, nextProps) => {
+  const { ready, recents } = prevProps;
+
+  return ready === nextProps.ready && _isEqual(recents, nextProps.recents);
+};
+
 export default connect(
   props,
   actions
-)(RecentsList);
+)(React.memo(RecentsList, areEqual));

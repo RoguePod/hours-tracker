@@ -3,7 +3,7 @@ import update from 'immutability-helper';
 
 // Constants
 
-const path = 'golfbook/shared/fetching';
+const path = 'hours-tracker/shared/fetching';
 
 const FETCHING_START = `${path}/FETCHING_START`;
 const FETCHING_STOP = `${path}/FETCHING_STOP`;

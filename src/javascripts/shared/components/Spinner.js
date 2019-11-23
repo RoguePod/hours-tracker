@@ -43,7 +43,7 @@ const Page = styled(FadeIn)`
 
 const Spinner = ({ page, spinning, text }) => {
   const shadeClassName =
-    'pin z-10 overflow-hidden bg-smoke flex items-center ' +
+    'inset-0 z-10 overflow-hidden bg-smoke flex items-center ' +
     'justify-center text-white flex-col';
 
   const children = (
