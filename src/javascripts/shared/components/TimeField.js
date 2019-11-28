@@ -1,17 +1,17 @@
-import FieldError from "./FieldError";
-import FieldHelper from "./FieldHelper";
-import InputBase from "./InputBase";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import chrono from "chrono-node";
-import { isBlank } from "javascripts/globals";
-import moment from "moment-timezone";
+import FieldError from './FieldError';
+import FieldHelper from './FieldHelper';
+import InputBase from './InputBase';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import chrono from 'chrono-node';
+import { isBlank } from 'javascripts/globals';
+import moment from 'moment-timezone';
 
 class TimeField extends React.Component {
   static propTypes = {
     disabled: PropTypes.bool,
-    field: PropTypes.field.isRequired,
-    form: PropTypes.form.isRequired,
+    field: PropTypes.formikField.isRequired,
+    form: PropTypes.formikForm.isRequired,
     id: PropTypes.string,
     onChange: PropTypes.func,
     timezone: PropTypes.string
@@ -21,7 +21,7 @@ class TimeField extends React.Component {
     disabled: false,
     id: null,
     onChange: null,
-    timezone: "UTC"
+    timezone: 'UTC'
   };
 
   constructor(props) {
@@ -87,11 +87,11 @@ class TimeField extends React.Component {
       const date = moment.tz(value, timezone);
 
       if (date && date.isValid()) {
-        return date.format("MM/DD/YYYY [a]t hh:mm A z");
+        return date.format('MM/DD/YYYY [a]t hh:mm A z');
       }
     }
 
-    return "";
+    return '';
   }
 
   _handleChange(event) {

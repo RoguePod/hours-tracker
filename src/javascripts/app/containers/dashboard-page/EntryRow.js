@@ -1,13 +1,13 @@
-import { ActionIcon, Clock, Table } from "javascripts/shared/components";
+import { ActionIcon, Clock, Table } from 'javascripts/shared/components';
 
-import { Link } from "react-router-dom";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _get from "lodash/get";
-import _isEqual from "lodash/isEqual";
-import cx from "classnames";
-import moment from "moment-timezone";
-import nl2br from "react-nl2br";
+import { Link } from 'react-router-dom';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _get from 'lodash/get';
+import _isEqual from 'lodash/isEqual';
+import cx from 'classnames';
+import moment from 'moment-timezone';
+import nl2br from 'react-nl2br';
 
 class EntryRow extends React.Component {
   static propTypes = {
@@ -88,12 +88,12 @@ class EntryRow extends React.Component {
       stoppedAt = moment().tz(entry.timezone);
     }
 
-    const baseHighlightClasses = "w-px whitespace-no-wrap";
+    const baseHighlightClasses = 'w-px whitespace-no-wrap';
 
-    let highlightClasses = cx("text-green", baseHighlightClasses);
+    let highlightClasses = cx('text-green', baseHighlightClasses);
 
     if (!project) {
-      highlightClasses = cx("text-red", baseHighlightClasses);
+      highlightClasses = cx('text-red', baseHighlightClasses);
     } else if (!entry.billable) {
       highlightClasses = cx(baseHighlightClasses);
     }
@@ -135,31 +135,31 @@ class EntryRow extends React.Component {
           </div>
         </Table.Td>
         <Table.Td className={highlightClasses}>
-          {_get(entry, "client.name", "No Client")}
+          {_get(entry, 'client.name', 'No Client')}
         </Table.Td>
         <Table.Td className={highlightClasses}>
-          {_get(entry, "project.name", "No Project")}
+          {_get(entry, 'project.name', 'No Project')}
         </Table.Td>
         <Table.Td className="w-px text-center whitespace-no-wrap">
-          {startedAt.format("ddd, MM/DD")}
+          {startedAt.format('ddd, MM/DD')}
         </Table.Td>
         <Table.Td className="w-px text-center whitespace-no-wrap">
-          {startedAt.format("h:mma ")}
-          {entry.timezone !== timezone && <sup>{startedAt.format(" z")}</sup>}
+          {startedAt.format('h:mma ')}
+          {entry.timezone !== timezone && <sup>{startedAt.format(' z')}</sup>}
         </Table.Td>
         <Table.Td className="w-px text-center whitespace-no-wrap">
-          {entry.stoppedAt && stoppedAt.format("h:mma")}
+          {entry.stoppedAt && stoppedAt.format('h:mma')}
           {!entry.stoppedAt && (
             <div className="flex justify-center">
               <Clock size="25px" />
             </div>
           )}
           {entry.stoppedAt && entry.timezone !== timezone && (
-            <sup>{startedAt.format(" z")}</sup>
+            <sup>{startedAt.format(' z')}</sup>
           )}
         </Table.Td>
         <Table.Td className="w-px text-center whitespace-no-wrap">
-          {stoppedAt.diff(startedAt, "hours", true).toFixed(1)}
+          {stoppedAt.diff(startedAt, 'hours', true).toFixed(1)}
         </Table.Td>
         <Table.Td>{nl2br(entry.description)}</Table.Td>
       </tr>

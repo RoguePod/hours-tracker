@@ -4,6 +4,7 @@
     "jsx-a11y",
     "prettier",
     "react",
+    "react-hooks",
     "standard"
   ],
   "extends": [
@@ -29,7 +30,10 @@
     "jsx-a11y/no-autofocus": "off",
     "jsx-a11y/no-onchange": "off",
     "max-lines": "error",
+    "no-console": "error",
     "prettier/prettier": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error",
     "react/forbid-prop-types": "error",
     "react/jsx-sort-props": "error",
     "react/no-unused-prop-types": "error",

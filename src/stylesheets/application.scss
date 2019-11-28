@@ -1,13 +1,54 @@
 @import url('//use.typekit.net/pbd6lbw.css');
 
-@tailwind preflight;
+@tailwind base;
+
+a {
+  color: theme('colors.teal.500');
+  text-decoration: none;
+
+  &:hover {
+    color: theme('colors.teal.500');
+    text-decoration: underline;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  // color: theme('colors.teal.500');
+  font-family: theme('fontFamily.serif');
+  margin-bottom: theme('spacing.2')
+}
+
+h1 {
+  font-size: theme('fontSize.4xl');
+}
+
+h2 {
+  font-size: theme('fontSize.3xl');
+}
+
+h3 {
+  font-size: theme('fontSize.2xl');
+}
+
+h4 {
+  font-size: theme('fontSize.xl');
+}
+
+h5 {
+  font-size: theme('fontSize.lg');
+}
+
+h6 {
+  font-size: theme('fontSize.base');
+}
+
 @tailwind components;
 @tailwind utilities;
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+// #app {
+//   height: 100%;
+//   min-height: 100%;
+// }
 
 #app {
   display: grid;
@@ -18,4 +59,67 @@ a {
 ::selection {
   color: white;
   background: #4e8eb2;
+}
+
+button.uppy-FileInput-btn {
+  cursor: pointer;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+
+.grayscale {
+  filter: grayscale(1);
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  margin: 1rem 0;
+}
+
+.katex > .katex-html {
+	white-space: normal;
+}
+
+.katex .base {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
+.markdown {
+  blockquote {
+    margin: 0 0 0 0.3em;
+    padding: 0 0 0 0.6em;
+    border-left: 0.15em solid #ccc;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  ol, ul {
+    margin-block-end: 1em;
+    margin-block-start: 1em;
+    margin-inline-end: 0px;
+    margin-inline-start: 0px;
+    padding-inline-start: 40px;
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
+  }
 }

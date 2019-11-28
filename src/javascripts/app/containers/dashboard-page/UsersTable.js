@@ -1,13 +1,13 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Table } from "javascripts/shared/components";
-import UserRow from "./UserRow";
-import UsersFooter from "./UsersFooter";
-import _times from "lodash/times";
-import moment from "moment-timezone";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Table } from 'javascripts/shared/components';
+import UserRow from './UserRow';
+import UsersFooter from './UsersFooter';
+import _times from 'lodash/times';
+import moment from 'moment-timezone';
 
 const _renderRows = (users, startMonth, endMonth, props) => {
-  return users.map(user => {
+  return users.map((user) => {
     return (
       <UserRow
         {...props}
@@ -22,11 +22,11 @@ const _renderRows = (users, startMonth, endMonth, props) => {
 
 const _renderHeaderCells = (date, timezone) => {
   const headerCells = [];
-  _times(7, index => {
+  _times(7, (index) => {
     const dow = moment
       .tz(date, timezone)
-      .add(index, "d")
-      .format("ddd");
+      .add(index, 'd')
+      .format('ddd');
     headerCells.push(
       <Table.Th className="w-px" key={dow}>
         {dow}
@@ -37,7 +37,7 @@ const _renderHeaderCells = (date, timezone) => {
   return headerCells;
 };
 
-const UsersTable = props => {
+const UsersTable = (props) => {
   const {
     query: { date },
     timezone,
@@ -45,22 +45,22 @@ const UsersTable = props => {
   } = props;
 
   const startMonth = moment.tz(date, timezone);
-  const endMonth = moment.tz(date, timezone).add(6, "d");
+  const endMonth = moment.tz(date, timezone).add(6, 'd');
 
   return (
     <Table.Responsive>
       <Table.Table>
         <thead>
           <tr>
-            <Table.Th>{"User"}</Table.Th>
+            <Table.Th>{'User'}</Table.Th>
             {_renderHeaderCells(date, timezone)}
-            <Table.Th className="w-px">{"Totals"}</Table.Th>
+            <Table.Th className="w-px">{'Totals'}</Table.Th>
             <Table.Th className="bg-blue text-white w-px">
-              {startMonth.format("MMM")}
+              {startMonth.format('MMM')}
             </Table.Th>
-            {startMonth.format("MMM") !== endMonth.format("MMM") && (
+            {startMonth.format('MMM') !== endMonth.format('MMM') && (
               <Table.Th className="bg-blue text-white w-px">
-                {endMonth.format("MMM")}
+                {endMonth.format('MMM')}
               </Table.Th>
             )}
           </tr>

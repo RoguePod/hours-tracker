@@ -1,6 +1,6 @@
-import { Pill } from "javascripts/shared/components";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import { Pill } from 'javascripts/shared/components';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const AdminMenu = ({ location }) => {
   const { hash } = location;
@@ -8,26 +8,26 @@ const AdminMenu = ({ location }) => {
   return (
     <ul className="list-reset flex flex-row mb-4">
       <li className="mr-3">
-        <Pill replace selected={hash === ""} to={{ ...location, hash: "" }}>
-          {"My Dashboard"}
+        <Pill replace selected={hash === ''} to={{ ...location, hash: '' }}>
+          {'My Dashboard'}
         </Pill>
       </li>
       <li className="mr-3">
         <Pill
           replace
-          selected={hash === "#users"}
-          to={{ ...location, hash: "#users" }}
+          selected={hash === '#users'}
+          to={{ ...location, hash: '#users' }}
         >
-          {"Users"}
+          {'Users'}
         </Pill>
       </li>
       <li className="mr-3">
         <Pill
           replace
-          selected={hash === "#projects"}
-          to={{ ...location, hash: "#projects" }}
+          selected={hash === '#projects'}
+          to={{ ...location, hash: '#projects' }}
         >
-          {"Projects"}
+          {'Projects'}
         </Pill>
       </li>
     </ul>

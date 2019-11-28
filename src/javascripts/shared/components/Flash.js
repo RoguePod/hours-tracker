@@ -1,11 +1,11 @@
-/* global window */
+import { removeFlash, updateFlash } from 'javascripts/shared/redux/flashes';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _isEqual from "lodash/isEqual";
-import _isNumber from "lodash/isNumber";
-import styled from "styled-components";
+import Alert from './Alert';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _isNumber from 'lodash/isNumber';
+import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
 
 const DURATION = 3000;
 
@@ -14,109 +14,69 @@ const Container = styled.div`
   transition: all 300ms ease;
 `;
 
-class Flash extends React.Component {
-  static propTypes = {
-    flash: PropTypes.flash.isRequired,
-    onRemoveFlash: PropTypes.func.isRequired,
-    onUpdateFlash: PropTypes.func.isRequired
-  };
+const Flash = ({ flash }) => {
+  const { id } = flash;
+  const element = React.useRef(null);
+  const [height, setHeight] = React.useState(0);
+  const dispatch = useDispatch();
 
-  constructor(props) {
-    super(props);
+  const _handleRemove = React.useCallback(() => {
+    dispatch(removeFlash(id));
+  }, [dispatch, id]);
 
-    this._handleRemove = this._handleRemove.bind(this);
-    this._handleResize = this._handleResize.bind(this);
+  React.useEffect(() => {
+    const _handleResize = () => {
+      const { height } = element.current.getBoundingClientRect();
+      setHeight(height);
+    };
 
-    this.element = React.createRef();
+    _handleResize();
+
+    window.addEventListener('resize', _handleResize);
+
+    const timeout = setTimeout(() => {
+      _handleRemove();
+    }, flash.duration || DURATION);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      window.removeEventListener('resize', _handleResize);
+    };
+  }, [_handleRemove, flash.duration]);
+
+  React.useEffect(() => {
+    dispatch(updateFlash(id, { height }));
+  }, [dispatch, height, id]);
+
+  const { bottom, message, ...rest } = flash;
+
+  const containerClasses = 'fixed w-full pb-4 px-4 z-100';
+
+  const containerStyles = {};
+
+  if (_isNumber(bottom)) {
+    containerStyles.transform = `translateY(-${bottom}px)`;
   }
 
-  componentDidMount() {
-    this._handleResize();
+  return (
+    <Container
+      className={containerClasses}
+      onClick={_handleRemove}
+      ref={element}
+      style={containerStyles}
+    >
+      <Alert {...rest} className="max-w-sm mx-auto px-4 py-3 shadow-lg" remove>
+        {message}
+      </Alert>
+    </Container>
+  );
+};
 
-    window.addEventListener("resize", this._handleResize);
-
-    this.timeout = setTimeout(() => {
-      this._handleRemove();
-    }, DURATION);
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const { flash } = this.props;
-
-    return !_isEqual(flash, nextProps.flash);
-  }
-
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-
-    window.removeEventListener("resize", this._handleResize);
-  }
-
-  timeout = null;
-
-  _handleRemove() {
-    const {
-      onRemoveFlash,
-      flash: { id }
-    } = this.props;
-
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-
-    onRemoveFlash(id);
-  }
-
-  _handleResize() {
-    const {
-      flash: { id },
-      onUpdateFlash
-    } = this.props;
-
-    const { height } = this.element.current.getBoundingClientRect();
-
-    onUpdateFlash(id, { height });
-  }
-
-  render() {
-    const { flash } = this.props;
-
-    const { bottom } = flash;
-    const color = flash.color || "green";
-    const icon = flash.icon || "exclamation-circle";
-
-    const containerClasses = "fixed w-full pb-4 px-4";
-    const alertClasses =
-      `bg-${color}-lightest border-${color} rounded text-${color}-darkest ` +
-      "border-t-4 px-4 py-3 shadow-lg flex max-w-sm mx-auto";
-
-    const containerStyles = {};
-
-    if (_isNumber(bottom)) {
-      containerStyles.transform = `translateY(-${bottom}px)`;
-    }
-
-    return (
-      <Container
-        className={containerClasses}
-        onClick={this._handleRemove}
-        ref={this.element}
-        style={containerStyles}
-      >
-        <div className={alertClasses}>
-          <div className="p-2">
-            <FontAwesomeIcon icon={icon} />
-          </div>
-          <div className="flex-1 self-center">{flash.message}</div>
-          <div className="p-2 cursor-pointer">
-            <FontAwesomeIcon icon="times" />
-          </div>
-        </div>
-      </Container>
-    );
-  }
-}
+Flash.propTypes = {
+  flash: PropTypes.flash.isRequired
+};
 
 export default Flash;

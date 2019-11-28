@@ -1,50 +1,39 @@
-import { Clock } from "javascripts/shared/components";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Redirect } from "react-router-dom";
-import Routes from "./Routes";
-import { connect } from "react-redux";
+import { ForgotPasswordPage, SignInPage } from 'javascripts/app/containers';
+import { Route, Switch } from 'react-router-dom';
 
-const SignedOutStack = props => {
-  const { token } = props;
+import { Clock } from 'javascripts/shared/components';
+// import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
-  if (token) {
-    return <Redirect to="/" />;
-  }
+const SignedOutStack = () => {
+  React.useEffect(() => {
+    document.documentElement.className = 'antialiased h-full bg-blue-200';
+
+    return () => {
+      document.documentElement.className = 'antialiased h-full bg-white';
+    };
+  }, []);
 
   return (
-    <div>
-      <div className="max-w-sm mx-auto py-4 px-2">
-        <header className="text-blue flex flex-row items-center justify-center">
-          <Clock animate={false} size="50px" />
-          <h1 className="pl-3">{"Hours Tracker"}</h1>
-        </header>
+    <div className="min-w-128 mx-auto py-4 px-2">
+      <header className="text-blue flex flex-row items-center justify-center">
+        <Clock animate={false} size="50px" />
+        <h1 className="pl-3">{'Hours Tracker'}</h1>
+      </header>
 
-        <div className="pt-6">
-          <Routes {...props} />
-        </div>
+      <div className="pt-6">
+        <Switch>
+          <Route component={ForgotPasswordPage} path="/forgot-password" />
+          {/* <Route component={SignUpPage} path="/sign-up" /> */}
+          <Route component={SignInPage} exact path="/" />
+        </Switch>
       </div>
     </div>
   );
 };
 
-SignedOutStack.propTypes = {
-  token: PropTypes.string
-};
+SignedOutStack.propTypes = {};
 
-SignedOutStack.defaultProps = {
-  token: null
-};
+SignedOutStack.defaultProps = {};
 
-const props = state => {
-  return {
-    token: state.app.token
-  };
-};
-
-const actions = {};
-
-export default connect(
-  props,
-  actions
-)(SignedOutStack);
+export default React.memo(SignedOutStack);

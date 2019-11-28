@@ -1,34 +1,38 @@
-import Button from "./Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import Button from './Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
-const SubmitButton = ({ children, submitting, submittingText, ...rest }) => {
+const SubmitButton = ({
+  children,
+  disabled,
+  submitting,
+  submittingText,
+  ...rest
+}) => {
   return (
-    <Button {...rest} disabled={submitting} type="submit">
+    <Button {...rest} disabled={disabled || submitting} type="submit">
       {submitting && (
-        <div className="inline-block pr-3">
-          <FontAwesomeIcon icon="spinner" spin />
-        </div>
+        <>
+          <FontAwesomeIcon icon="spinner" spin /> {submittingText}
+        </>
       )}
-      {submitting && submittingText ? submittingText : children}
+      {!submitting && children}
     </Button>
   );
 };
 
 SubmitButton.propTypes = {
   children: PropTypes.node.isRequired,
-  className: PropTypes.string,
-  color: PropTypes.string,
+  disabled: PropTypes.bool,
   submitting: PropTypes.bool,
   submittingText: PropTypes.string
 };
 
 SubmitButton.defaultProps = {
-  className: "py-2 px-4",
-  color: "green",
+  disabled: false,
   submitting: false,
-  submittingText: "Saving..."
+  submittingText: null
 };
 
-export default SubmitButton;
+export default React.memo(SubmitButton);

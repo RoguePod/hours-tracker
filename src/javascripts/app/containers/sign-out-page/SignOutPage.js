@@ -1,38 +1,16 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Redirect } from "react-router-dom";
-import { connect } from "react-redux";
-import { signOutUser } from "javascripts/app/redux/app";
+// import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { signOutUser } from 'javascripts/shared/redux/app';
+import { useDispatch } from 'react-redux';
 
-class SignOutPage extends React.Component {
-  static propTypes = {
-    onSignOutUser: PropTypes.func.isRequired
-  };
+const SignOutPage = () => {
+  const dispatch = useDispatch();
 
-  componentDidMount() {
-    const { onSignOutUser } = this.props;
+  React.useEffect(() => {
+    dispatch(signOutUser());
+  }, [dispatch]);
 
-    onSignOutUser();
-  }
-
-  shouldComponentUpdate() {
-    return false;
-  }
-
-  render() {
-    return <Redirect to="/sign-in" />;
-  }
-}
-
-const props = () => {
-  return {};
+  return null;
 };
 
-const actions = {
-  onSignOutUser: signOutUser
-};
-
-export default connect(
-  props,
-  actions
-)(SignOutPage);
+export default SignOutPage;

@@ -1,6 +1,6 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Table } from "javascripts/shared/components";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Table } from 'javascripts/shared/components';
 
 class Row extends React.Component {
   static propTypes = {

@@ -1,20 +1,15 @@
-import { Button, Table } from "javascripts/shared/components";
-import {
-  selectClientsByEntries,
-  selectQuery,
-  selectUsersByEntries,
-  subscribeEntries
-} from "javascripts/app/redux/entries";
+import { Button, Table } from 'javascripts/shared/components';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ProjectsTable from "./ProjectsTable";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import UsersTable from "./UsersTable";
-import _isEqual from "lodash/isEqual";
-import { connect } from "react-redux";
-import { isBlank } from "javascripts/globals";
-import { selectTimezone } from "javascripts/app/redux/app";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ProjectsTable from './ProjectsTable';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import UsersTable from './UsersTable';
+import _isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { isBlank } from 'javascripts/globals';
+
+// import { selectTimezone } from 'javascripts/shared/redux/app';
 
 class EntriesSummaryTable extends React.Component {
   static propTypes = {
@@ -102,7 +97,7 @@ class EntriesSummaryTable extends React.Component {
   _renderWarning() {
     const text =
       "You've requested to get all entries, without filters, " +
-      "which can be slow.";
+      'which can be slow.';
 
     return (
       <div className="text-center">
@@ -118,7 +113,7 @@ class EntriesSummaryTable extends React.Component {
           onClick={this._handleSubscribe}
           type="submit"
         >
-          {"Do it Anyway"}
+          {'Do it Anyway'}
         </Button>
       </div>
     );
@@ -136,13 +131,13 @@ class EntriesSummaryTable extends React.Component {
         <Table.Table>
           <thead>
             <tr>
-              <Table.Th colSpan={5}>{"Summary by Users"}</Table.Th>
+              <Table.Th colSpan={5}>{'Summary by Users'}</Table.Th>
             </tr>
           </thead>
           <UsersTable {...this.props} />
           <thead>
             <tr>
-              <Table.Th colSpan={5}>{"Summary by Clients/Projects"}</Table.Th>
+              <Table.Th colSpan={5}>{'Summary by Clients/Projects'}</Table.Th>
             </tr>
           </thead>
           <ProjectsTable {...this.props} />
@@ -152,20 +147,17 @@ class EntriesSummaryTable extends React.Component {
   }
 }
 
-const props = state => {
+const props = (state) => {
   return {
-    clients: selectClientsByEntries(state),
-    query: selectQuery(state),
-    timezone: selectTimezone(state),
-    users: selectUsersByEntries(state)
+    // clients: selectClientsByEntries(state),
+    // query: selectQuery(state),
+    // timezone: selectTimezone(state),
+    // users: selectUsersByEntries(state)
   };
 };
 
 const actions = {
-  onSubscribeEntries: subscribeEntries
+  // onSubscribeEntries: subscribeEntries
 };
 
-export default connect(
-  props,
-  actions
-)(EntriesSummaryTable);
+export default connect(props, actions)(EntriesSummaryTable);

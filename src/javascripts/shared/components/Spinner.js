@@ -1,14 +1,14 @@
-import { Clock, Portal } from "javascripts/shared/components";
+import { Clock, Portal } from 'javascripts/shared/components';
 
-import { CSSTransition } from "react-transition-group";
-import { HEADER_HEIGHT } from "javascripts/globals";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import cx from "classnames";
-import styled from "styled-components";
+import { CSSTransition } from 'react-transition-group';
+import { HEADER_HEIGHT } from 'javascripts/globals';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import cx from 'classnames';
+import styled from 'styled-components';
 
 const DURATION = 300;
-const PHONE_SIZE = "768px";
+const PHONE_SIZE = '768px';
 
 const FadeIn = styled.div`
   &.fade-enter {
@@ -43,8 +43,8 @@ const Page = styled(FadeIn)`
 
 const Spinner = ({ page, spinning, size, text }) => {
   const shadeClassName =
-    "pin z-10 overflow-hidden bg-smoke flex items-center " +
-    "justify-center text-white flex-col";
+    'pin z-10 overflow-hidden bg-smoke flex items-center ' +
+    'justify-center text-white flex-col';
 
   const children = (
     <>
@@ -67,7 +67,7 @@ const Spinner = ({ page, spinning, size, text }) => {
           timeout={DURATION}
           unmountOnExit
         >
-          <Page className={cx(shadeClassName, "fixed")}>{children}</Page>
+          <Page className={cx(shadeClassName, 'fixed')}>{children}</Page>
         </CSSTransition>
       </Portal>
     );
@@ -81,7 +81,7 @@ const Spinner = ({ page, spinning, size, text }) => {
       timeout={DURATION}
       unmountOnExit
     >
-      <FadeIn className={cx(shadeClassName, "absolute")}>{children}</FadeIn>
+      <FadeIn className={cx(shadeClassName, 'absolute')}>{children}</FadeIn>
     </CSSTransition>
   );
 };

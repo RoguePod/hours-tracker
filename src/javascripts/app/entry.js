@@ -1,19 +1,5 @@
-/* global document */
-
-import "javascripts/initializers/sentry";
-import "javascripts/initializers/store";
-import "javascripts/initializers/validators";
-import "stylesheets/application.scss?main";
-import "javascript-detect-element-resize";
-import "whatwg-fetch";
-
-import {
-  App,
-  SignOutPage,
-  SignedInStack,
-  SignedOutStack
-} from "javascripts/app/containers";
-import { Route, Switch } from "react-router-dom";
+import { App, SignedInStack, SignedOutStack } from 'javascripts/app/containers';
+import { Provider, useSelector } from 'react-redux';
 import {
   faAngleDoubleLeft,
   faAngleDoubleRight,
@@ -39,17 +25,17 @@ import {
   faStop,
   faSyncAlt,
   faTimes
-} from "@fortawesome/free-solid-svg-icons";
-import { faCheckSquare, faSquare } from "@fortawesome/free-regular-svg-icons";
-import { history, store } from "javascripts/app/redux/store";
+} from '@fortawesome/free-solid-svg-icons';
+import { faCheckSquare, faSquare } from '@fortawesome/free-regular-svg-icons';
 
-import { ConnectedRouter } from "connected-react-router";
-import { Provider } from "react-redux";
-import React from "react";
-import ReactDOM from "react-dom";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import moment from "moment-timezone";
-import registerServiceWorker from "./registerServiceWorker";
+import { ConnectedRouter } from 'connected-react-router';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import history from 'javascripts/history';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import moment from 'moment-timezone';
+import registerServiceWorker from './registerServiceWorker';
+import store from 'javascripts/app/redux/store';
 
 library.add(
   faAngleDoubleLeft,
@@ -80,21 +66,23 @@ library.add(
   faTimes
 );
 
-moment.locale("en");
+moment.locale('en');
+
+const AppRoutes = () => {
+  const token = useSelector((state) => state.app.token);
+
+  return token ? <SignedInStack /> : <SignedOutStack />;
+};
 
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <App>
-        <Switch>
-          <Route component={SignOutPage} path="/sign-out" />
-          <Route component={SignedOutStack} path="/sign-in" />
-          <Route component={SignedInStack} path="/" />
-        </Switch>
+        <AppRoutes />
       </App>
     </ConnectedRouter>
   </Provider>,
-  document.getElementById("app")
+  document.getElementById('app')
 );
 
 registerServiceWorker();

@@ -1,18 +1,18 @@
-import { fromQuery, toQuery } from "javascripts/globals";
+import { fromQuery, toQuery } from 'javascripts/globals';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PaginationLink from "./PaginationLink";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _range from "lodash/range";
-import { withRouter } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PaginationLink from './PaginationLink';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _range from 'lodash/range';
+import { withRouter } from 'react-router-dom';
 
 const toPage = (page, location) => {
   const { search } = location;
   return { ...location, search: toQuery({ ...fromQuery(search), page }) };
 };
 
-const Pagination = props => {
+const Pagination = (props) => {
   const {
     count,
     location,
@@ -44,7 +44,7 @@ const Pagination = props => {
   }
   const nextMore = end < totalPages;
 
-  const links = _range(start, end + 1).map(number => {
+  const links = _range(start, end + 1).map((number) => {
     return (
       <PaginationLink
         active={number === pageNumber}

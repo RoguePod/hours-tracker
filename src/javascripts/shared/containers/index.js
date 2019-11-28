@@ -1,1 +1,1 @@
-export NoMatchPage from "./no-match-page/NoMatchPage";
+export NoMatchPage from './no-match-page/NoMatchPage';

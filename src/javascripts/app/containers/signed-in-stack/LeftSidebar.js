@@ -1,12 +1,11 @@
-import { RecentsList, StopWatch } from "javascripts/app/containers";
+import { RecentsList, StopWatch } from 'javascripts/app/containers';
+import { useHistory, useLocation } from 'react-router-dom';
 
-import { CSSTransition } from "react-transition-group";
-import { HEADER_HEIGHT } from "javascripts/globals";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _isEqual from "lodash/isEqual";
-import { history } from "javascripts/app/redux/store";
-import styled from "styled-components";
+import { CSSTransition } from 'react-transition-group';
+import { HEADER_HEIGHT } from 'javascripts/globals';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import styled from 'styled-components';
 
 const DURATION = 300;
 
@@ -58,75 +57,51 @@ const Slider = styled(SlideIn)`
   top: ${HEADER_HEIGHT};
 `;
 
-class LeftSidebar extends React.Component {
-  static propTypes = {
-    location: PropTypes.routerLocation.isRequired,
-    width: PropTypes.number.isRequired
+const LeftSidebar = ({ width }) => {
+  const location = useLocation();
+  const history = useHistory();
+
+  const _handleClose = () => {
+    history.push({ ...location, hash: null, replace: true });
   };
 
-  constructor(props) {
-    super(props);
+  const { hash } = location;
 
-    this._handleClose = this._handleClose.bind(this);
-  }
+  const open = hash.match(/stopwatch/u);
 
-  shouldComponentUpdate(nextProps) {
-    const {
-      location: { hash },
-      width
-    } = this.props;
+  const sliderClasses =
+    'fixed pin-l pin-b w-64 flex bg-blue-lightest shadow-md flex-col ' + 'z-10';
 
-    return (
-      !_isEqual(hash, nextProps.location.hash) || width !== nextProps.width
-    );
-  }
+  return (
+    <>
+      <CSSTransition
+        appear={width >= 768}
+        classNames="fade"
+        in={Boolean(open)}
+        mountOnEnter
+        timeout={DURATION}
+        unmountOnExit
+      >
+        <Overlay className="fixed pin bg-smoke z-10" onClick={_handleClose} />
+      </CSSTransition>
+      <CSSTransition
+        classNames="slide"
+        in={Boolean(open || width >= 768)}
+        mountOnEnter
+        timeout={DURATION}
+        unmountOnExit
+      >
+        <Slider className={sliderClasses}>
+          <StopWatch location={location} />
+          <RecentsList />
+        </Slider>
+      </CSSTransition>
+    </>
+  );
+};
 
-  _handleClose() {
-    const { location } = this.props;
+LeftSidebar.propTypes = {
+  width: PropTypes.number.isRequired
+};
 
-    history.push({ ...location, hash: null, replace: true });
-  }
-
-  render() {
-    const { location, width } = this.props;
-    const { hash } = location;
-
-    const open = hash.match(/stopwatch/u);
-
-    const sliderClasses =
-      "fixed pin-l pin-b w-64 flex bg-blue-lightest shadow-md flex-col " +
-      "z-10";
-
-    return (
-      <>
-        <CSSTransition
-          appear={width >= 768}
-          classNames="fade"
-          in={Boolean(open)}
-          mountOnEnter
-          timeout={DURATION}
-          unmountOnExit
-        >
-          <Overlay
-            className="fixed pin bg-smoke z-10"
-            onClick={this._handleClose}
-          />
-        </CSSTransition>
-        <CSSTransition
-          classNames="slide"
-          in={Boolean(open || width >= 768)}
-          mountOnEnter
-          timeout={DURATION}
-          unmountOnExit
-        >
-          <Slider className={sliderClasses}>
-            <StopWatch location={location} />
-            <RecentsList />
-          </Slider>
-        </CSSTransition>
-      </>
-    );
-  }
-}
-
-export default LeftSidebar;
+export default React.memo(LeftSidebar);

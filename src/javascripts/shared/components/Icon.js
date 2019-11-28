@@ -1,8 +1,8 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import Transition from "./Transition";
-import cx from "classnames";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import Transition from './Transition';
+import cx from 'classnames';
 
 /* eslint-disable react/prefer-stateless-function */
 class Icon extends React.PureComponent {
@@ -17,12 +17,12 @@ class Icon extends React.PureComponent {
   };
 
   static defaultProps = {
-    as: "div",
+    as: 'div',
     className: null,
-    color: "green",
+    color: 'green',
     disabled: false,
     size: 10,
-    textColor: "white"
+    textColor: 'white'
   };
 
   render() {
@@ -39,11 +39,11 @@ class Icon extends React.PureComponent {
 
     const iconClasses = cx(
       `text-${textColor} w-${size} h-${size} items-center justify-center`,
-      "flex rounded-full appearance-none",
+      'flex rounded-full appearance-none',
       className,
       {
-        "shadow hover:shadow-md": color !== "transparent",
-        "bg-grey-dark": disabled,
+        'shadow hover:shadow-md': color !== 'transparent',
+        'bg-grey-dark': disabled,
         [`bg-${color} hover:bg-${color}-dark`]: !disabled
       }
     );

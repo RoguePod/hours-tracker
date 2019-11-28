@@ -1,9 +1,9 @@
-import FieldError from "./FieldError";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SelectBase from "./SelectBase";
+import FieldError from './FieldError';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SelectBase from './SelectBase';
 
-const SelectField = props => {
+const SelectField = (props) => {
   const {
     children,
     disabled,
@@ -32,8 +32,8 @@ const SelectField = props => {
 SelectField.propTypes = {
   children: PropTypes.node,
   disabled: PropTypes.bool,
-  field: PropTypes.field.isRequired,
-  form: PropTypes.form.isRequired,
+  field: PropTypes.formikField.isRequired,
+  form: PropTypes.formikForm.isRequired,
   label: PropTypes.string,
   required: PropTypes.bool
 };

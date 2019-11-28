@@ -1,8 +1,8 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Table } from "javascripts/shared/components";
-import _times from "lodash/times";
-import moment from "moment-timezone";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Table } from 'javascripts/shared/components';
+import _times from 'lodash/times';
+import moment from 'moment-timezone';
 
 class UsersRow extends React.Component {
   static propTypes = {
@@ -45,7 +45,7 @@ class UsersRow extends React.Component {
         stoppedAt = moment().tz(entry.timezone);
       }
 
-      const hours = stoppedAt.diff(startedAt, "hours", true);
+      const hours = stoppedAt.diff(startedAt, 'hours', true);
 
       sum += hours;
     }
@@ -57,13 +57,13 @@ class UsersRow extends React.Component {
     const cells = [];
     let weekTotal = 0;
 
-    _times(7, index => {
+    _times(7, (index) => {
       const day = moment
         .tz(query.date, timezone)
-        .add(index, "d")
-        .format("YYYY-MM-DD");
+        .add(index, 'd')
+        .format('YYYY-MM-DD');
 
-      const dayTotal = this._calcTotal("YYYY-MM-DD", day);
+      const dayTotal = this._calcTotal('YYYY-MM-DD', day);
 
       weekTotal += dayTotal;
 
@@ -82,12 +82,12 @@ class UsersRow extends React.Component {
 
     const { cells, weekTotal } = this._getCellsAndWeekTotal(query, timezone);
 
-    const diffMonth = startMonth.format("MMM") !== endMonth.format("MMM");
-    const monthTotal = this._calcTotal("YYYY-MM", startMonth.format("YYYY-MM"));
+    const diffMonth = startMonth.format('MMM') !== endMonth.format('MMM');
+    const monthTotal = this._calcTotal('YYYY-MM', startMonth.format('YYYY-MM'));
     let otherTotal = null;
 
     if (diffMonth) {
-      otherTotal = this._calcTotal("YYYY-MM", endMonth.format("YYYY-MM"));
+      otherTotal = this._calcTotal('YYYY-MM', endMonth.format('YYYY-MM'));
     }
 
     return (

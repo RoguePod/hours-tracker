@@ -1,8 +1,8 @@
-import { Button, FormError, InputField } from "javascripts/shared/components";
-import { Field, Form } from "formik";
+import { Button, FormError, InputField } from 'javascripts/shared/components';
+import { Field, Form } from 'formik';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const ClientsSearchForm = ({ isSubmitting, onClear, status }) => {
   return (
@@ -27,7 +27,7 @@ const ClientsSearchForm = ({ isSubmitting, onClear, status }) => {
             disabled={isSubmitting}
             type="submit"
           >
-            {"Filter"}
+            {'Filter'}
           </Button>
         </div>
         <div className="w-full md:w-1/2 px-2">
@@ -37,7 +37,7 @@ const ClientsSearchForm = ({ isSubmitting, onClear, status }) => {
             onClick={onClear}
             type="button"
           >
-            {"Clear"}
+            {'Clear'}
           </Button>
         </div>
       </div>

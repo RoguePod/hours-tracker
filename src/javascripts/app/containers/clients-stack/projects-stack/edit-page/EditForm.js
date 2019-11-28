@@ -1,77 +1,57 @@
-import * as Yup from "yup";
+import * as Yup from 'yup';
 
-import { Formik } from "formik";
-import ProjectForm from "../ProjectForm";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { selectProject } from "javascripts/app/redux/clients";
-import { updateProject } from "javascripts/app/redux/projects";
+import { Formik } from 'formik';
+import ProjectForm from '../ProjectForm';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
 
-class ProjectEditForm extends React.PureComponent {
-  static propTypes = {
-    onUpdateProject: PropTypes.func.isRequired,
-    project: PropTypes.project
-  };
-
-  static defaultProps = {
-    project: null
-  };
-
-  constructor(props) {
-    super(props);
-
-    this._handleSubmit = this._handleSubmit.bind(this);
-  }
-
-  _handleSubmit(data, actions) {
-    const { onUpdateProject, project } = this.props;
-
+const ProjectEditForm = ({ onUpdateProject, project }) => {
+  const _handleSubmit = (data, actions) => {
     onUpdateProject(project, data, actions);
+  };
+
+  if (!project) {
+    return <h1 className="text-center text-blue">{'Project Not Found'}</h1>;
   }
 
-  render() {
-    const { project } = this.props;
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required('Name is Required')
+  });
 
-    if (!project) {
-      return <h1 className="text-center text-blue">{"Project Not Found"}</h1>;
-    }
+  const initialValues = {
+    active: project.active,
+    billable: project.billable,
+    name: project.name
+  };
 
-    const validationSchema = Yup.object().shape({
-      name: Yup.string().required("Name is Required")
-    });
+  return (
+    <Formik
+      component={ProjectForm}
+      enableReinitialize
+      initialValues={initialValues}
+      onSubmit={_handleSubmit}
+      validationSchema={validationSchema}
+    />
+  );
+};
 
-    const initialValues = {
-      active: project.active,
-      billable: project.billable,
-      name: project.name
-    };
+ProjectEditForm.propTypes = {
+  onUpdateProject: PropTypes.func.isRequired,
+  project: PropTypes.project
+};
 
-    return (
-      <Formik
-        component={ProjectForm}
-        enableReinitialize
-        initialValues={initialValues}
-        onSubmit={this._handleSubmit}
-        validationSchema={validationSchema}
-      />
-    );
-  }
-}
+ProjectEditForm.defaultProps = {
+  project: null
+};
 
 const props = (state, ownProps) => {
-  const { match } = ownProps;
-
   return {
-    project: selectProject(state, match.params.clientId, match.params.id)
+    project: null
+    // selectProject(state, match.params.clientId, match.params.id)
   };
 };
 
-const actions = {
-  onUpdateProject: updateProject
-};
+const actions = {};
 
-export default connect(
-  props,
-  actions
-)(ProjectEditForm);
+export default connect(props, actions)(ProjectEditForm);

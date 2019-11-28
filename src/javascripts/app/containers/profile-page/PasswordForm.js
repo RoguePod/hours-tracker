@@ -1,14 +1,14 @@
-import { Field, Form } from "formik";
+import { Field, Form } from 'formik';
 import {
   FormError,
   InputField,
   SubmitButton
-} from "javascripts/shared/components";
+} from 'javascripts/shared/components';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
-const PasswordForm = props => {
+const PasswordForm = (props) => {
   const { isSubmitting, status } = props;
 
   return (
@@ -25,7 +25,7 @@ const PasswordForm = props => {
           type="password"
         />
       </div>
-      <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
+      <SubmitButton submitting={isSubmitting}>{'Save'}</SubmitButton>
     </Form>
   );
 };

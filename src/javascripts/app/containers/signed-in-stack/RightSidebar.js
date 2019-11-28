@@ -1,11 +1,10 @@
-import { CSSTransition } from "react-transition-group";
-import { HEADER_HEIGHT } from "javascripts/globals";
-import { Link } from "react-router-dom";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _isEqual from "lodash/isEqual";
-import { history } from "javascripts/app/redux/store";
-import styled from "styled-components";
+import { Link, useHistory, useLocation } from 'react-router-dom';
+
+import { CSSTransition } from 'react-transition-group';
+import { HEADER_HEIGHT } from 'javascripts/globals';
+// import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import styled from 'styled-components';
 
 const DURATION = 300;
 
@@ -57,30 +56,15 @@ const Slider = styled(SlideIn)`
   top: ${HEADER_HEIGHT};
 `;
 
-class RightSidebar extends React.Component {
-  static propTypes = {
-    location: PropTypes.routerLocation.isRequired
+const RightSidebar = () => {
+  const location = useLocation();
+  const history = useHistory();
+
+  const _handleClose = () => {
+    history.push({ ...location, hash: null, replace: true });
   };
 
-  constructor(props) {
-    super(props);
-
-    this._handleClose = this._handleClose.bind(this);
-  }
-
-  shouldComponentUpdate(nextProps) {
-    const { location } = this.props;
-
-    return !_isEqual(location, nextProps.location);
-  }
-
-  _handleClose() {
-    const { location } = this.props;
-
-    history.push({ ...location, hash: null, replace: true });
-  }
-
-  _renderMenu() {
+  const _renderMenu = () => {
     // const { location: { pathname } } = this.props;
     // const isHome    = pathname === '/' || pathname.length === 0;
     // const isEntries = pathname.startsWith('/entries');
@@ -94,7 +78,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/"
           >
-            {"Home"}
+            {'Home'}
           </Link>
         </li>
         <li>
@@ -102,7 +86,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/entries"
           >
-            {"Entries"}
+            {'Entries'}
           </Link>
         </li>
         <li>
@@ -110,7 +94,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/clients"
           >
-            {"Clients/Projects"}
+            {'Clients/Projects'}
           </Link>
         </li>
         <li>
@@ -118,7 +102,7 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/profile"
           >
-            {"Profile"}
+            {'Profile'}
           </Link>
         </li>
         <li>
@@ -126,52 +110,43 @@ class RightSidebar extends React.Component {
             className="block border-b border-grey p-4 hover:bg-blue-light"
             to="/sign-out"
           >
-            {"Sign Out"}
+            {'Sign Out'}
           </Link>
         </li>
       </ul>
     );
-  }
+  };
 
-  render() {
-    const { location } = this.props;
+  const { pathname, hash } = location;
 
-    const { pathname, hash } = location;
+  const open = hash.match(/sidebar/u);
 
-    const open = hash.match(/sidebar/u);
+  const sliderClasses =
+    'fixed pin-r pin-y w-64 flex bg-blue-lightest shadow-md flex-col ' +
+    'z-10 overflow-y-auto overflow-x-hidden';
 
-    const sliderClasses =
-      "fixed pin-r pin-y w-64 flex bg-blue-lightest shadow-md flex-col " +
-      "z-10 overflow-y-auto overflow-x-hidden";
+  return (
+    <>
+      <CSSTransition
+        classNames="fade"
+        in={Boolean(open)}
+        mountOnEnter
+        timeout={DURATION}
+        unmountOnExit
+      >
+        <Overlay className="fixed pin bg-smoke z-10" onClick={_handleClose} />
+      </CSSTransition>
+      <CSSTransition
+        classNames="slide"
+        in={Boolean(open)}
+        mountOnEnter
+        timeout={DURATION}
+        unmountOnExit
+      >
+        <Slider className={sliderClasses}>{_renderMenu(pathname)}</Slider>
+      </CSSTransition>
+    </>
+  );
+};
 
-    return (
-      <>
-        <CSSTransition
-          classNames="fade"
-          in={Boolean(open)}
-          mountOnEnter
-          timeout={DURATION}
-          unmountOnExit
-        >
-          <Overlay
-            className="fixed pin bg-smoke z-10"
-            onClick={this._handleClose}
-          />
-        </CSSTransition>
-        <CSSTransition
-          classNames="slide"
-          in={Boolean(open)}
-          mountOnEnter
-          timeout={DURATION}
-          unmountOnExit
-        >
-          <Slider className={sliderClasses}>
-            {this._renderMenu(pathname)}
-          </Slider>
-        </CSSTransition>
-      </>
-    );
-  }
-}
-
-export default RightSidebar;
+export default React.memo(RightSidebar);

@@ -1,7 +1,7 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import Row from "./Row";
-import { Table } from "javascripts/shared/components";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import Row from './Row';
+import { Table } from 'javascripts/shared/components';
 
 class ProjectsRow extends React.Component {
   static propTypes = {
@@ -69,7 +69,7 @@ class ProjectsRow extends React.Component {
   }
 
   _renderRows(client) {
-    return Object.keys(client.projects).map(key => {
+    return Object.keys(client.projects).map((key) => {
       const entries = client.projects[key];
 
       return <Row entries={entries} key={key} name={key} />;

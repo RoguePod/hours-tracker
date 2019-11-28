@@ -1,62 +1,18 @@
-/* global document */
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _padStart from 'lodash/padStart';
+import cx from 'classnames';
+import moment from 'moment-timezone';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import _padStart from "lodash/padStart";
-import cx from "classnames";
-import moment from "moment-timezone";
+const Timer = ({ disabled, entry }) => {
+  const [duration, setDuration] = React.useState(null);
+  const interval = React.useRef(null);
 
-class Timer extends React.Component {
-  static propTypes = {
-    disabled: PropTypes.bool,
-    entry: PropTypes.entry
-  };
-
-  static defaultProps = {
-    disabled: false,
-    entry: null
-  };
-
-  constructor(props) {
-    super(props);
-
-    this._handleTick = this._handleTick.bind(this);
-  }
-
-  state = {
-    duration: null
-  };
-
-  componentDidMount() {
-    this._handleTick();
-    this.interval = setInterval(this._handleTick, 1000);
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const { disabled } = this.props;
-    const { duration } = this.state;
-
-    return disabled !== nextProps.disabled || duration !== nextState.duration;
-  }
-
-  componentWillUnmount() {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-
-    document.title = "Hours Tracker";
-  }
-
-  interval = null;
-
-  _handleTick() {
-    const { disabled, entry } = this.props;
-    const { duration: currentDuration } = this.state;
-
+  const _handleTick = React.useCallback(() => {
     if (disabled) {
-      if (currentDuration) {
-        this.setState({ duration: null });
-        document.title = "Hours Tracker";
+      if (duration) {
+        setDuration(null);
+        document.title = 'Hours Tracker';
       }
 
       return;
@@ -64,55 +20,73 @@ class Timer extends React.Component {
 
     const now = moment().tz(entry.timezone);
     const startedAt = moment.tz(entry.startedAt, entry.timezone);
-    const duration = moment.duration(now.diff(startedAt));
+    const newDuration = moment.duration(now.diff(startedAt));
 
-    const hours = _padStart(duration.get("hours"), 2, "0");
-    const minutes = _padStart(duration.get("minutes"), 2, "0");
-    const seconds = _padStart(duration.get("seconds"), 2, "0");
+    const hours = _padStart(newDuration.get('hours'), 2, '0');
+    const minutes = _padStart(newDuration.get('minutes'), 2, '0');
+    const seconds = _padStart(newDuration.get('seconds'), 2, '0');
 
     document.title = `${hours}:${minutes}:${seconds} - Hours Tracker`;
 
-    this.setState({ duration });
+    setDuration(newDuration);
+  }, [disabled, duration, entry]);
+
+  React.useEffect(() => {
+    _handleTick();
+    interval.current = setInterval(_handleTick, 1000);
+
+    return () => {
+      if (interval.current) {
+        clearInterval(interval.current);
+      }
+
+      document.title = 'Hours Tracker';
+    };
+  }, [_handleTick]);
+
+  let hours = '00';
+  let minutes = '00';
+  let seconds = '00';
+
+  if (duration) {
+    hours = _padStart(duration.get('hours'), 2, '0');
+    minutes = _padStart(duration.get('minutes'), 2, '0');
+    seconds = _padStart(duration.get('seconds'), 2, '0');
   }
 
-  render() {
-    const { disabled } = this.props;
-    const { duration } = this.state;
+  const numberClasses = cx('rounded text-center px-2 text-3xl flex-1', {
+    'bg-blue': !disabled,
+    'bg-grey-dark': disabled
+  });
 
-    let hours = "00";
-    let minutes = "00";
-    let seconds = "00";
+  const separatorClasses = cx('text-center text-3xl px-2', {
+    'text-blue': !disabled,
+    'text-grey-dark': disabled
+  });
 
-    if (duration) {
-      hours = _padStart(duration.get("hours"), 2, "0");
-      minutes = _padStart(duration.get("minutes"), 2, "0");
-      seconds = _padStart(duration.get("seconds"), 2, "0");
-    }
+  const containerClasses =
+    'flex flex-row flex-no-wrap items-center justify-center text-white ' +
+    'font-mono';
 
-    const numberClasses = cx("rounded text-center px-2 text-3xl flex-1", {
-      "bg-blue": !disabled,
-      "bg-grey-dark": disabled
-    });
+  return (
+    <div className={containerClasses}>
+      <div className={numberClasses}>{hours}</div>
+      <div className={separatorClasses}>{':'}</div>
+      <div className={numberClasses}>{minutes}</div>
+      <div className={separatorClasses}>{':'}</div>
+      <div className={numberClasses}>{seconds}</div>
+    </div>
+  );
+};
 
-    const separatorClasses = cx("text-center text-3xl px-2", {
-      "text-blue": !disabled,
-      "text-grey-dark": disabled
-    });
+Timer.propTypes = {
+  disabled: PropTypes.bool,
+  entry: PropTypes.entry
+};
 
-    const containerClasses =
-      "flex flex-row flex-no-wrap items-center justify-center text-white " +
-      "font-mono";
+Timer.defaultProps = {
+  disabled: false,
+  entry: null
+};
 
-    return (
-      <div className={containerClasses}>
-        <div className={numberClasses}>{hours}</div>
-        <div className={separatorClasses}>{":"}</div>
-        <div className={numberClasses}>{minutes}</div>
-        <div className={separatorClasses}>{":"}</div>
-        <div className={numberClasses}>{seconds}</div>
-      </div>
-    );
-  }
-}
-
-export default Timer;
+export default React.memo(Timer);

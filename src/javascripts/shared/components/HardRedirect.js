@@ -1,26 +1,16 @@
-/* global window */
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-
-class HardRedirect extends React.Component {
-  static propTypes = {
-    to: PropTypes.string.isRequired
-  };
-
-  componentDidMount() {
-    const { to } = this.props;
-
+const HardRedirect = ({ to }) => {
+  React.useEffect(() => {
     window.location = to;
-  }
+  }, [to]);
 
-  shouldComponentUpdate() {
-    return false;
-  }
+  return null;
+};
 
-  render() {
-    return null;
-  }
-}
+HardRedirect.propTypes = {
+  to: PropTypes.string.isRequired
+};
 
 export default HardRedirect;

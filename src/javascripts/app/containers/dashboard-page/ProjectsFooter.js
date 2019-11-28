@@ -1,8 +1,8 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Table } from "javascripts/shared/components";
-import _times from "lodash/times";
-import moment from "moment-timezone";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Table } from 'javascripts/shared/components';
+import _times from 'lodash/times';
+import moment from 'moment-timezone';
 
 class ProjectsFooter extends React.Component {
   static propTypes = {
@@ -53,7 +53,7 @@ class ProjectsFooter extends React.Component {
         stoppedAt = moment().tz(entry.timezone);
       }
 
-      const hours = stoppedAt.diff(startedAt, "hours", true);
+      const hours = stoppedAt.diff(startedAt, 'hours', true);
 
       sum += hours;
     }
@@ -68,14 +68,14 @@ class ProjectsFooter extends React.Component {
     let weekBillableTotal = 0;
     let weekTotal = 0;
 
-    _times(7, index => {
+    _times(7, (index) => {
       const day = moment
         .tz(query.date, timezone)
-        .add(index, "d")
-        .format("YYYY-MM-DD");
+        .add(index, 'd')
+        .format('YYYY-MM-DD');
 
-      const billableTotal = this._calcTotal(true, "YYYY-MM-DD", day);
-      const total = this._calcTotal(false, "YYYY-MM-DD", day);
+      const billableTotal = this._calcTotal(true, 'YYYY-MM-DD', day);
+      const total = this._calcTotal(false, 'YYYY-MM-DD', day);
 
       weekBillableTotal += billableTotal;
       weekTotal += total;
@@ -97,31 +97,31 @@ class ProjectsFooter extends React.Component {
   }
 
   _getMonthTotalAndOtherTotals(startMonth, endMonth) {
-    const diffMonth = startMonth.format("MMM") !== endMonth.format("MMM");
+    const diffMonth = startMonth.format('MMM') !== endMonth.format('MMM');
     const monthTotal = this._calcTotal(
       false,
-      "YYYY-MM",
-      startMonth.format("YYYY-MM")
+      'YYYY-MM',
+      startMonth.format('YYYY-MM')
     );
     let otherTotal = null;
 
     const monthBillableTotal = this._calcTotal(
       true,
-      "YYYY-MM",
-      startMonth.format("YYYY-MM")
+      'YYYY-MM',
+      startMonth.format('YYYY-MM')
     );
     let otherBillableTotal = null;
 
     if (diffMonth) {
       otherTotal = this._calcTotal(
         false,
-        "YYYY-MM",
-        endMonth.format("YYYY-MM")
+        'YYYY-MM',
+        endMonth.format('YYYY-MM')
       );
       otherBillableTotal = this._calcTotal(
         true,
-        "YYYY-MM",
-        endMonth.format("YYYY-MM")
+        'YYYY-MM',
+        endMonth.format('YYYY-MM')
       );
     }
 
@@ -156,7 +156,7 @@ class ProjectsFooter extends React.Component {
       <tfoot>
         <tr className="bg-blue-lightest">
           <Table.Td className="text-right" colSpan="2">
-            <strong className="text-green">{"Billable"}</strong>
+            <strong className="text-green">{'Billable'}</strong>
           </Table.Td>
           {billableCells}
           <Table.Td className="w-px">
@@ -179,7 +179,7 @@ class ProjectsFooter extends React.Component {
         </tr>
         <tr className="bg-blue-lightest">
           <Table.Td className="text-right" colSpan="2">
-            <strong className="text-blue">{"Total"}</strong>
+            <strong className="text-blue">{'Total'}</strong>
           </Table.Td>
           {totalCells}
           <Table.Td className="w-px">

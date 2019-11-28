@@ -1,66 +1,49 @@
-import FieldError from "./FieldError";
-import InputBase from "./InputBase";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import FieldError from './FieldError';
+import InputBase from './InputBase';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _get from 'lodash/get';
 
-class InputField extends React.Component {
-  static propTypes = {
-    disabled: PropTypes.bool,
-    field: PropTypes.field.isRequired,
-    form: PropTypes.form.isRequired,
-    onChange: PropTypes.func,
-    type: PropTypes.string
-  };
+const InputField = (props) => {
+  const { disabled, field, form, onChange, ...rest } = props;
 
-  static defaultProps = {
-    disabled: false,
-    onChange: null,
-    type: "text"
-  };
+  const { errors, isSubmitting } = form;
 
-  constructor(props) {
-    super(props);
-
-    this._handleChange = this._handleChange.bind(this);
-  }
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  _handleChange(event) {
-    const { field, onChange } = this.props;
-
-    field.onChange(event);
-
+  React.useEffect(() => {
     if (onChange) {
-      setTimeout(() => onChange(event), 1);
+      onChange(field.value);
     }
-  }
+  }, [field.value, onChange]);
 
-  render() {
-    const {
-      disabled,
-      field,
-      form: { errors, isSubmitting, touched },
-      ...rest
-    } = this.props;
+  const error = _get(errors, field.name);
+  const touched = _get(form.touched, field.name);
+  const hasError = error && touched;
 
-    const hasError = errors[field.name] && touched[field.name];
+  return (
+    <>
+      <InputBase
+        {...field}
+        {...rest}
+        disabled={disabled || isSubmitting}
+        error={hasError}
+      />
+      <FieldError error={error} touched={touched} />
+    </>
+  );
+};
 
-    return (
-      <>
-        <InputBase
-          {...field}
-          {...rest}
-          disabled={disabled || isSubmitting}
-          error={hasError}
-          onChange={this._handleChange}
-        />
-        <FieldError error={errors[field.name]} touched={touched[field.name]} />
-      </>
-    );
-  }
-}
+InputField.propTypes = {
+  disabled: PropTypes.bool,
+  field: PropTypes.formikField.isRequired,
+  form: PropTypes.formikForm.isRequired,
+  onChange: PropTypes.func,
+  type: PropTypes.string
+};
+
+InputField.defaultProps = {
+  disabled: false,
+  onChange: null,
+  type: 'text'
+};
 
 export default InputField;

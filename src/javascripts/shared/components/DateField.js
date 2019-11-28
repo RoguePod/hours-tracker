@@ -1,16 +1,16 @@
-import { Dropdown, FieldError, InputBase } from "javascripts/shared/components";
+import { Dropdown, FieldError, InputBase } from 'javascripts/shared/components';
 
-import Calendar from "./Calendar";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import chrono from "chrono-node";
-import moment from "moment-timezone";
+import Calendar from './Calendar';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import chrono from 'chrono-node';
+import moment from 'moment-timezone';
 
 class DateField extends React.PureComponent {
   static propTypes = {
     disabled: PropTypes.bool,
-    field: PropTypes.field.isRequired,
-    form: PropTypes.form.isRequired
+    field: PropTypes.formikField.isRequired,
+    form: PropTypes.formikForm.isRequired
   };
 
   static defaultProps = {
@@ -48,7 +48,7 @@ class DateField extends React.PureComponent {
   }
 
   _handleKeyDown(event) {
-    if (event.key === "Tab" || event.key === "Enter") {
+    if (event.key === 'Tab' || event.key === 'Enter') {
       this._handleBlur();
       this.setState({ focused: false });
     }
@@ -71,11 +71,11 @@ class DateField extends React.PureComponent {
         parsed.getDate()
       ];
 
-      const date = moment(values).startOf("day");
+      const date = moment(values).startOf('day');
 
       if (date.isValid()) {
         setFieldTouched(field.name, true);
-        setFieldValue(field.name, date.format("YYYY-MM-DD"));
+        setFieldValue(field.name, date.format('YYYY-MM-DD'));
       }
     }
   }
@@ -108,13 +108,13 @@ class DateField extends React.PureComponent {
   }
 
   _findValue(value) {
-    let date = moment(value);
+    const date = moment(value);
 
     if (date.isValid()) {
-      return date.format("MM/DD/YYYY");
+      return date.format('MM/DD/YYYY');
     }
 
-    return "";
+    return '';
   }
 
   _handleClose() {
@@ -128,11 +128,11 @@ class DateField extends React.PureComponent {
     } = this.props;
 
     setFieldTouched(field.name, true);
-    setFieldValue(field.name, value.format("YYYY-MM-DD"));
+    setFieldValue(field.name, value.format('YYYY-MM-DD'));
 
     this.setState({
       focused: false,
-      value: this._findValue(value.format("YYYY-MM-DD"))
+      value: this._findValue(value.format('YYYY-MM-DD'))
     });
   }
 

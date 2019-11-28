@@ -1,29 +1,16 @@
-import { Button } from "javascripts/shared/components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SplitFormChart from "./SplitFormChart";
-import SplitFormEntry from "./SplitFormEntry";
+import { Button } from 'javascripts/shared/components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SplitFormChart from './SplitFormChart';
+import SplitFormEntry from './SplitFormEntry';
 
-class SplitFormEntries extends React.Component {
-  static propTypes = {
-    form: PropTypes.shape({
-      values: PropTypes.object.isRequired
-    }).isRequired,
-    push: PropTypes.func.isRequired
-  };
+const SplitFormEntries = ({ form, push }) => {
+  const {
+    values: { entries }
+  } = form;
 
-  constructor(props) {
-    super(props);
-
-    this._handleAdd = this._handleAdd.bind(this);
-  }
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  _handleAdd() {
+  const _handleAdd = () => {
     const {
       form: { values },
       push
@@ -31,64 +18,45 @@ class SplitFormEntries extends React.Component {
 
     push({
       clientId: null,
-      description: "",
-      hours: "0.0",
-      percent: "0.0",
+      description: '',
+      hours: '0.0',
+      percent: '0.0',
       projectId: null,
       startedAt: values.stoppedAt,
       stoppedAt: values.stoppedAt,
       timezone: values.timezone
     });
-  }
+  };
 
-  _renderRows() {
-    const {
-      form: {
-        values: { entries }
-      }
-    } = this.props;
-
-    return entries.map((entry, index) => {
-      return (
-        <SplitFormEntry
-          {...this.props}
-          entry={entry}
-          index={index}
-          key={index}
-        />
-      );
-    });
-  }
-
-  render() {
-    const {
-      form: {
-        isSubmitting,
-        values: { entries }
-      }
-    } = this.props;
-
-    const rows = this._renderRows();
-
+  const rows = entries.map((entry, index) => {
     return (
-      <div>
-        <div className="flex items-center mb-4">
-          <h2 className="text-blue flex-1">{"Entries"}</h2>
-          <Button
-            color="blue"
-            disabled={isSubmitting}
-            onClick={this._handleAdd}
-            type="button"
-          >
-            <FontAwesomeIcon icon="plus" /> {"Add Entry"}
-          </Button>
-        </div>
-        {rows}
-        <h3 className="text-blue">{"Chart"}</h3>
-        <SplitFormChart entries={entries || []} />
-      </div>
+      <SplitFormEntry entry={entry} index={index} key={index} push={push} />
     );
-  }
-}
+  });
 
-export default SplitFormEntries;
+  return (
+    <div>
+      <div className="flex items-center mb-4">
+        <h2 className="text-blue flex-1">{'Entries'}</h2>
+        <Button
+          color="blue"
+          disabled={form.isSubmitting}
+          onClick={_handleAdd}
+          type="button"
+        >
+          <FontAwesomeIcon icon="plus" /> {'Add Entry'}
+        </Button>
+      </div>
+      {rows}
+      <h3 className="text-blue">{'Chart'}</h3>
+      <SplitFormChart entries={entries || []} />
+    </div>
+  );
+};
+
+SplitFormEntries.propTypes = {
+  form: PropTypes.formikForm.isRequired,
+  push: PropTypes.func.isRequired
+};
+
+export default React.memo(SplitFormEntries);

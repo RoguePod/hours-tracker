@@ -1,49 +1,48 @@
-/* global window */
+import { FieldError, Label } from 'javascripts/shared/components';
 
-import { FieldError, Label } from "javascripts/shared/components";
-import React, { useEffect, useRef } from "react";
-
-import PropTypes from "javascripts/prop-types";
-import _sum from "lodash/sum";
-import cx from "classnames";
-import { isBlank } from "javascripts/globals";
-import styled from "styled-components";
-import useId from "javascripts/shared/hooks/useId";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _get from 'lodash/get';
+import _sum from 'lodash/sum';
+import cx from 'classnames';
+import { isBlank } from 'javascripts/globals';
+import styled from 'styled-components';
+import { useId } from 'javascripts/shared/hooks';
 
 const TextArea = styled.textarea`
   transition: border 300ms ease;
-
-  &:disabled {
-    background-color: #dae1e7;
-    cursor: not-allowed;
-  }
 `;
 
-const TextAreaField = props => {
+const TextAreaField = (props) => {
   const {
     autoHeight,
     className,
     disabled,
     field,
-    form: { errors, isSubmitting, touched },
+    form,
     label,
     onChange,
     required,
     ...rest
   } = props;
 
-  const textAreaRef = useRef(null);
+  const { errors, isSubmitting } = form;
+
+  const textAreaRef = React.useRef(null);
   const id = useId(rest.id);
 
-  const _removeAutoHeightStyles = () => {
-    if (textAreaRef && textAreaRef.current) {
+  React.useEffect(() => {
+    if (onChange) {
+      onChange(field.value);
+    }
+
+    if (!textAreaRef.current) {
+      return;
+    }
+
+    if (!autoHeight) {
       textAreaRef.current.style.height = null;
       textAreaRef.current.style.resize = null;
-    }
-  };
-
-  const _updateHeight = () => {
-    if (!textAreaRef || !textAreaRef.current || !autoHeight) {
       return;
     }
 
@@ -54,46 +53,30 @@ const TextAreaField = props => {
     } = window.getComputedStyle(textAreaRef.current);
 
     const borderHeight = _sum(
-      [borderBottomWidth, borderTopWidth].map(x => parseFloat(x))
+      [borderBottomWidth, borderTopWidth].map((x) => parseFloat(x))
     );
 
     // Measure the scrollHeight and update the height to match.
-    textAreaRef.current.style.height = "auto";
-    textAreaRef.current.style.overflowY = "hidden";
+    textAreaRef.current.style.height = 'auto';
+    textAreaRef.current.style.overflowY = 'hidden';
     textAreaRef.current.style.height = `${Math.max(
       parseFloat(minHeight),
       Math.ceil(textAreaRef.current.scrollHeight + borderHeight)
     )}px`;
-    textAreaRef.current.style.overflowY = "";
-  };
+    textAreaRef.current.style.overflowY = '';
+  }, [autoHeight, field.value, onChange]);
 
-  const handleChange = event => {
-    field.onChange(event);
-    _updateHeight();
-
-    if (onChange) {
-      setTimeout(() => onChange(event.target.value), 0);
-    }
-  };
-
-  useEffect(() => {
-    if (autoHeight) {
-      _updateHeight();
-    } else {
-      _removeAutoHeightStyles();
-    }
-  }, [autoHeight, field.value]);
-
-  const hasError = errors[field.name] && touched[field.name];
+  const error = _get(errors, field.name);
+  const touched = _get(form.touched, field.name);
+  const hasError = error && touched;
 
   const textAreaClassName = cx(
-    "appearance-none border rounded w-full py-2 px-3 text-grey-darker",
-    "leading-tight focus:outline-none",
+    'appearance-none border rounded w-full py-2 px-3 text-gray-800',
+    'leading-tight focus:outline-none disabled:bg-gray-300',
+    'disabled:cursor-not-allowed',
     {
-      "border-grey-light": !hasError,
-      "border-red": hasError,
-      "focus:border-blue-light": !hasError,
-      "focus:border-red": hasError
+      'border-gray-400 focus:shadow-outline focus:border-teal-500': !hasError,
+      'border-red-500 focus:shadow-outline-error focus:border-red-500': hasError
     },
     className
   );
@@ -113,10 +96,9 @@ const TextAreaField = props => {
         className={textAreaClassName}
         disabled={disabled || isSubmitting}
         id={id}
-        onChange={handleChange}
         ref={textAreaRef}
       />
-      <FieldError error={errors[field.name]} touched={touched[field.name]} />
+      <FieldError error={error} touched={touched} />
     </>
   );
 };
@@ -125,8 +107,8 @@ TextAreaField.propTypes = {
   autoHeight: PropTypes.bool,
   className: PropTypes.string,
   disabled: PropTypes.bool,
-  field: PropTypes.field.isRequired,
-  form: PropTypes.form.isRequired,
+  field: PropTypes.formikField.isRequired,
+  form: PropTypes.formikForm.isRequired,
   label: PropTypes.string,
   onChange: PropTypes.func,
   required: PropTypes.bool

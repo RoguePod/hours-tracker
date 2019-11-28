@@ -1,77 +1,73 @@
-import { FieldError } from "javascripts/shared/components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import cx from "classnames";
+import FieldError from './FieldError';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import _get from 'lodash/get';
+import cx from 'classnames';
 
-class CheckboxField extends React.Component {
-  static propTypes = {
-    disabled: PropTypes.bool,
-    field: PropTypes.field.isRequired,
-    form: PropTypes.form.isRequired,
-    label: PropTypes.string
-  };
+const CheckboxField = (props) => {
+  const { disabled, field, form, label, onChange } = props;
 
-  static defaultProps = {
-    disabled: false,
-    label: null
-  };
+  const error = _get(form.errors, field.name);
+  const touched = _get(form.touched, field.name);
+  const hasError = error && touched;
+  const isDisabled = disabled || form.isSubmitting;
+  // const icon = value ? ['far', 'check-square'] : ['far', 'square'];
 
-  constructor(props) {
-    super(props);
+  const labelClassName = cx('block flex flex-row items-center cursor-pointer', {
+    'text-gray-800': !hasError && !isDisabled,
+    'text-gray-300': !hasError && isDisabled,
+    'text-red-500': hasError
+  });
 
-    this._handleChange = this._handleChange.bind(this);
-  }
+  React.useEffect(() => {
+    if (onChange) {
+      onChange(field.value);
+    }
+  }, [field.value, onChange]);
 
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  _handleChange() {
-    const {
-      disabled,
-      field: { name, value },
-      form: { isSubmitting, setFieldValue }
-    } = this.props;
-
-    if (disabled || isSubmitting) {
+  const _handleChange = () => {
+    if (disabled || form.isSubmitting) {
       return;
     }
 
-    setFieldValue(name, !value);
-  }
+    form.setFieldValue(field.name, !field.value);
+  };
 
-  render() {
-    const {
-      disabled,
-      field: { name, value },
-      form: { errors, isSubmitting, touched },
-      label
-    } = this.props;
+  return (
+    <>
+      <label className={labelClassName}>
+        <input
+          {...props.field}
+          checked={field.value}
+          disabled={isDisabled}
+          onChange={_handleChange}
+          type="checkbox"
+        />
+        {/* <div className="focus:text-teal-500">
+          <FontAwesomeIcon icon={icon} size={size} />
+        </div> */}
+        <div className="ml-2">{label}</div>
+      </label>
+      <FieldError error={error} touched={touched} />
+    </>
+  );
+};
 
-    const hasError = errors[name] && touched[name];
-    const isDisabled = disabled || isSubmitting;
-    const icon = value ? ["far", "check-square"] : ["far", "square"];
+CheckboxField.propTypes = {
+  disabled: PropTypes.bool,
+  field: PropTypes.formikField.isRequired,
+  form: PropTypes.formikForm.isRequired,
+  label: PropTypes.string,
+  onChange: PropTypes.func,
+  size: PropTypes.string
+};
 
-    const labelClassName = cx(
-      "block flex flex-row items-center cursor-pointer",
-      {
-        "text-grey-darker": !hasError && !isDisabled,
-        "text-grey-light": !hasError && isDisabled,
-        "text-red": hasError
-      }
-    );
-
-    return (
-      <>
-        <label className={labelClassName} onClick={this._handleChange}>
-          <FontAwesomeIcon icon={icon} />
-          <div className="ml-2">{label}</div>
-        </label>
-        <FieldError error={errors[name]} touched={touched[name]} />
-      </>
-    );
-  }
-}
+CheckboxField.defaultProps = {
+  disabled: false,
+  label: null,
+  onChange: null,
+  size: '1x'
+};
 
 export default CheckboxField;

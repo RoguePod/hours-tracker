@@ -1,6 +1,6 @@
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import { Transition } from "javascripts/shared/components";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import { Transition } from 'javascripts/shared/components';
 
 class ClientRow extends React.Component {
   static propTypes = {
@@ -29,7 +29,7 @@ class ClientRow extends React.Component {
   render() {
     const { client } = this.props;
     const clientClasses =
-      "hover:bg-blue-lighter cursor-pointer px-3 py-2 text-sm text-blue";
+      'hover:bg-blue-lighter cursor-pointer px-3 py-2 text-sm text-blue';
 
     return (
       <li>

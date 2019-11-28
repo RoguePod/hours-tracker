@@ -5,15 +5,15 @@ import {
   SelectField,
   SubmitButton,
   TimezoneField
-} from "javascripts/shared/components";
-import { Field, Form } from "formik";
+} from 'javascripts/shared/components';
+import { Field, Form } from 'formik';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
 
 const ProfileForm = ({ isSubmitting, status }) => {
-  const _convertToOptions = values => {
-    return values.map(value => {
+  const _convertToOptions = (values) => {
+    return values.map((value) => {
       return (
         <option key={value.value} value={value.value}>
           {value.text}
@@ -24,9 +24,9 @@ const ProfileForm = ({ isSubmitting, status }) => {
 
   const _getRecentProjectsSortOptions = () => {
     return _convertToOptions([
-      { text: "Recent", value: "stopped_at" },
-      { text: "Clients", value: "clients" },
-      { text: "Projects", value: "projects" }
+      { text: 'Recent', value: 'stopped_at' },
+      { text: 'Clients', value: 'clients' },
+      { text: 'Projects', value: 'projects' }
     ]);
   };
 
@@ -62,7 +62,7 @@ const ProfileForm = ({ isSubmitting, status }) => {
           name="recentProjectsSort"
           required
         >
-          <option value="">{"--Select--"}</option>
+          <option value="">{'--Select--'}</option>
           {_getRecentProjectsSortOptions()}
         </Field>
       </div>
@@ -81,7 +81,7 @@ const ProfileForm = ({ isSubmitting, status }) => {
           name="autoloadLastDescription"
         />
       </div>
-      <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
+      <SubmitButton submitting={isSubmitting}>{'Save'}</SubmitButton>
     </Form>
   );
 };

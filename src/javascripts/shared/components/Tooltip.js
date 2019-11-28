@@ -1,11 +1,8 @@
-import { CSSTransition } from "react-transition-group";
-import { Portal } from "javascripts/shared/components";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import ReactDOM from "react-dom";
-import _isElement from "lodash/isElement";
-import cx from "classnames";
-import styled from "styled-components";
+import { CSSTransition } from 'react-transition-group';
+import Portal from './Portal';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import styled from 'styled-components';
 
 const DURATION = 300;
 
@@ -29,150 +26,214 @@ const FadeIn = styled.div`
   }
 `;
 
-const Title = styled(FadeIn)`
-  transform: translate(-50%, -100%) !important;
-
-  &::after {
-    border: solid transparent;
-    border-color: rgba(136, 183, 213, 0);
-    border-top-color: #22292f;
-    border-width: 0.75rem;
-    content: " ";
-    height: 0;
-    left: 50%;
-    margin-left: -0.75rem;
-    pointer-events: none;
-    position: absolute;
-    top: 95%;
-    width: 0;
-  }
+const TopArrow = styled.div`
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
 `;
 
-class Tooltip extends React.Component {
-  static propTypes = {
-    children: PropTypes.node.isRequired,
-    onMouseEnter: PropTypes.func,
-    onMouseLeave: PropTypes.func,
-    title: PropTypes.string.isRequired
-  };
+const RightArrow = styled.div`
+  border-bottom: 8px solid transparent;
+  border-top: 8px solid transparent;
+`;
 
-  static defaultProps = {
-    onMouseEnter: null,
-    onMouseLeave: null
-  };
+const BottomArrow = styled.div`
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+`;
 
-  constructor(props) {
-    super(props);
+const LeftArrow = styled.div`
+  border-bottom: 8px solid transparent;
+  border-top: 8px solid transparent;
+`;
 
-    this._handleMouseEnter = this._handleMouseEnter.bind(this);
-    this._handleMouseLeave = this._handleMouseLeave.bind(this);
-    this._handlePoseComplete = this._handlePoseComplete.bind(this);
-  }
-
-  state = {
-    hover: false,
-    show: false
-  };
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  _element = null;
-
-  _handleMouseEnter(event) {
-    const { onMouseEnter } = this.props;
-
-    this.setState({ hover: true, show: true });
-
-    if (onMouseEnter) {
-      onMouseEnter(event);
-    }
-  }
-
-  _handleMouseLeave(event) {
-    const { onMouseLeave } = this.props;
-
-    this.setState({ hover: false });
-
-    if (onMouseLeave) {
-      onMouseLeave(event);
-    }
-  }
-
-  _handlePoseComplete() {
-    const { hover } = this.state;
-
-    this.setState({ show: hover });
-  }
-
-  render() {
-    const { children, title, ...rest } = this.props;
-    const { hover, show } = this.state;
-
-    const titleClasses = cx(
-      "fixed bg-black text-white p-2 rounded text-sm z-20 shadow-md",
-      "text-center",
-      { hidden: !show }
-    );
-
-    let tooltipStyles = {};
-    if (show && this._element) {
-      const rect = this._element.getBoundingClientRect();
-
-      tooltipStyles = {
-        left: rect.left + rect.width / 2,
-        top: rect.top - 10
+const getPositionStyles = (elementRect, position) => {
+  switch (position) {
+    case 'left':
+      return {
+        arrow: <LeftArrow className="w-0 h-0 border-l-8 border-black" />,
+        iconStyles: {
+          right: '-8px',
+          top: '50%',
+          transform: 'translateY(-50%)'
+        },
+        tooltipStyles: {
+          left: elementRect.left - 10,
+          top: elementRect.top + elementRect.height / 2,
+          transform: 'translate(-100%, -50%)'
+        }
       };
+    case 'right':
+      return {
+        arrow: <RightArrow className="w-0 h-0 border-r-8 border-black" />,
+        iconStyles: {
+          left: '-8px',
+          top: '50%',
+          transform: 'translateY(-50%)'
+        },
+        tooltipStyles: {
+          left: elementRect.left + elementRect.width + 10,
+          top: elementRect.top + elementRect.height / 2,
+          transform: 'translate(0%, -50%)'
+        }
+      };
+    case 'bottom':
+      return {
+        arrow: <BottomArrow className="w-0 h-0 border-b-8 border-black" />,
+        iconStyles: {
+          top: '-8px',
+          left: '50%',
+          transform: 'translateX(-50%)'
+        },
+        tooltipStyles: {
+          left: elementRect.left + elementRect.width / 2,
+          top: elementRect.top + elementRect.height + 10,
+          transform: 'translate(-50%, 0%)'
+        }
+      };
+    default:
+      return {
+        arrow: <TopArrow className="w-0 h-0 border-t-8 border-black" />,
+        iconStyles: {
+          bottom: '-8px',
+          left: '50%',
+          transform: 'translateX(-50%)'
+        },
+        tooltipStyles: {
+          left: elementRect.left + elementRect.width / 2,
+          top: elementRect.top - 10,
+          transform: 'translate(-50%, -100%)'
+        }
+      };
+  }
+};
+
+const preserveRef = (ref, node) => {
+  if (ref) {
+    if (typeof ref === 'function') {
+      ref(node);
     }
+    if ({}.hasOwnProperty.call(ref, 'current')) {
+      ref.current = node;
+    }
+  }
+};
 
-    const child = React.Children.only(children);
-    const trigger = React.cloneElement(child, {
-      ...rest,
-      onMouseEnter: this._handleMouseEnter,
-      onMouseLeave: this._handleMouseLeave,
-      ref: node => {
-        // Keep your own reference
-        if (_isElement(node)) {
-          this._element = node;
-        } else {
-          /* eslint-disable react/no-find-dom-node */
-          this._element = ReactDOM.findDOMNode(node);
-          /* eslint-enable react/no-find-dom-node */
-        }
+const Tooltip = ({ children, position: initialPosition, title, ...rest }) => {
+  const [hover, setHover] = React.useState(false);
+  const [position, setPosition] = React.useState(initialPosition);
+  const triggerRef = React.useRef();
 
-        // Call the original ref, if any
-        const { ref } = child;
+  const _handleScroll = () => {
+    setHover(false);
+  };
 
-        if (typeof ref === "function") {
-          ref(node);
-        }
-      }
-    });
+  React.useEffect(() => {
+    window.addEventListener('scroll', _handleScroll);
 
-    return (
-      <>
-        {trigger}
-        {show && this._element && (
-          <Portal>
-            <CSSTransition
-              classNames="fade"
-              in={hover}
-              mountOnEnter
-              onEnter={this._handleEnter}
-              onExit={this._handleExit}
-              timeout={DURATION}
-              unmountOnExit
-            >
-              <Title className={titleClasses} style={tooltipStyles}>
-                {title}
-              </Title>
-            </CSSTransition>
-          </Portal>
-        )}
-      </>
+    return () => {
+      window.removeEventListener('scroll', _handleScroll);
+    };
+  }, []);
+
+  const _handleMouseEnter = (event, child) => {
+    setHover(true);
+
+    if (child.onMouseEnter) {
+      child.onMouseEnter(event);
+    }
+  };
+
+  const _handleMouseLeave = (event, child) => {
+    setHover(false);
+
+    if (child.onMouseLeave) {
+      child.onMouseLeave(event);
+    }
+  };
+
+  let options = {
+    iconStyles: {},
+    tooltipStyles: {}
+  };
+
+  if (triggerRef.current) {
+    options = getPositionStyles(
+      triggerRef.current.getBoundingClientRect(),
+      position
     );
   }
-}
+
+  const child = React.Children.only(children);
+  const trigger = React.cloneElement(child, {
+    ...rest,
+    ...child.props,
+    onMouseEnter: (event) => _handleMouseEnter(event, child),
+    onMouseLeave: (event) => _handleMouseLeave(event, child),
+    ref: (node) => {
+      triggerRef.current = node;
+      preserveRef(child.ref, node);
+    }
+  });
+
+  const _handleEnter = (tooltipElement) => {
+    const { bottom, left, right, top } = tooltipElement.getBoundingClientRect();
+
+    if (position === 'top' && top < 0) {
+      setPosition('bottom');
+    } else if (position === 'bottom' && bottom > window.innerHeight) {
+      setPosition('top');
+    } else if (position === 'right' && right > window.innerWidth) {
+      setPosition('left');
+    } else if (position === 'left' && left < 0) {
+      setPosition('right');
+    }
+  };
+
+  const _handleExited = () => {
+    setPosition(initialPosition);
+  };
+
+  const bubbleClasses =
+    'bg-black max-w-sm p-2 rounded text-center text-white text-xs w-full';
+
+  return (
+    <>
+      {trigger}
+      {triggerRef.current && (
+        <Portal>
+          <CSSTransition
+            classNames="fade"
+            in={hover}
+            mountOnEnter
+            onEnter={_handleEnter}
+            onExited={_handleExited}
+            timeout={DURATION}
+            unmountOnExit
+          >
+            <FadeIn className="fixed z-80" style={options.tooltipStyles}>
+              <div
+                className={bubbleClasses}
+                dangerouslySetInnerHTML={{ __html: title }}
+              />
+              <div className="absolute" style={options.iconStyles}>
+                {options.arrow}
+              </div>
+            </FadeIn>
+          </CSSTransition>
+        </Portal>
+      )}
+    </>
+  );
+};
+
+Tooltip.propTypes = {
+  children: PropTypes.node.isRequired,
+  position: PropTypes.string,
+  title: PropTypes.string.isRequired
+};
+
+Tooltip.defaultProps = {
+  position: 'top'
+};
 
 export default Tooltip;

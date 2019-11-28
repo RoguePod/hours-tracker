@@ -1,10 +1,10 @@
-import { Dropdown } from "javascripts/shared/components";
-import ExportEntriesButton from "./ExportEntriesButton";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import cx from "classnames";
+import { Dropdown } from 'javascripts/shared/components';
+import ExportEntriesButton from './ExportEntriesButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import cx from 'classnames';
 
 const EntriesIndexAdminMenu = ({ location, query, timezone }) => {
   const { pathname } = location;
@@ -12,23 +12,23 @@ const EntriesIndexAdminMenu = ({ location, query, timezone }) => {
   const [open, setOpen] = React.useState(false);
   const target = React.useRef(null);
 
-  const isReports = pathname === "/entries/reports";
-  const isReportsSummary = pathname === "/entries/reports/summary";
+  const isReports = pathname === '/entries/reports';
+  const isReportsSummary = pathname === '/entries/reports/summary';
 
-  const basePillClasses = "block py-2 px-4 text-center";
-  const selectedPillClasses = "bg-blue text-white border-blue";
-  const unselectedPillClasses = "hover:bg-blue-lighter text-blue";
+  const basePillClasses = 'block py-2 px-4 text-center';
+  const selectedPillClasses = 'bg-blue text-white border-blue';
+  const unselectedPillClasses = 'hover:bg-blue-lighter text-blue';
 
   const leftPillClasses = cx(
     basePillClasses,
-    "rounded-l-lg border-t border-l border-b",
+    'rounded-l-lg border-t border-l border-b',
     {
       [selectedPillClasses]: isReports,
       [unselectedPillClasses]: !isReports
     }
   );
 
-  const middlePillClasses = cx(basePillClasses, "border", {
+  const middlePillClasses = cx(basePillClasses, 'border', {
     [selectedPillClasses]: isReportsSummary,
     [unselectedPillClasses]: !isReportsSummary
   });
@@ -36,7 +36,7 @@ const EntriesIndexAdminMenu = ({ location, query, timezone }) => {
   const rightPillClasses = cx(
     basePillClasses,
     unselectedPillClasses,
-    "rounded-r-lg border-t border-r border-b cursor-pointer"
+    'rounded-r-lg border-t border-r border-b cursor-pointer'
   );
 
   const _handleOpen = () => {
@@ -48,17 +48,17 @@ const EntriesIndexAdminMenu = ({ location, query, timezone }) => {
       <li className="flex-1">
         <Link
           className={leftPillClasses}
-          to={{ ...location, pathname: "/entries/reports" }}
+          to={{ ...location, pathname: '/entries/reports' }}
         >
-          <FontAwesomeIcon icon="list" /> {"List"}
+          <FontAwesomeIcon icon="list" /> {'List'}
         </Link>
       </li>
       <li className="flex-1">
         <Link
           className={middlePillClasses}
-          to={{ ...location, pathname: "/entries/reports/summary" }}
+          to={{ ...location, pathname: '/entries/reports/summary' }}
         >
-          <FontAwesomeIcon icon="layer-group" /> {"Summary"}
+          <FontAwesomeIcon icon="layer-group" /> {'Summary'}
         </Link>
       </li>
       <li className="flex-1 relative" ref={target}>
@@ -68,7 +68,7 @@ const EntriesIndexAdminMenu = ({ location, query, timezone }) => {
           role="button"
           tabIndex="-1"
         >
-          <FontAwesomeIcon icon="download" /> {"Download"}
+          <FontAwesomeIcon icon="download" /> {'Download'}
         </div>
 
         <Dropdown onClose={_handleOpen} open={open} target={target}>

@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 const project = PropTypes.shape({
   name: PropTypes.string.isRequired
@@ -37,23 +37,23 @@ const propTypes = {
     stoppedAtText: PropTypes.string
   }),
   error,
-  field: PropTypes.shape({
+  formikField: PropTypes.shape({
     name: PropTypes.string.isRequired,
     onBlur: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired
+  }),
+  formikForm: PropTypes.shape({
+    errors: PropTypes.object.isRequired,
+    isSubmitting: PropTypes.bool.isRequired,
+    setFieldValue: PropTypes.func.isRequired,
+    touched: PropTypes.object.isRequired,
+    values: PropTypes.object.isRequired
   }),
   flash: PropTypes.shape({
     color: PropTypes.string,
     icon: PropTypes.string,
     id: PropTypes.number.isRequired,
     message: PropTypes.string.isRequired
-  }),
-  form: PropTypes.shape({
-    errors: PropTypes.object.isRequired,
-    isSubmitting: PropTypes.bool.isRequired,
-    setFieldValue: PropTypes.func.isRequired,
-    touched: PropTypes.object.isRequired,
-    values: PropTypes.object.isRequired
   }),
   gqlMutation: PropTypes.shape({
     called: PropTypes.bool.isRequired,
@@ -79,7 +79,7 @@ const propTypes = {
   //   })
   // }),
   project,
-  role: PropTypes.oneOf(["User", "Admin"]),
+  role: PropTypes.oneOf(['User', 'Admin']),
   route: PropTypes.shape({
     key: PropTypes.string.isRequired
   }),
@@ -107,11 +107,11 @@ const propTypes = {
     name: PropTypes.string,
     recentProjectsListSize: PropTypes.number,
     recentProjectsSort: PropTypes.oneOf([
-      "startedAt",
-      "client.name",
-      "project.name"
+      'startedAt',
+      'client.name',
+      'project.name'
     ]),
-    role: PropTypes.oneOf(["Admin", "User"]),
+    role: PropTypes.oneOf(['Admin', 'User']),
     timezone: PropTypes.string
   })
 };

@@ -1,50 +1,27 @@
-import { Field, FieldArray, Form } from "formik";
+import { Field, FieldArray, Form } from 'formik';
 import {
   FormError,
   SubmitButton,
   TimeField,
   TimezoneField
-} from "javascripts/shared/components";
+} from 'javascripts/shared/components';
 
-import PropTypes from "javascripts/prop-types";
-import React from "react";
-import SplitFormEntries from "./SplitFormEntries";
-import { calcHours } from "javascripts/globals";
-import moment from "moment-timezone";
+import PropTypes from 'javascripts/prop-types';
+import React from 'react';
+import SplitFormEntries from './SplitFormEntries';
+import { calcHours } from 'javascripts/globals';
+import moment from 'moment-timezone';
 
-class EntrySplitForm extends React.Component {
-  static propTypes = {
-    isSubmitting: PropTypes.bool.isRequired,
-    isValid: PropTypes.bool.isRequired,
-    setFieldValue: PropTypes.func.isRequired,
-    status: PropTypes.string,
-    values: PropTypes.shape({
-      entries: PropTypes.arrayOf(PropTypes.object).isRequired,
-      timezone: PropTypes.string.isRequired
-    }).isRequired
-  };
+const EntrySplitForm = ({
+  isSubmitting,
+  isValid,
+  setFieldValue,
+  status,
+  values
+}) => {
+  const { entries, startedAt, stoppedAt, timezone } = values;
 
-  static defaultProps = {
-    status: null
-  };
-
-  constructor(props) {
-    super(props);
-
-    this._handleCalculate = this._handleCalculate.bind(this);
-  }
-
-  shouldComponentUpdate() {
-    return true;
-  }
-
-  _handleCalculate() {
-    const {
-      isValid,
-      setFieldValue,
-      values: { entries, startedAt, stoppedAt, timezone }
-    } = this.props;
-
+  const _handleCalculate = () => {
     if (!isValid) {
       return;
     }
@@ -69,7 +46,7 @@ class EntrySplitForm extends React.Component {
         `entries.${index}.startedAt`,
         moment
           .tz(startedAt, timezone)
-          .add(hours, "hours")
+          .add(hours, 'hours')
           .valueOf()
       );
 
@@ -80,57 +57,66 @@ class EntrySplitForm extends React.Component {
           `entries.${index}.stoppedAt`,
           moment
             .tz(startedAt, timezone)
-            .add(hours + staticHours, "hours")
+            .add(hours + staticHours, 'hours')
             .valueOf()
         );
         hours += staticHours;
       }
     });
-  }
+  };
 
-  render() {
-    const {
-      isSubmitting,
-      status,
-      values: { timezone }
-    } = this.props;
+  // console.log(isSubmitting, status);
 
-    // console.log(isSubmitting, status);
+  return (
+    <Form noValidate>
+      <FormError error={status} />
+      <div className="flex flex-wrap -mx-2">
+        <div className="w-full md:w-1/2 px-2 mb-4">
+          <Field
+            autoFocus
+            component={TimeField}
+            label="Started"
+            name="startedAt"
+            onChange={_handleCalculate}
+            timezone={timezone}
+          />
+        </div>
+        <div className="w-full md:w-1/2 px-2 mb-4">
+          <Field
+            component={TimeField}
+            label="Stopped"
+            name="stoppedAt"
+            onChange={_handleCalculate}
+            timezone={timezone}
+          />
+        </div>
+      </div>
+      <div className="mb-4">
+        <Field component={TimezoneField} label="Timezone" name="timezone" />
+      </div>
+      <div className="mb-4">
+        <FieldArray component={SplitFormEntries} name="entries" />
+      </div>
+      <SubmitButton submitting={isSubmitting}>{'Save'}</SubmitButton>
+    </Form>
+  );
+};
 
-    return (
-      <Form noValidate>
-        <FormError error={status} />
-        <div className="flex flex-wrap -mx-2">
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <Field
-              autoFocus
-              component={TimeField}
-              label="Started"
-              name="startedAt"
-              onChange={this._handleCalculate}
-              timezone={timezone}
-            />
-          </div>
-          <div className="w-full md:w-1/2 px-2 mb-4">
-            <Field
-              component={TimeField}
-              label="Stopped"
-              name="stoppedAt"
-              onChange={this._handleCalculate}
-              timezone={timezone}
-            />
-          </div>
-        </div>
-        <div className="mb-4">
-          <Field component={TimezoneField} label="Timezone" name="timezone" />
-        </div>
-        <div className="mb-4">
-          <FieldArray component={SplitFormEntries} name="entries" />
-        </div>
-        <SubmitButton submitting={isSubmitting}>{"Save"}</SubmitButton>
-      </Form>
-    );
-  }
-}
+EntrySplitForm.propTypes = {
+  isSubmitting: PropTypes.bool.isRequired,
+  isValid: PropTypes.bool.isRequired,
+  setFieldValue: PropTypes.func.isRequired,
+  status: PropTypes.string,
+  values: PropTypes.shape({
+    entries: PropTypes.arrayOf(PropTypes.object).isRequired,
+    startedAt: PropTypes.string,
+    stoppedAt: PropTypes.string,
+    timezone: PropTypes.string.isRequired
+  }).isRequired
+};
+
+EntrySplitForm.defaultProps = {
+  status: null
+};
 
 export default EntrySplitForm;

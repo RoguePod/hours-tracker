@@ -1,16 +1,16 @@
-import * as Sentry from "@sentry/browser";
+import * as Sentry from '@sentry/browser';
 
-import { applyMiddleware, compose, createStore } from "redux";
+import { applyMiddleware, compose, createStore } from 'redux';
 
-import { createBrowserHistory } from "history";
-import createRootReducer from "./reducers";
-import createSagaMiddleware from "redux-saga";
-import { routerMiddleware } from "connected-react-router";
-import sagas from "./sagas";
+import createRootReducer from './reducers';
+import createSagaMiddleware from 'redux-saga';
+import history from 'javascripts/history';
+import { routerMiddleware } from 'connected-react-router';
+import sagas from './sagas';
 
 const sagaMiddleware = createSagaMiddleware({
-  onError: error => {
-    if (process.env.ENV === "development") {
+  onError: (error) => {
+    if (process.env.ENV === 'development') {
       /* eslint-disable no-console */
       console.error(error);
       /* eslint-enable no-console */
@@ -20,8 +20,7 @@ const sagaMiddleware = createSagaMiddleware({
   }
 });
 
-export const history = createBrowserHistory();
-export const store = createStore(
+const store = createStore(
   createRootReducer(history),
   compose(
     applyMiddleware(sagaMiddleware),
@@ -30,3 +29,5 @@ export const store = createStore(
 );
 
 sagaMiddleware.run(sagas);
+
+export default store;

@@ -37,6 +37,6 @@
     }],
     "block-no-empty": null,
     "order/properties-alphabetical-order": true,
-    "unit-whitelist": ["em", "rem", "ms", "%"]
+    "unit-whitelist": ["em", "rem", "ms", "%", "fr", "px"]
   }
 }
